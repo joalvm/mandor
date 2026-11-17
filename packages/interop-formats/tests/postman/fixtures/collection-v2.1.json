@@ -1,0 +1,257 @@
+{
+    "info": {
+        "_postman_id": "11111111-aaaa-bbbb-cccc-000000000001",
+        "name": "Demo API",
+        "description": "The collection the tests read.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "123456"
+    },
+    "variable": [
+        { "key": "base", "value": "http://127.0.0.1:1" },
+        { "key": "apiSecret", "value": "s3cret", "type": "secret" },
+        { "key": "bad name", "value": "x" }
+    ],
+    "auth": {
+        "type": "basic",
+        "basic": [
+            { "key": "username", "value": "ana", "type": "string" },
+            { "key": "password", "value": "hunter2", "type": "string" }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": { "type": "text/javascript", "exec": ["console.log('collection');"] }
+        }
+    ],
+    "item": [
+        {
+            "name": "Users",
+            "description": "Everything about users.",
+            "item": [
+                {
+                    "name": "Get user",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": ["pm.variables.set('x', 1);"]
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('ok', function () {",
+                                    "  pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "X-Trace", "value": "1", "disabled": true },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "description": "What the client accepts"
+                            }
+                        ],
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+                        },
+                        "url": {
+                            "raw": "{{base}}/users/:id?verbose=true",
+                            "host": ["{{base}}"],
+                            "path": ["users", ":id"],
+                            "query": [{ "key": "verbose", "value": "true" }],
+                            "variable": [{ "key": "id", "value": "7" }]
+                        }
+                    },
+                    "response": [
+                        {
+                            "name": "Found",
+                            "originalRequest": {
+                                "method": "GET",
+                                "url": { "raw": "{{base}}/users/7" }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [{ "key": "Content-Type", "value": "application/json" }],
+                            "body": "{\"id\":7}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get user",
+                    "request": { "method": "GET", "url": "{{base}}/users" }
+                },
+                {
+                    "name": "Create user",
+                    "request": {
+                        "method": "POST",
+                        "header": [{ "key": "Content-Type", "value": "application/json" }],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"id\":\"{{$guid}}\",\"email\":\"{{$randomEmail}}\"}",
+                            "options": { "raw": { "language": "json" } }
+                        },
+                        "url": { "raw": "{{base}}/users" }
+                    }
+                },
+                {
+                    "name": "Upload",
+                    "request": {
+                        "method": "POST",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "ana",
+                                    "type": "text",
+                                    "contentType": "text/plain"
+                                },
+                                {
+                                    "key": "avatar",
+                                    "type": "file",
+                                    "src": "C:\\Users\\ana\\avatar.png"
+                                },
+                                { "key": "docs", "type": "file", "src": ["a.pdf", "b.pdf"] },
+                                { "key": "empty", "type": "file", "src": null }
+                            ]
+                        },
+                        "url": { "raw": "{{base}}/upload" }
+                    }
+                },
+                {
+                    "name": "Raw file",
+                    "request": {
+                        "method": "PUT",
+                        "body": { "mode": "file", "file": { "src": "/home/ana/data.bin" } },
+                        "url": { "raw": "{{base}}/blob" }
+                    }
+                },
+                {
+                    "name": "Query",
+                    "request": {
+                        "method": "POST",
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": { "query": "{ me { id } }", "variables": "{\"a\":1}" }
+                        },
+                        "url": { "raw": "{{base}}/graphql" }
+                    }
+                },
+                {
+                    "name": "Legacy",
+                    "request": {
+                        "method": "GET",
+                        "auth": {
+                            "type": "digest",
+                            "digest": [{ "key": "username", "value": "ana", "type": "string" }]
+                        },
+                        "url": { "raw": "{{base}}/legacy" }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "auth": {
+                            "type": "oauth2",
+                            "oauth2": [
+                                { "key": "grant_type", "value": "client_credentials" },
+                                {
+                                    "key": "accessTokenUrl",
+                                    "value": "https://auth.example.test/token"
+                                },
+                                { "key": "clientId", "value": "abc" },
+                                { "key": "clientSecret", "value": "literal-secret" },
+                                { "key": "client_authentication", "value": "header" },
+                                { "key": "scope", "value": "read" }
+                            ]
+                        },
+                        "url": { "raw": "{{base}}/login" }
+                    }
+                },
+                {
+                    "name": "Auth code",
+                    "request": {
+                        "method": "GET",
+                        "auth": {
+                            "type": "oauth2",
+                            "oauth2": [
+                                { "key": "grant_type", "value": "authorization_code" },
+                                {
+                                    "key": "authUrl",
+                                    "value": "https://auth.example.test/authorize"
+                                },
+                                {
+                                    "key": "accessTokenUrl",
+                                    "value": "https://auth.example.test/token"
+                                },
+                                { "key": "clientId", "value": "abc" },
+                                {
+                                    "key": "redirect_uri",
+                                    "value": "https://oauth.pstmn.io/v1/callback"
+                                }
+                            ]
+                        },
+                        "url": { "raw": "{{base}}/me" }
+                    }
+                },
+                {
+                    "name": "No auth",
+                    "request": {
+                        "method": "GET",
+                        "auth": { "type": "noauth" },
+                        "url": { "raw": "{{base}}/public" }
+                    }
+                },
+                {
+                    "name": "Settings",
+                    "protocolProfileBehavior": {
+                        "followRedirects": false,
+                        "disableBodyPruning": true
+                    },
+                    "request": { "method": "GET", "url": { "raw": "{{base}}/settings" } }
+                },
+                { "name": "Plain", "request": "https://example.test/plain" },
+                {
+                    "name": "Admin",
+                    "description": "The people in charge.",
+                    "auth": {
+                        "type": "apikey",
+                        "apikey": [
+                            { "key": "key", "value": "X-Admin", "type": "string" },
+                            { "key": "value", "value": "{{key}}", "type": "string" },
+                            { "key": "in", "value": "header", "type": "string" }
+                        ]
+                    },
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": ["console.log('admin');"]
+                            }
+                        }
+                    ],
+                    "item": [
+                        {
+                            "name": "List admins",
+                            "request": { "method": "GET", "url": { "raw": "{{base}}/admins" } }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

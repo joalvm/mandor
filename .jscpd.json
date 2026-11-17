@@ -1,0 +1,17 @@
+{
+    "minTokens": 70,
+    "format": ["typescript", "tsx"],
+    "path": ["packages", "apps"],
+    "ignore": [
+        "**/tests/**",
+        "**/*.test.*",
+        "**/node_modules/**",
+        "**/out/**",
+        "**/dist/**",
+        "**/schemas/**",
+        "**/generated/**"
+    ],
+    "threshold": 0,
+    "reporters": ["console"],
+    "gitignore": true
+}

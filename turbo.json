@@ -1,0 +1,17 @@
+{
+    "$schema": "https://turborepo.com/schema.json",
+    "ui": "stream",
+    // One app builds at a time. The renderer of each carries the bundle Mermaid ships built, and
+    // two of them side by side outgrow the memory of a hosted runner; with its two cores, the
+    // second build was only ever waiting for the first one's processor anyway.
+    "concurrency": "1",
+    "tasks": {
+        // What electron-vite writes, and nothing else. `dist/` is where electron-builder leaves the
+        // packaged app, close to a gigabyte: kept here, every build of a new hash stored one more,
+        // and the cache, which nothing trims, grew past two hundred gigabytes.
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["out/**"]
+        }
+    }
+}

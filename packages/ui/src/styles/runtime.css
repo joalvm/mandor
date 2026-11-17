@@ -1,0 +1,746 @@
+[data-part='titlebar'] {
+    app-region: drag;
+}
+
+[data-part='titlebar'] :where(button, [role='button'], [contenteditable]) {
+    app-region: no-drag;
+}
+
+/**
+ * The chrome is not prose: a double click on a tab, a row or a button is a command, never a
+ * selection, so none of them lift their text. What carries the user's own words — a field, the
+ * editor — selects as always, and so does everything outside the library's chrome.
+ */
+button,
+label,
+[role='button'],
+[role='checkbox'],
+[role='menuitem'],
+[role='option'],
+[role='switch'],
+[role='tab'],
+[data-part='empty-row'],
+[data-part='list-row'],
+[data-part='tree-row'] {
+    user-select: none;
+}
+
+/* What the user types into selects as always, even inside chrome that does not: `auto`
+   resolves against the parent, so a field inside a tab or a row would inherit the ban. */
+input,
+textarea,
+[contenteditable] {
+    user-select: text;
+}
+
+/**
+ * The pending arc of a button turns while the action runs: a still arc reads as a broken
+ * glyph, not as work in progress. The turn is the one motion that never ends, so it takes a
+ * period of its own instead of a duration of the scale — and it keeps turning under
+ * reduced motion, because "something is running" is information, not decoration. Any other
+ * glyph of work in progress turns the same way under 'data-spin'.
+ */
+@keyframes mandor-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+[data-part='button-pending'] [data-part='icon'],
+[data-spin] [data-part='icon'] {
+    animation: mandor-spin 800ms linear infinite;
+}
+
+/**
+ * The chevron of a foldable region turns with the region. It is the header's own glyph, and the
+ * state radix writes on the trigger already says which way the region is: the turn is said once
+ * here instead of once in every header that draws one.
+ */
+[data-state='open'] > [data-part='collapsible-chevron'] {
+    transform: rotate(90deg);
+}
+
+[data-part='activity-viewport'],
+[data-part='example-diff-viewport'],
+[data-part='log-lines-viewport'] {
+    height: attr(data-total-size type(<length>), 0px);
+}
+
+[data-part='activity-window'],
+[data-part='example-diff-lines'],
+[data-part='log-lines-window'] {
+    transform: translateY(attr(data-offset type(<length>), 0px));
+}
+
+/**
+ * A line is a window onto its text: a value longer than the box scrolls inside it with the
+ * caret and never spills past the edge. Nothing draws a bar on a field one line tall.
+ */
+[data-part='editable'] {
+    overflow: hidden;
+}
+
+[data-part='editable'][data-placeholder]:empty {
+    text-overflow: ellipsis;
+}
+
+[data-part='editable'][data-placeholder]:empty::before {
+    color: var(--text-secondary);
+    content: attr(data-placeholder);
+    pointer-events: none;
+}
+
+/**
+ * A variable inside a field is a pill in the line the field already has: the padding is part
+ * of the text, so the caret walks into it and out of it without a jump, and the tone the
+ * declaration earns is the only thing the pill adds. The pointer may land on one to open the
+ * variable it names, so the pill takes the cursor of something reachable.
+ */
+[data-part='variable-token'] {
+    border-radius: var(--mandor-radius-sm);
+    cursor: pointer;
+    padding-inline: calc(var(--mandor-space-base) / 2);
+}
+
+/* A field that is read and not written still names its variables, quieter, and reaches none. */
+[aria-disabled='true'] > [data-part='variable-token'] {
+    cursor: default;
+    opacity: 0.6;
+}
+
+[data-part='variable-token'][data-tone='resolved'],
+[data-part='variable-token'][data-tone='secret'] {
+    background: var(--surface-chrome-control);
+    color: var(--text-variable);
+}
+
+[data-part='variable-token'][data-tone='empty'],
+[data-part='variable-token'][data-tone='open'] {
+    background: var(--surface-chrome-control);
+    color: var(--text-secondary);
+}
+
+[data-part='variable-token'][data-tone='missing'] {
+    color: var(--text-error);
+    text-decoration: underline wavy var(--border-error);
+    text-underline-offset: 2px;
+}
+
+/**
+ * The option the keyboard or the pointer is on: one fill, shared by the two ways of naming
+ * it, so the list never shows two choices at once.
+ */
+[data-part='suggest-option'][data-active='true'],
+[data-part='suggest-option']:hover {
+    background: var(--surface-control);
+}
+
+/**
+ * The list of a select is at least as wide as the trigger it fell from: a list narrower than
+ * the value it chooses reads as another control. Radix measures the trigger and hands the
+ * width over as a variable; wider options stretch the list past it, and never cut.
+ */
+[data-part='select-content'] {
+    min-width: var(--radix-select-trigger-width);
+}
+
+/**
+ * The texts a select trigger can show, laid unseen under the chosen one so the trigger is as
+ * wide as the longest: the words come from the attribute, so no copy of them is in the tree a
+ * reader or a search walks.
+ */
+[data-part='select-sizer']::before {
+    content: attr(data-label);
+}
+
+/**
+ * The chosen line of a select is told by weight, not by a glyph: the line keeps its place, its
+ * neighbours keep theirs, and no column stands reserved for a mark most lines never carry.
+ */
+[data-part='select-item'][data-state='checked'] {
+    font-weight: var(--mandor-weight-semibold);
+}
+
+/**
+ * The sidebar keeps the width the user dragged it to, in pixels. A percentage would make a
+ * wider window widen the tree, and a list of names does not need more room than it had.
+ *
+ * The zone declares its own width and the band it sits in measures nothing: an app is free to
+ * put another box beside it without a track being reserved for a child the band cannot see.
+ */
+[data-part='sidebar'] {
+    width: attr(data-width type(<length>), var(--mandor-width-sidebar));
+}
+
+/**
+ * The handle is the seam: one line wide, and the only line between the lateral and the
+ * workbench. What the pointer may grab is wider than what the eye sees — the room is lent by a
+ * layer over the boundary, which draws nothing and moves nothing — so a hairline still takes a
+ * drag without a track being reserved beside it.
+ */
+[data-part='sidebar-handle'] {
+    position: relative;
+    cursor: col-resize;
+    touch-action: none;
+}
+
+[data-part='sidebar-handle']::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: -3px;
+}
+
+/**
+ * A section of the lateral is as tall as what it holds, and never more than two fifths of the
+ * lateral: past that its body scrolls. The one that fills takes what the others leave, and
+ * never less than its header and one row. A folded one is only its header.
+ */
+[data-part='sidebar-slot'] {
+    flex: none;
+    max-height: 40%;
+}
+
+[data-part='sidebar-slot'][data-fills='true'] {
+    flex: 1 1 0;
+    max-height: none;
+    min-height: calc(var(--mandor-height-section) + var(--mandor-height-row));
+}
+
+/* An open section that holds rows ends a step below the last one, so it never touches the line
+   of the next; one that holds nothing is only its header. */
+[data-part='sidebar-slot'] [data-part='collapsible-body']:not(:empty) {
+    padding-block-end: var(--mandor-gap-control);
+}
+
+/**
+ * A bar of a timing is three runs side by side, and each takes its weight of the room: what came
+ * before, the phase itself, and what came after. Nothing measures the track; the weights do.
+ */
+[data-part='timing-span'][data-weight] {
+    flex-basis: 0;
+    flex-grow: attr(data-weight type(<number>), 0);
+    flex-shrink: 1;
+}
+
+/* The two halves add up to the whole pane: a share for the first, the rest for the second.
+   The handle owns no track — a fixed one on top of the share was the overflow the surface
+   audit measured — it lies over the boundary instead. */
+[data-part='split-pane'] {
+    position: relative;
+    grid-template-columns: attr(data-position type(<percentage>), 50%) minmax(0, 1fr);
+}
+
+/* Stacked halves: the position measures height, and the divider runs across. */
+[data-part='split-pane'][data-direction='column'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: attr(data-position type(<percentage>), 50%) minmax(0, 1fr);
+}
+
+/* A closed second half leaves the first the whole pane, stacked or not: stated after both
+   shapes, so it wins over either. */
+[data-part='split-pane'][data-collapsed] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+}
+
+[data-part='split-handle'] {
+    position: absolute;
+    cursor: col-resize;
+    touch-action: none;
+    inset-block: 0;
+    inset-inline-start: calc(attr(data-position type(<percentage>), 50%) - 4px);
+    width: 4px;
+}
+
+[data-direction='column'] > [data-part='split-handle'] {
+    cursor: row-resize;
+    inset-block: auto;
+    inset-block-start: calc(attr(data-position type(<percentage>), 50%) - 4px);
+    inset-inline: 0;
+    width: auto;
+    height: 4px;
+}
+
+/**
+ * The brand colors of the known hosts: the one closed table the system accepts from outside
+ * its tokens. A host the table does not know, and the local origin, draw in secondary text.
+ */
+[data-host='github'] {
+    color: var(--primitive-host-github);
+}
+
+[data-host='gitlab'] {
+    color: var(--primitive-host-gitlab);
+}
+
+[data-host='bitbucket'] {
+    color: var(--primitive-host-bitbucket);
+}
+
+[data-host='azure-devops'] {
+    color: var(--primitive-host-azure-devops);
+}
+
+[data-host='local'],
+[data-host='generic'] {
+    color: var(--text-secondary);
+}
+
+/**
+ * The tone of what a menu button names is a dot on the lower corner of its glyph. The glyph keeps
+ * its own colour and the name its contrast; the ring of the band's surface around the dot keeps it
+ * apart from the strokes it sits on.
+ */
+[data-part='menu-button-glyph'][data-tone]::after {
+    content: '';
+    position: absolute;
+    inset-block-end: -1px;
+    inset-inline-end: -2px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--surface-panel);
+    border-radius: var(--mandor-radius-full);
+}
+
+[data-part='menu-button-glyph'][data-tone='success']::after {
+    background: var(--solid-success);
+}
+
+[data-part='menu-button-glyph'][data-tone='error']::after {
+    background: var(--solid-error);
+}
+
+/**
+ * The section being read is the one that carries a fill. A tab draws nothing of its own — no
+ * border, no bar, no accent — so the only thing that separates the open one from the rest is a
+ * pill of neutral behind it, and the same two fills answer for every strip of the window.
+ */
+[data-part='tabs-trigger'] {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+/* The pointer lays the veil over whatever the tab shows, the open one too: its fill stays a
+   color, so the veil above it is never reset. */
+[data-part='tabs-trigger']:hover {
+    background-image: linear-gradient(var(--surface-veil), var(--surface-veil));
+    color: var(--text-primary);
+}
+
+[data-part='tabs-trigger'][data-state='active'] {
+    background-color: var(--surface-tab-active);
+    color: var(--text-primary);
+}
+
+/* A section with no room for its whole name goes to the menu of the strip. It stays in the list,
+   for the arrow keys and for whoever reads the strip aloud, and opening it brings it into view. */
+[data-part='tabs-trigger'][data-out-of-view] {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/**
+ * A name longer than its place is cut where the place ends and fades out there, so the letters
+ * that fit are all read and no three dots take the room of three more. Only a name that
+ * overflows fades: the timeline of its own scroll is live only while there is something to
+ * scroll, and the mask rides on it.
+ */
+[data-fade-overflow] {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: fade-overflow linear both;
+    animation-timeline: scroll(self inline);
+}
+
+@keyframes fade-overflow {
+    from,
+    to {
+        mask-image: linear-gradient(
+            to right,
+            black calc(100% - var(--mandor-width-tab-fade)),
+            transparent
+        );
+    }
+}
+
+/**
+ * How deep a row of the tree sits: flush with the header of its section — the chevron of the
+ * section and the first row under it open at the same column — and one step in per level below
+ * that. The level is a number only the runtime knows, so it arrives on the element and the
+ * scale turns it into a measure here; a `style` attribute would leave the theme with no say
+ * over what one level of nesting is worth.
+ *
+ * The guides of the levels above come with it, and only while the reader has a hand in the
+ * tree: one line per ancestor, standing under the middle of the hole the row reserves. The
+ * stretch is painted by the line's own wrapper, one device pixel past its end — a fraction of
+ * a device pixel lives at every seam on a scaled display, and the overdraw is what keeps the
+ * stretches reading as one line instead of a column of dashes.
+ */
+[data-part='tree-row'][data-level],
+[data-part='list-row'][data-level],
+[data-part='empty-row'][data-level] {
+    padding-inline-start: calc(
+        var(--mandor-pad-inline-panel) + (attr(data-level type(<number>), 1) - 1) *
+            var(--mandor-indent-tree)
+    );
+}
+
+[data-part='tree-line'][data-level]::before {
+    background-image: repeating-linear-gradient(
+        to right,
+        var(--border-strong) 0 1px,
+        transparent 1px var(--mandor-indent-tree)
+    );
+    background-position-x: calc(var(--mandor-pad-inline-panel) + var(--mandor-icon-sm) / 2);
+    background-repeat: no-repeat;
+    background-size: calc((attr(data-level type(<number>), 1) - 1) * var(--mandor-indent-tree)) 100%;
+    content: '';
+    inset-block: 0 -1px;
+    inset-inline: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: -1;
+}
+
+/* The line of a folder is born in the folder itself, the way the explorer of VS Code and the
+   sidebar of Postman draw it: the row stretches the guide to its own column — open, so the
+   line runs from the folder's own top to the last descendant, and folded, so the column still
+   says where its children hang. A tree with chevrons has a mark standing in that column, so the
+   line is not born there: it starts under the folder, on the first line of its children, and a
+   folded folder has none. */
+[data-part='tree-line']:not([data-chevrons]):has(> [data-part='tree-row'][aria-expanded])::before {
+    background-size: calc(attr(data-level type(<number>), 1) * var(--mandor-indent-tree)) 100%;
+}
+
+/* The lateral shows what can be done to a line only on the line the reader is on, the way the
+   explorer of VS Code does: a column of three dots on every row is noise that hides the names.
+   The menu of a row comes out under the pointer, with the keyboard on the row, and stays while
+   it is open. The buttons of a section header follow the same rule one level up: they come out
+   while the pointer or the keyboard is anywhere in the section. They keep their room while
+   hidden, so nothing moves when they appear. */
+[data-part='sidebar-content'] [data-part$='-row-menu'],
+[data-part='sidebar-content'] [data-part='collapsible-actions'] {
+    opacity: 0;
+    transition: opacity var(--mandor-duration-fast) ease-out;
+}
+
+[data-part='sidebar-content']
+    :is([data-part='tree-row'], [data-part='list-row']):is(:hover, :focus-within)
+    [data-part$='-row-menu'],
+[data-part='sidebar-content'] [data-part$='-row-menu']:has([aria-expanded='true']),
+[data-part='sidebar-content']
+    [data-part='collapsible']:is(:hover, :focus-within)
+    [data-part='collapsible-actions'],
+[data-part='sidebar-content'] [data-part='collapsible-actions']:has([aria-expanded='true']) {
+    opacity: 1;
+}
+
+/* The scrollbar of the lateral follows the same rule: a narrow thumb that comes out only while
+   the pointer or the keyboard is in the box that scrolls, so a long tree is not a bar beside every
+   section. Chromium draws the `::-webkit-scrollbar` parts only while neither standard property
+   is set, and both inherit from the root, so they go back to `auto` here. The track keeps its
+   width while the thumb is hidden, so nothing moves when it comes out. */
+[data-part='sidebar-content'] * {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+}
+
+[data-part='sidebar-content'] *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: transparent;
+}
+
+[data-part='sidebar-content'] *::-webkit-scrollbar-thumb {
+    border-radius: var(--mandor-radius-full);
+    background: transparent;
+}
+
+[data-part='sidebar-content'] *:is(:hover, :focus-within)::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+}
+
+/* A menu hung from a trigger that names the current choice is as wide as that trigger at least;
+   the width is the library's measure of it, so it can only be said here. */
+[data-part='menu-content'][data-fit-trigger] {
+    min-width: var(--radix-dropdown-menu-trigger-width);
+}
+
+/**
+ * A long tree draws only the lines on screen: the viewport is as tall as every line would be,
+ * and each drawn line stands where it would stand in the whole tree. The numbers change as the
+ * tree scrolls, so they arrive on the element and turn into measures here.
+ */
+[data-part='tree-viewport'] {
+    position: relative;
+    height: attr(data-total-size type(<length>), 0px);
+}
+
+[data-part='tree-line'] {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    transform: translateY(attr(data-offset type(<length>), 0px));
+}
+
+/**
+ * Where a drop would leave the node. A line between two rows when it lands among them, and a
+ * tint over the whole row when it goes inside the folder: the mark is drawn over what is
+ * already there and moves nothing, so the tree under the pointer stays where the eye left it.
+ */
+[data-part='collection-row'][data-drop] {
+    position: relative;
+}
+
+[data-part='collection-row'][data-drop='inside'] {
+    background: var(--surface-accent-tint);
+}
+
+[data-part='collection-row'][data-drop='above']::after,
+[data-part='collection-row'][data-drop='below']::after {
+    background: var(--solid-accent);
+    content: '';
+    height: 2px;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+
+[data-part='collection-row'][data-drop='above']::after {
+    top: 0;
+}
+
+[data-part='collection-row'][data-drop='below']::after {
+    bottom: 0;
+}
+
+/**
+ * The two togglers of a list or a setting: a pill that slides its knob to the side it means,
+ * and a box that shows the check it carries. The state radix writes on the root is what the
+ * fill answers to, and the knob travels the distance the pill leaves for it. Off, the pill and
+ * the box wear the line of a control, the one grey that keeps 3:1 against every surface they sit
+ * on: a toggle that fades into its dialog says nothing about where it stands.
+ */
+[data-part='switch'] {
+    background-color: var(--border-control);
+}
+
+[data-part='switch']:hover {
+    background-color: var(--border-control-hover);
+}
+
+[data-part='switch']:disabled {
+    background-color: var(--surface-control);
+}
+
+[data-part='switch'][data-state='checked'],
+[data-part='switch'][data-state='checked']:hover {
+    background-color: var(--solid-accent);
+}
+
+/* On, the pill keeps its accent under the pointer and only takes the veil over it. */
+[data-part='switch'][data-state='checked']:hover:not(:disabled) {
+    background-image: linear-gradient(var(--surface-veil), var(--surface-veil));
+}
+
+[data-part='switch'][data-state='checked'] [data-part='switch-thumb'] {
+    transform: translateX(
+        calc(var(--mandor-width-toggle) - var(--mandor-icon-md) - 2 * var(--mandor-pad-toggle))
+    );
+}
+
+/* The box carries no colour utility: every fill lives here, or the utilities layer would bury
+   these rules. The order is the contract — rest, hover, disabled, invalid, and the checked rule
+   last, so a box that is both disabled and checked keeps the accent and only loses light. */
+[data-part='checkbox'] {
+    background-color: var(--surface-sunken);
+    border-color: var(--border-control);
+    color: var(--text-primary);
+}
+
+[data-part='checkbox']:hover {
+    border-color: var(--border-control-hover);
+}
+
+[data-part='checkbox']:disabled {
+    background-color: var(--surface-control);
+    border-color: var(--border-subtle);
+    color: var(--text-disabled);
+}
+
+[data-part='checkbox'][aria-invalid='true'] {
+    border-color: var(--border-error);
+}
+
+/* The checked box and the mixed one share the accent fill: both mean "in", and the glyph is
+   what tells them apart — the check of a done state, the dash of a group whose children
+   disagree. The dash inherits the same on-solid tone the check does. */
+[data-part='checkbox'][data-state='checked'],
+[data-part='checkbox'][data-state='indeterminate'],
+[data-part='checkbox'][data-state='checked']:hover,
+[data-part='checkbox'][data-state='indeterminate']:hover {
+    background-color: var(--solid-accent);
+    border-color: transparent;
+    color: var(--text-on-solid-accent);
+}
+
+[data-part='checkbox']:is([data-state='checked'], [data-state='indeterminate']):hover:not(
+        :disabled
+    ) {
+    background-image: linear-gradient(var(--surface-veil), var(--surface-veil));
+}
+
+/* The marks of the box are drawn a weight heavier than the icon registry ships them: at twelve
+   pixels the check reads as a hairline over a filled square. The stroke wears the fill's own
+   colour over the same path — the geometry stays the registry's, the weight is the box's. */
+[data-part='checkbox'] [data-part='icon'] {
+    stroke: currentColor;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+
+/**
+ * Every modal of the window is cut the same way: a column of sections down the leading edge when
+ * the dialog has one, and beside it the title, the body that scrolls and the actions that close
+ * it. The areas are named once here, so a dialog with no column leaves its track empty and the
+ * order the parts are written in is free to be the order they are read and tabbed through.
+ *
+ * The size is read from what the dialog holds, so no caller picks one. A form is a column of
+ * fields; a confirmation asks one thing and stands narrower; a column of sections beside a detail
+ * needs room, and a height it keeps while the sections change, so the frame never jumps under the
+ * pointer that is choosing them. A dialog that shows code stands at a medium measure: a request
+ * copied as code wraps its lines short, and a wider frame only leaves room nobody reads.
+ */
+[data-part='dialog'] {
+    grid-template-areas:
+        'nav header'
+        'nav body'
+        'nav footer';
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: var(--mandor-width-dialog-form);
+}
+
+[data-part='dialog'][role='alertdialog'] {
+    width: var(--mandor-width-dialog-confirm);
+}
+
+[data-part='dialog']:has(> [data-part='dialog-nav']) {
+    width: var(--mandor-width-dialog-sections);
+    height: var(--mandor-height-dialog-sections);
+    max-height: calc(100vh - 2 * var(--mandor-margin-dialog-window));
+}
+
+/**
+ * The settings of the app read as a list: a thin line between rows, and under the title of a
+ * group its own, the way the sections of a preferences window are cut. The rows of a request and
+ * of a connection are the same rows without the lines, so the lines belong to this dialog.
+ */
+[data-part='app-settings'] [data-part='settings-group'],
+[data-part='app-settings'] [data-part='settings-rows'] {
+    gap: 0;
+}
+
+[data-part='app-settings'] [data-part='settings-group'] > h3 {
+    padding-block-end: var(--mandor-gap-control);
+    border-block-end: 1px solid var(--border-subtle);
+    font-size: var(--mandor-text-sm-size);
+    line-height: var(--mandor-text-sm-line);
+}
+
+[data-part='app-settings'] [data-part='setting-row'] {
+    padding-block: calc(var(--mandor-space-base) * 2.5);
+}
+
+[data-part='app-settings'] [data-part='setting-row'] + [data-part='setting-row'] {
+    border-block-start: 1px solid var(--border-subtle);
+}
+
+[data-part='dialog']:has([data-part='code-editor']) {
+    width: var(--mandor-width-dialog-code);
+    height: var(--mandor-height-dialog-code);
+}
+
+/**
+ * The title, the way out and the first section stand on one line, the middle of a band as tall as
+ * a header. Each offset is that band minus what stands in it, halved, so a change of height in the
+ * scale moves the three together. A title too long for one line grows its band downwards and
+ * leaves its first line where it was.
+ */
+[data-part='dialog-nav'] {
+    grid-area: nav;
+    padding-block-start: calc((var(--mandor-height-header) - var(--mandor-height-row)) / 2);
+}
+
+[data-part='dialog-header'] {
+    grid-area: header;
+    padding-block: calc((var(--mandor-height-header) - var(--mandor-text-lg-line)) / 2);
+    padding-inline: var(--mandor-pad-inline-dialog);
+}
+
+/* The way out owns a square of the band at the corner, and the title stops short of it. */
+[data-part='dialog']:has(> [data-part='dialog-close']) > [data-part='dialog-header'] {
+    padding-inline-end: var(--mandor-height-header);
+}
+
+[data-part='dialog-close'] {
+    position: absolute;
+    inset-block-start: calc((var(--mandor-height-header) - var(--mandor-height-control)) / 2);
+    inset-inline-end: calc((var(--mandor-height-header) - var(--mandor-height-control)) / 2);
+}
+
+[data-part='dialog-body'] {
+    grid-area: body;
+}
+
+[data-part='dialog-footer'] {
+    grid-area: footer;
+}
+
+/**
+ * One authored moment: the scrim settles while the surface rises the last few pixels into place,
+ * and on the way out both let go faster than they came. The durations are the tokens of the
+ * scale, so a system that asks for less motion gets a dialog that simply appears.
+ */
+@keyframes mandor-dialog-scrim-in {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes mandor-dialog-scrim-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes mandor-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+    }
+}
+
+@keyframes mandor-dialog-out {
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+}
+
+[data-part='dialog-scrim'][data-state='open'] {
+    animation: mandor-dialog-scrim-in var(--mandor-duration-slow) var(--mandor-ease-out);
+}
+
+[data-part='dialog-scrim'][data-state='closed'] {
+    animation: mandor-dialog-scrim-out var(--mandor-duration-base) var(--mandor-ease-in);
+}
+
+[data-part='dialog'][data-state='open'] {
+    animation: mandor-dialog-in var(--mandor-duration-slow) var(--mandor-ease-out);
+}
+
+[data-part='dialog'][data-state='closed'] {
+    animation: mandor-dialog-out var(--mandor-duration-base) var(--mandor-ease-in);
+}

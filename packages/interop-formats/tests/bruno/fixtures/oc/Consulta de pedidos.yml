@@ -1,0 +1,15 @@
+info:
+    name: Consulta de pedidos
+    type: graphql
+    seq: 3
+graphql:
+    method: POST
+    url: '{{baseUrl}}/graphql'
+    body:
+        query: '{ pedidos { id } }'
+        variables: '{ "first": 1 }'
+    auth:
+        type: apikey
+        key: X-Key
+        value: '{{apiKey}}'
+        placement: header

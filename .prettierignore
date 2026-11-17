@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+release/
+coverage/
+.turbo/
+package-lock.json
+.local-ci/
+
+# Copied as published, so a new version of the standard diffs against the old one.
+packages/interop-formats/tests/conformance/official/

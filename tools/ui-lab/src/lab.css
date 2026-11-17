@@ -1,0 +1,29 @@
+/*
+ * Hoja del lab. Importa la hoja única de `@mandor/ui` —la misma que montan las apps: tailwind,
+ * primitivas, semánticos de los dos temas, escala, base, runtime y editor— y añade solo lo que
+ * existe solo aquí: el escaneo del propio lab. Un registro que se pinta con su propio tema deja
+ * de servir para revisar nada.
+ */
+
+@import '@mandor/ui/styles.css';
+
+@source './';
+
+/*
+ * La escala de la web del lab: titular, título de sección, entradilla y cuerpo de una página de
+ * documentación. Las apps no la usan; viven en la escala densa de `scales.css`.
+ */
+@theme {
+    --text-lab-display: 2rem;
+    --text-lab-display--line-height: 2.5rem;
+    --text-lab-display--letter-spacing: -0.022em;
+    --text-lab-title: 1.375rem;
+    --text-lab-title--line-height: 1.875rem;
+    --text-lab-title--letter-spacing: -0.017em;
+    --text-lab-lead: 1rem;
+    --text-lab-lead--line-height: 1.625rem;
+    --text-lab-lead--letter-spacing: -0.011em;
+    --text-lab-body: 0.875rem;
+    --text-lab-body--line-height: 1.375rem;
+    --text-lab-body--letter-spacing: -0.006em;
+}

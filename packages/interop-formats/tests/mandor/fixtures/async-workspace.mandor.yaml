@@ -1,0 +1,30 @@
+mandor: workspace
+formatVersion: 1
+app: async
+workspace:
+    name: Pasarela de Pedidos
+environments:
+    - id: dev
+      name: Dev
+      variables:
+          - name: host
+            value: localhost
+            enabled: true
+            secret: false
+collections:
+    - name: Pedidos
+      items:
+          - kind: message
+            name: registrarPedido
+            body:
+                channel: pedidos
+                direction: outgoing
+                payload: '{}'
+                payloadType: json
+connections:
+    - id: pedidos
+      name: Pedidos
+      transport: websocket
+      url: wss://api.test/ws
+      headers: {}
+      environmentId: dev

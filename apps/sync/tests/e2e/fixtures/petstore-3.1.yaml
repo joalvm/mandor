@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+    title: Tienda de mascotas
+    version: 1.0.0
+servers:
+    - url: http://127.0.0.1:{port}
+      description: local
+      variables:
+          port:
+              default: '1'
+tags:
+    - name: pets
+security:
+    - bearerAuth: []
+paths:
+    /pets:
+        post:
+            tags: [pets]
+            summary: Add a pet
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: [name]
+                            properties:
+                                name: { type: string }
+                                tag: { type: string }
+            responses:
+                '201':
+                    description: created
+    /pets/{petId}:
+        get:
+            tags: [pets]
+            summary: Get a pet
+            parameters:
+                - name: petId
+                  in: path
+                  required: true
+                  schema: { type: string }
+            responses:
+                '200':
+                    description: the pet
+                    content:
+                        application/json:
+                            example: { id: 7, name: Rex }
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer

@@ -1,0 +1,802 @@
+{
+    "provider": {
+        "package": "@vscode/codicons",
+        "version": "0.0.46-24"
+    },
+    "intentions": {
+        "add": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "add",
+                "sha256": "2f67796c7a4506dbec770919ae1cf57759aa0f37a3f971edcda73b45e89c4ee0",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "arrow-inbound": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "arrow-down",
+                "sha256": "f94113b5bcc60685eb4fe87927b6249e3640c6db406bb936d56b230957f41135",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "arrow-outbound": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "arrow-up",
+                "sha256": "64430f0ec76b9461e23a0995034461fd12f09af8fd0177347c745a6d3bdf1cbd",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "braces": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/braces.svg",
+                "sha256": "b8a18ad540defb7721cdc1bf67164616e7647eb79fcc05ce1f821ba9bc641e0c",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "check": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "check",
+                "sha256": "58e1762d74142ee78ee2422ae46498c1059e4f4812f9c7514e422a1f8d80235d",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "chevron-down": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chevron-down",
+                "sha256": "d98010cf4a4a2f830da7d7686535295fe224b8d5e4c1e92fb79913329af4e47b",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "chevron-left": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chevron-left",
+                "sha256": "7bcd5cc5ccc3290af3ccf095d29714558c08967992af1c8bb4aa69b39281e078",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "chevron-right": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chevron-right",
+                "sha256": "f57be224b89aab6a03908b726ffa643f32e6709119b780eba486005180772bf2",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "chevron-up": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chevron-up",
+                "sha256": "f26867f525724604cc1eb0afbea90d4bea9c962db84eb07030df7bdc51115635",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "close": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "close",
+                "sha256": "4018c01e5d50c8ec061fb71781f5f7140433a96e0d02f23a4ce7c627589b5d24",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "code": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "code",
+                "sha256": "14f4b4b93285aabf5df0c93f955d6b3c1d4060cf61a5f7adb1ddc1a1c3e54c0d",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "collection": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "library",
+                "sha256": "3c869faf1ad45e0c815b03f62a87d8966445ce121af881d8a49d1899147ed65b",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "color-mode": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "color-mode",
+                "sha256": "bbdd23290bb80b1722e4a1e3760f257f8fc6a3cacecb6ec4a8358a51a5872134",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "compare": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "arrow-swap",
+                "sha256": "2aa8e59d456037a62c545a1640aaba486743eaa7ad0ffda5e75bc76a3ff36e67",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "connect": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "plug",
+                "sha256": "445f53a81c78a1e83ae078322f76fa5ccb362119f4e731c798f24c59fa8df0dc",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "console": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "layout-panel",
+                "sha256": "05bc28dc8f47e4d56266e10bc0befcd8675cb2d89b79308850632021db320cb7",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "connection": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "link",
+                "sha256": "061a58aa3a081cd0dfde043952e463da5a9daeebc5a7999e24cf98a69b7f25df",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "copy": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "copy",
+                "sha256": "0fc12b2cb386b45c074e281a7314019810fb816e8fd5cd0c89630e913488f90c",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "corner-radius": {
+            "state": "approved",
+            "source": {
+                "origin": "derived",
+                "file": "authoring/corner-radius.svg",
+                "base": "codicons:square",
+                "sha256": "f01ebb7958c6bab6269bf61e2ec559c25681fdf6c87a62cecac2361eebf9676c",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "dash": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "remove",
+                "sha256": "9dd7226072789535d2243d5f5e48f878897d1d71afaf277d9760cab489af2115",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "delete": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "trash",
+                "sha256": "a1cc936852db8aaf0c8c20492368f25880cf9bd59c7d077fc9b4a24306a86e22",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "disconnect": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "debug-disconnect",
+                "sha256": "b433cadad87ae2b09056e11e9c8ba4e8eb43c62c42af81ef6a2729969fc9906a",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "doc": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "file-text",
+                "sha256": "8aaa80bfff83b3de3484f86f41c33b94a078212d642ce8141770c6179a71c919",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "duplicate": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "copy",
+                "sha256": "0fc12b2cb386b45c074e281a7314019810fb816e8fd5cd0c89630e913488f90c",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "edit": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "edit",
+                "sha256": "4a4b4824674b57ab7389f0cdee73b56566136c754e8ddacf232c99834ec6085f",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "environment": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "beaker",
+                "sha256": "15fe1a57223ae657eaa6455ab27e19b8ac0580e9ef6095e8f563903b316c3131",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "bell": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "bell",
+                "sha256": "15ec03f36a7d06d32de0525ce73351ef1b7a6763f8a89f95b1198481e8195543",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "error": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "error",
+                "sha256": "cd674cb138f6e5cef9795b4429e1d31501309c1b87d2db99cd0969dab09cda9d",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "export": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/export.svg",
+                "sha256": "c0e78c4d7de2351bed9e530b69138092c7f435e51cc616ee1c4c1cf8801730f3",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "external-link": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "link-external",
+                "sha256": "cb5499bf8a68b4f9267a0fef6264f1426efaa6852e23626bceb781587a5f7911",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "file": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "file",
+                "sha256": "8d85e1e13c99e0b303442631ec01238b1aeb64a4e9e3a2949f12a60f0def71ae",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "filter": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "filter",
+                "sha256": "737b12312754c5a2e4c43f8d7e2d0126c0d5789d4ecfc77d6f42c28dbf848fe4",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "folder": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "folder",
+                "sha256": "f1eae6f443ee2f95b99ee74f0f2d07c03d7b4f1bade49b3f3783c97e9a5b9b5b",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "format": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "wand",
+                "sha256": "4cad93ae56271a23f7631d86618ab7a46b3b6ca393ce1e36648e17f33cb017fe",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "grip-vertical": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "gripper",
+                "sha256": "c386beabbcf07c2febb782780376381af78ab825bde6da1d6dcd900a2c3e3f9d",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "headers": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "list-flat",
+                "sha256": "e9ea963de6c549dca85d1c52fdfe77c10787b7a8c18d9e77fe67c26a19f91e94",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "http": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/http.svg",
+                "sha256": "25139028caf8dd9858e0784e1d4872e658340bba2c61f1996e481a216eccfa47",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "import": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/import.svg",
+                "sha256": "11992f645c2a0b3622749af5b66c915b54c01dfc661c45662c657fba51a25843",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "info": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "info",
+                "sha256": "6b2077f23b0ffccf1d98b4f3dda9a2cb6d37f0df7568d1b975877bf56d938067",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "keepalive": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "pulse",
+                "sha256": "4dbbed03afb37f2db4f08928a7cef2ff2fac8015d91092a19035cbdd262c6d9d",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "key": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "key",
+                "sha256": "3ab1833cb3d41ad5974675ff0dbdf0be784b0559610a8dd48e319f974ae899a6",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "loading": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "loading",
+                "sha256": "68b3641c14fcc66001ac8e939df29f2a7922239be64907f4bd95c1f8edbdbbea",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "menu": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "three-bars",
+                "sha256": "a2220074b7b838942796fd1950c3f664d929ebb76502540112ad480aa41dce1f",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "message": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "comment",
+                "sha256": "1a3a9e749deaf48bcc0a17b6647fd2dc70bf689cba58eee80e469c447f2f9d22",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "more-horizontal": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "ellipsis",
+                "sha256": "e993dba6f9d71feb33e85400ce881822559b435f002abe0254358923a8cf1cf3",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "more-vertical": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "kebab-vertical",
+                "sha256": "d777a4c672f3cf55b390a3c1a13f8ea5452dce25a5e883a5238923ce52a89627",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "origin-azure": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/origin-azure.svg",
+                "sha256": "ae0097def009161eec7424aece1acf25fed775c4665d63634ace6bd1cb80196f",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "origin-bitbucket": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/origin-bitbucket.svg",
+                "sha256": "63659b0a64d2fb062a5190946bba287dbff0f20640fe73823cfed9aea5a6c7f3",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "origin-github": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/origin-github.svg",
+                "sha256": "07de8943c157777adaec0849b60e718a0f163f7f03bc6f66e6eeefbfda139f57",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "origin-gitlab": {
+            "state": "approved",
+            "source": {
+                "origin": "own",
+                "file": "authoring/origin-gitlab.svg",
+                "sha256": "4fe7222338e912e4059fc05e4ddfb428e8d3093f923ffc4936a0ec7fff138a30",
+                "license": "Mandor (MIT)"
+            }
+        },
+        "origin-local": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "vm",
+                "sha256": "57bd82b3c012372b199406a7a04efec757aff6cb389509d09ed331e1edccc308",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "origin-remote": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "server",
+                "sha256": "dd7155304dbdad4268303054067ec2e52216c9307df7002d2d898c9a95c8bc7b",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "panel-maximize": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "screen-full",
+                "sha256": "46b03d677c0dc53bc0d7496a4f743711318a14672ba90f1c1c90c2b5bd5dd6dc",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "record": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "record",
+                "sha256": "4a5e0e600e78e99a4858927cb11bb4261aa27113b8873ad887579d8566901115",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "refresh": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "refresh",
+                "sha256": "b2c8746f438a50cee7f710c1d2e35bb5eea1cc735dc66ac43fa118baab01fee3",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "rename": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "edit",
+                "sha256": "4a4b4824674b57ab7389f0cdee73b56566136c754e8ddacf232c99834ec6085f",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "schema": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "json",
+                "sha256": "599119a929d894146c16ad07bda6ed053b53deef86825b368ba6f863ceee2f92",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "search": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "search",
+                "sha256": "ea26083bb6dd49a42a1a6fe13cd9613022442a002f11c8247476c32b7eab7dfe",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "send": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "send",
+                "sha256": "da362073163ef6dacbef0741efa6efda82f00873d4e36c0dc4055581b3260adb",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "settings": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "gear",
+                "sha256": "7fb101d9ff3fa63283269fe5de9f0fc9f273f0de97a762b97389c6e67ab92de5",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "sidebar-left": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "layout-sidebar-left",
+                "sha256": "534df9174d0e50e6b4b7c3a96d991dea39391d6b7ba288144c7da6cadc0d3dad",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "sidebar-right": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "layout-sidebar-right",
+                "sha256": "a947adb61491c547bf9831cd2a63ef0b0f9da3fa895f30e59a2b3ebf30248c45",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "sliders": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "settings",
+                "sha256": "4ae19b0f89f73484263ed8fd32d65e757a7014957ffcf6c5e3d1bb977c33a717",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "split-horizontal": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "split-horizontal",
+                "sha256": "329ac127b76c970e283e8c573b71e6cafd8f555c9198d9b41ab2cb99ad88d9bc",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "split-vertical": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "split-vertical",
+                "sha256": "82c749b8c70e229dfaf051d855b9aa51e124bef527bbe46f137351e7d40932c8",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "warning": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "warning",
+                "sha256": "e3e4cb7573830716be647b7c930595daca925dd6c2bc3ff99a5b2a6b087cc060",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "window-close": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chrome-close",
+                "sha256": "5858b07d74cd2e32ca421121b09ff940d3eff82ad563d49addcb98bde879cb03",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "window-maximize": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chrome-maximize",
+                "sha256": "b2713506aaac02a5cf39531612d142c2752be547ae82f07167a7b07c606f6cf0",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "window-minimize": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chrome-minimize",
+                "sha256": "61970afb22ba6828f4e06ddd665dbd4cd55ed4fc05ae33815ee03c07e929c37e",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "window-restore": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "chrome-restore",
+                "sha256": "451365376e95c99b512f2451d6763caea1f2ad6c82e63a710aede29b5feee294",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "workspace": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "editor-layout",
+                "sha256": "1a41951b9f43e194d4a8f3475419f780f7ed97645621cf5a0bf7f016f738e3f3",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "wrap-text": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "word-wrap",
+                "sha256": "00e7fe55f15a814cb0682964d5a984cddf5b8e6ceaaee0ef5161c5ffe357747b",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "wrap-text-off": {
+            "state": "approved",
+            "source": {
+                "origin": "derived",
+                "file": "authoring/wrap-text-off.svg",
+                "base": "codicons:word-wrap",
+                "sha256": "b37e983cb431b03ff3e1a3f34b5235c42fc3ecac4af228e6f175fd779eb9be80",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "zoom-in": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "zoom-in",
+                "sha256": "2aa70bdfdf29f965bd8d883e69c94a38b9baaaa8781305d713fcf9d2f50a9158",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "zoom-out": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "zoom-out",
+                "sha256": "c7ecdcfbb8b9cbd24756eed5ef6da34fa265657c9a8ac2d3c680882e4c9aeeff",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "eye": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "eye",
+                "sha256": "8f935a93b507315b8d5e851f68b88f0a72829b797d59f5993ffa449cd8489b4b",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "eye-closed": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "eye-closed",
+                "sha256": "b732fc95cb45deaef0d20dcce54e5f6f367ad71ac27e58118fa034f88576385e",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "pin": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "pin",
+                "sha256": "6b8922453c82aa18eaf5b79f61e60e0fc3152d8d79500d7a7fdd4dbd36700556",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "pinned": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "pinned",
+                "sha256": "d40b9ef21bfc8d6363a6d013d5ac4f5dfcdb94c30d0bbdf70e70df240f08d527",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "fold": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "fold",
+                "sha256": "3f5ee6ff5657eb332462be8a56f38e98b00692ddc5bad5f1b718075add1569f5",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "unfold": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "unfold",
+                "sha256": "caddbb7feb65dc41f6742f5d64c1eda07fbdf5f10402bd4f79d1b28f16d2b6df",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "collapse-all": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "collapse-all",
+                "sha256": "5e61ec6c422a69d4073a4844847aaa770f39a0e19f902aa65a9f824a82e894d8",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "file-code": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "file-code",
+                "sha256": "62361f0fc23e21a6924a5a7f9a22bf3fa35359a1dfd6ccd06f5d657a3a34b3f7",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "globe": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "globe",
+                "sha256": "24af4c08d32efe6e524f6d797ad2cfb0d66484a0b2e5be10502ad18b5b3836e8",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "save": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "save",
+                "sha256": "476779ecc41e49b5913b977984c1cdae8e1dc1aeaeb4cbbbee98630f5d12d42d",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "preview": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "open-preview",
+                "sha256": "6ce580940ec710f125a3dd1ac3ee786486bba0b6f080eb0a8fabf65e20da95d0",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "link": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "link",
+                "sha256": "061a58aa3a081cd0dfde043952e463da5a9daeebc5a7999e24cf98a69b7f25df",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "markdown": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "markdown",
+                "sha256": "b6fe79c75b9e3c61090678444cbf6ef1b2041ce22d5f0a537e2b4229c16ec094",
+                "license": "CC-BY-4.0"
+            }
+        }
+    }
+}

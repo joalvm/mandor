@@ -99,13 +99,19 @@ open in any text editor.
 Windows (installer), macOS (dmg) and Linux (AppImage, deb). Updates arrive through stable and
 beta channels, and you pick which.
 
+## Contributing
+
+Pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) explains how the code is laid out
+and which gates a change has to pass; your first pull request asks you to sign the
+[CLA](CLA.md). How scripts work and what their sandbox allows: [SCRIPTS.md](SCRIPTS.md).
+Vulnerabilities are reported privately, as [SECURITY.md](SECURITY.md) describes.
+
 ## Open source
 
 Mandor is free software under the [GNU Affero General Public License v3.0 only](LICENSE).
 Copyright (C) 2026 Alejandro Vilchez.
 
-The source code is being published in this repository ahead of the first release. Issues are
-open: tell us what your current client gets wrong.
+Issues are open: tell us what your current client gets wrong.
 
 The names and logos are trademarks and are not covered by the license: see
 [TRADEMARKS.md](TRADEMARKS.md).

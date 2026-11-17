@@ -1,0 +1,39 @@
+{
+    "name": "@mandor/host",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./preload": "./src/preload/expose-bridge.ts",
+        "./bridge-kit": "./src/preload/bridge-kit.ts",
+        "./import-worker": "./src/import/serve-import-reads.ts",
+        "./script-worker": "./src/script/serve-scripts.ts",
+        "./testing": "./src/testing/handler-harness.ts",
+        "./testing/bridge": "./src/testing/spy-bridge-ipc.ts",
+        "./testing/script-worker": "./src/testing/in-process-script-worker.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "@mandor/git": "0.0.0",
+        "@mandor/i18n": "0.0.0",
+        "@mandor/interop-core": "0.0.0",
+        "@mandor/ipc": "0.0.0",
+        "@mandor/merge": "0.0.0",
+        "@mandor/schema": "0.0.0",
+        "@mandor/script": "0.0.0",
+        "@mandor/store-fs": "0.0.0",
+        "@mandor/vars": "0.0.0",
+        "electron-updater": "6.8.11",
+        "oauth4webapi": "3.8.8",
+        "undici": "8.12.4",
+        "zod": "4.6.7"
+    },
+    "devDependencies": {
+        "@types/node": "26.6.6",
+        "electron": "45.2.3",
+        "simple-git": "4.0.2"
+    }
+}

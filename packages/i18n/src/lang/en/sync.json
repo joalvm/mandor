@@ -1,0 +1,15 @@
+{
+    "importBrunoHint": "a folder of a collection, in OpenCollection YAML or .bru files",
+    "importHarHint": "1.2 recorded by a browser, in JSON",
+    "importHint": "3.x or Swagger 2.0, as JSON or YAML",
+    "importInsomniaHint": "v4 or v5 export, in JSON or YAML",
+    "importPostmanHint": "v2.1 collection, in JSON",
+    "importWorkspaceBrunoHint": "folders of collections, in OpenCollection YAML or .bru files, with their environments",
+    "importWorkspaceHint": "A workspace of Mandor Request, in YAML",
+    "importWorkspacePostmanHint": "v2.1 collections, with their environments and globals, in JSON",
+    "name": "Mandor Request",
+    "noTabOpen": "Select or open an item",
+    "noTabOpenBody": "Whatever you open from the sidebar takes a tab of this group.",
+    "settings": "Settings",
+    "windowTitle": "Mandor Request"
+}

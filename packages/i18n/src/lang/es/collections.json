@@ -1,0 +1,118 @@
+{
+    "conflictMark": "Conflicto",
+    "delete": "Borrar",
+    "deleteBody": "«{{name}}» y todo lo que tenga dentro salen del workspace. Las pestañas que lo miran se quedan abiertas, apuntando a nada.",
+    "deleteCancel": "Cancelar",
+    "deleteConfirm": "Borrar",
+    "deleteExampleBody": "«{{name}}» sale de los ejemplos de su request. Las pestañas que lo miran se quedan abiertas, apuntando a nada.",
+    "deleteManyBody": "{{count}} entradas y todo lo que tengan dentro salen del workspace. Las pestañas que las miran se quedan abiertas, apuntando a nada.",
+    "deleteManyExamplesBody": "{{count}} ejemplos salen de sus requests. Las pestañas que los miran se quedan abiertas, apuntando a nada.",
+    "deleteTitle": "Borrar de las colecciones",
+    "duplicate": "Duplicar",
+    "foldCollections": "Colapsar colecciones",
+    "foldFolders": "Colapsar carpetas",
+    "folderDocs": "Docs",
+    "folderGone": "Esta carpeta ya no existe",
+    "folderNoSections": "Esta carpeta no tiene secciones",
+    "folderSections": "Secciones de la carpeta",
+    "folderVariables": "Variables",
+    "heading": "Colecciones",
+    "newCollection": "Colección nueva",
+    "newFolder": "Carpeta nueva",
+    "newItem": "Item nuevo",
+    "openBeside": "Abrir al lado",
+    "openExample": "Abrir",
+    "rename": "Renombrar",
+    "renameField": "Nombre nuevo",
+    "resolveConflict": "Resolver conflicto",
+    "rowOptions": "Opciones de la fila",
+    "script": {
+        "editor": "Script",
+        "api": {
+            "console": {
+                "log": "Escribe una línea en la Consola.",
+                "info": "Escribe una línea informativa en la Consola.",
+                "warn": "Escribe un aviso en la Consola.",
+                "error": "Escribe un error en la Consola."
+            },
+            "atob": "Decodifica un texto en base64.",
+            "btoa": "Codifica un texto en base64.",
+            "URLSearchParams": "Lee o arma una query string.",
+            "vars": {
+                "get": "Valor de una variable. Un secreto da undefined.",
+                "set": "Fija una variable de script para los envíos que siguen.",
+                "has": "Si la variable existe.",
+                "replaceIn": "Resuelve las variables de un texto. Un secreto queda como texto."
+            },
+            "test": "Declara un test: pasa si su función no lanza.",
+            "expect": "Afirma algo de un valor dentro de un test.",
+            "request": {
+                "url": "URL del request. Se puede escribir antes del envío.",
+                "method": "Método del request. Se puede escribir antes del envío.",
+                "body": "Body del request como texto. Se puede escribir antes del envío.",
+                "headers": {
+                    "get": "Valor de un header del request.",
+                    "has": "Si el request lleva el header.",
+                    "set": "Pone o cambia un header del request.",
+                    "delete": "Quita un header del request."
+                },
+                "query": {
+                    "get": "Valor de un parámetro de la query.",
+                    "has": "Si la query lleva el parámetro.",
+                    "set": "Pone o cambia un parámetro de la query.",
+                    "delete": "Quita un parámetro de la query."
+                }
+            },
+            "response": {
+                "status": "Código de estado de la response.",
+                "timeMs": "Milisegundos que tardó la response.",
+                "text": "Body de la response como texto.",
+                "json": "Body de la response leído como JSON.",
+                "headers": {
+                    "get": "Valor de un header de la response.",
+                    "has": "Si la response lleva el header."
+                }
+            },
+            "message": {
+                "text": "Texto del mensaje.",
+                "direction": "Si el mensaje llegó o salió.",
+                "binary": "Si el mensaje es binario.",
+                "event": "Nombre del evento de Socket.IO del mensaje."
+            },
+            "socket": {
+                "send": "Envía un mensaje por la conexión."
+            },
+            "sendRequest": "Envía otro request y espera su response. Sus variables no se resuelven y no sigue redirects."
+        }
+    },
+    "scriptApprove": "Aprobar",
+    "scriptHidden_one": "{{count}} carácter oculto",
+    "scriptHidden_other": "{{count}} caracteres ocultos",
+    "scriptTooLarge": "Sobre el tope: no corre",
+    "scriptUnapproved": "No corre hasta que lo apruebes",
+    "searchEmpty": "Sin coincidencias.",
+    "searchHeading": "Buscar",
+    "searchLabel": "Buscar en el workspace",
+    "searchMatch": {
+        "content": "Contenido",
+        "name": "Nombre",
+        "tag": "Etiqueta",
+        "trail": "Ubicación"
+    },
+    "searchPlaceholder": "Nombre, ubicación, etiqueta o contenido",
+    "searchResults": "Resultados de búsqueda",
+    "settings": "Ajustes",
+    "unknownItem": "Nada en esta ventana sabe abrir un item de tipo «{{kind}}».",
+    "skippedTitle_one": "{{count}} script quedó fuera",
+    "skippedTitle_other": "{{count}} scripts quedaron fuera",
+    "skippedList": "Scripts que quedaron fuera del envío",
+    "skippedClose": "Cerrar",
+    "skippedPlace": "{{level}} · {{event}}",
+    "skippedApproved": "Aprobado: corre desde el próximo envío",
+    "skippedNotShown": "{{bytes}} bytes, demasiados para mostrarlo aquí. Ábrelo en su editor para revisarlo.",
+    "scriptLevel-request": "Request",
+    "scriptLevel-folder": "Carpeta",
+    "scriptLevel-collection": "Colección",
+    "scriptLevel-connection": "Conexión",
+    "reviewSkipped": "Revisar"
+}

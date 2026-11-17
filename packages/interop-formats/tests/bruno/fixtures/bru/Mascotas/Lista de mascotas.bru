@@ -1,0 +1,24 @@
+meta {
+  name: Lista de mascotas
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/pets?limit=10&page=2
+  body: none
+  auth: inherit
+}
+
+params:query {
+  limit: 10
+  ~debug: 1
+}
+
+headers {
+  Accept-Language: es
+}
+
+docs {
+  Lista las mascotas.
+}

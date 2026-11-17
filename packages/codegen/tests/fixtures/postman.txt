@@ -1,0 +1,7 @@
+curl --location 'https://api.example.test/users/42' \
+--header 'Content-Type: application/json' \
+--header 'X-Request-Id: {{requestId}}' \
+--data-raw '{
+    "name": "Ana",
+    "active": true
+}'

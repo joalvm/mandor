@@ -1,0 +1,5 @@
+curl --request PUT \
+  --url 'https://api.example.test/orders/7?expand=lines' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/10.0.0' \
+  --data '{"status":"shipped"}'

@@ -1,0 +1,19 @@
+opencollection: 1.0.0
+info:
+    name: Tienda de Mascotas
+    summary: La tienda
+docs: |
+    Todo lo de la tienda.
+request:
+    headers:
+        - name: Accept
+          value: application/json
+    auth:
+        type: bearer
+        token: '{{token}}'
+    variables:
+        - name: region
+          value: eu
+    scripts:
+        - type: before-request
+          code: console.log('hola')

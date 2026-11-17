@@ -1,0 +1,62 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "resources": [
+        { "_id": "wrk_chat", "_type": "workspace", "parentId": null, "name": "Chat" },
+        {
+            "_id": "fld_rooms",
+            "_type": "request_group",
+            "parentId": "wrk_chat",
+            "name": "Rooms",
+            "metaSortKey": 1
+        },
+        {
+            "_id": "ws-req_lobby",
+            "_type": "websocket_request",
+            "parentId": "wrk_chat",
+            "name": "Lobby",
+            "description": "The public room",
+            "url": "ws://localhost:4010/lobby",
+            "metaSortKey": 2,
+            "headers": [
+                { "name": "Sec-WebSocket-Protocol", "value": "chat, superchat" },
+                { "name": "x-token", "value": "{{ _.token }}", "disabled": true }
+            ],
+            "parameters": [{ "name": "room", "value": "1" }],
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" }
+        },
+        {
+            "_id": "ws-req_room",
+            "_type": "websocket_request",
+            "parentId": "fld_rooms",
+            "name": "Room",
+            "url": "wss://localhost:4010/rooms/:id",
+            "metaSortKey": 1,
+            "pathParameters": [{ "name": "id", "value": "42" }]
+        },
+        {
+            "_id": "ws-payload_hello",
+            "_type": "websocket_payload",
+            "parentId": "ws-req_lobby",
+            "name": "hello",
+            "value": "{\"hello\":true}"
+        },
+        {
+            "_id": "socketio-req_events",
+            "_type": "socketio_request",
+            "parentId": "wrk_chat",
+            "name": "Events",
+            "url": "http://localhost:4010",
+            "metaSortKey": 3
+        },
+        {
+            "_id": "req_health",
+            "_type": "request",
+            "parentId": "wrk_chat",
+            "name": "Health",
+            "method": "GET",
+            "url": "http://localhost:4010/health",
+            "metaSortKey": 4
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+/*
+ * The high-contrast themes: the light and the dark scheme with only what they raise laid over
+ * them. Text reaches 7:1 and every line that draws a box 4.5:1; the rest is the scheme.
+ * Ratios are the worst of the surfaces the line or the text sits on (app, panel, raised,
+ * dialog and the control fills), measured by tests/styles/contrast-themes.test.ts.
+ */
+[data-theme='light-contrast'] {
+    /* neutral 12 on the surfaces: 13.05:1 at the worst (step 11 gave 4.74:1). */
+    --text-secondary: var(--primitive-neutral-light-12);
+    /* neutral 11 on the surfaces: 4.74:1 at the worst; hover and error take 12 and red 12. */
+    --border-subtle: var(--primitive-neutral-light-11);
+    --border-chrome: var(--primitive-neutral-light-11);
+    --border-strong: var(--primitive-neutral-light-11);
+    --border-hover: var(--primitive-neutral-light-12);
+    --border-control: var(--primitive-neutral-light-11);
+    --border-control-hover: var(--primitive-neutral-light-12);
+    --border-error: var(--primitive-red-light-12);
+    --focus-ring-width: 2px;
+}
+
+[data-theme='dark-contrast'] {
+    /* neutral 12 on the surfaces: 11.21:1 at the worst (step 11 gave 6.27:1). */
+    --text-secondary: var(--primitive-neutral-dark-12);
+    /* neutral 11 on the surfaces: 6.27:1 at the worst; hover takes 12. */
+    --border-subtle: var(--primitive-neutral-dark-11);
+    --border-chrome: var(--primitive-neutral-dark-11);
+    --border-strong: var(--primitive-neutral-dark-11);
+    --border-hover: var(--primitive-neutral-dark-12);
+    --border-control: var(--primitive-neutral-dark-11);
+    --border-control-hover: var(--primitive-neutral-dark-12);
+    --border-error: var(--primitive-red-dark-11);
+    --focus-ring-width: 2px;
+}

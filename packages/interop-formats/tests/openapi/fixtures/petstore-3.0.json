@@ -1,0 +1,82 @@
+{
+    "openapi": "3.0.3",
+    "info": { "title": "Petstore", "version": "1.0.0" },
+    "servers": [{ "url": "https://petstore.example.com/v1", "description": "Production" }],
+    "tags": [{ "name": "pets" }],
+    "paths": {
+        "/pets": {
+            "get": {
+                "tags": ["pets"],
+                "summary": "List pets",
+                "operationId": "listPets",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": { "type": "integer", "default": 10 }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "content": {
+                            "application/json": {
+                                "schema": { "$ref": "#/components/schemas/Pets" },
+                                "example": [{ "id": 1, "name": "Rex" }]
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["pets"],
+                "summary": "Add a pet",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": { "schema": { "$ref": "#/components/schemas/Pet" } }
+                    }
+                },
+                "responses": { "201": { "description": "created" } }
+            }
+        },
+        "/pets/{petId}": {
+            "get": {
+                "tags": ["pets"],
+                "summary": "Get a pet",
+                "parameters": [
+                    {
+                        "name": "petId",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "content": {
+                            "application/json": { "schema": { "$ref": "#/components/schemas/Pet" } }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Pet": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "tag": { "type": "string" }
+                }
+            },
+            "Pets": { "type": "array", "items": { "$ref": "#/components/schemas/Pet" } }
+        },
+        "securitySchemes": { "bearerAuth": { "type": "http", "scheme": "bearer" } }
+    },
+    "security": [{ "bearerAuth": [] }]
+}

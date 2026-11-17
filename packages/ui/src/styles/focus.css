@@ -1,0 +1,55 @@
+/**
+ * The ring replaces the border it lands on. Same line, same thickness, another colour: nothing
+ * about the control moves when it takes the focus, and nothing is drawn a second time inside it.
+ * A control that carries no border of its own takes the ring where its border would have been.
+ *
+ * Unlayered, like the rules the editor writes for itself: the border colour of a control is a
+ * utility, and a rule inside a layer loses to every utility no matter how specific it is — the
+ * ring would never reach the controls that carry a border of their own.
+ */
+
+[data-focus-frame]:focus-visible,
+[data-focus-frame]:has(:focus-visible) {
+    border-color: var(--focus-ring);
+}
+
+/**
+ * A field that only narrows what its panel shows takes the focus without the accent: its edge
+ * darkens a step and it comes forward to the surface of the page, the way a field on the panel
+ * rises to be typed in. The accent stays with the fields and controls that change something.
+ */
+[data-focus-frame='quiet']:has(:focus-visible) {
+    border-color: var(--border-control);
+    background-color: var(--surface-app);
+}
+
+/**
+ * A fill that owns the accent cannot take the accent back as its ring: teal over teal is no
+ * ring at all, and the red of danger has no business wearing one either. The frame of a filled
+ * control reads the colour its own label wears — the pair the theme already guarantees against
+ * that fill — so the ring lands where the eye already knows how to read it.
+ */
+[data-focus-frame][data-variant='primary']:focus-visible,
+[data-part='switch'][data-state='checked']:focus-visible,
+[data-part='checkbox'][data-state='checked']:focus-visible,
+[data-part='checkbox'][data-state='indeterminate']:focus-visible {
+    border-color: var(--text-on-solid-accent);
+}
+
+[data-focus-frame][data-variant='danger']:focus-visible {
+    border-color: var(--text-on-solid-danger);
+}
+
+/**
+ * An invalid field keeps its error line under focus: the caret in the line and the coloured
+ * border say where the focus is, and the signal that something is wrong never blinks out while
+ * the answer is being typed.
+ */
+[data-focus-frame]:has([aria-invalid='true']:focus-visible),
+[data-focus-frame][aria-invalid='true']:focus-visible {
+    border-color: var(--border-error);
+}
+
+[data-focus-ring]:focus-visible {
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring);
+}

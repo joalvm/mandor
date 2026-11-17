@@ -1,0 +1,22 @@
+{
+    "name": "@mandor/interop-core",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "sideEffects": false,
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "test": "vitest run tests/",
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "@mandor/schema": "0.0.0",
+        "yaml": "2.9.1",
+        "zod": "4.6.7"
+    },
+    "devDependencies": {
+        "@types/node": "26.6.6"
+    }
+}

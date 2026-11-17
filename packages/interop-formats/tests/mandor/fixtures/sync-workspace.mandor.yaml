@@ -1,0 +1,56 @@
+mandor: workspace
+formatVersion: 1
+app: sync
+workspace:
+    name: Tienda de Mascotas
+    auth:
+        type: bearer
+        token: '{{token}}'
+    variables:
+        - name: region
+          value: eu
+          enabled: true
+          secret: false
+environments:
+    - id: prod
+      name: Prod
+      variables:
+          - name: baseUrl
+            value: https://api.test
+            enabled: true
+            secret: false
+          - name: token
+            value: ''
+            enabled: true
+            secret: true
+collections:
+    - name: Mascotas
+      description: Todo lo de las mascotas
+      auth:
+          type: none
+      folders:
+          - name: Admin
+            auth:
+                type: basic
+                username: admin
+                password: '{{adminPassword}}'
+            items:
+                - kind: request
+                  name: borrarMascota
+                  body:
+                      method: DELETE
+                      url: '{{baseUrl}}/pets/1'
+      items:
+          - kind: request
+            name: listaMascotas
+            tags:
+                - lectura
+            body:
+                method: GET
+                url: '{{baseUrl}}/pets'
+docs:
+    - name: leeme.md
+      text: |
+          # Tienda
+
+          Notas de la tienda.

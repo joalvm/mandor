@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.base.json",
+    "include": [
+        "vitest.config.ts",
+        "tools/vitest/setup.ts",
+        "tools/vitest/hygiene.ts",
+        "tools/vitest/stores.ts",
+        "tools/vitest/electron.ts",
+        "tools/vitest/main.ts",
+        "tools/vitest/timers.ts",
+        "tools/vitest/regexp.ts",
+        "tools/vitest/frames.ts",
+        "eslint.config.js",
+        "knip.config.ts"
+    ],
+    "compilerOptions": {
+        "allowJs": true,
+        "jsx": "react-jsx"
+    }
+}

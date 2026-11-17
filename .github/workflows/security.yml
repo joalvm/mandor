@@ -1,0 +1,57 @@
+# The weekly look at what is already installed. Dependabot proposes updates; this answers a
+# different question: does the lockfile on main carry an advisory published since the last merge.
+# It never runs on a pull request, so it costs one short job a week.
+name: security
+
+on:
+    schedule:
+        - cron: '0 11 * * 1'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    audit:
+        name: npm audit
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+            # The lockfile is enough: the audit asks the registry about it and installs nothing.
+            # Advisories with no upgrade path and already dismissed at the Dependabot alert go
+            # in the allowlist so they do not turn this red forever and hide new ones. Today, the
+            # Socket.IO v2 line, which gets no more fixes: parseuri in the v2 client (it parses only
+            # the url the user types), and cookie and debug in the v2 server the tests run. And
+            # minimatch below 11, whose 3, 5 and 9 lines get no fix: electron-builder and the
+            # AsyncAPI rulesets match patterns they wrote themselves, never one the user typed.
+            - run: |
+                  npm audit --audit-level=low --json > audit.json || true
+                  node -e "
+                      const audit = require(process.cwd() + '/audit.json');
+                      const vulns = audit.vulnerabilities ?? {};
+                      const allowlist = new Set([
+                          'GHSA-6fx8-h7jm-663j',
+                          'GHSA-pxg6-pf52-xh8x',
+                          'GHSA-gxpj-cx7g-858c',
+                          'GHSA-g3hv-75wg-m249',
+                      ]);
+                      // A package is pardoned when every advisory it carries, however deep in
+                      // the packages it pulls in, is on the allowlist. A package met again down
+                      // a cycle is already being judged above, so the cycle pardons nothing.
+                      const pardoned = (name, seen = new Set()) =>
+                          seen.has(name) ||
+                          (vulns[name]?.via ?? []).every((via) =>
+                              typeof via === 'object'
+                                  ? allowlist.has(via.url.split('/').pop())
+                                  : pardoned(via, new Set([...seen, name])),
+                          );
+                      const counted = Object.keys(vulns).filter((name) => !pardoned(name));
+                      if (counted.length > 0) {
+                          console.error(JSON.stringify(counted, null, 4));
+                          process.exit(1);
+                      }
+                  "

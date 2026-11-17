@@ -1,0 +1,181 @@
+@import 'dockview/dist/styles/dockview.css';
+
+/**
+ * The grid of groups, dressed in the tokens of the product. The library ships a dozen themes and
+ * none of them is ours, so every value it can be told about is told, and what is left is the
+ * geometry: the surfaces below and the pill above are the same ones the rest of the window uses.
+ *
+ * The group with the focus is the only one whose tab in front is filled. That is a fill, not a
+ * hue: the difference survives a screen that shows no colour, and it is the only difference
+ * there is, because every letter of the window is drawn at the one weight the system has.
+ */
+.dockview-theme-mandor {
+    --dv-active-sash-color: var(--border-hover);
+    --dv-activegroup-hiddenpanel-tab-background-color: transparent;
+    --dv-activegroup-hiddenpanel-tab-color: var(--text-secondary);
+    --dv-activegroup-visiblepanel-tab-background-color: var(--surface-tab-active);
+    --dv-activegroup-visiblepanel-tab-color: var(--text-primary);
+    --dv-drag-over-background-color: var(--surface-accent-tint);
+    --dv-drag-over-border-color: var(--focus-ring);
+    --dv-group-view-background-color: var(--surface-app);
+    --dv-icon-hover-background-color: var(--surface-control-hover);
+    --dv-inactivegroup-hiddenpanel-tab-background-color: transparent;
+    --dv-inactivegroup-hiddenpanel-tab-color: var(--text-disabled);
+    --dv-inactivegroup-visiblepanel-tab-background-color: transparent;
+    --dv-inactivegroup-visiblepanel-tab-color: var(--text-secondary);
+    --dv-sash-color: transparent;
+    --dv-separator-border: var(--border-subtle);
+    --dv-tab-divider-color: transparent;
+    --dv-tab-font-size: var(--mandor-text-xs-size);
+    --dv-tabs-and-actions-container-background-color: var(--surface-panel);
+    --dv-tabs-and-actions-container-font-size: var(--mandor-text-xs-size);
+    --dv-tabs-and-actions-container-height: var(--mandor-height-header);
+    --dv-transition-duration: var(--mandor-duration-fast);
+}
+
+/**
+ * A tab is the same shape here as anywhere else in the window: its own height, centred in the
+ * band, corners rounded by a step and not by a half, and the padding of it belongs to what is
+ * drawn inside. The library ships a padding of its own, and left on it would sit under ours and
+ * make the title sit off-centre.
+ *
+ * Every tab is the same width, whatever its name, so the strip reads as a row of places and not
+ * as a ragged line of words. When they no longer fit they give way all alike, down to a floor,
+ * and past the floor the strip scrolls. The library keeps its tabs from shrinking and lets its
+ * scroller grow with them; both are told otherwise.
+ *
+ * `--tab-fill` is what the tab is painted with right now, so what lies over its name can fade
+ * into it.
+ *
+ * The rounding is said here and not through `--dv-tab-border-radius`: only one of the themes the
+ * library ships reads that variable, so on ours it would be a value nobody asks for and a tab
+ * with square corners.
+ */
+.dockview-theme-mandor .dv-tab {
+    --tab-fill: var(--dv-tabs-and-actions-container-background-color);
+    --tab-veil: transparent;
+
+    background-image: linear-gradient(var(--tab-veil), var(--tab-veil));
+    display: flex;
+    flex: 0 1 auto;
+    width: var(--mandor-width-tab);
+    min-width: var(--mandor-width-tab-min);
+    height: var(--mandor-height-tab);
+    margin-block: auto;
+    padding: 0;
+    border-radius: var(--mandor-radius-md);
+}
+
+.dockview-theme-mandor .dv-tab > * {
+    flex: 1;
+    min-width: 0;
+}
+
+.dockview-theme-mandor .dv-scrollable {
+    min-width: 0;
+}
+
+.dockview-theme-mandor .dv-groupview.dv-active-group .dv-tab.dv-active-tab {
+    --tab-fill: var(--surface-tab-active);
+}
+
+.dockview-theme-mandor .dv-tab + .dv-tab {
+    margin-inline-start: var(--mandor-gap-tight);
+}
+
+/**
+ * The band opens at the same inset as every other band of the window, and what sits after its
+ * tabs is centred. The library leaves its ends stretching, which drops a control of fixed height
+ * against the top edge instead of the middle of the band.
+ */
+.dockview-theme-mandor .dv-tabs-container {
+    padding-inline-start: var(--mandor-pad-inline-panel);
+}
+
+/** The add of the strip takes a breath after the tab it sits beside, like any sibling would. */
+.dockview-theme-mandor .dv-left-actions-container {
+    display: flex;
+    align-items: center;
+    margin-block: auto;
+    margin-inline-start: var(--mandor-gap-control);
+    gap: var(--mandor-gap-control);
+}
+
+/** The list of tabs closes the band at the far end, at the inset the band opened with. */
+.dockview-theme-mandor .dv-right-actions-container {
+    display: flex;
+    align-items: center;
+    margin-block: auto;
+    padding-inline: var(--mandor-gap-control) var(--mandor-pad-inline-panel);
+}
+
+/**
+ * Two groups side by side are two zones, so a hairline stands between them. The handle over it
+ * shows itself, stronger, when it is pointed at or focused.
+ */
+.dockview-theme-mandor .dv-sash {
+    touch-action: none;
+}
+
+.dockview-theme-mandor .dv-sash:hover {
+    background-color: var(--border-hover);
+}
+
+/**
+ * Pointed at, a tab takes the veil every other thing of the window takes, the open tab too. The
+ * library paints the fill of the tabs with rules stronger than any plain selector of ours; the
+ * veil is an image over that fill, so it lies on whichever fill the library chose.
+ */
+.dockview-theme-mandor .dv-tab:hover {
+    --tab-veil: var(--surface-veil);
+}
+
+/** The strip of tabs closes with a line, the way the title row above it does. */
+.dockview-theme-mandor .dv-tabs-and-actions-container {
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+/**
+ * The end of a tab lies over the end of its name. Whenever something is drawn there — the state
+ * of the thing, the close or the pin — the name fades into the fill of the tab under it instead
+ * of running behind the glyph.
+ */
+.dockview-theme-mandor .dv-tab [data-part='tab-trailing'] {
+    padding-inline-start: var(--mandor-width-tab-fade);
+}
+
+.dockview-theme-mandor .dv-tab:is(:hover, :focus-within) [data-part='tab-trailing'],
+.dockview-theme-mandor .dv-tab [data-pinned] [data-part='tab-trailing'],
+.dockview-theme-mandor
+    .dv-tab
+    [data-part='tab-trailing']:has(> [data-part='tab-status']:not(:empty)) {
+    background:
+        linear-gradient(to right, transparent, var(--tab-veil) var(--mandor-width-tab-fade)),
+        linear-gradient(to right, transparent, var(--tab-fill) var(--mandor-width-tab-fade));
+}
+
+/**
+ * A tab opened only to look at what it holds is written in italics, and nothing else says it:
+ * no hue, no line. The next look replaces it; editing it, or a double click, keeps it upright.
+ */
+.dockview-theme-mandor [data-preview] [data-part='tab-head'] {
+    font-style: italic;
+}
+
+/**
+ * The pinned stand first and say so with their pin; the first tab that is not pinned stands a
+ * step further off, so where the pinned end is read without a line.
+ */
+.dockview-theme-mandor .dv-tab:has([data-pinned]) + .dv-tab:not(:has([data-pinned])) {
+    margin-inline-start: var(--mandor-gap-control);
+}
+
+/**
+ * A tab is a band of the chrome, so it reads a step smaller than the content it opens; the verb of
+ * a request rides one step below its title, the way a badge sits beside a name.
+ */
+.dockview-theme-mandor .dv-tab [data-part='method-mark'] {
+    font-size: var(--mandor-text-3xs-size);
+    line-height: var(--mandor-text-3xs-line);
+    letter-spacing: var(--mandor-text-3xs-tracking);
+}

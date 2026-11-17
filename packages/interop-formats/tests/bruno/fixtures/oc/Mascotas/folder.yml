@@ -1,0 +1,9 @@
+info:
+    name: Mascotas
+    type: folder
+    seq: 1
+request:
+    auth: inherit
+    headers:
+        - name: X-Team
+          value: perros

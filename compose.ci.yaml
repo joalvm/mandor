@@ -1,0 +1,60 @@
+# CPU quota approximates a private hosted runner; raise MANDOR_CI_CPUS for a faster local gate.
+# MANDOR_CI_HEAP raises the heap of Node (MB) when the lint of the whole tree outgrows the default.
+x-ci: &ci
+    image: ${MANDOR_CI_IMAGE:-mandor-ci-local}
+    build:
+        context: .
+        dockerfile: tools/ci/Dockerfile
+    init: true
+    cpus: ${MANDOR_CI_CPUS:-2}
+    cpuset: ${MANDOR_CI_CPUSET:-0-1}
+    # A private GitHub runner has 2 vCPU and 8 GB for the whole machine; the container gets less,
+    # and no swap. A run that outgrows it dies of OOM here, where the cause shows, instead of
+    # paging the Docker VM until the disk of the host saturates and the engine stops answering.
+    mem_limit: ${MANDOR_CI_MEMORY:-6g}
+    memswap_limit: ${MANDOR_CI_MEMORY:-6g}
+    shm_size: 1gb
+    environment:
+        # The lint of the whole tree pushes past the heap Node sizes on its own in the container.
+        NODE_OPTIONS: --max-old-space-size=${MANDOR_CI_HEAP:-4096}
+    volumes:
+        - ./.local-ci:/artifacts
+        - ${MANDOR_CI_INPUT:-./.local-ci/input}:/ci-input:ro
+
+services:
+    ci:
+        <<: *ci
+        command:
+            [
+                sh,
+                -c,
+                'node tools/ci/docker-qa.mjs && npm run verify && xvfb-run -a npm run e2e -w apps/async && xvfb-run -a npm run e2e -w apps/sync',
+            ]
+    verify:
+        <<: *ci
+        command: [sh, -c, 'npm run verify']
+    e2e:
+        <<: *ci
+        command:
+            [
+                sh,
+                -c,
+                'npm run build && xvfb-run -a npm run e2e -w apps/async && xvfb-run -a npm run e2e -w apps/sync',
+            ]
+    installers:
+        <<: *ci
+        command:
+            [
+                sh,
+                -c,
+                'npm run dist -w apps/async -- --publish never && ls -l apps/async/dist/*.AppImage apps/async/dist/*.deb && npm run dist -w apps/sync -- --publish never && ls -l apps/sync/dist/*.AppImage apps/sync/dist/*.deb',
+            ]
+    qa:
+        <<: *ci
+        command: [node, tools/ci/docker-qa.mjs]
+    test:
+        <<: *ci
+        command: [npx, vitest, run]
+    check:
+        <<: *ci
+        command: [node, tools/check.mjs]

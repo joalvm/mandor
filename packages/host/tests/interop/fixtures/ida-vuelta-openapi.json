@@ -1,0 +1,721 @@
+{
+    "document": {
+        "name": "Tienda",
+        "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+        "servers": [
+            {
+                "name": "Produccion",
+                "url": "https://api.tienda.ejemplo.com/v1",
+                "protocol": "https",
+                "security": [],
+                "variables": {},
+                "extras": {}
+            },
+            {
+                "name": "Local",
+                "url": "http://127.0.0.1:{port}/v1",
+                "protocol": "http",
+                "security": [],
+                "variables": {
+                    "port": {
+                        "default": "5123"
+                    }
+                },
+                "extras": {}
+            }
+        ],
+        "security": {
+            "bearerAuth": {
+                "type": "http",
+                "extras": {
+                    "scheme": "bearer"
+                }
+            },
+            "basicAuth": {
+                "type": "http",
+                "extras": {
+                    "scheme": "basic"
+                }
+            }
+        },
+        "channels": [
+            {
+                "name": "/mascotas",
+                "address": "/mascotas",
+                "extras": {}
+            },
+            {
+                "name": "/mascotas/{petId}",
+                "address": "/mascotas/{petId}",
+                "extras": {}
+            },
+            {
+                "name": "/pedidos",
+                "address": "/pedidos",
+                "extras": {}
+            }
+        ],
+        "operations": [
+            {
+                "name": "Lista mascotas",
+                "channel": "/mascotas",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "GET",
+                    "path": "/mascotas",
+                    "summary": "Lista mascotas",
+                    "tags": ["mascotas"],
+                    "parameters": [
+                        {
+                            "name": "limit",
+                            "in": "query",
+                            "required": false,
+                            "value": "10",
+                            "schema": "{\"type\":\"integer\",\"default\":10}"
+                        },
+                        {
+                            "name": "sesion",
+                            "in": "cookie",
+                            "required": false,
+                            "value": "",
+                            "schema": "{\"type\":\"string\"}"
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "name": "200",
+                            "status": "200",
+                            "contentType": "application/json",
+                            "body": "[]"
+                        }
+                    ],
+                    "security": null
+                },
+                "extras": {
+                    "operationId": "listaMascotas",
+                    "x-interno": "tramo-1"
+                }
+            },
+            {
+                "name": "Muestra mascota",
+                "channel": "/mascotas/{petId}",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "GET",
+                    "path": "/mascotas/{petId}",
+                    "summary": "Muestra mascota",
+                    "tags": ["mascotas"],
+                    "parameters": [
+                        {
+                            "name": "petId",
+                            "in": "path",
+                            "required": true,
+                            "value": "",
+                            "schema": "{\"type\":\"string\"}"
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "name": "mascota",
+                            "status": "200",
+                            "contentType": "application/json",
+                            "body": "{\n  \"name\": \"Firulais\"\n}"
+                        }
+                    ],
+                    "security": []
+                },
+                "extras": {}
+            },
+            {
+                "name": "Registra pedido",
+                "channel": "/pedidos",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "POST",
+                    "path": "/pedidos",
+                    "summary": "Registra pedido",
+                    "tags": ["pedidos"],
+                    "parameters": [],
+                    "requestBody": {
+                        "contentType": "application/json",
+                        "value": "{\n  \"destino\": \"Pernambuco\"\n}",
+                        "schema": "{\"type\":\"object\",\"required\":[\"destino\"],\"properties\":{\"destino\":{\"type\":\"string\"}}}",
+                        "required": false
+                    },
+                    "responses": [
+                        {
+                            "name": "201",
+                            "status": "201",
+                            "contentType": "application/json",
+                            "body": "{\n  \"id\": \"pedido-1\"\n}"
+                        }
+                    ],
+                    "security": ["basicAuth"]
+                },
+                "extras": {}
+            },
+            {
+                "name": "Reemplaza pedido",
+                "channel": "/pedidos",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "PUT",
+                    "path": "/pedidos",
+                    "summary": "Reemplaza pedido",
+                    "tags": ["pedidos"],
+                    "parameters": [
+                        {
+                            "name": "pedido",
+                            "in": "path",
+                            "required": true,
+                            "value": "",
+                            "schema": "{\"type\":\"string\"}"
+                        }
+                    ],
+                    "requestBody": {
+                        "contentType": "application/x-www-form-urlencoded",
+                        "value": "{\n  \"destino\": \"Pernambuco\"\n}",
+                        "schema": "{\"type\":\"object\",\"properties\":{\"destino\":{\"type\":\"string\"}}}",
+                        "required": false
+                    },
+                    "responses": [
+                        {
+                            "name": "200",
+                            "status": "200",
+                            "contentType": "application/json",
+                            "body": "{}"
+                        }
+                    ],
+                    "security": ["basicAuth"]
+                },
+                "extras": {}
+            }
+        ],
+        "defaultSecurity": ["bearerAuth"],
+        "payloadSchemas": {},
+        "notes": [
+            "`/paths/mascotas/get/responses/200/content/application/json/schema` is an array, so it should include an `items` schema.",
+            "`/paths/pedidos/put` has a path parameter named `pedido`, but there is no corresponding `{pedido}` in the path string."
+        ],
+        "extras": {}
+    },
+    "resources": [
+        {
+            "place": "workspace",
+            "itemKind": null,
+            "route": ".",
+            "name": "Tienda",
+            "fields": {
+                "auth": {
+                    "type": "bearer",
+                    "token": "{{token}}"
+                }
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "dc701ac7e2f55f00"
+            },
+            "degradations": []
+        },
+        {
+            "place": "environment",
+            "itemKind": null,
+            "route": "produccion",
+            "name": "Produccion",
+            "fields": {
+                "name": "Produccion",
+                "variables": [
+                    {
+                        "name": "baseUrl",
+                        "value": "https://api.tienda.ejemplo.com/v1",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "token",
+                        "value": "",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "username",
+                        "value": "",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "password",
+                        "value": "",
+                        "enabled": true,
+                        "secret": false
+                    }
+                ]
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "9f8d23d666ad1a99"
+            },
+            "degradations": []
+        },
+        {
+            "place": "environment",
+            "itemKind": null,
+            "route": "local",
+            "name": "Local",
+            "fields": {
+                "name": "Local",
+                "variables": [
+                    {
+                        "name": "baseUrl",
+                        "value": "http://127.0.0.1:{{port}}/v1",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "port",
+                        "value": "5123",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "token",
+                        "value": "",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "username",
+                        "value": "",
+                        "enabled": true,
+                        "secret": false
+                    },
+                    {
+                        "name": "password",
+                        "value": "",
+                        "enabled": true,
+                        "secret": false
+                    }
+                ]
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "3bb44f76493fb2d9"
+            },
+            "degradations": []
+        },
+        {
+            "place": "collection",
+            "itemKind": null,
+            "route": "tienda",
+            "name": "Tienda",
+            "fields": {
+                "name": "Tienda"
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "db662113c9d140b9"
+            },
+            "degradations": []
+        },
+        {
+            "place": "folder",
+            "itemKind": null,
+            "route": "tienda/mascotas",
+            "name": "mascotas",
+            "fields": {
+                "name": "mascotas"
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510"
+            },
+            "degradations": []
+        },
+        {
+            "place": "folder",
+            "itemKind": null,
+            "route": "tienda/pedidos",
+            "name": "pedidos",
+            "fields": {
+                "name": "pedidos"
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510"
+            },
+            "degradations": []
+        },
+        {
+            "place": "item",
+            "itemKind": "request",
+            "route": "tienda/mascotas/lista-mascotas",
+            "name": "Lista mascotas",
+            "fields": {
+                "operationId": "listaMascotas",
+                "x-interno": "tramo-1",
+                "method": "GET",
+                "url": "{{baseUrl}}/mascotas",
+                "query": [
+                    {
+                        "key": "limit",
+                        "value": "10",
+                        "enabled": false,
+                        "required": false,
+                        "schema": "{\"type\":\"integer\",\"default\":10}"
+                    }
+                ],
+                "headers": [
+                    {
+                        "key": "Cookie",
+                        "value": "sesion=",
+                        "enabled": false
+                    }
+                ],
+                "examples": [
+                    {
+                        "name": "200",
+                        "status": "200",
+                        "contentType": "application/json",
+                        "body": "[]"
+                    }
+                ],
+                "settings": {}
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "230cd55cc9845df3"
+            },
+            "degradations": []
+        },
+        {
+            "place": "item",
+            "itemKind": "request",
+            "route": "tienda/mascotas/muestra-mascota",
+            "name": "Muestra mascota",
+            "fields": {
+                "method": "GET",
+                "url": "{{baseUrl}}/mascotas/{petId}",
+                "pathParams": [
+                    {
+                        "key": "petId",
+                        "value": "",
+                        "enabled": true,
+                        "required": true,
+                        "schema": "{\"type\":\"string\"}"
+                    }
+                ],
+                "examples": [
+                    {
+                        "name": "mascota",
+                        "status": "200",
+                        "contentType": "application/json",
+                        "body": "{\n  \"name\": \"Firulais\"\n}"
+                    }
+                ],
+                "settings": {},
+                "auth": {
+                    "type": "none"
+                }
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "e1b67b7fa6910eee"
+            },
+            "degradations": []
+        },
+        {
+            "place": "item",
+            "itemKind": "request",
+            "route": "tienda/pedidos/registra-pedido",
+            "name": "Registra pedido",
+            "fields": {
+                "method": "POST",
+                "url": "{{baseUrl}}/pedidos",
+                "body": {
+                    "type": "json",
+                    "content": "{\n  \"destino\": \"Pernambuco\"\n}"
+                },
+                "bodySchema": "{\"type\":\"object\",\"required\":[\"destino\"],\"properties\":{\"destino\":{\"type\":\"string\"}}}",
+                "examples": [
+                    {
+                        "name": "201",
+                        "status": "201",
+                        "contentType": "application/json",
+                        "body": "{\n  \"id\": \"pedido-1\"\n}"
+                    }
+                ],
+                "settings": {},
+                "auth": {
+                    "type": "basic",
+                    "username": "{{username}}",
+                    "password": "{{password}}"
+                }
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "878b349533d9f204"
+            },
+            "degradations": []
+        },
+        {
+            "place": "item",
+            "itemKind": "request",
+            "route": "tienda/pedidos/reemplaza-pedido",
+            "name": "Reemplaza pedido",
+            "fields": {
+                "method": "PUT",
+                "url": "{{baseUrl}}/pedidos",
+                "pathParams": [
+                    {
+                        "key": "pedido",
+                        "value": "",
+                        "enabled": true,
+                        "required": true,
+                        "schema": "{\"type\":\"string\"}"
+                    }
+                ],
+                "body": {
+                    "type": "urlencoded",
+                    "fields": [
+                        {
+                            "key": "destino",
+                            "value": "Pernambuco",
+                            "enabled": true
+                        }
+                    ]
+                },
+                "bodySchema": "{\"type\":\"object\",\"properties\":{\"destino\":{\"type\":\"string\"}}}",
+                "examples": [
+                    {
+                        "name": "200",
+                        "status": "200",
+                        "contentType": "application/json",
+                        "body": "{}"
+                    }
+                ],
+                "settings": {},
+                "auth": {
+                    "type": "basic",
+                    "username": "{{username}}",
+                    "password": "{{password}}"
+                }
+            },
+            "origin": {
+                "kind": "openapi",
+                "sourceId": "cb0d84d0f039ebde08c41bba0ca8be2b2c0b7dc01b69be72959dd820bb8c1510",
+                "fingerprint": "31cc88a09ab09760"
+            },
+            "degradations": []
+        }
+    ],
+    "held": {
+        "name": "Tienda",
+        "sourceId": "",
+        "servers": [
+            {
+                "name": "Local",
+                "url": "http://127.0.0.1:{port}/v1",
+                "protocol": "http",
+                "security": [],
+                "variables": {
+                    "port": {
+                        "default": "5123"
+                    }
+                },
+                "extras": {}
+            },
+            {
+                "name": "Produccion",
+                "url": "https://api.tienda.ejemplo.com/v1",
+                "protocol": "https",
+                "security": [],
+                "variables": {},
+                "extras": {}
+            }
+        ],
+        "security": {
+            "bearerAuth": {
+                "type": "http",
+                "extras": {
+                    "scheme": "bearer"
+                }
+            },
+            "basicAuth": {
+                "type": "http",
+                "extras": {
+                    "scheme": "basic"
+                }
+            }
+        },
+        "channels": [
+            {
+                "name": "/mascotas",
+                "address": "/mascotas",
+                "extras": {}
+            },
+            {
+                "name": "/mascotas/{petId}",
+                "address": "/mascotas/{petId}",
+                "extras": {}
+            },
+            {
+                "name": "/pedidos",
+                "address": "/pedidos",
+                "extras": {}
+            }
+        ],
+        "operations": [
+            {
+                "name": "Lista mascotas",
+                "channel": "/mascotas",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "GET",
+                    "path": "/mascotas",
+                    "summary": "Lista mascotas",
+                    "tags": ["mascotas"],
+                    "parameters": [
+                        {
+                            "name": "limit",
+                            "in": "query",
+                            "required": false,
+                            "value": "10",
+                            "schema": "{\"type\":\"integer\",\"default\":10}"
+                        },
+                        {
+                            "name": "sesion",
+                            "in": "cookie",
+                            "required": false,
+                            "value": ""
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "name": "200",
+                            "status": "200",
+                            "contentType": "application/json",
+                            "body": "[]"
+                        }
+                    ],
+                    "security": null
+                },
+                "extras": {
+                    "operationId": "listaMascotas",
+                    "x-interno": "tramo-1"
+                }
+            },
+            {
+                "name": "Muestra mascota",
+                "channel": "/mascotas/{petId}",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "GET",
+                    "path": "/mascotas/{petId}",
+                    "summary": "Muestra mascota",
+                    "tags": ["mascotas"],
+                    "parameters": [
+                        {
+                            "name": "petId",
+                            "in": "path",
+                            "required": true,
+                            "value": "",
+                            "schema": "{\"type\":\"string\"}"
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "name": "mascota",
+                            "status": "200",
+                            "contentType": "application/json",
+                            "body": "{\n  \"name\": \"Firulais\"\n}"
+                        }
+                    ],
+                    "security": []
+                },
+                "extras": {}
+            },
+            {
+                "name": "Registra pedido",
+                "channel": "/pedidos",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "POST",
+                    "path": "/pedidos",
+                    "summary": "Registra pedido",
+                    "tags": ["pedidos"],
+                    "parameters": [],
+                    "requestBody": {
+                        "contentType": "application/json",
+                        "value": "{\n  \"destino\": \"Pernambuco\"\n}",
+                        "schema": "{\"type\":\"object\",\"required\":[\"destino\"],\"properties\":{\"destino\":{\"type\":\"string\"}}}",
+                        "required": false
+                    },
+                    "responses": [
+                        {
+                            "name": "201",
+                            "status": "201",
+                            "contentType": "application/json",
+                            "body": "{\n  \"id\": \"pedido-1\"\n}"
+                        }
+                    ],
+                    "security": ["basicAuth"]
+                },
+                "extras": {}
+            },
+            {
+                "name": "Reemplaza pedido",
+                "channel": "/pedidos",
+                "direction": "outgoing",
+                "security": [],
+                "http": {
+                    "method": "PUT",
+                    "path": "/pedidos",
+                    "summary": "Reemplaza pedido",
+                    "tags": ["pedidos"],
+                    "parameters": [
+                        {
+                            "name": "pedido",
+                            "in": "path",
+                            "required": true,
+                            "value": "",
+                            "schema": "{\"type\":\"string\"}"
+                        }
+                    ],
+                    "requestBody": {
+                        "contentType": "application/x-www-form-urlencoded",
+                        "value": "{\n  \"destino\": \"Pernambuco\"\n}",
+                        "required": false
+                    },
+                    "responses": [
+                        {
+                            "name": "200",
+                            "status": "200",
+                            "contentType": "application/json",
+                            "body": "{}"
+                        }
+                    ],
+                    "security": ["basicAuth"]
+                },
+                "extras": {}
+            }
+        ],
+        "defaultSecurity": ["bearerAuth"],
+        "payloadSchemas": {},
+        "notes": [],
+        "extras": {}
+    }
+}

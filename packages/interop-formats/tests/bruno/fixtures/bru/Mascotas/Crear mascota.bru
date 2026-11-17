@@ -1,0 +1,30 @@
+meta {
+  name: Crear mascota
+  type: http
+  seq: 2
+  tags: [
+    smoke
+  ]
+}
+
+post {
+  url: {{baseUrl}}/pets
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  { "name": "Rex" }
+}
+
+script:pre-request {
+  console.log('antes')
+}

@@ -1,0 +1,23 @@
+headers {
+  Accept: application/json
+}
+
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+vars:pre-request {
+  region: eu
+}
+
+script:pre-request {
+  console.log('hola')
+}
+
+docs {
+  Todo lo de la tienda.
+}

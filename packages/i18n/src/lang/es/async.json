@@ -1,0 +1,7 @@
+{
+    "importHint": "2.x o 3.x, en JSON o YAML",
+    "importWorkspaceHint": "Un workspace de Mandor Realtime, en YAML",
+    "name": "Mandor Realtime",
+    "settings": "Configuración",
+    "windowTitle": "Mandor Realtime"
+}

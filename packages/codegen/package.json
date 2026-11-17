@@ -1,0 +1,22 @@
+{
+    "name": "@mandor/codegen",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "test": "vitest run tests/",
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "@mandor/schema": "0.0.0",
+        "@mandor/vars": "0.0.0",
+        "@readme/httpsnippet": "11.4.1",
+        "shell-quote": "1.12.0"
+    },
+    "devDependencies": {
+        "@types/node": "26.6.6"
+    }
+}

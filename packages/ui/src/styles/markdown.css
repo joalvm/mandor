@@ -1,0 +1,480 @@
+/**
+ * The page of a document, which is not the interface. It is drawn the way GitHub draws markdown,
+ * after the GitHub theme of crossnote (Markdown Preview Enhanced, `preview_theme/github.less`,
+ * NCSA), with the colours of GitHub Light and Dark Colorblind: whoever writes a doc here has
+ * read a thousand of them on a forge, and the page reads like the one they know.
+ *
+ * The page sits on the background of the editor, so the editor, its band and the page beside it
+ * are one surface. Its code is coloured the way github.com colours it (`prettylights`).
+ *
+ * It is a stylesheet and not a map of components because markdown draws twenty elements and a
+ * `components` prop would spell each of them out in JSX to say one thing about spacing.
+ */
+:root,
+[data-theme='light'],
+[data-theme='light-contrast'] {
+    --markdown-canvas: var(--primitive-markdown-light-canvas);
+    --markdown-canvas-subtle: var(--primitive-markdown-light-canvas-subtle);
+    --markdown-fg: var(--primitive-markdown-light-fg);
+    --markdown-fg-strong: var(--primitive-markdown-light-fg-strong);
+    --markdown-fg-muted: var(--primitive-markdown-light-fg-muted);
+    --markdown-border: var(--primitive-markdown-light-border);
+    --markdown-code-bg: var(--primitive-markdown-light-code-bg);
+    --markdown-link: var(--primitive-markdown-light-link);
+    --markdown-note: var(--primitive-markdown-light-note);
+    --markdown-tip: var(--primitive-markdown-light-tip);
+    --markdown-important: var(--primitive-markdown-light-important);
+    --markdown-warning: var(--primitive-markdown-light-warning);
+    --markdown-caution: var(--primitive-markdown-light-caution);
+    --markdown-hl-comment: var(--primitive-markdown-light-hl-comment);
+    --markdown-hl-constant: var(--primitive-markdown-light-hl-constant);
+    --markdown-hl-entity: var(--primitive-markdown-light-hl-entity);
+    --markdown-hl-tag: var(--primitive-markdown-light-hl-tag);
+    --markdown-hl-keyword: var(--primitive-markdown-light-hl-keyword);
+    --markdown-hl-string: var(--primitive-markdown-light-hl-string);
+    --markdown-hl-variable: var(--primitive-markdown-light-hl-variable);
+    --markdown-hl-heading: var(--primitive-markdown-light-hl-heading);
+    --markdown-hl-list: var(--primitive-markdown-light-hl-list);
+    --markdown-hl-inserted: var(--primitive-markdown-light-hl-inserted);
+    --markdown-hl-inserted-bg: var(--primitive-markdown-light-hl-inserted-bg);
+    --markdown-hl-deleted: var(--primitive-markdown-light-hl-deleted);
+    --markdown-hl-deleted-bg: var(--primitive-markdown-light-hl-deleted-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --markdown-canvas: var(--primitive-markdown-dark-canvas);
+        --markdown-canvas-subtle: var(--primitive-markdown-dark-canvas-subtle);
+        --markdown-fg: var(--primitive-markdown-dark-fg);
+        --markdown-fg-strong: var(--primitive-markdown-dark-fg-strong);
+        --markdown-fg-muted: var(--primitive-markdown-dark-fg-muted);
+        --markdown-border: var(--primitive-markdown-dark-border);
+        --markdown-code-bg: var(--primitive-markdown-dark-code-bg);
+        --markdown-link: var(--primitive-markdown-dark-link);
+        --markdown-note: var(--primitive-markdown-dark-note);
+        --markdown-tip: var(--primitive-markdown-dark-tip);
+        --markdown-important: var(--primitive-markdown-dark-important);
+        --markdown-warning: var(--primitive-markdown-dark-warning);
+        --markdown-caution: var(--primitive-markdown-dark-caution);
+        --markdown-hl-comment: var(--primitive-markdown-dark-hl-comment);
+        --markdown-hl-constant: var(--primitive-markdown-dark-hl-constant);
+        --markdown-hl-entity: var(--primitive-markdown-dark-hl-entity);
+        --markdown-hl-tag: var(--primitive-markdown-dark-hl-tag);
+        --markdown-hl-keyword: var(--primitive-markdown-dark-hl-keyword);
+        --markdown-hl-string: var(--primitive-markdown-dark-hl-string);
+        --markdown-hl-variable: var(--primitive-markdown-dark-hl-variable);
+        --markdown-hl-heading: var(--primitive-markdown-dark-hl-heading);
+        --markdown-hl-list: var(--primitive-markdown-dark-hl-list);
+        --markdown-hl-inserted: var(--primitive-markdown-dark-hl-inserted);
+        --markdown-hl-inserted-bg: var(--primitive-markdown-dark-hl-inserted-bg);
+        --markdown-hl-deleted: var(--primitive-markdown-dark-hl-deleted);
+        --markdown-hl-deleted-bg: var(--primitive-markdown-dark-hl-deleted-bg);
+    }
+}
+
+[data-theme='dark'],
+[data-theme='dark-contrast'] {
+    --markdown-canvas: var(--primitive-markdown-dark-canvas);
+    --markdown-canvas-subtle: var(--primitive-markdown-dark-canvas-subtle);
+    --markdown-fg: var(--primitive-markdown-dark-fg);
+    --markdown-fg-strong: var(--primitive-markdown-dark-fg-strong);
+    --markdown-fg-muted: var(--primitive-markdown-dark-fg-muted);
+    --markdown-border: var(--primitive-markdown-dark-border);
+    --markdown-code-bg: var(--primitive-markdown-dark-code-bg);
+    --markdown-link: var(--primitive-markdown-dark-link);
+    --markdown-note: var(--primitive-markdown-dark-note);
+    --markdown-tip: var(--primitive-markdown-dark-tip);
+    --markdown-important: var(--primitive-markdown-dark-important);
+    --markdown-warning: var(--primitive-markdown-dark-warning);
+    --markdown-caution: var(--primitive-markdown-dark-caution);
+    --markdown-hl-comment: var(--primitive-markdown-dark-hl-comment);
+    --markdown-hl-constant: var(--primitive-markdown-dark-hl-constant);
+    --markdown-hl-entity: var(--primitive-markdown-dark-hl-entity);
+    --markdown-hl-tag: var(--primitive-markdown-dark-hl-tag);
+    --markdown-hl-keyword: var(--primitive-markdown-dark-hl-keyword);
+    --markdown-hl-string: var(--primitive-markdown-dark-hl-string);
+    --markdown-hl-variable: var(--primitive-markdown-dark-hl-variable);
+    --markdown-hl-heading: var(--primitive-markdown-dark-hl-heading);
+    --markdown-hl-list: var(--primitive-markdown-dark-hl-list);
+    --markdown-hl-inserted: var(--primitive-markdown-dark-hl-inserted);
+    --markdown-hl-inserted-bg: var(--primitive-markdown-dark-hl-inserted-bg);
+    --markdown-hl-deleted: var(--primitive-markdown-dark-hl-deleted);
+    --markdown-hl-deleted-bg: var(--primitive-markdown-dark-hl-deleted-bg);
+}
+
+/**
+ * The sheet of github.com (`github-markdown-css`, MIT): Mona Sans at 16 px on lines of 1.5, the
+ * headings on GitHub's scale, a column of 980 px at most with 45 px of air around it. The code is
+ * written in the mono type of the product, the one the editor beside the page writes it in.
+ */
+[data-part='markdown'] {
+    box-sizing: border-box;
+    color: var(--markdown-fg);
+    font-family:
+        'Mona Sans Variable',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        'Noto Sans',
+        Helvetica,
+        Arial,
+        sans-serif;
+    font-size: 16px;
+    letter-spacing: normal;
+    line-height: 1.5;
+    margin-inline: auto;
+    max-width: 980px;
+    overflow-wrap: break-word;
+    padding: 45px;
+    /*
+     * The page is drawn at the step the reader put the text of the window at, a tenth larger for
+     * each step up, and all of it with the text: its air, its column and its pictures.
+     */
+    zoom: calc(1 + attr(data-text-zoom type(<number>), 0) / 10);
+
+    /* The first block of a doc opens it and the last one closes it: nothing pushes past them. */
+    & > :first-child {
+        margin-block-start: 0;
+    }
+
+    & > :last-child {
+        margin-block-end: 0;
+    }
+
+    & :is(p, blockquote, ul, ol, dl, table, pre, details) {
+        margin: 0 0 16px;
+    }
+
+    & :is(h1, h2, h3, h4, h5, h6) {
+        border: 0;
+        font-weight: 600;
+        letter-spacing: normal;
+        line-height: 1.25;
+        margin: 24px 0 16px;
+    }
+
+    /* The two first levels close with a rule, lighter than the lines of a table. */
+    & :is(h1, h2) {
+        border-block-end: 1px solid color-mix(in srgb, var(--markdown-border) 70%, transparent);
+        padding-block-end: 0.3em;
+    }
+
+    & h1 {
+        font-size: 2em;
+    }
+
+    & h2 {
+        font-size: 1.5em;
+    }
+
+    & h3 {
+        font-size: 1.25em;
+    }
+
+    & h4 {
+        font-size: 1em;
+    }
+
+    & h5 {
+        font-size: 0.875em;
+    }
+
+    & h6 {
+        color: var(--markdown-fg-muted);
+        font-size: 0.85em;
+    }
+
+    & :is(h1, h2, h3, h4, h5, h6) code {
+        font-size: inherit;
+        padding: 0 0.2em;
+    }
+
+    & :is(b, strong, th) {
+        font-weight: 600;
+    }
+
+    & del {
+        color: var(--markdown-fg-muted);
+    }
+
+    & a {
+        color: var(--markdown-link);
+        text-decoration: none;
+    }
+
+    & a:hover {
+        text-decoration: underline;
+    }
+
+    & img {
+        box-sizing: content-box;
+        max-width: 100%;
+    }
+
+    & :is(ul, ol) {
+        padding-inline-start: 2em;
+    }
+
+    & ul {
+        list-style: disc;
+    }
+
+    & ol {
+        list-style: decimal;
+    }
+
+    & :is(ul, ol) ol {
+        list-style: lower-roman;
+    }
+
+    & :is(ul, ol) :is(ul, ol) ol {
+        list-style: lower-alpha;
+    }
+
+    & :is(ul, ol) :is(ul, ol) {
+        margin: 0;
+    }
+
+    & li + li {
+        margin-block-start: 0.25em;
+    }
+
+    & li > p {
+        margin-block-start: 16px;
+    }
+
+    /* A task takes the room its bullet would have had, and its box stands where the bullet was. */
+    & .task-list-item {
+        align-items: start;
+        display: flex;
+        gap: 0.4em;
+        list-style: none;
+        margin-inline-start: -1.4em;
+    }
+
+    & .task-list-item > :is(input, [data-part='checkbox']) {
+        margin-block-start: 0.25em;
+    }
+
+    & .task-list-item > p {
+        margin: 0;
+    }
+
+    & blockquote {
+        border-inline-start: 0.25em solid var(--markdown-border);
+        color: var(--markdown-fg-muted);
+        padding: 0 1em;
+    }
+
+    & blockquote > :last-child {
+        margin-block-end: 0;
+    }
+
+    & hr {
+        background: var(--markdown-border);
+        border: 0;
+        height: 0.25em;
+        margin: 24px 0;
+        padding: 0;
+    }
+
+    & table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: block;
+        font-variant: tabular-nums;
+        max-width: 100%;
+        overflow: auto;
+        width: max-content;
+    }
+
+    & tr {
+        background: var(--markdown-canvas);
+        border-block-start: 1px solid color-mix(in srgb, var(--markdown-border) 70%, transparent);
+    }
+
+    & tr:nth-child(2n) {
+        background: var(--markdown-canvas-subtle);
+    }
+
+    & :is(th, td) {
+        border: 1px solid var(--markdown-border);
+        padding: 6px 13px;
+    }
+
+    & td > :last-child {
+        margin-block-end: 0;
+    }
+
+    & dl {
+        padding: 0;
+    }
+
+    & dt {
+        font-style: italic;
+        font-weight: 600;
+        margin-block-start: 16px;
+    }
+
+    & dd {
+        margin: 0 0 16px;
+        padding: 0 16px;
+    }
+
+    & :is(code, pre, kbd, samp) {
+        font-family: var(--mandor-font-mono);
+    }
+
+    & :not(pre) > code {
+        background: var(--markdown-code-bg);
+        border-radius: 6px;
+        font-size: 85%;
+        margin: 0;
+        overflow-wrap: anywhere;
+        padding: 0.2em 0.4em;
+        white-space: break-spaces;
+    }
+
+    /* A block of code keeps its own line breaks and scrolls sideways; the page never does. */
+    & pre {
+        background: var(--markdown-canvas-subtle);
+        border-radius: 6px;
+        color: var(--markdown-fg);
+        font-size: 85%;
+        line-height: 1.45;
+        overflow: auto;
+        overflow-wrap: normal;
+        padding: 16px;
+    }
+
+    & pre code {
+        background: none;
+        border: 0;
+        font-size: 100%;
+        line-height: inherit;
+        margin: 0;
+        padding: 0;
+        white-space: pre;
+        word-break: normal;
+    }
+
+    & kbd {
+        background: var(--markdown-canvas-subtle);
+        border: 1px solid var(--markdown-border);
+        border-block-end-width: 2px;
+        border-radius: 6px;
+        display: inline-block;
+        font-size: 11px;
+        line-height: 10px;
+        padding: 4px;
+        vertical-align: middle;
+    }
+
+    /* The notes are a second reading of the page, smaller, and the rule says the first ended. */
+    & section[data-footnotes] {
+        border-block-start: 1px solid var(--markdown-border);
+        color: var(--markdown-fg-muted);
+        font-size: 12px;
+        padding-block-start: 16px;
+    }
+
+    & section[data-footnotes] ol {
+        padding-inline-start: 16px;
+    }
+
+    & section[data-footnotes] h2 {
+        border: 0;
+        font-size: 1em;
+        margin-block: 0 0.5em;
+        padding: 0;
+    }
+}
+
+/** A narrow page keeps less air at its edges, at the width github.com narrows it at. */
+@container (max-width: 767px) {
+    [data-part='markdown'] {
+        padding: 15px;
+    }
+}
+
+/** The code, in the colours of github.com: the scopes the editor colours markdown by. */
+[data-part='markdown'] {
+    & :is(.hljs, .hljs-subst) {
+        color: var(--markdown-fg);
+    }
+
+    &
+        :is(
+            .hljs-doctag,
+            .hljs-keyword,
+            .hljs-template-tag,
+            .hljs-template-variable,
+            .hljs-type,
+            .hljs-variable.language_
+        ) {
+        color: var(--markdown-hl-keyword);
+    }
+
+    & :is(.hljs-title, .hljs-title.class_, .hljs-title.function_) {
+        color: var(--markdown-hl-entity);
+    }
+
+    &
+        :is(
+            .hljs-attr,
+            .hljs-attribute,
+            .hljs-literal,
+            .hljs-meta,
+            .hljs-number,
+            .hljs-operator,
+            .hljs-variable,
+            .hljs-selector-attr,
+            .hljs-selector-class,
+            .hljs-selector-id
+        ) {
+        color: var(--markdown-hl-constant);
+    }
+
+    & :is(.hljs-regexp, .hljs-string, .hljs-meta .hljs-string) {
+        color: var(--markdown-hl-string);
+    }
+
+    & :is(.hljs-built_in, .hljs-symbol) {
+        color: var(--markdown-hl-variable);
+    }
+
+    & :is(.hljs-comment, .hljs-code, .hljs-formula) {
+        color: var(--markdown-hl-comment);
+    }
+
+    & :is(.hljs-name, .hljs-quote, .hljs-selector-tag, .hljs-selector-pseudo) {
+        color: var(--markdown-hl-tag);
+    }
+
+    & .hljs-section {
+        color: var(--markdown-hl-heading);
+        font-weight: 700;
+    }
+
+    & .hljs-bullet {
+        color: var(--markdown-hl-list);
+    }
+
+    & .hljs-emphasis {
+        font-style: italic;
+    }
+
+    & .hljs-strong {
+        font-weight: 700;
+    }
+
+    & .hljs-addition {
+        background: var(--markdown-hl-inserted-bg);
+        color: var(--markdown-hl-inserted);
+    }
+
+    & .hljs-deletion {
+        background: var(--markdown-hl-deleted-bg);
+        color: var(--markdown-hl-deleted);
+    }
+}

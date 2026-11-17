@@ -1,0 +1,23 @@
+{
+    "cancel": "Cancelar",
+    "columnName": "Nombre",
+    "columnModified": "Modificado",
+    "columnActions": "Acciones",
+    "createAction": "Crear",
+    "defaultName": "Personal",
+    "deleteAction": "Eliminar",
+    "deleteBody": "Todo lo que {{name}} guarda se va con él: eventos, carpetas, entornos y docs. Esto no se puede deshacer.",
+    "deleteConfirm": "Eliminar",
+    "deleteTitle": "¿Eliminar {{name}}?",
+    "emptyBody": "Crea uno para empezar a guardar tu trabajo.",
+    "emptyTitle": "Sin workspaces",
+    "heading": "Workspaces",
+    "subtitle": "Cada proyecto del origen en uso, con lo que guarda y cuándo se tocó por última vez.",
+    "manage": "Administrar workspaces",
+    "nameLabel": "Nombre del workspace",
+    "newTitle": "Nuevo workspace",
+    "newWorkspace": "Nuevo workspace",
+    "none": "Sin workspace",
+    "rename": "Renombrar",
+    "rowOptions": "Opciones del workspace"
+}

@@ -1,0 +1,15 @@
+{
+    "importBrunoHint": "una carpeta de colección, en YAML de OpenCollection o archivos .bru",
+    "importHarHint": "1.2 grabado por un navegador, en JSON",
+    "importHint": "3.x o Swagger 2.0, en JSON o YAML",
+    "importInsomniaHint": "exportación v4 o v5, en JSON o YAML",
+    "importPostmanHint": "colección v2.1, en JSON",
+    "importWorkspaceBrunoHint": "carpetas de colecciones, en YAML de OpenCollection o archivos .bru, con sus entornos",
+    "importWorkspaceHint": "Un workspace de Mandor Request, en YAML",
+    "importWorkspacePostmanHint": "colecciones v2.1, con sus entornos y globals, en JSON",
+    "name": "Mandor Request",
+    "noTabOpen": "Seleccione o abra un elemento",
+    "noTabOpenBody": "Lo que abra desde el lateral ocupa una pestaña de este grupo.",
+    "settings": "Configuración",
+    "windowTitle": "Mandor Request"
+}

@@ -1,0 +1,18 @@
+{
+    "bell": "Notices",
+    "bellUnread": "Notices, {{count}} unread",
+    "clearAll": "Clear all",
+    "dismiss": "Dismiss notice",
+    "emptyDescription": "Errors and warnings from this session show up here.",
+    "emptyTitle": "No notices",
+    "files-unreadable-unnamed_one": "{{count}} file could not be read",
+    "files-unreadable-unnamed_other": "{{count}} files could not be read",
+    "files-unreadable_one": "{{count}} file could not be read: {{names}}",
+    "files-unreadable_other": "{{count}} files could not be read: {{names}}",
+    "keychain-missing": "This system has no keychain: passwords and tokens last until Mandor closes. Install GNOME Keyring or KWallet to keep them",
+    "main-fault": "Something failed inside the app",
+    "relaunch": "Restart",
+    "title": "Notices",
+    "update-failed": "Could not check for updates",
+    "window-restarted": "The window restarted"
+}

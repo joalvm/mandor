@@ -1,0 +1,72 @@
+name: update-e2e
+
+# Installs a beta of Mandor Realtime, serves a stable from a local feed and checks that the
+# installed app finds it, downloads it, installs it when it quits and starts again as the stable
+# with what the person had set. It is the only place the updater meets a real installation, so it
+# runs on Linux (AppImage) and Windows (NSIS) and nowhere else; macOS waits for the signed feed.
+#
+# It costs about 42 billed minutes a run, so a pull request pays for it only when it changes what
+# it exercises, and anyone can start it by hand on a branch. It is not a required check of `main`.
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - packages/host/src/update/**
+            - packages/updates/**
+            - tools/update/**
+            - apps/async/tests/e2e/update-install.spec.ts
+            - apps/async/tests/e2e/installed-smoke.spec.ts
+            - apps/async/tests/e2e/support/installed-app.ts
+            - apps/async/tests/e2e/support/update-feed-server.ts
+            - .github/workflows/update-e2e.yml
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: update-e2e-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    update-e2e:
+        name: update-e2e (${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+        env:
+            TURBO_TELEMETRY_DISABLED: 1
+            # No certificates in CI: without this, electron-builder searches the macOS keychain.
+            CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/unscanned-workspace
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            # Both workspaces install the same Electron dist; serialize their lifecycle scripts.
+            - run: npm ci --foreground-scripts
+            # Ubuntu 24.04 no longer ships the FUSE 2 library an AppImage needs to run.
+            - if: runner.os == 'Linux'
+              run: sudo apt-get update && sudo apt-get install -y libfuse2t64
+            - run: node tools/update/build-update-pair.mjs async
+            - if: runner.os == 'Linux'
+              shell: bash
+              working-directory: apps/async
+              env:
+                  MANDOR_UPDATE_PAIR: ${{ github.workspace }}/apps/async/dist/update-pair
+              run: xvfb-run -a npx playwright test --config playwright.config.ts installed-smoke update-install
+            - if: runner.os == 'Windows'
+              shell: bash
+              working-directory: apps/async
+              env:
+                  MANDOR_UPDATE_PAIR: ${{ github.workspace }}/apps/async/dist/update-pair
+              run: npx playwright test --config playwright.config.ts installed-smoke update-install
+            # The page Playwright saved beside a failure goes to the log, where the failing job is.
+            - if: failure()
+              shell: bash
+              run: find apps/async/test-results -name 'error-context.md' -print -exec cat {} + 2>/dev/null || true

@@ -1,0 +1,12 @@
+{
+    "crashedAgainDetail": "The window stopped twice in a row. Your tabs and your work are saved.",
+    "crashedAgainTitle": "The window keeps stopping",
+    "hungDetail": "You can wait for it to respond or reload it. Your work is saved.",
+    "hungTitle": "The window is not responding",
+    "quit": "Quit",
+    "reload": "Reload",
+    "reopen": "Reopen",
+    "startFailedDetail": "What stopped it: {{cause}}",
+    "startFailedTitle": "The app could not start",
+    "wait": "Wait"
+}

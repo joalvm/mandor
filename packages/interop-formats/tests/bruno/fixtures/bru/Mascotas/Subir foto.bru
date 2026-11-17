@@ -1,0 +1,20 @@
+meta {
+  name: Subir foto
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/pets/:id/photo
+  body: multipartForm
+  auth: none
+}
+
+params:path {
+  id: 7
+}
+
+body:multipart-form {
+  caption: Rex
+  photo: @file(./fotos/rex.png)
+}

@@ -1,0 +1,158 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+import { format } from 'prettier';
+
+function declarationsOf(css) {
+    const values = new Map();
+
+    for (const match of css.matchAll(/--([\w-]+):\s*([^;]+);/g)) {
+        const [, name = '', value = ''] = match;
+
+        if (!values.has(name)) {
+            values.set(name, value.trim());
+        }
+    }
+
+    return values;
+}
+
+/** The declarations of the block a theme names in the sheet of the high-contrast themes. */
+function contrastBlockOf(css, theme) {
+    const block = new RegExp(String.raw`\[data-theme='${theme}'\]\s*{([^}]*)}`).exec(css)?.[1];
+
+    if (block === undefined) {
+        throw new Error(`Missing theme block: ${theme}`);
+    }
+
+    return declarationsOf(block);
+}
+
+function resolvedValue(name, values, seen = new Set()) {
+    const value = values.get(name);
+
+    if (value === undefined) {
+        throw new Error(`Missing token: ${name}`);
+    }
+
+    const reference = /^var\(--([\w-]+)\)$/.exec(value)?.[1];
+
+    if (reference === undefined) {
+        return value;
+    }
+
+    if (seen.has(reference)) {
+        throw new Error(`Circular token: ${reference}`);
+    }
+
+    return resolvedValue(reference, values, new Set([...seen, reference]));
+}
+
+function resolvedObject(source, values) {
+    return Object.fromEntries(
+        [...source.keys()].map((name) => [name, resolvedValue(name, values)]),
+    );
+}
+
+/** The primitives as a window whose root names `accent` reads them. */
+function withAccent(primitiveValues, accent) {
+    return new Map(
+        [...primitiveValues].map(([name, value]) => {
+            const step = /^primitive-accent-(.+)$/.exec(name)?.[1];
+
+            return [name, step === undefined ? value : `var(--primitive-${accent}-${step})`];
+        }),
+    );
+}
+
+function picked(values, names) {
+    return Object.fromEntries(names.map((name) => [name, values[name]]));
+}
+
+/**
+ * The tokens each accent paints, per mode. Only the names whose value changes between accents
+ * are kept: the rest is the same in every window and lives once, in the values of its mode.
+ */
+function accentObjects(accents, primitiveValues, modes) {
+    const resolved = accents.map((accent) => {
+        const primitives = withAccent(primitiveValues, accent);
+
+        return Object.fromEntries(
+            Object.entries(modes).map(([mode, values]) => [
+                mode,
+                resolvedObject(values, new Map([...primitives, ...values])),
+            ]),
+        );
+    });
+    const [first] = resolved;
+
+    return Object.fromEntries(
+        accents.map((accent, index) => [
+            accent,
+            Object.fromEntries(
+                Object.keys(modes).map((mode) => {
+                    const names = Object.keys(first[mode]).filter((name) =>
+                        resolved.some((values) => values[mode][name] !== first[mode][name]),
+                    );
+
+                    return [mode, picked(resolved[index][mode], names)];
+                }),
+            ),
+        ]),
+    );
+}
+
+async function formatted(source) {
+    return format(source, {
+        parser: 'typescript',
+        printWidth: 100,
+        singleQuote: true,
+        tabWidth: 4,
+    });
+}
+
+/** Creates typed modules from the authored semantic and scale CSS. */
+export async function createTokenModuleSources(stylesDir, primitives, accents) {
+    const [lightCss, darkCss, contrastCss, scalesCss] = await Promise.all([
+        readFile(join(stylesDir, 'semantic.css'), 'utf8'),
+        readFile(join(stylesDir, 'semantic-dark.css'), 'utf8'),
+        readFile(join(stylesDir, 'semantic-contrast.css'), 'utf8'),
+        readFile(join(stylesDir, 'scales.css'), 'utf8'),
+    ]);
+    const primitiveValues = declarationsOf(primitives);
+    const lightValues = declarationsOf(lightCss);
+    const darkValues = declarationsOf(darkCss);
+    const scaleValues = declarationsOf(scalesCss);
+    const light = resolvedObject(lightValues, new Map([...primitiveValues, ...lightValues]));
+    const dark = resolvedObject(darkValues, new Map([...primitiveValues, ...darkValues]));
+    // A high-contrast theme raises a few tokens of its colour scheme and leaves the rest as it is:
+    // only the raised ones are kept, and `token-values` lays them over the scheme they belong to.
+    const lightRaised = contrastBlockOf(contrastCss, 'light-contrast');
+    const darkRaised = contrastBlockOf(contrastCss, 'dark-contrast');
+    const lightContrast = resolvedObject(
+        lightRaised,
+        new Map([...primitiveValues, ...lightValues, ...lightRaised]),
+    );
+    const darkContrast = resolvedObject(
+        darkRaised,
+        new Map([...primitiveValues, ...darkValues, ...darkRaised]),
+    );
+    const scales = resolvedObject(scaleValues, new Map([...primitiveValues, ...scaleValues]));
+    const byAccent = accentObjects(accents, primitiveValues, {
+        light: lightValues,
+        dark: darkValues,
+    });
+    const colorSource = `// Generated by tools/build-tokens.mjs. Do not edit.\nexport const lightTokenValues = ${JSON.stringify(light, null, 4)} as const;\nexport const darkTokenValues = ${JSON.stringify(dark, null, 4)} as const;\n`;
+    const contrastSource = `// Generated by tools/build-tokens.mjs. Do not edit.\nexport const lightContrastTokenValues = ${JSON.stringify(lightContrast, null, 4)} as const;\nexport const darkContrastTokenValues = ${JSON.stringify(darkContrast, null, 4)} as const;\n`;
+    const accentSource = `// Generated by tools/build-tokens.mjs. Do not edit.\nexport const accentTokenValues = ${JSON.stringify(byAccent, null, 4)} as const;\n`;
+    const scaleSource = `// Generated by tools/build-tokens.mjs. Do not edit.\nexport const scaleTokenValues = ${JSON.stringify(scales, null, 4)} as const;\n`;
+    const tokenSource = `// Generated by tools/build-tokens.mjs. Do not edit.\nimport { accentTokenValues } from './token-accent-values.js';\nimport { darkTokenValues, lightTokenValues } from './token-color-values.js';\nimport { darkContrastTokenValues, lightContrastTokenValues } from './token-contrast-values.js';\nimport { scaleTokenValues } from './token-scale-values.js';\n\nexport const tokenValues = { light: lightTokenValues, dark: darkTokenValues, lightContrast: { ...lightTokenValues, ...lightContrastTokenValues }, darkContrast: { ...darkTokenValues, ...darkContrastTokenValues }, scales: scaleTokenValues, accents: accentTokenValues } as const;\n`;
+
+    return {
+        accents: await formatted(accentSource),
+        colors: await formatted(colorSource),
+        contrast: await formatted(contrastSource),
+        scales: await formatted(scaleSource),
+        tokens: await formatted(tokenSource),
+    };
+}

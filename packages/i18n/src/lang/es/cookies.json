@@ -1,0 +1,22 @@
+{
+    "button": "Cookies",
+    "cancel": "Descartar cambio",
+    "clear": "Vaciar cookie jar…",
+    "clearBody": "Se van todas las cookies guardadas de este entorno. No se puede deshacer.",
+    "clearCancel": "Conservar",
+    "clearConfirm": "Vaciar cookie jar",
+    "clearTitle": "¿Vaciar el cookie jar?",
+    "close": "Cerrar",
+    "colActions": "Acciones",
+    "colDomain": "Dominio",
+    "colName": "Nombre",
+    "colValue": "Valor",
+    "copy": "Copiar valor",
+    "delete": "Borrar cookie",
+    "edit": "Editar valor",
+    "emptyBody": "Una response que fije una cookie llena este cookie jar.",
+    "emptyTitle": "Sin cookies",
+    "save": "Guardar valor",
+    "title": "Cookies",
+    "valueOf": "Valor de {{name}}"
+}
