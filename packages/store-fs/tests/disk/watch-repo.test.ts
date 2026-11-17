@@ -49,6 +49,13 @@ async function written(path: string, text: string): Promise<void> {
     }, ARRIVAL);
 }
 
+/** How many batches have named the workspaces directory itself. */
+function workspacesReports(): number {
+    return batches.filter((batch) =>
+        batch.some((change) => 'path' in change && change.path === 'workspaces'),
+    ).length;
+}
+
 /** Repo paths come back with `/` on every platform: that is how the repo, git and the entities spell them. */
 describe('watching a repo', () => {
     it('reports a file written outside the app', async () => {
@@ -158,10 +165,19 @@ describe('watching a repo', () => {
 
     /** A pull or a restore can take the directory away and bring it back: the watch follows it. */
     it('keeps reporting the workspaces once their directory is gone and back', async () => {
+        // The directory comes back only once its going was heard: the watch then follows it
+        // while it is missing too, whatever the order the events of a fast machine land in.
         await rm(join(root, 'workspaces'), { recursive: true, force: true });
+        await vi.waitFor(() => {
+            expect(workspacesReports()).toBeGreaterThan(0);
+        }, ARRIVAL);
+        await settle();
+
+        const gone = workspacesReports();
+
         await mkdir(join(root, 'workspaces'));
         await vi.waitFor(() => {
-            expect(batches.flat()).toContainEqual(expect.objectContaining({ path: 'workspaces' }));
+            expect(workspacesReports()).toBeGreaterThan(gone);
         }, ARRIVAL);
         await settle();
 
