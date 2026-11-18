@@ -66,8 +66,9 @@ tree, uncommitted changes included.
   end-to-end jobs reuse the Linux build. Local `verify` keeps the complete gate in order on one
   machine.
   Windows end-to-end runs each app on its own runner, keeping focus and clipboard independent;
-  the protected `e2e (windows-latest)` check requires success from both. Linux and macOS run both
-  apps in order through the same action.
+  macOS does the same, because both apps in a row outlast the job ceiling on a hosted Mac. The
+  protected `e2e (windows-latest)` and `e2e (macos-latest)` checks require success from both.
+  Linux runs both apps in order through the same action.
   A commit that only touches e2e tests does not repeat the Windows and macOS checks an earlier
   commit of the pull request left green; Linux always runs. To repeat a check with no new commit,
   `gh run rerun <run> --failed` runs only what failed.

@@ -63,12 +63,16 @@ export function scopeOf(files, labels) {
  * @returns {Record<string, boolean>}
  */
 export function checksToRun(scope, reused, labels) {
+    const asked = labels.includes(LABEL);
+
     return {
         e2e: scope.e2e,
-        macos: scope.macos && (labels.includes(LABEL) || !reused.has('e2e (macos-latest)')),
+        macos: scope.macos,
         'verify-windows': !reused.has('verify (windows-latest)'),
         'e2e-windows-async': scope.e2e && !reused.has('e2e async (windows-latest)'),
         'e2e-windows-sync': scope.e2e && !reused.has('e2e sync (windows-latest)'),
+        'e2e-macos-async': scope.macos && (asked || !reused.has('e2e async (macos-latest)')),
+        'e2e-macos-sync': scope.macos && (asked || !reused.has('e2e sync (macos-latest)')),
     };
 }
 

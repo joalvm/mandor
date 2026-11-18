@@ -15,7 +15,8 @@ const COSTLY_CHECKS = [
     'verify (windows-latest)',
     'e2e async (windows-latest)',
     'e2e sync (windows-latest)',
-    'e2e (macos-latest)',
+    'e2e async (macos-latest)',
+    'e2e sync (macos-latest)',
 ];
 
 const E2E_TESTS = /^apps\/[^/]+\/tests\/e2e\//u;

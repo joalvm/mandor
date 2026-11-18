@@ -43,7 +43,7 @@ por job: Linux ×1, Windows ×2, macOS ×10.
 | `verify (windows-latest)` | `npm run test:node`                         | tras Linux en verde                            |
 | `e2e (ubuntu-latest)`     | e2e de las dos apps sobre el build de Linux | el PR cambia algo más que prosa                |
 | `e2e (windows-latest)`    | lo mismo, cada app en su runner             | igual                                          |
-| `e2e (macos-latest)`      | lo mismo                                    | la app toca el sistema, o etiqueta `e2e:macos` |
+| `e2e (macos-latest)`      | lo mismo, cada app en su runner             | la app toca el sistema, o etiqueta `e2e:macos` |
 
 - El alcance lo calcula `tools/ci/changed-scope.mjs`. Prosa (`docs/`, `skills/`, `*.md`) no abre
   ninguna ventana.

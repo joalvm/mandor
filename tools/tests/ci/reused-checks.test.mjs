@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { reusedChecks } from '../../ci/reused-checks.mjs';
 
-const MACOS = 'e2e (macos-latest)';
+const MACOS = 'e2e sync (macos-latest)';
 const WINDOWS = 'verify (windows-latest)';
 const E2E_FILE = 'apps/sync/tests/e2e/support/open-section.ts';
 

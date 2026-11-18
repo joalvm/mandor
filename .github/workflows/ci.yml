@@ -61,6 +61,8 @@ jobs:
             verify-windows: ${{ steps.scope.outputs.verify-windows }}
             e2e-windows-async: ${{ steps.scope.outputs.e2e-windows-async }}
             e2e-windows-sync: ${{ steps.scope.outputs.e2e-windows-sync }}
+            e2e-macos-async: ${{ steps.scope.outputs.e2e-macos-async }}
+            e2e-macos-sync: ${{ steps.scope.outputs.e2e-macos-sync }}
         env:
             NODE_OPTIONS: --max-old-space-size=4096
         steps:
@@ -111,6 +113,8 @@ jobs:
             verify-windows: ${{ needs.tests-linux.outputs.verify-windows }}
             e2e-windows-async: ${{ needs.tests-linux.outputs.e2e-windows-async }}
             e2e-windows-sync: ${{ needs.tests-linux.outputs.e2e-windows-sync }}
+            e2e-macos-async: ${{ needs.tests-linux.outputs.e2e-macos-async }}
+            e2e-macos-sync: ${{ needs.tests-linux.outputs.e2e-macos-sync }}
         steps:
             - env:
                   CHECKS_RESULT: ${{ needs.checks-linux.result }}
@@ -201,13 +205,49 @@ jobs:
                   "
 
     # Only where the app meets the system, or with the label `e2e:macos`, and not again once an
-    # earlier commit proved it: the rule is in `tools/ci/changed-scope.mjs`.
-    e2e-macos:
-        name: e2e (macos-latest)
+    # earlier commit proved it: the rule is in `tools/ci/changed-scope.mjs`. Each app on its own
+    # runner: both in a row outlast the common ceiling on a hosted Mac.
+    e2e-macos-async:
+        name: e2e async (macos-latest)
         needs: verify-linux
-        if: needs.verify-linux.outputs.macos == 'true'
+        if: needs.verify-linux.outputs.e2e-macos-async == 'true'
         runs-on: macos-latest
         timeout-minutes: 15
         steps:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/e2e
+              with:
+                  app: async
+
+    e2e-macos-sync:
+        name: e2e sync (macos-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.e2e-macos-sync == 'true'
+        runs-on: macos-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/e2e
+              with:
+                  app: sync
+
+    e2e-macos:
+        name: e2e (macos-latest)
+        needs: [verify-linux, e2e-macos-async, e2e-macos-sync]
+        if: always() && needs.verify-linux.result == 'success' && needs.verify-linux.outputs.macos == 'true'
+        runs-on: ubuntu-latest
+        timeout-minutes: 2
+        steps:
+            - env:
+                  # An app left out because an earlier run proved it counts as passed.
+                  ASYNC_RESULT: ${{ needs.verify-linux.outputs.e2e-macos-async == 'true' && needs.e2e-macos-async.result || 'success' }}
+                  SYNC_RESULT: ${{ needs.verify-linux.outputs.e2e-macos-sync == 'true' && needs.e2e-macos-sync.result || 'success' }}
+              run: |
+                  node -e "
+                  const results = { async: process.env.ASYNC_RESULT, sync: process.env.SYNC_RESULT };
+
+                  if (Object.values(results).some((result) => result !== 'success')) {
+                      console.error('macOS e2e did not pass:', results);
+                      process.exit(1);
+                  }
+                  "

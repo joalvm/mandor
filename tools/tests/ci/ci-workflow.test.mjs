@@ -32,6 +32,7 @@ const LONGER_CEILINGS = {
     'e2e (windows-latest)': 2,
     'e2e async (windows-latest)': 20,
     'e2e sync (windows-latest)': 20,
+    'e2e (macos-latest)': 2,
 };
 
 function job(name) {
@@ -108,9 +109,10 @@ describe('the workflow that gates a pull request (ci.yml)', () => {
         for (const name of [
             'verify (windows-latest)',
             'e2e (ubuntu-latest)',
-            'e2e (macos-latest)',
             'e2e async (windows-latest)',
             'e2e sync (windows-latest)',
+            'e2e async (macos-latest)',
+            'e2e sync (macos-latest)',
         ]) {
             expect(job(name).needs, name).toEqual(linux.id);
         }
@@ -155,7 +157,15 @@ describe('the workflow that gates a pull request (ci.yml)', () => {
 
         expect(linux.steps[scope].run).toContain('node tools/ci/changed-scope.mjs');
         expect(scope).toBeLessThan(install);
-        const names = ['e2e', 'macos', 'verify-windows', 'e2e-windows-async', 'e2e-windows-sync'];
+        const names = [
+            'e2e',
+            'macos',
+            'verify-windows',
+            'e2e-windows-async',
+            'e2e-windows-sync',
+            'e2e-macos-async',
+            'e2e-macos-sync',
+        ];
 
         expect(linux.outputs).toEqual(
             Object.fromEntries(names.map((name) => [name, `\${{ steps.scope.outputs.${name} }}`])),
@@ -214,7 +224,12 @@ describe('the workflow that gates a pull request (ci.yml)', () => {
         expect(job('e2e sync (windows-latest)').if).toBe(
             `needs.${linux}.outputs.e2e-windows-sync == 'true'`,
         );
-        expect(job('e2e (macos-latest)').if).toBe(`needs.${linux}.outputs.macos == 'true'`);
+        expect(job('e2e async (macos-latest)').if).toBe(
+            `needs.${linux}.outputs.e2e-macos-async == 'true'`,
+        );
+        expect(job('e2e sync (macos-latest)').if).toBe(
+            `needs.${linux}.outputs.e2e-macos-sync == 'true'`,
+        );
         expect(job('verify (windows-latest)').if).toBe(
             `needs.${linux}.outputs.verify-windows == 'true'`,
         );
@@ -246,16 +261,15 @@ describe('the workflow that gates a pull request (ci.yml)', () => {
         expect(upload.with.path).toBe('apps/*/out');
     });
 
+    /** Linux opens both apps in a row; the other systems give each app a runner of its own. */
     it('drives each window with the same steps, on the build Linux made', () => {
-        for (const name of ['e2e (ubuntu-latest)', 'e2e (macos-latest)']) {
-            const each = job(name);
+        const linux = job('e2e (ubuntu-latest)');
 
-            expect(each['runs-on']).toBe(name.slice(5, -1));
-            expect(each.steps.map((step) => step.uses ?? step.run)).toEqual([
-                'actions/checkout@v7',
-                './.github/actions/e2e',
-            ]);
-            expect(each.steps.at(-1)).not.toHaveProperty('with');
-        }
+        expect(linux['runs-on']).toBe('ubuntu-latest');
+        expect(linux.steps.map((step) => step.uses ?? step.run)).toEqual([
+            'actions/checkout@v7',
+            './.github/actions/e2e',
+        ]);
+        expect(linux.steps.at(-1)).not.toHaveProperty('with');
     });
 });

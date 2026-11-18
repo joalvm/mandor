@@ -12,6 +12,8 @@ describe('what a pull request runs once its earlier proof is read (checksToRun)'
             'verify-windows': true,
             'e2e-windows-async': true,
             'e2e-windows-sync': true,
+            'e2e-macos-async': true,
+            'e2e-macos-sync': true,
         });
     });
 
@@ -24,20 +26,27 @@ describe('what a pull request runs once its earlier proof is read (checksToRun)'
             'verify-windows': false,
             'e2e-windows-async': true,
             'e2e-windows-sync': false,
+            'e2e-macos-async': true,
+            'e2e-macos-sync': true,
         });
     });
 
-    it('leaves out macOS once it was proven', () => {
-        const reused = new Set(['e2e (macos-latest)']);
+    /** The protected macOS check still waits for the apps: only the proven one is left out. */
+    it('leaves out a macOS app once it was proven', () => {
+        const checks = checksToRun(FULL, new Set(['e2e async (macos-latest)']), []);
 
-        expect(checksToRun(FULL, reused, []).macos).toBe(false);
+        expect(checks.macos).toBe(true);
+        expect(checks['e2e-macos-async']).toBe(false);
+        expect(checks['e2e-macos-sync']).toBe(true);
     });
 
     /** A label is a request to run: it is not satisfied by an earlier run. */
-    it('runs macOS when the label asks for it, proven or not', () => {
-        const reused = new Set(['e2e (macos-latest)']);
+    it('runs both macOS apps when the label asks for it, proven or not', () => {
+        const reused = new Set(['e2e async (macos-latest)', 'e2e sync (macos-latest)']);
+        const checks = checksToRun(FULL, reused, ['e2e:macos']);
 
-        expect(checksToRun(FULL, reused, ['e2e:macos']).macos).toBe(true);
+        expect(checks['e2e-macos-async']).toBe(true);
+        expect(checks['e2e-macos-sync']).toBe(true);
     });
 
     it('opens no window a change of prose does not reach, with nothing reused', () => {
@@ -47,6 +56,8 @@ describe('what a pull request runs once its earlier proof is read (checksToRun)'
             'verify-windows': true,
             'e2e-windows-async': false,
             'e2e-windows-sync': false,
+            'e2e-macos-async': false,
+            'e2e-macos-sync': false,
         });
     });
 });
