@@ -15,7 +15,7 @@
         "socket.io-client": "4.8.4",
         "socket.io-client-v2": "npm:socket.io-client@2.5.0",
         "socks-proxy-agent": "10.1.0",
-        "ws": "8.22.2"
+        "ws": "8.23.0"
     },
     "devDependencies": {
         "@types/node": "26.6.6",
