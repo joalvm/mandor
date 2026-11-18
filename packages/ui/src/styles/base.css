@@ -1,0 +1,33 @@
+/**
+ * The focus of the product is the border of the control in another colour, so the native outline
+ * goes. Under forced colours the system paints every border alike and drops every shadow: there
+ * the native outline is the one mark of focus left, and it stays.
+ */
+@media not (forced-colors: active) {
+    :where(button, [role='button'], [role='option'], [role='treeitem'], [contenteditable]) {
+        outline: none;
+    }
+}
+
+:where(html, body, #root) {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+/**
+ * Both scrollbar properties inherit, so the root says once what every box that overflows will
+ * draw, the ones a library brings with it included: a thin thumb over an empty track. A wide bar
+ * with a track of its own is a second surface inside the surface, and takes width from the list.
+ */
+:root {
+    color: var(--text-primary);
+    background: var(--surface-app);
+    font-family: var(--mandor-font-ui);
+    font-optical-sizing: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-hover) transparent;
+}

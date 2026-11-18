@@ -1,0 +1,98 @@
+/*
+ * Lo que la tabla clave-valor añade a la tabla común: el marco de la celda que se escribe, el
+ * par apagado, la fila que añade la app y la que se lleva el puntero. Las columnas, la cabecera
+ * y las acciones de cada fila son las de la tabla común.
+ */
+
+/* La celda que se escribe no trae aire propio: lo trae el campo de dentro, y el texto empieza
+   donde el nombre de su columna. Su línea es la que la tabla le da (ninguna junto a la casilla),
+   y el foco le pone marco, apenas: gris fuerte, no acento. */
+[data-part='table'] [data-part='key-value-cell'] {
+    --table-cell-pad: 0px;
+    --table-cell-pad-block: 0px;
+
+    border: var(--focus-ring-width) solid transparent;
+    border-left-color: var(--table-cell-rule);
+    border-radius: var(--mandor-radius-sm);
+    position: relative;
+}
+
+/* Estrecha, la tabla deja sus columnas a la clave y el valor, y la descripción pasa a una línea
+   debajo de ellas: sigue en su fila, así que el tabulador y las flechas llegan como siempre. */
+[data-kv-stacked] [data-part='table'] [data-kv-cell='description'] {
+    --table-cell-rule: transparent;
+
+    grid-column: 3 / -1;
+}
+
+/* Sin nada que decir, esa línea no ocupa sitio hasta que la fila recibe el foco. Se queda sin alto
+   y no sin dibujo: el tabulador sigue pudiendo entrar en ella. */
+[data-kv-stacked]
+    [data-part='table']
+    tr:not(:focus-within)
+    [data-kv-cell='description']:is(:has([data-part='editable']:empty), :has(> span:empty)) {
+    block-size: 0;
+    border-block-width: 0;
+    overflow: hidden;
+}
+
+/* El marco se dibuja sobre lo que se ve de la celda: las acciones de la fila tapan el final de
+   la última, y un marco del ancho de la celda quedaría abierto debajo de ellas. Termina donde
+   ellas empiezan, cerrado por sus cuatro lados. */
+[data-part='table'] [data-part='key-value-cell']:focus-within::after {
+    border: var(--focus-ring-width) solid var(--border-strong);
+    border-radius: var(--mandor-radius-sm);
+    bottom: calc(-1 * var(--focus-ring-width));
+    content: '';
+    left: calc(-1 * var(--focus-ring-width));
+    pointer-events: none;
+    position: absolute;
+    right: calc(var(--table-cell-covered, 0px) - var(--focus-ring-width));
+    top: calc(-1 * var(--focus-ring-width));
+}
+
+/* El campo de dentro no dibuja marco propio: un solo foco por celda, y discreto. */
+[data-part='key-value-table'] [data-part='input'],
+[data-part='key-value-table'] [data-part='input']:focus-within,
+[data-part='key-value-table'] [data-focus-frame]:has(:focus-visible) {
+    border-color: transparent;
+}
+
+/* El campo se lee sobre el blanco de la tabla, no sobre el fondo propio de un campo suelto. */
+[data-part='key-value-table'] [data-part='input'] {
+    background: var(--table-surface);
+}
+
+/* La fila que la app añade sola se lee apagada y sobre un velo apenas más opaco que el
+   panel: está, pero no se le habla. */
+[data-part='table'] [data-part='key-value-auto-row'] {
+    --table-row-tint: var(--surface-system-row);
+
+    color: var(--text-secondary);
+}
+
+/* La fila que una fila de la tabla pisa se lee tachada: sigue dicha, pero no va. */
+[data-part='key-value-auto-row'] [data-overridden='true'] {
+    text-decoration: line-through;
+}
+
+/* La fila que se lleva el puntero flota sobre sus hermanas, con la sombra del arrastre. */
+[data-part='table'] [data-part='key-value-row'][data-dragging='true'] {
+    background: var(--table-surface);
+    border-radius: var(--mandor-radius-md);
+    box-shadow: var(--mandor-shadow-drag);
+    z-index: 1;
+}
+
+/* El par apagado se lee apagado, también mientras se edita. */
+[data-part='key-value-row'][data-disabled='true'] [data-part='input'] {
+    color: var(--text-disabled);
+}
+
+/* Los pares que la ventana deja fuera ocupan lo que ocuparían, sin línea ni alto propio de
+   fila: la barra de desplazamiento lee la tabla entera. */
+[data-part='table'] [data-part='key-value-gap'] {
+    border-bottom: 0;
+    height: attr(data-size type(<length>), 0px);
+    min-height: 0;
+}

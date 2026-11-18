@@ -1,0 +1,36 @@
+node_modules/
+out/
+dist/
+release/
+coverage/
+.turbo/
+
+test-results/
+playwright-report/
+
+.env
+.env.*
+*.log
+
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Enlaces generados por tools/link-agent-skills.mjs. La fuente es skills/
+.claude/
+.agents/
+.cursor/
+.windsurf/
+.continue/
+.codebase-memory/
+.local-ci/
+artifacts/
+
+# Reglas de agente: viven en disco, nunca en el repo.
+/AGENTS.md
+/CLAUDE.md
+
+# Sesión del agente: planes y artefactos de navegador, nada de esto se commitea.
+.zcode/
+.playwright-mcp/

@@ -1,0 +1,28 @@
+# Windows scans every file that is written, and a job of this repository writes a tree of
+# packages, two builds and a repository on disk for each test that touches one. The steps that
+# read and write the most take twice on Windows what they take on Linux, while the ones that only
+# think take a fifth more: what the extra time buys is the scan, not the work.
+#
+# Three paths leave the scan and no others: the checkout, the scratch space the runner hands out
+# and the package cache. The three belong to the job, the job is a machine that is destroyed when
+# it ends, and nothing arrives in them from outside the run.
+#
+# On every other operating system this does nothing, so the workflows name it once and stay free
+# of a condition each.
+name: unscanned workspace
+description: Leaves the paths a job owns out of the Windows scanner.
+
+runs:
+    using: composite
+    steps:
+        # A runner image that refuses the exclusion is a slower job, not a broken one, so the
+        # failure is reported and swallowed. A green suite must never turn red over the speed of
+        # the machine it ran on.
+        - if: runner.os == 'Windows'
+          shell: pwsh
+          run: |
+              try {
+                  Add-MpPreference -ExclusionPath $env:GITHUB_WORKSPACE, $env:RUNNER_TEMP, 'C:\npm\cache'
+              } catch {
+                  Write-Host "::warning::Defender exclusions not applied: $($_.Exception.Message)"
+              }

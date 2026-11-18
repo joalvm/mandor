@@ -1,0 +1,12 @@
+{
+    "crashedAgainDetail": "La ventana se detuvo dos veces seguidas. Tus pestañas y tu trabajo están guardados.",
+    "crashedAgainTitle": "La ventana sigue deteniéndose",
+    "hungDetail": "Puedes esperar a que responda o recargarla. Tu trabajo está guardado.",
+    "hungTitle": "La ventana no responde",
+    "quit": "Salir",
+    "reload": "Recargar",
+    "reopen": "Reabrir",
+    "startFailedDetail": "Lo que lo impidió: {{cause}}",
+    "startFailedTitle": "La aplicación no pudo arrancar",
+    "wait": "Esperar"
+}

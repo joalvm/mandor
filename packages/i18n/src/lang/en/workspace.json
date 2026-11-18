@@ -1,0 +1,23 @@
+{
+    "cancel": "Cancel",
+    "columnName": "Name",
+    "columnModified": "Modified",
+    "columnActions": "Actions",
+    "createAction": "Create",
+    "defaultName": "Personal",
+    "deleteAction": "Delete",
+    "deleteBody": "Everything {{name}} holds leaves with it: events, folders, environments and docs. This cannot be undone.",
+    "deleteConfirm": "Delete",
+    "deleteTitle": "Delete {{name}}?",
+    "emptyBody": "Create one to start keeping your work.",
+    "emptyTitle": "No workspaces",
+    "heading": "Workspaces",
+    "subtitle": "Each project of the origins in use, with what it holds and when it was last touched.",
+    "manage": "Manage workspaces",
+    "nameLabel": "Workspace name",
+    "newTitle": "New workspace",
+    "newWorkspace": "New workspace",
+    "none": "No workspace",
+    "rename": "Rename",
+    "rowOptions": "Workspace options"
+}

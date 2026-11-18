@@ -1,0 +1,118 @@
+{
+    "conflictMark": "Conflict",
+    "delete": "Delete",
+    "deleteBody": "\"{{name}}\" and everything inside it leave the workspace. Tabs looking at it stay open, pointing at nothing.",
+    "deleteCancel": "Cancel",
+    "deleteConfirm": "Delete",
+    "deleteExampleBody": "\"{{name}}\" leaves the examples of its request. Tabs looking at it stay open, pointing at nothing.",
+    "deleteManyBody": "{{count}} entries and everything inside them leave the workspace. Tabs looking at them stay open, pointing at nothing.",
+    "deleteManyExamplesBody": "{{count}} examples leave their requests. Tabs looking at them stay open, pointing at nothing.",
+    "deleteTitle": "Delete from the collections",
+    "duplicate": "Duplicate",
+    "foldCollections": "Collapse collections",
+    "foldFolders": "Collapse folders",
+    "folderDocs": "Docs",
+    "folderGone": "This folder is gone",
+    "folderNoSections": "This folder has no sections",
+    "folderSections": "Folder sections",
+    "folderVariables": "Variables",
+    "heading": "Collections",
+    "newCollection": "New collection",
+    "newFolder": "New folder",
+    "newItem": "New item",
+    "openBeside": "Open to the side",
+    "openExample": "Open",
+    "rename": "Rename",
+    "renameField": "New name",
+    "resolveConflict": "Resolve conflict",
+    "rowOptions": "Row options",
+    "script": {
+        "editor": "Script",
+        "api": {
+            "console": {
+                "log": "Writes a line to the Console.",
+                "info": "Writes an informational line to the Console.",
+                "warn": "Writes a warning to the Console.",
+                "error": "Writes an error to the Console."
+            },
+            "atob": "Decodes a base64 text.",
+            "btoa": "Encodes a text as base64.",
+            "URLSearchParams": "Reads or builds a query string.",
+            "vars": {
+                "get": "The value of a variable. A secret gives undefined.",
+                "set": "Sets a script variable for the sends that follow.",
+                "has": "Whether the variable exists.",
+                "replaceIn": "Resolves the variables of a text. A secret stays as text."
+            },
+            "test": "Declares a test: it passes if its function does not throw.",
+            "expect": "Asserts something about a value inside a test.",
+            "request": {
+                "url": "The URL of the request. Writable before it is sent.",
+                "method": "The method of the request. Writable before it is sent.",
+                "body": "The body of the request as text. Writable before it is sent.",
+                "headers": {
+                    "get": "The value of a request header.",
+                    "has": "Whether the request carries the header.",
+                    "set": "Sets or changes a request header.",
+                    "delete": "Removes a request header."
+                },
+                "query": {
+                    "get": "The value of a query parameter.",
+                    "has": "Whether the query carries the parameter.",
+                    "set": "Sets or changes a query parameter.",
+                    "delete": "Removes a query parameter."
+                }
+            },
+            "response": {
+                "status": "The status code of the response.",
+                "timeMs": "How many milliseconds the response took.",
+                "text": "The body of the response as text.",
+                "json": "The body of the response read as JSON.",
+                "headers": {
+                    "get": "The value of a response header.",
+                    "has": "Whether the response carries the header."
+                }
+            },
+            "message": {
+                "text": "The text of the message.",
+                "direction": "Whether the message arrived or left.",
+                "binary": "Whether the message is binary.",
+                "event": "The Socket.IO event name of the message."
+            },
+            "socket": {
+                "send": "Sends a message through the connection."
+            },
+            "sendRequest": "Sends another request and waits for its response. Its variables are not resolved and it follows no redirects."
+        }
+    },
+    "scriptApprove": "Approve",
+    "scriptHidden_one": "{{count}} hidden character",
+    "scriptHidden_other": "{{count}} hidden characters",
+    "scriptTooLarge": "Over the limit: it does not run",
+    "scriptUnapproved": "It does not run until you approve it",
+    "searchEmpty": "No matches.",
+    "searchHeading": "Search",
+    "searchLabel": "Search workspace",
+    "searchMatch": {
+        "content": "Content",
+        "name": "Name",
+        "tag": "Tag",
+        "trail": "Location"
+    },
+    "searchPlaceholder": "Name, location, tag or content",
+    "searchResults": "Search results",
+    "settings": "Settings",
+    "unknownItem": "Nothing in this window knows how to open an item of kind \"{{kind}}\".",
+    "skippedTitle_one": "{{count}} script left out",
+    "skippedTitle_other": "{{count}} scripts left out",
+    "skippedList": "Scripts left out of the send",
+    "skippedClose": "Close",
+    "skippedPlace": "{{level}} · {{event}}",
+    "skippedApproved": "Approved: it runs from the next send",
+    "skippedNotShown": "{{bytes}} bytes, too many to show here. Open it in its editor to review it.",
+    "scriptLevel-request": "Request",
+    "scriptLevel-folder": "Folder",
+    "scriptLevel-collection": "Collection",
+    "scriptLevel-connection": "Connection",
+    "reviewSkipped": "Review"
+}

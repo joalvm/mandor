@@ -1,0 +1,120 @@
+openapi: 3.1.0
+info:
+    title: Tienda
+    version: 1.0.0
+servers:
+    - url: https://api.tienda.ejemplo.com/v1
+      description: Produccion
+    - url: http://127.0.0.1:{port}/v1
+      description: Local
+      variables:
+          port:
+              default: '5123'
+security:
+    - bearerAuth: []
+paths:
+    /mascotas:
+        get:
+            tags: [mascotas]
+            summary: Lista mascotas
+            operationId: listaMascotas
+            x-interno: tramo-1
+            parameters:
+                - name: limit
+                  in: query
+                  schema:
+                      type: integer
+                      default: 10
+                - name: sesion
+                  in: cookie
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: ''
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                            example: []
+    /mascotas/{petId}:
+        get:
+            tags: [mascotas]
+            summary: Muestra mascota
+            security: []
+            parameters:
+                - name: petId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: ''
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                            examples:
+                                mascota:
+                                    value:
+                                        name: Firulais
+    /pedidos:
+        post:
+            tags: [pedidos]
+            summary: Registra pedido
+            security:
+                - basicAuth: []
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: [destino]
+                            properties:
+                                destino:
+                                    type: string
+                        example:
+                            destino: Pernambuco
+            responses:
+                '201':
+                    description: ''
+                    content:
+                        application/json:
+                            example:
+                                id: pedido-1
+        put:
+            tags: [pedidos]
+            summary: Reemplaza pedido
+            security:
+                - basicAuth: []
+            parameters:
+                - name: pedido
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/x-www-form-urlencoded:
+                        schema:
+                            type: object
+                            properties:
+                                destino:
+                                    type: string
+                        example:
+                            destino: Pernambuco
+            responses:
+                '200':
+                    description: ''
+                    content:
+                        application/json:
+                            example: {}
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+        basicAuth:
+            type: http
+            scheme: basic

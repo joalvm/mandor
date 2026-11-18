@@ -1,0 +1,30 @@
+info:
+    name: Pedidos en vivo
+    type: websocket
+    seq: 5
+    tags:
+        - live
+websocket:
+    url: 'wss://api.tienda.test/pedidos?sala=1'
+    headers:
+        - name: X-Token
+          value: '{{token}}'
+        - name: Sec-WebSocket-Protocol
+          value: json, v2
+        - name: X-Off
+          value: '1'
+          disabled: true
+    message:
+        - title: Saludo
+          selected: true
+          message:
+              type: json
+              data: '{"op":"hello"}'
+        - title: Ping
+          message:
+              type: text
+              data: ping
+    auth:
+        type: bearer
+        token: '{{token}}'
+docs: Canal de pedidos.

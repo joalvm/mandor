@@ -1,0 +1,71 @@
+import { MessagesProvider } from '@mandor/i18n';
+import { updateConfigureRequestSchema } from '@mandor/ipc';
+import { bridge, fireAndForget } from '@mandor/shell';
+import { setTextZoom, watchTextZoom } from '@mandor/ui';
+import { useEffect, useLayoutEffect, type PropsWithChildren } from 'react';
+
+import { usePreferences } from './preferences-context.js';
+import { readTextZoom, writeTextZoom } from './text-zoom-storage.js';
+import { useAppliedTheme } from './theme/useAppliedTheme.js';
+
+type PreferencesApplicationProps = PropsWithChildren;
+
+export function PreferencesApplication({ children }: PreferencesApplicationProps) {
+    const { values } = usePreferences();
+    const language = values['appearance.language'];
+    const { source, theme } = useAppliedTheme();
+    const mode = values['updates.mode'];
+    const channel = values['updates.channel'];
+
+    // The size the reader left the text at comes back with the window, before its first paint, and
+    // is kept at every change. It belongs to the window for as long as it is open: deps stay empty.
+    useLayoutEffect(() => {
+        setTextZoom(readTextZoom());
+
+        return watchTextZoom(writeTextZoom);
+    }, []);
+
+    // Before the first paint, so a window that is not drawn in the theme of the reader never
+    // flashes the one of the system first. The theme is always named, the system's included: the
+    // stylesheets keep following the system only for the instant before the preferences load.
+    useLayoutEffect(() => {
+        const root = document.documentElement;
+
+        root.dataset['theme'] = theme;
+
+        return () => {
+            root.removeAttribute('data-theme');
+        };
+    }, [theme]);
+
+    // Main draws what the window cannot reach: its frame, its menus, its native dialogs. It follows
+    // the system unless the reader holds a theme, and the window reads the system's appearance
+    // from it, so nothing but `system` is ever sent while the system picks.
+    useEffect(() => {
+        fireAndForget(bridge.app.configureAppearance({ source }));
+    }, [source]);
+
+    // What language the window is being read in, said where anything can read it: a screen
+    // reader pronounces the page by it, and the editor picks its own messages off it. A layout
+    // effect, because the effects of what the window holds run before the ones of the window, and
+    // an editor restored open would load its messages before a plain effect said the language.
+    useLayoutEffect(() => {
+        document.documentElement.lang = language;
+
+        return () => {
+            document.documentElement.removeAttribute('lang');
+        };
+    }, [language]);
+
+    // Main looks for versions by itself and cannot read the settings, which live in this window:
+    // it is told what the person chose once the window is up and at every change.
+    useEffect(() => {
+        const choice = updateConfigureRequestSchema.safeParse({ mode, channel });
+
+        if (choice.success) {
+            fireAndForget(bridge.update.configure(choice.data));
+        }
+    }, [mode, channel]);
+
+    return <MessagesProvider preferences={{ language }}>{children}</MessagesProvider>;
+}

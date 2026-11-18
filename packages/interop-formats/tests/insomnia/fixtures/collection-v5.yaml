@@ -1,0 +1,86 @@
+type: collection.insomnia.rest/5.0
+schema_version: '5.1'
+name: Tienda de Mascotas
+meta:
+    id: wrk_tienda
+    description: La tienda, de punta a punta.
+collection:
+    - name: Mascotas
+      meta:
+          id: fld_mascotas
+          description: Todo lo de las mascotas
+      authentication:
+          type: bearer
+          token: '{{ _.token }}'
+      children:
+          - url: '{{ _.base }}/pets/:species'
+            name: Lista de mascotas
+            meta:
+                id: req_lista
+                description: Devuelve la página pedida.
+            method: GET
+            parameters:
+                - name: page
+                  value: '1'
+                - name: debug
+                  value: '1'
+                  disabled: true
+            headers:
+                - name: Accept
+                  value: application/json
+            pathParameters:
+                - name: species
+                  value: dog
+          - url: '{{ _.base }}/pets'
+            name: Alta de mascota
+            meta:
+                id: req_alta
+            method: POST
+            body:
+                mimeType: application/json
+                text: '{"name":"{{ _.petName }}"}'
+            headers:
+                - name: Content-Type
+                  value: application/json
+            authentication:
+                type: basic
+                username: ana
+                password: '{{ _.password }}'
+    - url: '{{ _.base }}/health'
+      name: Salud
+      meta:
+          id: req_salud
+      method: GET
+      authentication:
+          type: none
+    - name: Feed en vivo
+      meta:
+          id: ws-req_feed
+      url: wss://feed.test
+    - name: Catálogo
+      meta:
+          id: greq_catalogo
+      url: grpc.test
+environments:
+    name: Base Environment
+    meta:
+        id: env_base
+    data:
+        base: https://api.test
+        retries: 3
+        verbose: true
+        owner: '{{ _.base }}/owner'
+        bad name: x
+        limits:
+            page: 20
+    subEnvironments:
+        - name: Prod
+          meta:
+              id: env_prod
+          data:
+              base: https://prod.test
+        - name: Staging
+          meta:
+              id: env_staging
+          data:
+              base: https://staging.test

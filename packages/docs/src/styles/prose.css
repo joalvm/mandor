@@ -1,0 +1,134 @@
+/** What a doc adds to the prose of the window: the stand-in for an image it does not carry. */
+[data-part='markdown'] span[data-part='doc-image'] {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/** Viewer, band, editor and page are one canvas: nothing is painted as a strip of its own. */
+[data-part='doc-surface'],
+[data-part='doc-page'] {
+    background: var(--markdown-canvas);
+}
+
+/** The page narrows its own air, whatever box it is shown in. */
+[data-part='doc-page'] {
+    container-type: inline-size;
+}
+
+/** The blocks a doc draws for itself keep the rhythm of the paragraphs around them. */
+[data-part='markdown']
+    :is([data-part='doc-alert'], [data-part='doc-diagram'], [data-part='doc-code-block']) {
+    margin: 0 0 16px;
+}
+
+/** The block holds the margin; the code inside it sits flush. */
+[data-part='markdown'] :is([data-part='doc-code-block'], [data-part='doc-diagram']) pre {
+    margin: 0;
+}
+
+/** The buttons of a block sit on its own ground, over whatever line runs under them. */
+[data-part='markdown'] [data-part='doc-block-actions'] {
+    background: var(--markdown-canvas-subtle);
+    z-index: 1;
+}
+
+/** The anchor of a heading is a button and not a word of the title. */
+[data-part='markdown'] [data-part='doc-heading-anchor'] {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+/** The alerts of GitHub, the way github.com draws them: a rule in the colour of the kind, a title. */
+[data-part='markdown'] [data-part='doc-alert'] {
+    border-inline-start: 0.25em solid var(--doc-alert-color);
+    padding: 0.5rem 1rem;
+
+    & > :last-child {
+        margin-block-end: 0;
+    }
+}
+
+[data-part='markdown'] [data-part='doc-alert-title'] {
+    color: var(--doc-alert-color);
+    font-weight: 500;
+    line-height: 1;
+}
+
+[data-alert='note'] {
+    --doc-alert-color: var(--markdown-note);
+}
+
+[data-alert='tip'] {
+    --doc-alert-color: var(--markdown-tip);
+}
+
+[data-alert='important'] {
+    --doc-alert-color: var(--markdown-important);
+}
+
+[data-alert='warning'] {
+    --doc-alert-color: var(--markdown-warning);
+}
+
+[data-alert='caution'] {
+    --doc-alert-color: var(--markdown-caution);
+}
+
+/** A diagram has a ground of its own, centred, and grows in steps. */
+[data-part='markdown'] [data-part='doc-diagram'] {
+    margin-inline: 0;
+}
+
+[data-part='markdown'] [data-part='doc-diagram-canvas'] {
+    background: var(--markdown-canvas-subtle);
+    border-radius: 6px;
+    display: flex;
+    justify-content: safe center;
+    padding: 1em;
+}
+
+[data-part='doc-diagram'][data-zoom='1'] img {
+    height: auto;
+    max-width: 100%;
+}
+
+[data-part='doc-diagram'][data-zoom='0.5'] img {
+    zoom: 0.5;
+}
+
+[data-part='doc-diagram'][data-zoom='0.75'] img {
+    zoom: 0.75;
+}
+
+[data-part='doc-diagram'][data-zoom='1.5'] img {
+    max-width: none;
+    zoom: 1.5;
+}
+
+[data-part='doc-diagram'][data-zoom='2'] img {
+    max-width: none;
+    zoom: 2;
+}
+
+[data-part='doc-diagram'][data-zoom='3'] img {
+    max-width: none;
+    zoom: 3;
+}
+
+[data-part='markdown'] [data-part='doc-diagram-error'] {
+    margin-block-start: 0.5em;
+}
+
+/**
+ * Where a diagram is drawn before it is shown: out of sight but laid out, because the drawing
+ * measures its words. The type is the one the drawing is told to use.
+ */
+[data-part='doc-diagram-stage'] {
+    font:
+        13px system-ui,
+        sans-serif;
+    inset-inline-start: -10000px;
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+}

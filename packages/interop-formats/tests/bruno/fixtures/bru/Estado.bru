@@ -1,0 +1,20 @@
+meta {
+  name: Estado
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/status
+  body: none
+  auth: oauth2
+}
+
+auth:oauth2 {
+  grant_type: client_credentials
+  access_token_url: {{baseUrl}}/token
+  client_id: tienda
+  client_secret: {{clientSecret}}
+  scope: read
+  credentials_placement: body
+}

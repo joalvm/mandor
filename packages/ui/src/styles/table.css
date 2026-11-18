@@ -1,0 +1,190 @@
+/*
+ * La tabla única de la ventana. La tabla es una rejilla cuyas pistas escribe el componente en
+ * `--table-columns`; la cabecera y cada fila ponen sus celdas sobre esa misma rejilla
+ * (subgrid), así una columna mide lo mismo arriba que en la última fila, contenga lo que
+ * contenga. Las herramientas de la cabecera y las acciones de una fila son celdas montadas
+ * sobre el final de su fila, sin pista propia: ninguna columna queda vacía esperando un hover.
+ */
+
+[data-part='table'] {
+    --table-surface: var(--surface-app);
+
+    background: var(--table-surface);
+    border: 1px solid var(--border-chrome);
+    display: grid;
+    grid-auto-rows: max-content;
+    grid-template-columns: var(--table-columns);
+    max-height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+}
+
+/* Dentro de un diálogo la tabla está sobre la superficie del diálogo: de ella toman el color
+   las capas que tapan el final de una fila. */
+:where([role='dialog']) [data-part='table'] {
+    --table-surface: var(--surface-dialog);
+}
+
+[data-part='table'] > thead,
+[data-part='table'] > tbody,
+[data-part='table'] tr {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+}
+
+/* La cabecera se queda a la vista mientras las filas pasan por debajo. */
+[data-part='table'] > thead {
+    background: var(--table-surface);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Cabecera y filas, de una sola altura: la línea de debajo se suma a la fila, no se come su
+   alto. El tinte de la fila y el velo del puntero son variables para que la capa que tapa su
+   final los repita encima de la superficie. */
+[data-part='table'] tr {
+    --table-row-tint: transparent;
+    --table-row-veil: transparent;
+
+    background:
+        linear-gradient(var(--table-row-veil), var(--table-row-veil)), var(--table-row-tint);
+    border-bottom: 1px solid var(--border-subtle);
+    box-sizing: content-box;
+    min-height: var(--mandor-height-control);
+    position: relative;
+}
+
+[data-part='table'] > tbody > tr:last-child {
+    border-bottom: 0;
+}
+
+/* Con el puntero encima, la fila de una tabla que se lee lleva el velo sobre lo que ya muestra:
+   también la que se tiñe por su cuenta. La de una tabla de campos no se mueve: cada campo
+   responde al puntero por sí solo. */
+[data-part='table']:not([data-row-hover='off']) > tbody > tr:hover {
+    --table-row-tint: var(--surface-control-hover);
+    --table-row-veil: var(--surface-veil);
+}
+
+/* Cada celda lleva su separador a la izquierda desde que nace; el borde ocupa siempre su
+   sitio, transparente donde no se ve, para que el texto empiece igual en todas. Su aire es una
+   variable, y al final suma lo que la tapa: una tabla que la pinta cambia el aire, no la cuenta.
+   El aire de arriba y abajo separa de sus líneas un texto que ocupa varias. El color del
+   separador también es una variable: la tabla decide dónde se ve, y una celda que redibuja su
+   marco desde otra hoja lo lee en vez de pintarlo. */
+[data-part='table'] :is(th, td) {
+    --table-cell-pad: var(--mandor-pad-inline-control);
+    --table-cell-pad-block: var(--mandor-gap-tight);
+    --table-cell-rule: var(--border-subtle);
+
+    align-items: center;
+    border-left: 1px solid var(--table-cell-rule);
+    display: flex;
+    font-weight: inherit;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding-block: var(--table-cell-pad-block);
+    padding-inline: var(--table-cell-pad);
+    padding-inline-end: calc(var(--table-cell-pad) + var(--table-cell-covered, 0px));
+    text-align: start;
+}
+
+/* Sin separador al borde de la tabla, ni entre los controles del principio y la primera
+   columna: la casilla y el asa se leen unidos a la celda que siguen. */
+[data-part='table'] :is(th, td):first-child,
+[data-part='table'] :is(th, td)[data-lead],
+[data-part='table'] [data-lead] + :is(th, td) {
+    --table-cell-rule: transparent;
+}
+
+/* Una columna fija guarda un control: centrado, sin aire propio. */
+[data-part='table'] :is(th, td)[data-lead] {
+    --table-cell-pad: 0px;
+    --table-cell-pad-block: 0px;
+
+    justify-content: center;
+}
+
+/* Una celda que guarda un campo le cede su aire: el campo trae el suyo y la fila no crece. */
+[data-part='table'] td:has(> [data-part='input']) {
+    --table-cell-pad: 0px;
+    --table-cell-pad-block: 0px;
+}
+
+/* Una celda que cruza la tabla, de borde a borde. */
+[data-part='table'] [colspan] {
+    grid-column: 1 / -1;
+}
+
+[data-part='table'] [data-column] {
+    position: relative;
+}
+
+/* El borde de cada columna: una franja estrecha que se agarra para estirarla, con su línea
+   marcada mientras el puntero está encima. */
+[data-part='table-resize'] {
+    bottom: 0;
+    cursor: col-resize;
+    position: absolute;
+    right: calc(-1 * var(--mandor-gap-control));
+    top: 0;
+    width: calc(2 * var(--mandor-gap-control));
+    z-index: 1;
+}
+
+[data-part='table-resize']:hover {
+    background: linear-gradient(var(--border-strong), var(--border-strong)) center / 1px 100%
+        no-repeat;
+}
+
+/* Las herramientas de la cabecera y las acciones de una fila, sobre el final de su fila y del
+   color de la fila: lo que tapan no asoma por debajo. */
+[data-part='table'] [data-part='table-tools'],
+[data-part='table'] [data-part='table-row-actions'] {
+    background:
+        linear-gradient(var(--table-row-veil), var(--table-row-veil)),
+        linear-gradient(var(--table-row-tint), var(--table-row-tint)), var(--table-surface);
+    border-left-color: transparent;
+    bottom: 0;
+    gap: var(--mandor-gap-tight);
+    padding-block: 0;
+    padding-inline: var(--mandor-gap-tight);
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+/* Tapan la vista de la celda, no su clic: el hueco alrededor de los botones sigue siendo de ella. */
+[data-part='table'] [data-part='table-row-actions'] {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--mandor-duration-fast);
+}
+
+[data-part='table'] [data-part='table-row-actions'] > * {
+    pointer-events: auto;
+}
+
+/* A la vista mientras el puntero o el foco están en la fila, y mientras una de sus acciones
+   tiene abierta su capa: el foco se fue a ella, y sin su botón la capa no tendría ancla. */
+[data-part='table']
+    tr:is(:hover, :focus-within, :has([aria-expanded='true']))
+    > [data-part='table-row-actions'] {
+    opacity: 1;
+}
+
+/* Lo que queda debajo termina donde empieza lo que lo tapa: el nombre de la última columna,
+   junto a las herramientas; la celda que se escribe, junto a las acciones de su fila. Cada una
+   mide su ancho y lo deja en su tabla o en su fila. */
+[data-part='table'] [data-part='table-header-cell']:has(+ [data-part='table-tools']) {
+    --table-cell-covered: var(--table-tools-width, 0px);
+}
+
+[data-part='table']
+    tr:is(:focus-within, :has([aria-expanded='true']))
+    > :has(+ [data-part='table-row-actions']) {
+    --table-cell-covered: var(--table-row-actions-width, 0px);
+}

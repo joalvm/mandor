@@ -1,0 +1,32 @@
+.git
+.local-ci
+# Local only, as in CI: the rehearsal must pass without them.
+AGENTS.md
+CLAUDE.md
+.codebase-memory
+.agents
+.claude
+.codex
+.cursor
+.windsurf
+.continue
+.vscode
+.idea
+**/node_modules
+**/out
+**/dist
+**/release
+**/coverage
+**/.turbo
+**/test-results
+**/playwright-report
+**/.env
+**/.env.*
+**/.npmrc
+**/*.log
+**/*.pem
+**/*.key
+# The self-signed pair of the transports' tests is fixture material, not a secret: it signs
+# nothing and only answers on 127.0.0.1 inside the test run.
+!packages/transport-sync/tests/support/tls/*.pem
+!packages/transport-async/tests/support/tls/*.pem

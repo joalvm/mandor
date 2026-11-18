@@ -1,0 +1,55 @@
+# The steps of a window: selected apps, opened on the system of the runner, on the build the Linux
+# verification made and kept. Every system runs the same steps, so they are written once.
+name: e2e
+description: Opens the selected apps on the build of the run and drives them end to end.
+
+inputs:
+    app:
+        description: Which app to open; both, async or sync.
+        default: both
+
+runs:
+    using: composite
+    steps:
+        - uses: ./.github/actions/unscanned-workspace
+        - uses: actions/setup-node@v7
+          with:
+              node-version: 26
+              cache: npm
+        # Validate before installing: an unknown selection must fail, not skip every test.
+        - shell: bash
+          env:
+              MANDOR_E2E_APP: ${{ inputs.app }}
+          run: |
+              node -e "
+              if (!['both', 'async', 'sync'].includes(process.env.MANDOR_E2E_APP)) {
+                  console.error('Unknown e2e app:', process.env.MANDOR_E2E_APP);
+                  process.exit(1);
+              }
+              "
+        # Both workspaces install the same Electron dist; serialize their lifecycle scripts.
+        - shell: bash
+          run: npm ci --foreground-scripts
+        - uses: actions/download-artifact@v8
+          with:
+              name: build
+              path: apps
+        - if: runner.os == 'Linux' && (inputs.app == 'both' || inputs.app == 'async')
+          shell: bash
+          run: xvfb-run -a npm run e2e -w apps/async
+        - if: runner.os == 'Linux' && (inputs.app == 'both' || inputs.app == 'sync')
+          shell: bash
+          run: xvfb-run -a npm run e2e -w apps/sync
+        - if: runner.os != 'Linux' && (inputs.app == 'both' || inputs.app == 'async')
+          shell: bash
+          run: npm run e2e -w apps/async
+        - if: runner.os != 'Linux' && (inputs.app == 'both' || inputs.app == 'sync')
+          shell: bash
+          run: npm run e2e -w apps/sync
+        # A run that fails on one operating system and passes on the others is only diagnosable
+        # from the page Playwright saved beside the failure. It goes to the log, where the failing
+        # job already is, and not to an artifact someone has to download.
+        - if: failure()
+          shell: bash
+          run: |
+              find apps/async/test-results apps/sync/test-results -name 'error-context.md' -print -exec cat {} + 2>/dev/null || true

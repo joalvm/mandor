@@ -1,0 +1,28 @@
+{
+    "name": "@mandor/exchange",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "@mandor/i18n": "0.0.0",
+        "@mandor/icons": "0.0.0",
+        "@mandor/interop-core": "0.0.0",
+        "@mandor/ipc": "0.0.0",
+        "@mandor/schema": "0.0.0",
+        "@mandor/shell": "0.0.0",
+        "@mandor/ui": "0.0.0",
+        "react": "19.3.1"
+    },
+    "devDependencies": {
+        "@testing-library/react": "16.3.3",
+        "@types/node": "26.6.6",
+        "@types/react": "19.3.0",
+        "@types/react-dom": "19.3.0"
+    }
+}

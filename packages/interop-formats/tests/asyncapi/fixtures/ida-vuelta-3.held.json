@@ -1,0 +1,65 @@
+{
+    "name": "Almacen",
+    "sourceId": "",
+    "servers": [
+        {
+            "name": "principal",
+            "url": "ws://almacen.ejemplo.com:8080/v1",
+            "protocol": "ws",
+            "security": [],
+            "extras": {}
+        }
+    ],
+    "security": {},
+    "channels": [
+        {
+            "name": "recibos/salientes",
+            "address": "recibos/salientes",
+            "extras": {}
+        },
+        {
+            "name": "avisos/salientes",
+            "address": "avisos/salientes",
+            "extras": {}
+        }
+    ],
+    "operations": [
+        {
+            "name": "recibos/salientes",
+            "channel": "recibos/salientes",
+            "direction": "outgoing",
+            "message": {
+                "name": "recibo",
+                "payload": "{\"id\":\"2\",\"total\":9.5}",
+                "payloadType": "json",
+                "payloadSchema": "recibo",
+                "examples": ["{\"id\":\"2\",\"total\":9.5}"],
+                "extras": {}
+            },
+            "security": [],
+            "extras": {}
+        },
+        {
+            "name": "avisos/salientes",
+            "channel": "avisos/salientes",
+            "direction": "outgoing",
+            "message": {
+                "name": "recibo",
+                "payload": "{\"id\":\"2\",\"total\":9.5}",
+                "payloadType": "json",
+                "payloadSchema": "recibo",
+                "examples": ["{\"id\":\"2\",\"total\":9.5}"],
+                "extras": {}
+            },
+            "security": [],
+            "extras": {}
+        }
+    ],
+    "payloadSchemas": {
+        "recibo": {
+            "text": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"total\": {\n      \"type\": \"number\"\n    }\n  }\n}",
+            "extras": {}
+        }
+    },
+    "extras": {}
+}

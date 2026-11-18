@@ -1,0 +1,9 @@
+name: Prod
+variables:
+    - name: baseUrl
+      value: https://api.tienda.test
+    - name: token
+      secret: true
+    - name: debug
+      value: '1'
+      disabled: true

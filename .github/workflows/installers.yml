@@ -1,0 +1,60 @@
+name: installers
+
+# Builds every installer of both apps on the system that makes it, and publishes nothing: no
+# release, no tag, no artifact. A red job is a packaging config that broke before anyone tried to
+# ship it.
+#
+# A matrix of six builds is the most expensive thing a pull request can start (a minute of macOS
+# is billed as ten), and nothing in the code of an app changes how it is packaged. So it runs only
+# for a change that can: the builder configs, the image the local rehearsal builds on, and this
+# workflow.
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - apps/*/electron-builder.yml
+            - tools/ci/Dockerfile
+            - .github/workflows/installers.yml
+
+permissions:
+    contents: read
+
+concurrency:
+    group: installers-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    installers:
+        name: installers (${{ matrix.app }}, ${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+                app: [async, sync]
+        env:
+            TURBO_TELEMETRY_DISABLED: 1
+            # No certificates in CI: without this, electron-builder searches the macOS keychain.
+            CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/unscanned-workspace
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            # Both workspaces install the same Electron dist; serialize their lifecycle scripts.
+            - run: npm ci --foreground-scripts
+            - run: npm run dist -w apps/${{ matrix.app }} -- --publish never
+            # `ls` fails when its glob matches nothing: a target that wrote no file turns the job
+            # red even when electron-builder itself exited with 0.
+            - if: runner.os == 'Linux'
+              shell: bash
+              run: ls -l apps/${{ matrix.app }}/dist/*.AppImage apps/${{ matrix.app }}/dist/*.deb
+            - if: runner.os == 'Windows'
+              shell: bash
+              run: ls -l apps/${{ matrix.app }}/dist/*.exe
+            - if: runner.os == 'macOS'
+              shell: bash
+              run: ls -l apps/${{ matrix.app }}/dist/*.dmg

@@ -1,0 +1,8 @@
+/*
+ * Inside an editor a variable is set apart by its slant alone: it keeps the colour of the text it
+ * is written in, so the syntax reads as Monaco paints it. A field outside an editor paints it in
+ * its own tone.
+ */
+.monaco-editor .mandor-variable {
+    font-style: italic;
+}

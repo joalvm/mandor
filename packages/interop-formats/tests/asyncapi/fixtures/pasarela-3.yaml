@@ -1,0 +1,83 @@
+asyncapi: 3.0.0
+info:
+    title: Pasarela
+    version: '1.0.0'
+    description: Recibe pedidos y devuelve recibos.
+servers:
+    produccion:
+        host: pasarela.ejemplo.com:443
+        pathname: /v1
+        protocol: wss
+        security:
+            - $ref: '#/components/securitySchemes/token-portador'
+        bindings:
+            ws:
+                bindingVersion: 0.1.0
+                query:
+                    token: '{{token}}'
+x-zona: eu-oeste
+channels:
+    pedidosEntrantes:
+        address: pedidos/entrantes
+        description: Pedidos que entran a la pasarela
+        messages:
+            pedido:
+                payload:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+    recibosSalientes:
+        address: recibos/salientes
+        messages:
+            recibo:
+                $ref: '#/components/messages/reciboEmitido'
+    avisosSalientes:
+        address: avisos/salientes
+        messages:
+            aviso:
+                $ref: '#/components/messages/reciboEmitido'
+operations:
+    registrarPedido:
+        action: send
+        channel:
+            $ref: '#/channels/pedidosEntrantes'
+        tags:
+            - name: pedidos
+        messages:
+            - $ref: '#/channels/pedidosEntrantes/messages/pedido'
+    recibirRecibo:
+        action: receive
+        channel:
+            $ref: '#/channels/recibosSalientes'
+        tags:
+            - name: recibos
+        messages:
+            - $ref: '#/channels/recibosSalientes/messages/recibo'
+    notificarRecibo:
+        action: receive
+        channel:
+            $ref: '#/channels/avisosSalientes'
+        tags:
+            - name: avisos
+        messages:
+            - $ref: '#/channels/avisosSalientes/messages/aviso'
+components:
+    messages:
+        reciboEmitido:
+            payload:
+                type: object
+                properties:
+                    id:
+                        type: string
+                    total:
+                        type: number
+            examples:
+                - payload:
+                      id: '1234'
+                      total: 42.5
+    securitySchemes:
+        token-portador:
+            type: http
+            scheme: bearer
+            bearerFormat: jwt

@@ -1,0 +1,10 @@
+{
+    "statusDownloading": "Descargando actualización {{progress}} %",
+    "statusAvailable": "Versión nueva {{version}}",
+    "download": "Descargar",
+    "restart": "Reiniciar para actualizar",
+    "takeIt": "Obtener",
+    "toastReadyTitle": "Hay una versión nueva lista",
+    "toastReadyDetail": "La versión {{version}} se instala al reiniciar.",
+    "toastRestart": "Reiniciar"
+}

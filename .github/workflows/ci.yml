@@ -1,0 +1,253 @@
+# The gate of a pull request: the five checks `main` requires besides `contribution rules`.
+#
+# Only pull_request: main requires branches to be up to date before merging, so the tree tested
+# here is the exact tree the squash lands on main. A push run on main would test it a second time.
+#
+# A minute of Windows is billed as two and one of macOS as ten, and most failures fail on every
+# system alike. Linux checks run beside the tests and build, on independent runners. The
+# protected verify check joins both results before another system starts, each with the part
+# its system can change, on the build Linux made.
+#
+# Every check is a job of its own and not a cell of a matrix. A job its condition skips reports
+# as passed under its name, but a matrix skipped before it expands reports under the name as
+# written, expression included, and the check `main` waits for never arrives.
+#
+# A fix that only touches e2e tests does not repeat what Windows and macOS already proved on an
+# earlier commit of the pull request: `tools/ci/reused-checks.mjs`.
+name: ci
+
+on:
+    pull_request:
+        branches: [main]
+
+permissions:
+    # What the earlier runs of the pull request left green.
+    actions: read
+    contents: read
+    # The labels of the pull request, read when the run starts and not when it was pushed.
+    pull-requests: read
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+    checks-linux:
+        name: checks (ubuntu-latest)
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        env:
+            # The lint of the whole tree pushes past the heap Node sizes on its own on a runner.
+            NODE_OPTIONS: --max-old-space-size=4096
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            - run: npm ci --ignore-scripts
+            - run: npm run verify:checks
+
+    tests-linux:
+        name: tests and build (ubuntu-latest)
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        outputs:
+            e2e: ${{ steps.scope.outputs.e2e }}
+            macos: ${{ steps.scope.outputs.macos }}
+            verify-windows: ${{ steps.scope.outputs.verify-windows }}
+            e2e-windows-async: ${{ steps.scope.outputs.e2e-windows-async }}
+            e2e-windows-sync: ${{ steps.scope.outputs.e2e-windows-sync }}
+            e2e-macos-async: ${{ steps.scope.outputs.e2e-macos-async }}
+            e2e-macos-sync: ${{ steps.scope.outputs.e2e-macos-sync }}
+        env:
+            NODE_OPTIONS: --max-old-space-size=4096
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  # The scope reads the range against the base branch, and a shallow checkout has
+                  # no base to compare against.
+                  fetch-depth: 0
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            # Which windows the change has to open. The labels come from the pull request as it
+            # is now: the ones in the event are the ones it had when it was pushed, and a rerun
+            # reads the same event again.
+            - id: scope
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  HEAD_REF: ${{ github.head_ref }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+                  PR: ${{ github.event.pull_request.number }}
+                  RUN_ID: ${{ github.run_id }}
+                  QA_BASE: origin/${{ github.base_ref }}
+              run: QA_LABELS="$(gh pr view "$PR" --json labels --jq '[.labels[].name]')" node tools/ci/changed-scope.mjs
+            # Verification never starts an app, so it skips the scripts that download Electron.
+            - run: npm ci --ignore-scripts
+            - run: npm run verify:tests-build
+            # The build is plain JavaScript, the same on every system: made once, here.
+            - if: steps.scope.outputs.e2e == 'true'
+              uses: actions/upload-artifact@v7
+              with:
+                  name: build
+                  path: apps/*/out
+                  if-no-files-found: error
+                  retention-days: 1
+
+    # Keep the protected check name stable. A skipped or cancelled prerequisite is not success;
+    # always() ensures its failure is reported instead of making this required check skip too.
+    verify-linux:
+        name: verify (ubuntu-latest)
+        needs: [checks-linux, tests-linux]
+        if: always()
+        runs-on: ubuntu-latest
+        timeout-minutes: 2
+        outputs:
+            e2e: ${{ needs.tests-linux.outputs.e2e }}
+            macos: ${{ needs.tests-linux.outputs.macos }}
+            verify-windows: ${{ needs.tests-linux.outputs.verify-windows }}
+            e2e-windows-async: ${{ needs.tests-linux.outputs.e2e-windows-async }}
+            e2e-windows-sync: ${{ needs.tests-linux.outputs.e2e-windows-sync }}
+            e2e-macos-async: ${{ needs.tests-linux.outputs.e2e-macos-async }}
+            e2e-macos-sync: ${{ needs.tests-linux.outputs.e2e-macos-sync }}
+        steps:
+            - env:
+                  CHECKS_RESULT: ${{ needs.checks-linux.result }}
+                  TESTS_RESULT: ${{ needs.tests-linux.result }}
+              run: |
+                  node -e "
+                  const results = { checks: process.env.CHECKS_RESULT, tests: process.env.TESTS_RESULT };
+
+                  if (Object.values(results).some((result) => result !== 'success')) {
+                      console.error('Linux verification did not pass:', results);
+                      process.exit(1);
+                  }
+                  "
+
+    # What Windows can change is what touches its disk, its paths and its processes: the node
+    # tests. The static checks, the window tests and coverage answer the same on every system.
+    verify-windows:
+        name: verify (windows-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.verify-windows == 'true'
+        runs-on: windows-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/unscanned-workspace
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            - run: npm ci --ignore-scripts
+            - run: npm run test:node
+
+    e2e-linux:
+        name: e2e (ubuntu-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.e2e == 'true'
+        runs-on: ubuntu-latest
+        # Both apps run back to back on one machine: their suites take some thirteen minutes.
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/e2e
+
+    # Separate machines give both apps their own focus, clipboard and Electron processes.
+    e2e-windows-async:
+        name: e2e async (windows-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.e2e-windows-async == 'true'
+        runs-on: windows-latest
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/e2e
+              with:
+                  app: async
+
+    e2e-windows-sync:
+        name: e2e sync (windows-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.e2e-windows-sync == 'true'
+        runs-on: windows-latest
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/e2e
+              with:
+                  app: sync
+
+    e2e-windows:
+        name: e2e (windows-latest)
+        needs: [verify-linux, e2e-windows-async, e2e-windows-sync]
+        if: always() && needs.verify-linux.result == 'success' && needs.verify-linux.outputs.e2e == 'true'
+        runs-on: ubuntu-latest
+        timeout-minutes: 2
+        steps:
+            - env:
+                  # An app left out because an earlier run proved it counts as passed.
+                  ASYNC_RESULT: ${{ needs.verify-linux.outputs.e2e-windows-async == 'true' && needs.e2e-windows-async.result || 'success' }}
+                  SYNC_RESULT: ${{ needs.verify-linux.outputs.e2e-windows-sync == 'true' && needs.e2e-windows-sync.result || 'success' }}
+              run: |
+                  node -e "
+                  const results = { async: process.env.ASYNC_RESULT, sync: process.env.SYNC_RESULT };
+
+                  if (Object.values(results).some((result) => result !== 'success')) {
+                      console.error('Windows e2e did not pass:', results);
+                      process.exit(1);
+                  }
+                  "
+
+    # Only where the app meets the system, or with the label `e2e:macos`, and not again once an
+    # earlier commit proved it: the rule is in `tools/ci/changed-scope.mjs`. Each app on its own
+    # runner: both in a row outlast the common ceiling on a hosted Mac.
+    e2e-macos-async:
+        name: e2e async (macos-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.e2e-macos-async == 'true'
+        runs-on: macos-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/e2e
+              with:
+                  app: async
+
+    e2e-macos-sync:
+        name: e2e sync (macos-latest)
+        needs: verify-linux
+        if: needs.verify-linux.outputs.e2e-macos-sync == 'true'
+        runs-on: macos-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/e2e
+              with:
+                  app: sync
+
+    e2e-macos:
+        name: e2e (macos-latest)
+        needs: [verify-linux, e2e-macos-async, e2e-macos-sync]
+        if: always() && needs.verify-linux.result == 'success' && needs.verify-linux.outputs.macos == 'true'
+        runs-on: ubuntu-latest
+        timeout-minutes: 2
+        steps:
+            - env:
+                  # An app left out because an earlier run proved it counts as passed.
+                  ASYNC_RESULT: ${{ needs.verify-linux.outputs.e2e-macos-async == 'true' && needs.e2e-macos-async.result || 'success' }}
+                  SYNC_RESULT: ${{ needs.verify-linux.outputs.e2e-macos-sync == 'true' && needs.e2e-macos-sync.result || 'success' }}
+              run: |
+                  node -e "
+                  const results = { async: process.env.ASYNC_RESULT, sync: process.env.SYNC_RESULT };
+
+                  if (Object.values(results).some((result) => result !== 'success')) {
+                      console.error('macOS e2e did not pass:', results);
+                      process.exit(1);
+                  }
+                  "

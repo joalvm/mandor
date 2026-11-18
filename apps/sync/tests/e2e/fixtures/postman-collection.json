@@ -1,0 +1,100 @@
+{
+    "info": {
+        "_postman_id": "44444444-aaaa-bbbb-cccc-000000000004",
+        "name": "Demo API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base",
+            "value": "http://127.0.0.1:1"
+        }
+    ],
+    "item": [
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "Get user",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": ["pm.variables.set('x', 1);"]
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('ok', function () {",
+                                    "  pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base}}/users/:id",
+                            "host": ["{{base}}"],
+                            "path": ["users", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "7"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Legacy",
+                    "request": {
+                        "method": "GET",
+                        "auth": {
+                            "type": "digest",
+                            "digest": [
+                                {
+                                    "key": "username",
+                                    "value": "ana",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base}}/legacy"
+                        }
+                    }
+                },
+                {
+                    "name": "Admin",
+                    "item": [
+                        {
+                            "name": "List admins",
+                            "request": {
+                                "method": "GET",
+                                "url": {
+                                    "raw": "{{base}}/admins"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

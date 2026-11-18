@@ -1,0 +1,44 @@
+meta {
+  name: Pedidos en vivo
+  type: ws
+  seq: 5
+  tags: [
+    live
+  ]
+}
+
+ws {
+  url: wss://api.tienda.test/pedidos?sala=1
+  auth: bearer
+}
+
+headers {
+  X-Token: {{token}}
+  Sec-WebSocket-Protocol: json, v2
+  ~X-Off: 1
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:ws {
+  name: Saludo
+  type: json
+  selected: true
+  content: '''
+    {"op":"hello"}
+  '''
+}
+
+body:ws {
+  name: Ping
+  type: text
+  content: '''
+    ping
+  '''
+}
+
+docs {
+  Canal de pedidos.
+}

@@ -1,0 +1,22 @@
+{
+    "button": "Cookies",
+    "cancel": "Discard change",
+    "clear": "Empty jar…",
+    "clearBody": "Every cookie kept for this environment goes. This cannot be undone.",
+    "clearCancel": "Keep",
+    "clearConfirm": "Empty jar",
+    "clearTitle": "Empty the jar?",
+    "close": "Close",
+    "colActions": "Actions",
+    "colDomain": "Domain",
+    "colName": "Name",
+    "colValue": "Value",
+    "copy": "Copy value",
+    "delete": "Delete cookie",
+    "edit": "Edit value",
+    "emptyBody": "A response that sets a cookie fills this jar.",
+    "emptyTitle": "No cookies",
+    "save": "Save value",
+    "title": "Cookies",
+    "valueOf": "Value of {{name}}"
+}

@@ -1,0 +1,73 @@
+appId: com.mandor.sync
+productName: Mandor Request
+executableName: mandor-request
+artifactName: Mandor-Request-${version}-${os}-${arch}.${ext}
+asar: true
+npmRebuild: false
+
+directories:
+    buildResources: resources
+    output: dist
+
+files:
+    - out/**
+    - package.json
+    - resources/icon.png
+    - '!out/**/*.map'
+
+extraResources:
+    - from: ../../LICENSE
+      to: licenses/LICENSE
+    - from: ../../packages/icons/NOTICE.md
+      to: licenses/icons-NOTICE.md
+    - from: ../../packages/icons/licenses
+      to: licenses/icons
+
+electronFuses:
+    runAsNode: false
+    enableCookieEncryption: true
+    enableNodeOptionsEnvironmentVariable: false
+    enableNodeCliInspectArguments: false
+    enableEmbeddedAsarIntegrityValidation: true
+    onlyLoadAppFromAsar: true
+    loadBrowserProcessSpecificV8Snapshot: false
+    grantFileProtocolExtraPrivileges: false
+
+win:
+    icon: resources/icon.ico
+    target:
+        - target: nsis
+          arch:
+              - x64
+              - arm64
+
+nsis:
+    oneClick: false
+    allowToChangeInstallationDirectory: true
+    deleteAppDataOnUninstall: false
+    installerIcon: resources/icon.ico
+    uninstallerIcon: resources/icon.ico
+
+mac:
+    icon: resources/icon.png
+    category: public.app-category.developer-tools
+    target:
+        - target: dmg
+          arch:
+              - x64
+              - arm64
+
+linux:
+    icon: resources/icon.png
+    category: Development
+    maintainer: Alejandro Vilchez <joalvm@gmail.com>
+    syncDesktopName: true
+    target:
+        - target: AppImage
+          arch:
+              - x64
+              - arm64
+        - target: deb
+          arch:
+              - x64
+              - arm64

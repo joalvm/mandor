@@ -1,0 +1,228 @@
+@import '@fontsource-variable/inter/wght.css' layer(theme);
+@import '@fontsource-variable/mona-sans/wght.css' layer(theme);
+@import '@fontsource-variable/mona-sans/wght-italic.css' layer(theme);
+@import '@fontsource/ibm-plex-mono/latin-400.css' layer(theme);
+@import '@fontsource/ibm-plex-mono/latin-400-italic.css' layer(theme);
+@import '@fontsource/ibm-plex-mono/latin-500.css' layer(theme);
+@import '@fontsource/ibm-plex-mono/latin-600.css' layer(theme);
+@import 'tailwindcss' source(none);
+@import './primitives.css' layer(theme);
+@import './semantic.css' layer(theme);
+@import './semantic-dark.css' layer(theme);
+@import './semantic-contrast.css' layer(theme);
+@import './scales.css' layer(theme);
+@import './base.css' layer(base);
+@import './runtime.css' layer(components);
+@import './table.css' layer(components);
+/* Unlayered: the border colour the ring replaces is a utility, and no layered rule beats it. */
+@import './focus.css';
+@import './markdown.css';
+@import './editor.css';
+
+@source '../../../';
+@source '../../../../apps';
+
+@theme inline {
+    --color-*: initial;
+    --font-*: initial;
+    --color-surface-app: var(--surface-app);
+    --color-surface-panel: var(--surface-panel);
+    --color-surface-sunken: var(--surface-sunken);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-dialog: var(--surface-dialog);
+    --color-surface-dialog-nav: var(--surface-dialog-nav);
+    --color-surface-dialog-nav-active: var(--surface-dialog-nav-active);
+    --color-surface-control: var(--surface-control);
+    --color-surface-control-hover: var(--surface-control-hover);
+    --color-surface-control-active: var(--surface-control-active);
+    --color-surface-system-row: var(--surface-system-row);
+    --color-surface-tray: var(--surface-tray);
+    --color-surface-selected: var(--surface-selected);
+    --color-surface-veil: var(--surface-veil);
+    --color-surface-chrome-control: var(--surface-chrome-control);
+    --color-surface-chrome-control-hover: var(--surface-chrome-control-hover);
+    --color-surface-tab-active: var(--surface-tab-active);
+    --color-surface-accent-tint: var(--surface-accent-tint);
+    --color-surface-success-tint: var(--surface-success-tint);
+    --color-surface-warning-tint: var(--surface-warning-tint);
+    --color-surface-error-tint: var(--surface-error-tint);
+    --color-surface-info-tint: var(--surface-info-tint);
+    --color-surface-iris-tint: var(--surface-iris-tint);
+    --color-surface-selection: var(--surface-selection);
+    --color-surface-active-line: var(--surface-active-line);
+    --color-surface-overlay: var(--surface-overlay);
+    --color-surface-window-close-hover: var(--surface-window-close-hover);
+    --color-surface-window-close-active: var(--surface-window-close-active);
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-disabled: var(--text-disabled);
+    --color-text-accent: var(--text-accent);
+    --color-text-variable: var(--text-variable);
+    --color-text-success: var(--text-success);
+    --color-text-warning: var(--text-warning);
+    --color-text-error: var(--text-error);
+    --color-text-info: var(--text-info);
+    --color-text-iris: var(--text-iris);
+    --color-text-pink: var(--text-pink);
+    --color-text-method-get: var(--text-method-get);
+    --color-text-method-post: var(--text-method-post);
+    --color-text-method-put: var(--text-method-put);
+    --color-text-method-patch: var(--text-method-patch);
+    --color-text-method-delete: var(--text-method-delete);
+    --color-text-method-head: var(--text-method-head);
+    --color-text-method-options: var(--text-method-options);
+    --color-text-on-solid-accent: var(--text-on-solid-accent);
+    --color-text-on-solid-status: var(--text-on-solid-status);
+    --color-text-on-window-close: var(--text-on-window-close);
+    --color-text-on-solid-danger: var(--text-on-solid-danger);
+    --color-border-subtle: var(--border-subtle);
+    --color-border-chrome: var(--border-chrome);
+    --color-border-strong: var(--border-strong);
+    --color-border-hover: var(--border-hover);
+    --color-border-control: var(--border-control);
+    --color-border-control-hover: var(--border-control-hover);
+    --color-border-error: var(--border-error);
+    --color-solid-accent: var(--solid-accent);
+    --color-solid-accent-hover: var(--solid-accent-hover);
+    --color-solid-accent-active: var(--solid-accent-active);
+    --color-solid-success: var(--solid-success);
+    --color-solid-warning: var(--solid-warning);
+    --color-solid-error: var(--solid-error);
+    --color-solid-info: var(--solid-info);
+    --color-solid-danger: var(--solid-danger);
+    --color-solid-danger-hover: var(--solid-danger-hover);
+    --color-solid-danger-active: var(--solid-danger-active);
+    --color-focus-ring: var(--focus-ring);
+    --font-ui: var(--mandor-font-ui);
+    --font-mono: var(--mandor-font-mono);
+    --text-3xs: var(--mandor-text-3xs-size);
+    --text-3xs--line-height: var(--mandor-text-3xs-line);
+    --text-3xs--letter-spacing: var(--mandor-text-3xs-tracking);
+    --text-2xs: var(--mandor-text-2xs-size);
+    --text-2xs--line-height: var(--mandor-text-2xs-line);
+    --text-2xs--letter-spacing: var(--mandor-text-2xs-tracking);
+    --text-xs: var(--mandor-text-xs-size);
+    --text-xs--line-height: var(--mandor-text-xs-line);
+    --text-xs--letter-spacing: var(--mandor-text-xs-tracking);
+    --text-sm: var(--mandor-text-sm-size);
+    --text-sm--line-height: var(--mandor-text-sm-line);
+    --text-sm--letter-spacing: var(--mandor-text-sm-tracking);
+    --text-md: var(--mandor-text-md-size);
+    --text-md--line-height: var(--mandor-text-md-line);
+    --text-md--letter-spacing: var(--mandor-text-md-tracking);
+    --text-lg: var(--mandor-text-lg-size);
+    --text-lg--line-height: var(--mandor-text-lg-line);
+    --text-lg--letter-spacing: var(--mandor-text-lg-tracking);
+    --text-xl: var(--mandor-text-xl-size);
+    --text-xl--line-height: var(--mandor-text-xl-line);
+    --text-xl--letter-spacing: var(--mandor-text-xl-tracking);
+    --text-code: var(--mandor-text-code-size);
+    --text-code--line-height: var(--mandor-text-code-line);
+    --text-code--letter-spacing: var(--mandor-text-code-tracking);
+    --font-weight-regular: var(--mandor-weight-regular);
+    --font-weight-semibold: var(--mandor-weight-semibold);
+    --spacing: var(--mandor-space-base);
+    --spacing-tab: var(--mandor-height-tab);
+    --spacing-row-xs: var(--mandor-height-row-xs);
+    --spacing-control-xs: var(--mandor-height-control-xs);
+    --spacing-control-sm: var(--mandor-height-control-sm);
+    --spacing-field: var(--mandor-height-field);
+    --spacing-row: var(--mandor-height-row);
+    --spacing-row-pair: var(--mandor-height-row-pair);
+    --spacing-control: var(--mandor-height-control);
+    --spacing-section: var(--mandor-height-section);
+    --spacing-header: var(--mandor-height-header);
+    --spacing-titlebar: var(--mandor-height-titlebar);
+    --spacing-statusbar: var(--mandor-height-statusbar);
+    --spacing-sidebar: var(--mandor-width-sidebar);
+    --spacing-settings-nav: var(--mandor-width-settings-nav);
+    --spacing-form: var(--mandor-width-form);
+    --spacing-toggle: var(--mandor-width-toggle);
+    --spacing-pad-toggle: var(--mandor-pad-toggle);
+    --grid-template-columns-settings: var(--mandor-width-settings-nav) minmax(0, 1fr);
+    --grid-template-columns-setting-row: minmax(0, 1fr) var(--mandor-width-setting-control);
+    --grid-template-columns-form-row: var(--mandor-width-form-label) minmax(0, 1fr);
+    --spacing-pad-control: var(--mandor-pad-inline-control);
+    --spacing-pad-panel: var(--mandor-pad-inline-panel);
+    --spacing-pad-dialog: var(--mandor-pad-inline-dialog);
+    --spacing-indent-tree: var(--mandor-indent-tree);
+    --spacing-gap-tight: var(--mandor-gap-tight);
+    --spacing-gap-icon-text: var(--mandor-gap-icon-text);
+    --spacing-gap-control: var(--mandor-gap-control);
+    --spacing-gap-group: var(--mandor-gap-group);
+    --spacing-gap-section: var(--mandor-gap-section);
+    --spacing-icon-sm: var(--mandor-icon-sm);
+    --spacing-icon-md: var(--mandor-icon-md);
+    --spacing-icon-lg: var(--mandor-icon-lg);
+    --radius-none: var(--mandor-radius-none);
+    --radius-sm: var(--mandor-radius-sm);
+    --radius-md: var(--mandor-radius-md);
+    --radius-lg: var(--mandor-radius-lg);
+    --radius-xl: var(--mandor-radius-xl);
+    --radius-full: var(--mandor-radius-full);
+    --shadow-none: var(--mandor-shadow-none);
+    --shadow-popover: var(--mandor-shadow-popover);
+    --shadow-dialog: var(--mandor-shadow-dialog);
+    --shadow-drag: var(--mandor-shadow-drag);
+    --ease-out: var(--mandor-ease-out);
+    --ease-in: var(--mandor-ease-in);
+}
+
+@utility tabular {
+    font-variant-numeric: var(--mandor-numeric-tabular);
+}
+
+/* The pointer over a thing: a faint veil over whatever it shows, never a fill of its own. Bare,
+   the thing takes a tint; selected or open, its fill goes a step deeper and the pointer is seen
+   on it too. */
+@utility veil {
+    background-image: linear-gradient(var(--surface-veil), var(--surface-veil));
+}
+
+@utility duration-fast {
+    transition-duration: var(--mandor-duration-fast);
+}
+
+@utility duration-base {
+    transition-duration: var(--mandor-duration-base);
+}
+
+@utility duration-slow {
+    transition-duration: var(--mandor-duration-slow);
+}
+
+@utility z-base {
+    z-index: var(--mandor-z-base);
+}
+
+@utility z-sticky {
+    z-index: var(--mandor-z-sticky);
+}
+
+@utility z-splitter {
+    z-index: var(--mandor-z-splitter);
+}
+
+@utility z-dropdown {
+    z-index: var(--mandor-z-dropdown);
+}
+
+@utility z-popover {
+    z-index: var(--mandor-z-popover);
+}
+
+@utility z-tooltip {
+    z-index: var(--mandor-z-tooltip);
+}
+
+@utility z-dialog {
+    z-index: var(--mandor-z-dialog);
+}
+
+@utility z-toast {
+    z-index: var(--mandor-z-toast);
+}
+
+@utility z-drag {
+    z-index: var(--mandor-z-drag);
+}

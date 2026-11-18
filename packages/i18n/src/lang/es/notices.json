@@ -1,0 +1,18 @@
+{
+    "bell": "Avisos",
+    "bellUnread": "Avisos, {{count}} sin leer",
+    "clearAll": "Borrar todos",
+    "dismiss": "Borrar aviso",
+    "emptyDescription": "Los errores y las advertencias de esta sesión aparecen aquí.",
+    "emptyTitle": "Sin avisos",
+    "files-unreadable-unnamed_one": "{{count}} archivo no se pudo leer",
+    "files-unreadable-unnamed_other": "{{count}} archivos no se pudieron leer",
+    "files-unreadable_one": "{{count}} archivo no se pudo leer: {{names}}",
+    "files-unreadable_other": "{{count}} archivos no se pudieron leer: {{names}}",
+    "keychain-missing": "Este sistema no tiene llavero: las contraseñas y los tokens duran hasta cerrar Mandor. Instala GNOME Keyring o KWallet para conservarlos",
+    "main-fault": "Algo falló dentro de la app",
+    "relaunch": "Reiniciar",
+    "title": "Avisos",
+    "update-failed": "No se pudo buscar la actualización",
+    "window-restarted": "La ventana se reinició"
+}

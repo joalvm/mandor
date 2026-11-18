@@ -1,0 +1,22 @@
+{
+    "name": "@mandor/script",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./engine": "./src/engine/new-engine.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "@jitl/quickjs-singlefile-cjs-release-sync": "0.32.0",
+        "@mandor/schema": "0.0.0",
+        "quickjs-emscripten-core": "0.32.0",
+        "zod": "4.6.7"
+    },
+    "devDependencies": {
+        "@types/node": "26.6.6"
+    }
+}

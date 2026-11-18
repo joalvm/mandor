@@ -1,0 +1,8 @@
+curl 'https://api.example.test/v1/items?limit=10&sort=name' \
+  -H 'accept: application/json, text/plain, */*' \
+  -H 'accept-language: en-US,en;q=0.9' \
+  -H 'authorization: Bearer eyJhbGciOi.payload.sig' \
+  -H 'content-type: application/json' \
+  -b 'session=abc123; theme=dark' \
+  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36' \
+  --data-raw $'{"title":"it\'s a \\"test\\"","note":"line1\\nline2"}'

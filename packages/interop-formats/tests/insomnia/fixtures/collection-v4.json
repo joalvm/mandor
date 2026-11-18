@@ -1,0 +1,117 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2026-03-02T09:30:00.000Z",
+    "__export_source": "insomnia.desktop.app:v10.3.0",
+    "resources": [
+        {
+            "_id": "wrk_tienda",
+            "_type": "workspace",
+            "parentId": null,
+            "name": "Tienda de Mascotas",
+            "description": "La tienda, de punta a punta."
+        },
+        {
+            "_id": "env_base",
+            "_type": "environment",
+            "parentId": "wrk_tienda",
+            "name": "Base Environment",
+            "metaSortKey": 1,
+            "data": {
+                "base": "https://api.test",
+                "retries": 3,
+                "verbose": true,
+                "owner": "{{ _.base }}/owner",
+                "bad name": "x",
+                "limits": { "page": 20 }
+            }
+        },
+        {
+            "_id": "env_prod",
+            "_type": "environment",
+            "parentId": "env_base",
+            "name": "Prod",
+            "metaSortKey": 2,
+            "data": { "base": "https://prod.test" }
+        },
+        {
+            "_id": "env_staging",
+            "_type": "environment",
+            "parentId": "env_base",
+            "name": "Staging",
+            "metaSortKey": 3,
+            "data": { "base": "https://staging.test" }
+        },
+        {
+            "_id": "fld_mascotas",
+            "_type": "request_group",
+            "parentId": "wrk_tienda",
+            "name": "Mascotas",
+            "description": "Todo lo de las mascotas",
+            "metaSortKey": -200,
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" }
+        },
+        {
+            "_id": "req_lista",
+            "_type": "request",
+            "parentId": "fld_mascotas",
+            "name": "Lista de mascotas",
+            "description": "Devuelve la página pedida.",
+            "metaSortKey": -100,
+            "method": "get",
+            "url": "{{ _.base }}/pets/:species",
+            "parameters": [
+                { "name": "page", "value": "1" },
+                { "name": "debug", "value": "1", "disabled": true }
+            ],
+            "pathParameters": [{ "name": "species", "value": "dog" }],
+            "headers": [{ "name": "Accept", "value": "application/json" }],
+            "authentication": {}
+        },
+        {
+            "_id": "req_alta",
+            "_type": "request",
+            "parentId": "fld_mascotas",
+            "name": "Alta de mascota",
+            "metaSortKey": -50,
+            "method": "POST",
+            "url": "{{ _.base }}/pets",
+            "headers": [{ "name": "Content-Type", "value": "application/json" }],
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\"name\":\"{{ _.petName }}\"}"
+            },
+            "authentication": { "type": "basic", "username": "ana", "password": "{{ _.password }}" }
+        },
+        {
+            "_id": "req_salud",
+            "_type": "request",
+            "parentId": "wrk_tienda",
+            "name": "Salud",
+            "metaSortKey": -300,
+            "method": "GET",
+            "url": "{{ _.base }}/health",
+            "authentication": { "type": "none" }
+        },
+        {
+            "_id": "ws-req_feed",
+            "_type": "websocket_request",
+            "parentId": "wrk_tienda",
+            "name": "Feed en vivo",
+            "url": "wss://feed.test"
+        },
+        {
+            "_id": "greq_catalogo",
+            "_type": "grpc_request",
+            "parentId": "wrk_tienda",
+            "name": "Catálogo",
+            "url": "grpc.test"
+        },
+        {
+            "_id": "spec_1",
+            "_type": "api_spec",
+            "parentId": "wrk_tienda",
+            "contents": "openapi: 3.0.0"
+        }
+    ]
+}

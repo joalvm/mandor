@@ -1,0 +1,22 @@
+{
+    "name": "@mandor/validate",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "test": "vitest run tests/",
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "json-schema-faker": "0.6.4",
+        "json-schema-library": "11.6.16",
+        "jsonc-parser": "3.3.1",
+        "randexp": "0.6.1"
+    },
+    "devDependencies": {
+        "@types/node": "26.6.6"
+    }
+}

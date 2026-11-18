@@ -1,0 +1,49 @@
+import { describe, expect, it } from 'vitest';
+
+import { PREFERENCE_DEFINITIONS } from '../../src/preference/preference-definitions.js';
+import { THEME_IDS } from '../../src/preference/theme-id.js';
+
+describe('PREFERENCE_DEFINITIONS', () => {
+    it('names each preference once', () => {
+        const keys = PREFERENCE_DEFINITIONS.map((definition) => definition.key);
+
+        expect(new Set(keys).size).toBe(keys.length);
+    });
+
+    it.each(PREFERENCE_DEFINITIONS.map((definition) => [definition.key, definition] as const))(
+        '%s has a default that is one of its own values',
+        (_key, definition) => {
+            const values: readonly string[] = definition.values;
+
+            expect(values).toContain(definition.defaultValue);
+        },
+    );
+
+    it.each(PREFERENCE_DEFINITIONS.map((definition) => [definition.key, definition] as const))(
+        '%s has a label and a help text in the preferences namespace',
+        (_key, definition) => {
+            expect(definition.labelKey).toMatch(/^preferences:\w+$/);
+            expect(definition.helpKey).toBe(`${definition.labelKey}Help`);
+        },
+    );
+
+    it('draws the three choices of a theme from the same list of themes', () => {
+        const themed = PREFERENCE_DEFINITIONS.filter(
+            (definition) =>
+                definition.key.startsWith('appearance.theme') &&
+                definition.key !== 'appearance.themeMode',
+        );
+
+        expect(themed).toHaveLength(3);
+
+        for (const definition of themed) {
+            expect(definition.values).toBe(THEME_IDS);
+        }
+    });
+
+    it('keeps every preference at the level of the app', () => {
+        expect(new Set(PREFERENCE_DEFINITIONS.map((definition) => definition.scope))).toEqual(
+            new Set(['app']),
+        );
+    });
+});

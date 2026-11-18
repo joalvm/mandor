@@ -1,0 +1,66 @@
+asyncapi: 3.0.0
+info:
+    title: Almacen
+    version: 1.0.0
+servers:
+    principal:
+        host: almacen.ejemplo.com:8080
+        pathname: /v1
+        protocol: ws
+channels:
+    pedidos:
+        address: pedidos/entrantes
+        messages:
+            pedido:
+                payload:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+                examples:
+                    - payload:
+                          id: '1'
+                contentType: application/json
+    recibos:
+        address: recibos/salientes
+        messages:
+            recibo:
+                $ref: '#/components/messages/recibo'
+    avisos:
+        address: avisos/salientes
+        messages:
+            recibo:
+                $ref: '#/components/messages/recibo'
+operations:
+    registrarPedido:
+        action: send
+        channel:
+            $ref: '#/channels/pedidos'
+        messages:
+            - $ref: '#/channels/pedidos/messages/pedido'
+    recibirRecibo:
+        action: receive
+        channel:
+            $ref: '#/channels/recibos'
+        messages:
+            - $ref: '#/channels/recibos/messages/recibo'
+    notificarRecibo:
+        action: receive
+        channel:
+            $ref: '#/channels/avisos'
+        messages:
+            - $ref: '#/channels/avisos/messages/recibo'
+components:
+    messages:
+        recibo:
+            payload:
+                type: object
+                properties:
+                    id:
+                        type: string
+                    total:
+                        type: number
+            examples:
+                - payload:
+                      id: '2'
+                      total: 9.5

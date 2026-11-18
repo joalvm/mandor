@@ -1,0 +1,44 @@
+{
+    "swagger": "2.0",
+    "info": { "title": "Tienda de mascotas", "version": "1.0.0" },
+    "host": "127.0.0.1:1",
+    "schemes": ["http"],
+    "tags": [{ "name": "pets" }],
+    "securityDefinitions": { "basicAuth": { "type": "basic" } },
+    "security": [{ "basicAuth": [] }],
+    "paths": {
+        "/pets": {
+            "post": {
+                "tags": ["pets"],
+                "summary": "Add a pet",
+                "consumes": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": ["name"],
+                            "properties": {
+                                "name": { "type": "string" },
+                                "tag": { "type": "string" }
+                            }
+                        }
+                    }
+                ],
+                "responses": { "201": { "description": "created" } }
+            }
+        },
+        "/pets/{petId}": {
+            "get": {
+                "tags": ["pets"],
+                "summary": "Get a pet",
+                "parameters": [
+                    { "name": "petId", "in": "path", "required": true, "type": "string" }
+                ],
+                "responses": { "200": { "description": "the pet" } }
+            }
+        }
+    }
+}

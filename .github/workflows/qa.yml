@@ -1,0 +1,39 @@
+# The rules a reviewer used to hold in memory. `verify` answers for the code; this answers for
+# how the change arrives: its branch, its title, its new files' tests and what it must never carry.
+name: qa
+
+on:
+    pull_request:
+        branches: [main]
+        # `edited` as well: a title fixed after the fact runs this check again, and only this one.
+        types: [opened, synchronize, reopened, edited]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: qa-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    contribution:
+        name: contribution rules
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  # The checks read the range against the base branch, so the history has to be
+                  # here. A shallow checkout has no base to compare against.
+                  fetch-depth: 0
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+            # Title and branch reach the script through the environment and never through the
+            # command line: both are written by whoever opens the pull request, and a shell must
+            # not read what a stranger wrote.
+            - env:
+                  QA_BASE: origin/${{ github.base_ref }}
+                  QA_BRANCH: ${{ github.head_ref }}
+                  QA_TITLE: ${{ github.event.pull_request.title }}
+              run: node tools/pull-request/check-pull-request.mjs

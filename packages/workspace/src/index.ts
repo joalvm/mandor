@@ -1,0 +1,10 @@
+export { adoptOrigin } from './adopt-origin.js';
+export { WorkspaceListAction } from './components/panel/WorkspaceListAction.js';
+export { WorkspacePanelAction } from './components/panel/WorkspacePanelAction.js';
+export { WorkspaceMenu } from './components/menu/WorkspaceMenu.js';
+export { WorkspacePanel } from './components/panel/WorkspacePanel.js';
+export { openNewWorkspace } from './open-new-workspace.js';
+export { openWorkspacesTab } from './open-workspaces-tab.js';
+export { selectWorkspaces } from './selectors.js';
+export { WorkspacesTabKind } from './WorkspacesTabKind.js';
+export { workspacesStore } from './workspaces-store.js';

@@ -1,0 +1,19 @@
+{
+    "id": "55555555-aaaa-bbbb-cccc-000000000005",
+    "name": "Local",
+    "values": [
+        {
+            "key": "base",
+            "value": "http://127.0.0.1:1",
+            "enabled": true,
+            "type": "default"
+        },
+        {
+            "key": "token",
+            "value": "s3cret",
+            "enabled": true,
+            "type": "secret"
+        }
+    ],
+    "_postman_variable_scope": "environment"
+}

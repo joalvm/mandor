@@ -1,0 +1,31 @@
+{
+    "name": "@mandor/interop-formats",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "sideEffects": false,
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "test": "vitest run tests/",
+        "typecheck": "tsc --noEmit -p tsconfig.json"
+    },
+    "dependencies": {
+        "@asyncapi/parser": "3.6.6",
+        "@mandor/interop-core": "0.0.0",
+        "@mandor/schema": "0.0.0",
+        "@readme/openapi-parser": "10.0.0",
+        "@scalar/openapi-upgrader": "0.4.7",
+        "@usebruno/lang": "0.41.0",
+        "openapi-sampler": "1.7.10",
+        "yaml": "2.9.1",
+        "zod": "4.6.7"
+    },
+    "devDependencies": {
+        "@mandor/validate": "0.0.0",
+        "@opencollection/types": "0.15.0",
+        "@types/node": "26.6.6",
+        "openapi-types": "12.1.3"
+    }
+}

@@ -1,0 +1,13 @@
+mandor: workspace
+formatVersion: 1
+app: sync
+workspace:
+    name: Tienda
+docs:
+    - name: k3m9x2q7a4bd.md
+      title: Guía de uso
+      text: |
+          ---
+          title: Guía de uso
+          ---
+          # Guía

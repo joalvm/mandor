@@ -1,0 +1,11 @@
+info:
+    name: Borrar mascota
+    type: http
+    seq: 1
+http:
+    method: DELETE
+    url: '{{baseUrl}}/pets/:id'
+    params:
+        - name: id
+          value: '7'
+          type: path

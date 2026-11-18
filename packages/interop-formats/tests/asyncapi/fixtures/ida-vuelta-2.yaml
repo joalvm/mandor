@@ -1,0 +1,47 @@
+asyncapi: 2.6.0
+info:
+    title: Almacen
+    version: 1.0.0
+servers:
+    principal:
+        url: ws://almacen.ejemplo.com:8080/v1
+        protocol: ws
+channels:
+    pedidos/entrantes:
+        publish:
+            operationId: registrarPedido
+            message:
+                name: pedido
+                payload:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+                examples:
+                    - payload:
+                          id: '1'
+                contentType: application/json
+    recibos/salientes:
+        subscribe:
+            operationId: recibirRecibo
+            message:
+                $ref: '#/components/messages/recibo'
+    avisos/salientes:
+        subscribe:
+            operationId: notificarRecibo
+            message:
+                $ref: '#/components/messages/recibo'
+components:
+    messages:
+        recibo:
+            payload:
+                type: object
+                properties:
+                    id:
+                        type: string
+                    total:
+                        type: number
+            examples:
+                - payload:
+                      id: '2'
+                      total: 9.5
