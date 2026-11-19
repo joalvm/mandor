@@ -24,7 +24,7 @@
     --dv-inactivegroup-visiblepanel-tab-background-color: transparent;
     --dv-inactivegroup-visiblepanel-tab-color: var(--text-secondary);
     --dv-sash-color: transparent;
-    --dv-separator-border: var(--border-subtle);
+    --dv-separator-border: transparent;
     --dv-tab-divider-color: transparent;
     --dv-tab-font-size: var(--mandor-text-xs-size);
     --dv-tabs-and-actions-container-background-color: var(--surface-frame);
@@ -111,9 +111,42 @@
 }
 
 /**
- * Two groups side by side are two zones, so a hairline stands between them. The handle over it
- * shows itself, stronger, when it is pointed at or focused.
+ * Two groups side by side are two cards, so the gutter of the frame stands between them and no
+ * line does. Each side keeps half of it, so the handle the library lays on the seam sits in the
+ * middle of the gutter, and shows itself, stronger, when it is pointed at or focused.
  */
+.dockview-theme-mandor .dv-split-view-container > .dv-view-container > .dv-view {
+    box-sizing: border-box;
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-horizontal
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    padding-inline-start: calc(var(--mandor-gap-gutter) / 2);
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-horizontal
+    > .dv-view-container
+    > .dv-view:not(:last-child) {
+    padding-inline-end: calc(var(--mandor-gap-gutter) / 2);
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-vertical
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    padding-block-start: calc(var(--mandor-gap-gutter) / 2);
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-vertical
+    > .dv-view-container
+    > .dv-view:not(:last-child) {
+    padding-block-end: calc(var(--mandor-gap-gutter) / 2);
+}
+
 .dockview-theme-mandor .dv-sash {
     touch-action: none;
 }

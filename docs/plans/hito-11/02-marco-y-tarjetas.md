@@ -175,7 +175,7 @@ contains apps/async/tests/e2e/chrome-shape.spec.ts "mandor-radius-xl"
 `npm run ci:check -- packages/shell packages/ui`. Con la app abierta: pasar el puntero por la
 activa no la cambia; por una inactiva, toma un gris un paso más claro que la activa.
 
-### [ ] Fase 3: Cada pestaña se dibuja en una tarjeta
+### [x] Fase 3: Cada pestaña se dibuja en una tarjeta
 
 **Objetivo.** El cuerpo de toda pestaña va sobre una tarjeta redondeada, separada del lateral y
 del borde por el hueco del marco.

@@ -1,4 +1,5 @@
 import { registerSurface, TabBody, TabKind } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 import { useEffect } from 'react';
 
 import { WorkspacePanel } from './components/panel/WorkspacePanel.js';
@@ -25,7 +26,9 @@ export function WorkspacesTabKind() {
             title={(_resource, translate) => translate('workspace:heading')}
         >
             <TabBody>
-                <WorkspacePanel />
+                <Card>
+                    <WorkspacePanel />
+                </Card>
             </TabBody>
         </TabKind>
     );

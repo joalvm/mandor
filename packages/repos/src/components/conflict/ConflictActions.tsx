@@ -42,7 +42,7 @@ export function ConflictActions({
 
     return (
         <footer
-            className="flex h-header shrink-0 items-center gap-gap-control bg-surface-panel px-pad-panel"
+            className="flex h-header shrink-0 items-center gap-gap-control bg-surface-card px-pad-panel"
             data-part="conflict-actions"
         >
             <span className="mr-auto min-w-0 truncate text-sm text-text-secondary">

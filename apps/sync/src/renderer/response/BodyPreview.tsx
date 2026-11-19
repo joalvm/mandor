@@ -67,7 +67,7 @@ function BodyPage({ content }: BodyPreviewProps) {
 
     return (
         <iframe
-            className="size-full border-0 bg-surface-panel"
+            className="size-full border-0 bg-surface-card"
             data-part="response-page"
             sandbox=""
             srcDoc={content.text}

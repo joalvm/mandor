@@ -1,4 +1,5 @@
 import { TabBody, TabKind } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 
 import { COLLECTIONS_SECTION_ID } from './components/sidebar/CollectionsSection.js';
 import { FolderTab } from './components/folder/FolderTab.js';
@@ -21,7 +22,9 @@ export function FolderTabKind() {
             title={folderTitle}
         >
             <TabBody>
-                <FolderTab />
+                <Card>
+                    <FolderTab />
+                </Card>
             </TabBody>
         </TabKind>
     );

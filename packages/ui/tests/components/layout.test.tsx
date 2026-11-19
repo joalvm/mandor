@@ -2,7 +2,15 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { byPart } from '../../src/testing/by-part.js';
 
-import { AppBody, AppShell, SidePanel, StatusBar, TitleBar, Workbench } from '../../src/index.js';
+import {
+    AppBody,
+    AppShell,
+    Card,
+    SidePanel,
+    StatusBar,
+    TitleBar,
+    Workbench,
+} from '../../src/index.js';
 
 /**
  * The zones say where the window is divided and nothing about what fills it: every one of them
@@ -68,5 +76,27 @@ describe('the zones of the window', () => {
         );
 
         expect(byPart('sidebar')).toHaveAttribute('data-width', '312px');
+    });
+
+    /**
+     * The work rests on a card above the frame: rounded by the step of a panel, in the tone of a
+     * card, holding what it is given and nothing of its own. Named, it is a zone a screen reader
+     * can land on; unnamed, it stays a plain box around the body of a tab.
+     */
+    it('draws the work on a card that holds its children', () => {
+        render(
+            <Workbench>
+                <Card aria-label="console">
+                    <span>a line of the log</span>
+                </Card>
+            </Workbench>,
+        );
+
+        const card = byPart('card');
+
+        expect(byPart('workbench')).toContainElement(card);
+        expect(card).toHaveClass('rounded-panel', 'bg-surface-card');
+        expect(card).toContainElement(screen.getByText('a line of the log'));
+        expect(screen.getByRole('region', { name: 'console' })).toBe(card);
     });
 });

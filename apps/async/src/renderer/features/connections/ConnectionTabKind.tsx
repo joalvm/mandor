@@ -1,4 +1,5 @@
 import { EmptyGroup, TabBody, TabIndicator, TabKind, TabStatus, useTab } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 
 import { composerUnsaved } from '../../events/composer-unsaved.js';
 import { saveEventInComposer } from '../../events/save-event-in-composer.js';
@@ -61,7 +62,9 @@ export function ConnectionTabKind() {
                     <TabTransportMark />
                 </TabIndicator>
                 <TabBody>
-                    <TabConnectionPanel />
+                    <Card>
+                        <TabConnectionPanel />
+                    </Card>
                 </TabBody>
                 <TabStatus>
                     <TabStatusDot />

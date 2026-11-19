@@ -1,4 +1,5 @@
 import { registerCommand, registerSurface, TabBody, TabKind, useTab } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 import { useEffect } from 'react';
 
 import { syncBridge } from '../../app/sync-bridge.js';
@@ -17,7 +18,11 @@ function HistoryBody() {
         return null;
     }
 
-    return <HistoryTab resource={resource} workspaceId={parts.workspaceId} />;
+    return (
+        <Card>
+            <HistoryTab resource={resource} workspaceId={parts.workspaceId} />
+        </Card>
+    );
 }
 
 function DiffBody() {
@@ -27,7 +32,11 @@ function DiffBody() {
         return null;
     }
 
-    return <HistoryDiffTab ids={parts.ids} workspaceId={parts.workspaceId} />;
+    return (
+        <Card>
+            <HistoryDiffTab ids={parts.ids} workspaceId={parts.workspaceId} />
+        </Card>
+    );
 }
 
 /**

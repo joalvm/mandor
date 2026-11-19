@@ -183,7 +183,7 @@ function ActivityDock({ entry, onClose }: { entry: ActivityEntry; onClose: () =>
 
     return (
         <div
-            className="flex h-full min-h-0 min-w-0 flex-col bg-surface-panel"
+            className="flex h-full min-h-0 min-w-0 flex-col bg-surface-card"
             data-part="activity-dock"
         >
             <div

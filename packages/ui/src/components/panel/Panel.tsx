@@ -16,11 +16,11 @@ export function Panel({ children, title }: PanelProps) {
 
     return (
         <section
-            className="flex min-h-0 min-w-0 flex-col bg-surface-app"
+            className="flex min-h-0 min-w-0 flex-col bg-surface-card"
             aria-labelledby={titleId}
             data-part="panel"
         >
-            <header className="flex h-section shrink-0 items-center gap-gap-control bg-surface-panel px-pad-panel">
+            <header className="flex h-section shrink-0 items-center gap-gap-control bg-surface-card px-pad-panel">
                 <h2 className="min-w-0 flex-1 truncate text-sm text-text-secondary" id={titleId}>
                     {title}
                 </h2>

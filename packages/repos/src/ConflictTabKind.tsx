@@ -1,4 +1,5 @@
 import { TabBody, TabKind } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 
 import { ConflictTab } from './components/conflict/ConflictTab.js';
 import { conflictDrafts } from './lib/conflict-drafts.js';
@@ -26,7 +27,9 @@ export function ConflictTabKind() {
             title={(_resource, translate) => translate('conflicts:tabTitle')}
         >
             <TabBody>
-                <ConflictTab />
+                <Card>
+                    <ConflictTab />
+                </Card>
             </TabBody>
         </TabKind>
     );

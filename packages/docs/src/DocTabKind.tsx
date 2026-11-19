@@ -1,4 +1,5 @@
 import { TabBody, TabKind } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 
 import { DOCS_SECTION_ID } from './components/sidebar/DocsSection.js';
 import { DocTab } from './components/tab/DocTab.js';
@@ -20,7 +21,9 @@ export function DocTabKind() {
             title={docTabTitle}
         >
             <TabBody>
-                <DocTab />
+                <Card>
+                    <DocTab />
+                </Card>
             </TabBody>
         </TabKind>
     );
