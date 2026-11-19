@@ -45,6 +45,9 @@ describe('the centre of the window with the console under it', () => {
 
         expect(screen.getByText('trabajo')).toBe(work);
         expect(work.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        // The console is a card of its own, and the gutter of the frame keeps it off the work.
+        expect(panel).toHaveAttribute('data-part', 'card');
+        expect(screen.getByRole('separator').parentElement).toHaveAttribute('data-gap', 'gutter');
         expect(
             screen.getByRole('separator', { name: 'Cambiar el alto de la consola' }),
         ).toBeVisible();

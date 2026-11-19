@@ -12,6 +12,11 @@ type SplitPaneProps = PropsWithChildren<{
      */
     collapsed?: boolean | undefined;
     direction?: SplitDirection | undefined;
+    /**
+     * What stands between the halves: nothing, when both live in one card, or the gutter of the
+     * frame, when each half is a card of its own and the handle lives in the gutter.
+     */
+    gap?: 'none' | 'gutter' | undefined;
     /** Where a double click on the line puts it back. */
     initial?: number | undefined;
     label: string;
@@ -35,6 +40,7 @@ export function SplitPane({
     className,
     collapsed = false,
     direction = 'row',
+    gap = 'none',
     initial,
     label,
     max = 70,
@@ -49,6 +55,7 @@ export function SplitPane({
             className={cn('grid min-h-0 min-w-0 overflow-hidden', className)}
             data-collapsed={collapsed ? '' : undefined}
             data-direction={direction}
+            data-gap={gap}
             data-part="split-pane"
             data-position={position}
         >

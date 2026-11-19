@@ -25,7 +25,7 @@ export async function hostileRepoRoot(sandbox: Sandbox): Promise<string> {
 }
 
 export function consolePanel(page: Page) {
-    return page.locator('[data-part="console-panel"]');
+    return page.getByRole('region', { name: 'Console' });
 }
 
 /** Opens the console from the status bar, reads it, and puts it away again. */

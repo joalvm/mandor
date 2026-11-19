@@ -220,7 +220,7 @@ contains apps/sync/src/renderer/features/history/HistoryTabKinds.tsx "<Card>"
 cuatro esquinas redondeadas y el hueco a la derecha y abajo; partir el grupo en dos y ver el hueco
 entre los dos.
 
-### [ ] Fase 4: La consola es una tarjeta bajo el trabajo
+### [x] Fase 4: La consola es una tarjeta bajo el trabajo
 
 **Objetivo.** La consola abierta es una tarjeta separada del trabajo por el hueco, sin línea
 arriba; se sigue redimensionando por el asa, que vive en el hueco.

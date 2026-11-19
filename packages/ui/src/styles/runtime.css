@@ -261,6 +261,30 @@ textarea,
     height: 4px;
 }
 
+/* Two cards on the frame: the gutter stands between the halves, and the handle lies in its
+   middle. The gutter already parts them, so the line of the handle stays unpainted until it is
+   pointed at or dragged. */
+[data-part='split-pane'][data-gap='gutter'] {
+    gap: var(--mandor-gap-gutter);
+}
+
+[data-gap='gutter'] > [data-part='split-handle'] {
+    inset-inline-start: calc(
+        attr(data-position type(<percentage>), 50%) + var(--mandor-gap-gutter) / 2 - 2px
+    );
+}
+
+[data-direction='column'][data-gap='gutter'] > [data-part='split-handle'] {
+    inset-inline-start: 0;
+    inset-block-start: calc(
+        attr(data-position type(<percentage>), 50%) + var(--mandor-gap-gutter) / 2 - 2px
+    );
+}
+
+[data-gap='gutter'] > [data-part='split-handle']:not(:hover, :active)::before {
+    background-color: transparent;
+}
+
 /**
  * The brand colors of the known hosts: the one closed table the system accepts from outside
  * its tokens. A host the table does not know, and the local origin, draw in secondary text.

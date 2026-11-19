@@ -52,7 +52,7 @@ async function send(): Promise<void> {
 }
 
 function consolePanel() {
-    return page.locator('[data-part="console-panel"]');
+    return page.getByRole('region', { name: 'Console' });
 }
 
 /** Opens the console from the status bar, reads it, and puts it away again. */
