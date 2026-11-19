@@ -32,10 +32,13 @@ const STEPS = Array.from({ length: 12 }, (_, index) => String(index + 1));
  * The head of the neutral ramp is the chrome of the window, and its steps are chosen and not
  * derived: white for the body, one step for the panels that frame it, and three more for the
  * states a tab and a title bar control pass through. The rest of the ramp stays as it comes,
- * so text and the borders that survive keep a scale that was built to stay legible.
+ * so text and the borders that survive keep a scale that was built to stay legible. The frame
+ * the cards rest on takes step 2, a point deeper than the ramp's own, so a white card reads as
+ * raised above it without a line around it.
  */
 const CHROME = {
     gray1: '#ffffff',
+    gray2: '#f4f4f4',
     gray3: '#f2f2f2',
     gray4: '#ededed',
     gray5: '#e6e6e6',
@@ -43,9 +46,12 @@ const CHROME = {
 const RAMP_SOURCES = {
     neutral: [{ ...gray, ...CHROME }, grayDark, 'gray'],
     green: [grass, grassDark, 'grass'],
-    amber: [{ ...amber, amber11: '#9a6700' }, amberDark, 'amber'],
+    // Status text is read on the frame as well as on a card, and the frame is a step deeper than
+    // white: step 11 of amber and of blue darkens along its hue to the first value that keeps
+    // 4.5:1 on both.
+    amber: [{ ...amber, amber11: '#976500' }, amberDark, 'amber'],
     red: [red, redDark, 'red'],
-    blue: [blue, blueDark, 'blue'],
+    blue: [{ ...blue, blue11: '#0d70c8' }, blueDark, 'blue'],
     iris: [iris, irisDark, 'iris'],
     pink: [pink, pinkDark, 'pink'],
 };

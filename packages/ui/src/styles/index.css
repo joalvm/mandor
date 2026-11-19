@@ -27,6 +27,8 @@
     --font-*: initial;
     --color-surface-app: var(--surface-app);
     --color-surface-panel: var(--surface-panel);
+    --color-surface-frame: var(--surface-frame);
+    --color-surface-card: var(--surface-card);
     --color-surface-sunken: var(--surface-sunken);
     --color-surface-raised: var(--surface-raised);
     --color-surface-dialog: var(--surface-dialog);
@@ -151,6 +153,7 @@
     --spacing-gap-control: var(--mandor-gap-control);
     --spacing-gap-group: var(--mandor-gap-group);
     --spacing-gap-section: var(--mandor-gap-section);
+    --spacing-gap-gutter: var(--mandor-gap-gutter);
     --spacing-icon-sm: var(--mandor-icon-sm);
     --spacing-icon-md: var(--mandor-icon-md);
     --spacing-icon-lg: var(--mandor-icon-lg);
@@ -159,6 +162,7 @@
     --radius-md: var(--mandor-radius-md);
     --radius-lg: var(--mandor-radius-lg);
     --radius-xl: var(--mandor-radius-xl);
+    --radius-panel: var(--mandor-radius-panel);
     --radius-full: var(--mandor-radius-full);
     --shadow-none: var(--mandor-shadow-none);
     --shadow-popover: var(--mandor-shadow-popover);

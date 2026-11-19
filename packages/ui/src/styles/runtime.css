@@ -173,10 +173,9 @@ textarea,
 }
 
 /**
- * The handle is the seam: one line wide, and the only line between the lateral and the
- * workbench. What the pointer may grab is wider than what the eye sees — the room is lent by a
- * layer over the boundary, which draws nothing and moves nothing — so a hairline still takes a
- * drag without a track being reserved beside it.
+ * The handle is the gutter between the lateral and the workbench, and the pointer may grab a
+ * little past it on either side: the room is lent by a layer over the boundary, which draws
+ * nothing and moves nothing.
  */
 [data-part='sidebar-handle'] {
     position: relative;

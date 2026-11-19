@@ -88,7 +88,7 @@ Ninguna diferencia nueva entre las apps: las dos ganan lo mismo en el mismo PR.
 `Card` y `CommandCenter` nacen con dos consumidores reales: `Card` la usan los once `TabKind` y la
 consola; `CommandCenter` lo montan las dos barras de título.
 
-### [ ] Fase 1: Marco y tarjeta como superficies de la ventana
+### [x] Fase 1: Marco y tarjeta como superficies de la ventana
 
 **Objetivo.** La ventana pinta su cromo (barra de título, lateral, barra de estado) sobre el marco,
 sin línea bajo la barra de título, y el área de trabajo deja un hueco a la derecha.

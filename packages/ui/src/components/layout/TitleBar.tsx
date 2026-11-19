@@ -16,13 +16,13 @@ type TitleBarProps = PropsWithChildren;
  * The whole zone is a drag surface and the buttons carve themselves out of it, which is the part
  * `runtime.css` decides from `data-part`.
  *
- * The line under it is one of the four the window draws: it sits where the panel meets the
- * body, because a surface already says where a zone ends and a line over it would be decoration.
+ * It sits on the frame with the lateral and the status row, and draws no line under it: the
+ * frame runs on unbroken below it, and what marks where the work begins is the card on top.
  */
 export function TitleBar({ children }: TitleBarProps) {
     return (
         <header
-            className="flex h-titlebar shrink-0 items-center gap-gap-control border-b border-border-subtle bg-surface-panel pl-pad-panel"
+            className="flex h-titlebar shrink-0 items-center gap-gap-control bg-surface-frame pl-pad-panel"
             data-part="titlebar"
         >
             {children}

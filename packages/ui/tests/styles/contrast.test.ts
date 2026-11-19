@@ -6,6 +6,8 @@ import { themeOf, type ThemeMode } from './theme-values.js';
 const SURFACES = [
     'app',
     'panel',
+    'frame',
+    'card',
     'sunken',
     'raised',
     'dialog',
@@ -16,7 +18,7 @@ const SURFACES = [
     'dialog-nav',
     'dialog-nav-active',
 ] as const;
-const BASE_SURFACES = ['app', 'panel', 'sunken', 'raised', 'dialog'] as const;
+const BASE_SURFACES = ['app', 'panel', 'frame', 'card', 'sunken', 'raised', 'dialog'] as const;
 const SUPPORTING_TEXTS = ['secondary', 'accent', 'success', 'warning', 'error', 'info'] as const;
 const SOLIDS = ['success', 'warning', 'error', 'info'] as const;
 /** Every theme the window can wear passes the same floor; the contrast ones raise it further elsewhere. */
@@ -109,6 +111,18 @@ describe.each(['teal', 'orange'] as const)('the semantic theme contrast, %s acce
             expect(active).not.toBe(nav);
         },
     );
+
+    /**
+     * The window is a frame with cards on it, and what tells a card from the frame is its tone:
+     * no line goes around a card. One value for both is content painted on the frame.
+     */
+    it.each(MODES)('keeps a card a step apart from the frame in %s mode', async (mode) => {
+        const theme = await themeOf(mode, accent);
+
+        expect(theme['surface-frame']).toBeDefined();
+        expect(theme['surface-card']).toBeDefined();
+        expect(theme['surface-card']).not.toBe(theme['surface-frame']);
+    });
 
     /**
      * The pointer lays one veil over whatever a thing shows: a faint tint on bare ground, and the

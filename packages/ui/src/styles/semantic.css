@@ -4,6 +4,8 @@
     color-scheme: light;
     --surface-app: var(--primitive-neutral-light-1);
     --surface-panel: var(--primitive-neutral-light-2);
+    --surface-frame: var(--primitive-neutral-light-2);
+    --surface-card: var(--primitive-neutral-light-1);
     --surface-sunken: var(--primitive-neutral-light-1);
     --surface-raised: var(--primitive-neutral-light-1);
     --surface-dialog: var(--primitive-neutral-light-1);

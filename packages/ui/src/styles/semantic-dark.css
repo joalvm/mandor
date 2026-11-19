@@ -3,6 +3,8 @@
         color-scheme: dark;
         --surface-app: var(--primitive-neutral-dark-1);
         --surface-panel: var(--primitive-neutral-dark-2);
+        --surface-frame: var(--primitive-neutral-dark-1);
+        --surface-card: var(--primitive-neutral-dark-2);
         --surface-sunken: var(--primitive-neutral-dark-1);
         --surface-raised: var(--primitive-neutral-dark-3);
         --surface-dialog: var(--primitive-neutral-dark-3);
@@ -78,6 +80,8 @@
     color-scheme: dark;
     --surface-app: var(--primitive-neutral-dark-1);
     --surface-panel: var(--primitive-neutral-dark-2);
+    --surface-frame: var(--primitive-neutral-dark-1);
+    --surface-card: var(--primitive-neutral-dark-2);
     --surface-sunken: var(--primitive-neutral-dark-1);
     --surface-raised: var(--primitive-neutral-dark-3);
     --surface-dialog: var(--primitive-neutral-dark-3);

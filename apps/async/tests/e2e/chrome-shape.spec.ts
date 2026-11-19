@@ -17,7 +17,7 @@ const ROUNDED = scaleTokenValues['mandor-radius-md'];
 
 type TabShape = { bordered: boolean; name: string; pill: boolean; radius: string };
 
-type Skin = { app: string; chrome: Record<string, string>; panel: string; workbench: string };
+type Skin = { chrome: Record<string, string>; frame: string; workbench: string };
 
 /**
  * The shape of every tab on screen, measured on what the browser resolved rather than on the
@@ -56,10 +56,10 @@ async function tabShapes(page: Page): Promise<TabShape[]> {
 }
 
 /**
- * What each band of the window is painted with, beside the two surfaces of the system. The
- * colours are read back from the tokens instead of written here: the law is that the chrome
- * takes one surface and the work area the other, and a test that spelled the hex out would fail
- * for a change of palette that breaks nothing.
+ * What each band of the window is painted with, beside the frame of the system. The colour is
+ * read back from the token instead of written here: the law is that the chrome and the work
+ * area both show the frame — the work has no surface of its own, its cards carry theirs — and a
+ * test that spelled the hex out would fail for a change of palette that breaks nothing.
  */
 async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
     return page.evaluate((names) => {
@@ -81,9 +81,8 @@ async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
 
         const chrome = Object.fromEntries(names.map((name) => [name, fill(name)]));
         const measured = {
-            app: resolve('--surface-app'),
             chrome,
-            panel: resolve('--surface-panel'),
+            frame: resolve('--surface-frame'),
             workbench: fill('workbench'),
         };
 
@@ -93,7 +92,7 @@ async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
     }, parts);
 }
 
-test('rounds its tabs by a step and draws its bands on the two surfaces of the system', async () => {
+test('rounds its tabs by a step and draws its bands on the frame of the window', async () => {
     const sandbox = await makeSandbox();
     const { app, page } = await launch(sandbox.userDataDir, sandbox.defaultRepoRoot);
 
@@ -113,9 +112,9 @@ test('rounds its tabs by a step and draws its bands on the two surfaces of the s
         const painted = await skin(page, CHROME);
 
         expect(painted.chrome).toEqual(
-            Object.fromEntries(CHROME.map((part) => [part, painted.panel])),
+            Object.fromEntries(CHROME.map((part) => [part, painted.frame])),
         );
-        expect(painted.workbench).toBe(painted.app);
+        expect(painted.workbench).toBe(painted.frame);
         await expect
             .poll(() =>
                 page.evaluate(() => getComputedStyle(document.documentElement).scrollbarWidth),
