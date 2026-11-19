@@ -12,15 +12,15 @@ const NOWHERE = 'wss://127.0.0.1:9/socket';
 /** The bands of the chrome, each one named by the part it plays in the window. */
 const CHROME = ['titlebar', 'sidebar', 'status-bar'];
 
-/** A tab is rounded by one step of the scale: the same corner every strip of the window takes. */
-const ROUNDED = scaleTokenValues['mandor-radius-md'];
+/** A tab of the grid is rounded by the step of a tab: softer than a control, never a pill. */
+const ROUNDED = scaleTokenValues['mandor-radius-xl'];
 
 type TabShape = { bordered: boolean; name: string; pill: boolean; radius: string };
 
-type Skin = { chrome: Record<string, string>; frame: string; workbench: string };
+type Skin = { chrome: Record<string, string>; frame: string; strip: string; workbench: string };
 
 /**
- * The shape of every tab on screen, measured on what the browser resolved rather than on the
+ * The shape of every tab of the grid, measured on what the browser resolved rather than on the
  * classes that asked for it. A tab can carry the right token and still come out square: a value
  * handed to a foreign library through a variable it does not read leaves no trace in the source,
  * only in the pixels, and the tabs of the window are drawn by one such library.
@@ -41,7 +41,7 @@ async function tabShapes(page: Page): Promise<TabShape[]> {
             return parseFloat(radius) >= height / 2;
         };
 
-        return [...document.querySelectorAll('[role="tab"]')].map((tab) => {
+        return [...document.querySelectorAll('.dv-tab')].map((tab) => {
             const style = getComputedStyle(tab);
             const radius = style.borderTopLeftRadius;
 
@@ -57,8 +57,8 @@ async function tabShapes(page: Page): Promise<TabShape[]> {
 
 /**
  * What each band of the window is painted with, beside the frame of the system. The colour is
- * read back from the token instead of written here: the law is that the chrome and the work
- * area both show the frame — the work has no surface of its own, its cards carry theirs — and a
+ * read back from the token instead of written here: the law is that the chrome, the strip of
+ * tabs and the work area all show the frame — the work has no surface of its own, its cards carry theirs — and a
  * test that spelled the hex out would fail for a change of palette that breaks nothing.
  */
 async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
@@ -83,6 +83,9 @@ async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
         const measured = {
             chrome,
             frame: resolve('--surface-frame'),
+            strip: getComputedStyle(
+                document.querySelector('.dv-tabs-and-actions-container') ?? document.body,
+            ).backgroundColor,
             workbench: fill('workbench'),
         };
 
@@ -114,6 +117,7 @@ test('rounds its tabs by a step and draws its bands on the frame of the window',
         expect(painted.chrome).toEqual(
             Object.fromEntries(CHROME.map((part) => [part, painted.frame])),
         );
+        expect(painted.strip).toBe(painted.frame);
         expect(painted.workbench).toBe(painted.frame);
         await expect
             .poll(() =>

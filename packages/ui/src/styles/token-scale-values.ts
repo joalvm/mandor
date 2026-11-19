@@ -37,6 +37,8 @@ export const scaleTokenValues = {
     'mandor-radius-panel': '10px',
     'mandor-radius-full': '9999px',
     'mandor-height-tab': '24px',
+    'mandor-height-grid-tab': '28px',
+    'mandor-height-strip': '38px',
     'mandor-height-row-xs': '24px',
     'mandor-height-control-xs': '22px',
     'mandor-height-control-sm': '24px',

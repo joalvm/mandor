@@ -125,6 +125,8 @@
     --font-weight-semibold: var(--mandor-weight-semibold);
     --spacing: var(--mandor-space-base);
     --spacing-tab: var(--mandor-height-tab);
+    --spacing-grid-tab: var(--mandor-height-grid-tab);
+    --spacing-strip: var(--mandor-height-strip);
     --spacing-row-xs: var(--mandor-height-row-xs);
     --spacing-control-xs: var(--mandor-height-control-xs);
     --spacing-control-sm: var(--mandor-height-control-sm);

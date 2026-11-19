@@ -17,7 +17,7 @@
     --dv-activegroup-visiblepanel-tab-color: var(--text-primary);
     --dv-drag-over-background-color: var(--surface-accent-tint);
     --dv-drag-over-border-color: var(--focus-ring);
-    --dv-group-view-background-color: var(--surface-app);
+    --dv-group-view-background-color: var(--surface-frame);
     --dv-icon-hover-background-color: var(--surface-control-hover);
     --dv-inactivegroup-hiddenpanel-tab-background-color: transparent;
     --dv-inactivegroup-hiddenpanel-tab-color: var(--text-disabled);
@@ -27,9 +27,9 @@
     --dv-separator-border: var(--border-subtle);
     --dv-tab-divider-color: transparent;
     --dv-tab-font-size: var(--mandor-text-xs-size);
-    --dv-tabs-and-actions-container-background-color: var(--surface-panel);
+    --dv-tabs-and-actions-container-background-color: var(--surface-frame);
     --dv-tabs-and-actions-container-font-size: var(--mandor-text-xs-size);
-    --dv-tabs-and-actions-container-height: var(--mandor-height-header);
+    --dv-tabs-and-actions-container-height: var(--mandor-height-strip);
     --dv-transition-duration: var(--mandor-duration-fast);
 }
 
@@ -60,10 +60,10 @@
     flex: 0 1 auto;
     width: var(--mandor-width-tab);
     min-width: var(--mandor-width-tab-min);
-    height: var(--mandor-height-tab);
+    height: var(--mandor-height-grid-tab);
     margin-block: auto;
     padding: 0;
-    border-radius: var(--mandor-radius-md);
+    border-radius: var(--mandor-radius-xl);
 }
 
 .dockview-theme-mandor .dv-tab > * {
@@ -84,12 +84,13 @@
 }
 
 /**
- * The band opens at the same inset as every other band of the window, and what sits after its
- * tabs is centred. The library leaves its ends stretching, which drops a control of fixed height
- * against the top edge instead of the middle of the band.
+ * The strip sits on the frame over the card it opens, so its first tab starts where the card
+ * starts and not an inset further in. What sits after its tabs is centred: the library leaves
+ * its ends stretching, which drops a control of fixed height against the top edge instead of the
+ * middle of the band.
  */
 .dockview-theme-mandor .dv-tabs-container {
-    padding-inline-start: var(--mandor-pad-inline-panel);
+    padding-inline-start: 0;
 }
 
 /** The add of the strip takes a breath after the tab it sits beside, like any sibling would. */
@@ -122,17 +123,15 @@
 }
 
 /**
- * Pointed at, a tab takes the veil every other thing of the window takes, the open tab too. The
- * library paints the fill of the tabs with rules stronger than any plain selector of ours; the
- * veil is an image over that fill, so it lies on whichever fill the library chose.
+ * Pointed at, a tab that is not in front takes the gray of a control of the chrome, a step short
+ * of the tab in front; the tab in front keeps its fill under the pointer, so pointing never makes
+ * two tabs read as open. The library paints the fill of the tabs with rules stronger than any
+ * plain selector of ours; the veil is an image over that fill, so it lies on whichever fill the
+ * library chose.
  */
-.dockview-theme-mandor .dv-tab:hover {
-    --tab-veil: var(--surface-veil);
-}
-
-/** The strip of tabs closes with a line, the way the title row above it does. */
-.dockview-theme-mandor .dv-tabs-and-actions-container {
-    border-bottom: 1px solid var(--border-subtle);
+.dockview-theme-mandor .dv-tab:not(.dv-active-tab):hover {
+    --tab-fill: var(--surface-chrome-control);
+    --tab-veil: var(--tab-fill);
 }
 
 /**

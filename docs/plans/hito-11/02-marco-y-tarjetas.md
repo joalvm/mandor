@@ -136,7 +136,7 @@ contains apps/async/tests/e2e/chrome-shape.spec.ts "--surface-frame"
 `npm run dev:sync`: barra de título, lateral y barra de estado sobre un mismo fondo, sin línea
 entre la barra de título y lo de abajo, en claro y en oscuro.
 
-### [ ] Fase 2: Pestañas que flotan sobre el marco
+### [x] Fase 2: Pestañas que flotan sobre el marco
 
 **Objetivo.** La tira de pestañas no tiene fondo propio ni línea debajo; cada pestaña mide 28,
 redondea 6 y sigue la regla de estados.
