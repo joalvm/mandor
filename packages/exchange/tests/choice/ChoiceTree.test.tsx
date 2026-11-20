@@ -9,6 +9,8 @@ describe('the choice tree', () => {
         renderTree();
 
         expect(byPart('choice-tree-viewport')).toHaveClass('h-96');
+        // A box of white on the dialog, like every group a dialog holds.
+        expect(byPart('choice-tree-viewport')).toHaveClass('bg-surface-raised');
     });
 
     it('puts the title on top, with the top level under it and the branches folded', () => {

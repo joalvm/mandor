@@ -22,7 +22,7 @@ const PICK_LABELS = { files: 'choose', folder: 'chooseFolder' } as const;
 const LAYOUT =
     'flex flex-col items-center justify-center gap-gap-control rounded-md transition-colors duration-fast';
 const SURFACE_IDLE =
-    'border border-dashed border-border-strong bg-surface-panel px-pad-dialog py-gap-section';
+    'border border-dashed border-border-strong bg-surface-raised px-pad-dialog py-gap-section';
 const SURFACE_OVER =
     'border border-dashed border-border-strong bg-surface-accent-tint px-pad-dialog py-gap-section';
 

@@ -86,7 +86,7 @@ export function ChoiceTree({
                 {children}
             </ChoiceTreeToolbar>
             <div
-                className="box-content flex h-96 flex-col rounded-md border border-border-subtle bg-surface-panel p-2"
+                className="box-content flex h-96 flex-col rounded-md border border-border-subtle bg-surface-raised p-2"
                 data-part="choice-tree-viewport"
             >
                 <ChoiceTreeBody

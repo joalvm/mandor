@@ -90,6 +90,10 @@ describe('saving a request saved nowhere (SaveRequestDialog, useSaveTo)', () => 
         const name = within(dialog()).getByRole('textbox', { name: 'Name' });
 
         expect(name.textContent).toBe('New request');
+        // The places stand in a box of white on the dialog, never the grey of a panel.
+        expect(dialog().querySelector("[data-part='save-request-tree']")).toHaveClass(
+            'bg-surface-raised',
+        );
 
         fireEvent.input(name, { target: { textContent: 'Listar' } });
         fireEvent.click(within(dialog()).getByRole('button', { name: 'Save' }));

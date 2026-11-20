@@ -17,7 +17,7 @@ export function ImportSummaryCard({ name, onBrowse }: ImportSummaryCardProps) {
 
     return (
         <div
-            className="flex h-header items-center gap-gap-control rounded-md border border-border-subtle bg-surface-panel px-pad-panel"
+            className="flex h-header items-center gap-gap-control rounded-md border border-border-subtle bg-surface-raised px-pad-panel"
             data-part="import-summary"
         >
             <span

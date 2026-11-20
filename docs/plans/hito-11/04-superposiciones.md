@@ -54,10 +54,10 @@ scale(var(--mandor-motion-scale))` a reposo, desde el origen que Radix calcula p
   `reduced`, escrito en `data-motion` de la raíz. `system` sigue al sistema; `full` mueve aunque
   el sistema pida menos; `reduced` quita la escala y el desplazamiento aunque el sistema no lo
   pida. En las dos apps, en Ajustes › Temas.
-- **Grupos blancos.** Las filas de un grupo de ajustes van en una caja `bg-surface-raised` con
-  `border-border-subtle` y `--mandor-radius-panel`, con su línea fina entre filas. El título del
-  grupo queda encima, fuera de la caja, sin línea debajo. Árboles y cajas de elegir e importar
-  pasan de `bg-surface-panel` a `bg-surface-raised`.
+- **Ajustes como lista.** Los grupos de ajustes no llevan caja ni borde: son una lista sobre el
+  diálogo, con una línea bajo el título del grupo y otra entre filas, como las preferencias de los
+  clientes de API que el usuario conoce. Árboles y cajas de elegir e importar pasan de
+  `bg-surface-panel` a `bg-surface-raised`.
 - **El aviso es una tarjeta.** 380 px (`--mandor-width-toast`), `rounded-overlay`, el glifo de
   tono dentro de una insignia de 32 px en `bg-surface-control` (el glifo conserva su color de
   tono; la insignia no se tiñe), una sola acción como `Button` secundario, y el `×N` como píldora
@@ -140,32 +140,30 @@ absent packages/ui/src/styles/runtime.css "translateY(6px) scale(0.98)"
 `npm run ci:check` con las rutas tocadas. Con las dos apps: abrir Ajustes e Importar en tema
 claro, oscuro y de contraste; ninguna banda ni línea parte el diálogo.
 
-### [ ] Fase 2: Ajustes e Importar en grupos blancos
+### [x] Fase 2: Importar y Guardar en… sin gris de panel
 
-**Objetivo.** Cada grupo de ajustes es una caja blanca con sus filas; los árboles y cajas de
-elegir e importar dejan el gris de panel.
+**Objetivo.** Los ajustes siguen como lista con líneas, sin caja, y un test lo fija; los árboles
+y cajas de elegir e importar dejan el gris de panel.
 
 ```check
-contains packages/ui/src/styles/runtime.css "border-radius: var(--mandor-radius-panel)"
+matches packages/ui/tests/styles/settings-runtime.test.ts /no box around them/
 no-match packages/exchange/src /bg-surface-panel/
 absent apps/sync/src/renderer/features/requests/components/save/SaveRequestDialog.tsx "bg-surface-panel"
 ```
 
 **Cambios.**
 
-- `runtime.css` (bloque de `app-settings`): `settings-rows` pasa a caja con
-  `background: var(--surface-raised)`, `border: 1px solid var(--border-subtle)`,
-  `border-radius: var(--mandor-radius-panel)` y su relleno lateral; las filas conservan su línea
-  entre ellas. El `h3` del grupo pierde su `border-block-end` y queda encima de la caja.
+- `settings-runtime.test.ts` (nuevo): `settings-rows` sin fondo, borde ni radio; línea bajo el
+  `h3` del grupo y entre filas. `runtime.css` no cambia.
 - `ChoiceTree.tsx`, `ImportSummaryCard.tsx`, `ImportDropzone.tsx` y `SaveRequestDialog.tsx`:
   `bg-surface-panel` → `bg-surface-raised`; el resto de sus clases no cambia.
 
 **No hacer.** Cambiar `SettingRow` ni las filas de ajustes de un request o una conexión: no
 llevan grupo, y su regla es de este diálogo.
 
-**Cierre.** `npm run ci:test -- packages/ui/tests/components/settings packages/exchange/tests`;
-`npm run ci:check` con las rutas tocadas. Con las dos apps: Ajustes muestra cajas blancas en
-claro y un escalón sobre el diálogo en oscuro; Importar y Guardar en… sin gris.
+**Cierre.** `npm run ci:test -- packages/ui/tests/styles packages/exchange/tests`;
+`npm run ci:check` con las rutas tocadas. Con las dos apps: Ajustes se lee en
+claro y oscuro como lista, sin cajas; Importar y Guardar en… sin gris.
 
 ### [ ] Fase 3: El aviso es una tarjeta
 

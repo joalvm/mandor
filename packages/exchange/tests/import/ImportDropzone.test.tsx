@@ -134,6 +134,9 @@ describe('the import dropzone', () => {
 
         const zone = screen.getByRole('region', { name: 'Drop the document here' });
 
+        // At rest it is a box of white on the dialog, never the grey of a panel.
+        expect(zone).toHaveClass('bg-surface-raised');
+
         fireEvent.dragEnter(zone);
 
         expect(zone).toHaveAttribute('data-over', 'true');
