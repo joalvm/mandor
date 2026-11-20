@@ -18,11 +18,7 @@ function HistoryBody() {
         return null;
     }
 
-    return (
-        <Card>
-            <HistoryTab resource={resource} workspaceId={parts.workspaceId} />
-        </Card>
-    );
+    return <HistoryTab resource={resource} workspaceId={parts.workspaceId} />;
 }
 
 function DiffBody() {

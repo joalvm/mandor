@@ -1,6 +1,5 @@
 import { ItemProvider } from '@mandor/collections';
 import { TabBody, TabIndicator, TabKind, TabStatus, useTab } from '@mandor/shell';
-import { Card } from '@mandor/ui';
 import type { PropsWithChildren } from 'react';
 
 import { ExampleDraftMark } from './components/examples/ExampleDraftMark.js';
@@ -57,9 +56,7 @@ export function RequestExampleTabKind() {
                 </AsExample>
             </TabIndicator>
             <TabBody>
-                <Card>
-                    <ExamplePanel />
-                </Card>
+                <ExamplePanel />
             </TabBody>
             <TabStatus>
                 <ExampleDraftMark />

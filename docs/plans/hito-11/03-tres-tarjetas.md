@@ -96,7 +96,7 @@ La forma (destino arriba, dos tarjetas abajo) es la misma; lo que va dentro no.
 Nada nuevo aspira a `packages/`: las tarjetas son de cada app y la densidad amplía paquetes que ya
 existen.
 
-### [ ] Fase 1: Request en tres tarjetas
+### [x] Fase 1: Request en tres tarjetas
 
 **Objetivo.** Una pestaña de request muestra el destino en una tarjeta arriba y el request y su
 response en dos tarjetas abajo, con el hueco del marco entre las tres.

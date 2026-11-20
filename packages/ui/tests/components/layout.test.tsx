@@ -99,4 +99,29 @@ describe('the zones of the window', () => {
         expect(card).toContainElement(screen.getByText('a line of the log'));
         expect(screen.getByRole('region', { name: 'console' })).toBe(card);
     });
+
+    /**
+     * A card fills what is left of its column by default; one told to measure its contents keeps
+     * its own height, so the pair below it shares the rest.
+     */
+    it('fills its column unless it is told to keep the height of its contents', () => {
+        render(
+            <Workbench>
+                <Card aria-label="target" size="content">
+                    <span>the address</span>
+                </Card>
+                <Card aria-label="body">
+                    <span>the body</span>
+                </Card>
+            </Workbench>,
+        );
+
+        const target = screen.getByRole('region', { name: 'target' });
+        const body = screen.getByRole('region', { name: 'body' });
+
+        expect(target).toHaveClass('shrink-0');
+        expect(target).not.toHaveClass('flex-1', 'h-full');
+        expect(body).toHaveClass('flex-1', 'h-full');
+        expect(body).not.toHaveClass('shrink-0');
+    });
 });

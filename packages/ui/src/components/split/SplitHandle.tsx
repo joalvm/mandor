@@ -65,11 +65,7 @@ export function SplitHandle({
             aria-valuemax={max}
             aria-valuemin={min}
             aria-valuenow={Math.round(value)}
-            className={cn(
-                'z-splitter border-transparent before:absolute before:bg-border-subtle',
-                'hover:before:bg-border-hover active:before:bg-border-hover',
-                axis.handle,
-            )}
+            className={cn('z-splitter border-transparent before:absolute', axis.handle)}
             data-focus-ring=""
             data-part="split-handle"
             data-position={position}

@@ -1,6 +1,7 @@
 import { ItemBody, ItemKind } from '@mandor/collections';
 import { MessageIcon } from '@mandor/icons';
 import { MESSAGE_ITEM_KIND } from '@mandor/schema';
+import { Card } from '@mandor/ui';
 
 import { openEventInComposer } from '../../events/open-event-in-composer.js';
 import { messagesStore } from './messages-store.js';
@@ -24,7 +25,9 @@ export function MessageItemKind() {
             }}
         >
             <ItemBody>
-                <MessagePanel />
+                <Card>
+                    <MessagePanel />
+                </Card>
             </ItemBody>
         </ItemKind>
     );

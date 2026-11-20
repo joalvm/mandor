@@ -1,5 +1,4 @@
 import { TabBody, TabIndicator, TabKind, TabStatus } from '@mandor/shell';
-import { Card } from '@mandor/ui';
 
 import { COLLECTIONS_SECTION_ID } from './components/sidebar/CollectionsSection.js';
 import { ItemTab } from './components/tab/ItemTab.js';
@@ -45,9 +44,7 @@ export function ItemTabKind() {
                 <ItemTabMark />
             </TabIndicator>
             <TabBody>
-                <Card>
-                    <ItemTab />
-                </Card>
+                <ItemTab />
             </TabBody>
             <TabStatus>
                 <ItemLeafStatus />

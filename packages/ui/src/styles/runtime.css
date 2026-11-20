@@ -252,6 +252,16 @@ textarea,
     width: 4px;
 }
 
+/* The colour of the line lives here, beside the gutter rule that hides it: a utility sits in a
+   later layer and would paint over that rule whatever its weight. */
+[data-part='split-handle']::before {
+    background-color: var(--color-border-subtle);
+}
+
+[data-part='split-handle']:is(:hover, :active)::before {
+    background-color: var(--color-border-hover);
+}
+
 [data-direction='column'] > [data-part='split-handle'] {
     cursor: row-resize;
     inset-block: auto;

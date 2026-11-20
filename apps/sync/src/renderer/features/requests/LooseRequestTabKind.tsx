@@ -1,6 +1,5 @@
 import { ItemProvider } from '@mandor/collections';
 import { TabBody, TabIndicator, TabKind, TabStatus, TabStripAction, useTab } from '@mandor/shell';
-import { Card } from '@mandor/ui';
 import type { PropsWithChildren } from 'react';
 
 import { RequestDraftMark } from './components/panel/RequestDraftMark.js';
@@ -62,11 +61,9 @@ export function LooseRequestTabKind() {
                     </AsRequest>
                 </TabIndicator>
                 <TabBody>
-                    <Card>
-                        <AsRequest>
-                            <RequestPanel />
-                        </AsRequest>
-                    </Card>
+                    <AsRequest>
+                        <RequestPanel />
+                    </AsRequest>
                 </TabBody>
                 <TabStatus>
                     <AsRequest>

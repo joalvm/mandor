@@ -1,4 +1,5 @@
 import { failure, success } from '@mandor/ipc';
+import { allByPart, byPart } from '@mandor/ui/testing';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -34,6 +35,17 @@ describe('the tab of the history', () => {
 
         expect(await screen.findByText('http://localhost/a')).toBeVisible();
         expect(screen.getByText('No send picked')).toBeVisible();
+    });
+
+    it('rests the list and the detail on two cards, the gutter of the frame between them', async () => {
+        draw();
+
+        const cards = allByPart('card');
+
+        expect(cards).toHaveLength(2);
+        expect(cards[0]).toContainElement(await screen.findByText('Nothing sent yet'));
+        expect(cards[1]).toContainElement(screen.getByText('No send picked'));
+        expect(byPart('split-pane')).toHaveAttribute('data-gap', 'gutter');
     });
 
     it('says nothing was sent when the workspace has no history', async () => {

@@ -169,6 +169,8 @@
     "otherMethod": "Otro método…",
     "otherMethodField": "Método propio",
     "panelLabel": "Request",
+    "targetLabel": "Destino",
+    "responseLabel": "Response",
     "params": "Params",
     "path": "Path",
     "previewImage": "Imagen de la response",
