@@ -152,6 +152,34 @@ describe('the command palette', () => {
     });
 
     /**
+     * A press anywhere outside it closes it, and so does `Escape` once the focus went elsewhere:
+     * a palette that only the field inside it could close traps whoever clicked away.
+     */
+    it('closes on a press outside it and on Escape wherever the focus went', () => {
+        render(<Harness />, { wrapper: Wrapper });
+        openPalette();
+
+        fireEvent.pointerDown(document.body);
+
+        expect(screen.queryByRole('listbox')).toBeNull();
+
+        openPalette();
+        document.body.focus();
+        fireEvent.keyDown(document.body, { key: 'Escape' });
+
+        expect(screen.queryByRole('listbox')).toBeNull();
+    });
+
+    it('stays open on a press inside it', () => {
+        render(<Harness />, { wrapper: Wrapper });
+        openPalette();
+
+        fireEvent.pointerDown(screen.getByRole('listbox', { name: 'Command palette' }));
+
+        expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+
+    /**
      * The focus never leaves the field, so a reader learns which row the arrows stand on from the
      * field itself: it points at the row that is selected, inside the list it controls.
      */
