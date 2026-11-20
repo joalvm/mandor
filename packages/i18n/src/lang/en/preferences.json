@@ -113,5 +113,11 @@
     "forgetApprovalsButton": "Forget approvals",
     "forgetApprovalsTitle": "Forget every approval?",
     "forgetApprovalsDetail": "Every script asks to be approved again on this machine. The scripts themselves stay as they are.",
-    "forgetApprovalsConfirm": "Forget"
+    "forgetApprovalsConfirm": "Forget",
+    "appearance-motion-full": "Full",
+    "appearance-motion-reduced": "Reduced",
+    "appearance-motion-system": "System",
+    "motion": "Animations",
+    "motionGroup": "Motion",
+    "motionHelp": "System does what the system asks. Reduced takes away sliding and growing and keeps the fades."
 }

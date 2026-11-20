@@ -13,6 +13,8 @@ const CARDS: Record<ThemeMode, readonly ThemeSlot[]> = {
 
 const DENSITIES = ['comfortable', 'compact'] as const;
 
+const MOTIONS = ['system', 'full', 'reduced'] as const;
+
 /**
  * The themes of the window: whether the system or the reader picks, and the theme for each place
  * that is picked for, every one with its miniature. A theme changes colour and contrast and
@@ -52,6 +54,7 @@ export function ThemesSection() {
                 ))}
             </div>
             <DensityGroup />
+            <MotionGroup />
         </div>
     );
 }
@@ -83,6 +86,38 @@ function DensityGroup() {
                         value: each,
                     }))}
                     value={density}
+                />
+            </SettingRow>
+        </SettingsGroup>
+    );
+}
+
+/**
+ * How the window moves: as the system asks, always fully, or always less, where layers only fade.
+ * It sits apart too: like the density, it changes how the window behaves, not its colour.
+ */
+function MotionGroup() {
+    const translate = useTranslator();
+    const preferences = usePreferences();
+    const motion =
+        MOTIONS.find((each) => each === preferences.values['appearance.motion']) ?? 'system';
+
+    return (
+        <SettingsGroup title={translate('preferences:motionGroup')}>
+            <SettingRow
+                help={translate('preferences:motionHelp')}
+                label={translate('preferences:motion')}
+            >
+                <Select
+                    label={translate('preferences:motion')}
+                    onValueChange={(next) => {
+                        preferences.writePreference('appearance.motion', next);
+                    }}
+                    options={MOTIONS.map((each) => ({
+                        label: translate(`preferences:appearance-motion-${each}`),
+                        value: each,
+                    }))}
+                    value={motion}
                 />
             </SettingRow>
         </SettingsGroup>

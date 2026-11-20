@@ -22,6 +22,33 @@
 @source '../../../';
 @source '../../../../apps';
 
+/* The motion utilities read the choice of the reader as well as the system: `motion-reduce:`
+   holds when the system asks for less and the reader does not hold full motion, or when the
+   reader holds less; `motion-safe:`, the other way round. */
+@custom-variant motion-reduce {
+    @media (prefers-reduced-motion: reduce) {
+        &:where(:root:not([data-motion='full']), :root:not([data-motion='full']) *) {
+            @slot;
+        }
+    }
+
+    &:where(:root[data-motion='reduced'], :root[data-motion='reduced'] *) {
+        @slot;
+    }
+}
+
+@custom-variant motion-safe {
+    @media (prefers-reduced-motion: no-preference) {
+        &:where(:root:not([data-motion='reduced']), :root:not([data-motion='reduced']) *) {
+            @slot;
+        }
+    }
+
+    &:where(:root[data-motion='full'], :root[data-motion='full'] *) {
+        @slot;
+    }
+}
+
 @theme inline {
     --color-*: initial;
     --font-*: initial;

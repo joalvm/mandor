@@ -311,7 +311,7 @@ matches packages/ui/tests/components/table/Table.test.tsx /reveal="always"/
 Con las dos apps: Orígenes y Workspaces con sus botones
 de fila a la vista; los headers de un request, ocultos hasta pasar el puntero.
 
-### [ ] Fase 7: Animaciones como preferencia
+### [x] Fase 7: Animaciones como preferencia
 
 **Objetivo.** En Ajustes › Temas de las dos apps, «Animaciones: Sistema · Completas · Reducidas»
 decide si la interfaz se mueve, sin depender de lo que pida el sistema.
@@ -331,6 +331,9 @@ contains packages/i18n/src/lang/es/preferences.json "Animaciones"
   como la densidad; `system` quita el atributo.
 - `scales.css`: `:root[data-motion='reduced']` lleva desplazamiento y escalas a neutro; el
   bloque `prefers-reduced-motion` se aplica a `:root:not([data-motion='full'])`.
+- `index.css`: `motion-safe` y `motion-reduce` redefinidas con `@custom-variant` para que lean
+  `data-motion` además del sistema; sin eso, los pulsos de `StatusDot` y del esqueleto del
+  editor seguirían solo al sistema.
 - `ThemesSection.tsx`: grupo de movimiento con su `SettingRow` y `Select`. Textos en
   `src/lang/` (es y en) y `npm run i18n`.
 - Tests: la definición, el atributo en la raíz para los tres valores y la fila en Ajustes.

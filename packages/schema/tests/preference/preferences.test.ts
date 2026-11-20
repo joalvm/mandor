@@ -71,6 +71,16 @@ describe('the preference schema', () => {
                 values: ['comfortable', 'compact'],
             },
             {
+                defaultValue: 'system',
+                helpKey: 'preferences:motionHelp',
+                key: 'appearance.motion',
+                labelKey: 'preferences:motion',
+                scope: 'app',
+                section: 'themes',
+                type: 'select',
+                values: ['system', 'full', 'reduced'],
+            },
+            {
                 defaultValue: 'auto',
                 helpKey: 'preferences:updatesModeHelp',
                 key: 'updates.mode',
@@ -111,6 +121,7 @@ describe('the preference schema', () => {
             'appearance.themeNight': 'dark',
             'appearance.themeManual': 'dark',
             'appearance.density': 'comfortable',
+            'appearance.motion': 'system',
             'updates.mode': 'auto',
             'updates.channel': 'stable',
         });
@@ -128,6 +139,7 @@ describe('the preference schema', () => {
             'appearance.themeNight': 'dark',
             'appearance.themeManual': 'light',
             'appearance.density': 'comfortable',
+            'appearance.motion': 'system',
             'updates.mode': 'auto',
             'updates.channel': 'stable',
         });

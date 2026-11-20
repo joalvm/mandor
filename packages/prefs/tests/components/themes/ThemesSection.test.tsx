@@ -70,6 +70,19 @@ describe('the themes of the window', () => {
         expect(stored()).toEqual({ 'appearance.density': 'compact' });
     });
 
+    it('lets the reader hold the motion of the window whatever the system asks', () => {
+        renderSection();
+
+        const motion = screen.getByRole('combobox', { name: 'Animations' });
+
+        expect(motion).toHaveTextContent('System');
+
+        fireEvent.keyDown(motion, { key: 'ArrowDown' });
+        fireEvent.click(screen.getByRole('option', { name: 'Reduced' }));
+
+        expect(stored()).toEqual({ 'appearance.motion': 'reduced' });
+    });
+
     it('offers the night card the dark themes and writes the one chosen', async () => {
         renderSection();
         fireEvent.keyDown(screen.getByRole('combobox', { name: 'Night theme' }), {

@@ -63,6 +63,16 @@ export const PREFERENCE_DEFINITIONS = [
         values: ['comfortable', 'compact'],
     },
     {
+        defaultValue: 'system',
+        helpKey: 'preferences:motionHelp',
+        key: 'appearance.motion',
+        labelKey: 'preferences:motion',
+        scope: 'app',
+        section: 'themes',
+        type: 'select',
+        values: ['system', 'full', 'reduced'],
+    },
+    {
         defaultValue: 'auto',
         helpKey: 'preferences:updatesModeHelp',
         key: 'updates.mode',

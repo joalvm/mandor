@@ -113,5 +113,11 @@
     "forgetApprovalsButton": "Olvidar aprobaciones",
     "forgetApprovalsTitle": "¿Olvidar todas las aprobaciones?",
     "forgetApprovalsDetail": "Cada script vuelve a pedir aprobación en esta máquina. Los scripts quedan como están.",
-    "forgetApprovalsConfirm": "Olvidar"
+    "forgetApprovalsConfirm": "Olvidar",
+    "appearance-motion-full": "Completas",
+    "appearance-motion-reduced": "Reducidas",
+    "appearance-motion-system": "Sistema",
+    "motion": "Animaciones",
+    "motionGroup": "Movimiento",
+    "motionHelp": "Sistema hace lo que pida el sistema. Reducidas quita desplazamientos y crecimientos y deja los fundidos."
 }

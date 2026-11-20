@@ -131,9 +131,18 @@
 }
 
 /* Asking for less motion takes the travel away, never the fade: a layer stops rising and
-   growing and still dissolves at the pace of the scale, so the window never snaps. */
+   growing and still dissolves at the pace of the scale, so the window never snaps. The reader
+   asks in Settings (`data-motion`, written by the preferences); the system asks unless the reader
+   holds full motion. */
+:root[data-motion='reduced'] {
+    --mandor-motion-shift: 0px;
+    --mandor-motion-scale: 1;
+    --mandor-motion-scale-overlay: 1;
+    --mandor-duration-travel: 0ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
-    :root {
+    :root:not([data-motion='full']) {
         --mandor-motion-shift: 0px;
         --mandor-motion-scale: 1;
         --mandor-motion-scale-overlay: 1;

@@ -42,6 +42,7 @@ afterEach(() => {
     setTextZoom(0);
     document.documentElement.removeAttribute('data-theme');
     document.documentElement.removeAttribute('data-density');
+    document.documentElement.removeAttribute('data-motion');
     document.documentElement.removeAttribute('lang');
     window.localStorage.clear();
     vi.restoreAllMocks();
@@ -82,6 +83,33 @@ describe('preferences application', () => {
         unmount();
 
         expect(document.documentElement.dataset['density']).toBeUndefined();
+    });
+
+    /**
+     * A choice of motion is named on the window for the stylesheets; following the system names
+     * nothing, so they keep reading what the system asks for.
+     */
+    it.each([
+        ['full', 'full'],
+        ['reduced', 'reduced'],
+        ['system', undefined],
+    ])('names the motion %s on the window as %s', (motion, named) => {
+        window.localStorage.setItem(
+            'mandor.preferences',
+            JSON.stringify({ 'appearance.motion': motion }),
+        );
+
+        const { unmount } = render(
+            <PreferencesProvider>
+                <PreferencesApplication />
+            </PreferencesProvider>,
+        );
+
+        expect(document.documentElement.dataset['motion']).toBe(named);
+
+        unmount();
+
+        expect(document.documentElement.dataset['motion']).toBeUndefined();
     });
 
     /**
