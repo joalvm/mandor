@@ -1,4 +1,4 @@
-export { AddressActions } from './components/input/AddressActions.js';
+export { AddressEnd } from './components/input/AddressEnd.js';
 export { AddressBar } from './components/input/AddressBar.js';
 export { AppBody } from './components/layout/AppBody.js';
 export { AppShell } from './components/layout/AppShell.js';

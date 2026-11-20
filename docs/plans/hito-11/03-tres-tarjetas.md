@@ -278,7 +278,7 @@ la casilla y el interruptor.
 dos apps en claro y oscuro: la barra de dirección, el buscador del lateral y el de actividad se
 leen como línea sobre su fondo; Tab recolorea su línea sin moverlos.
 
-### [ ] Fase 6: La tarjeta de destino mide como el canvas
+### [x] Fase 6: La tarjeta de destino mide como el canvas
 
 **Objetivo.** La dirección y su acción principal miden 34 px. En Request, la tarjeta de destino
 lleva una fila de miga de 30 px con sus iconos (código, guardar, más) y la fila de la dirección;
@@ -299,8 +299,10 @@ matches packages/ui/src/components/input/AddressBar.tsx /h-address/
   acciones», que abre el menú de la fila del árbol del request (sin él en un request suelto). La
   dirección pierde esos iconos; método de 84 px de ancho.
 - Realtime: fila de 48 px; dentro de la dirección, una pastilla con el estado y el tiempo
-  conectada. Grabar queda como botón de icono con su tooltip, sin texto. A la derecha, dividir
-  (abre la pestaña en el grupo de al lado) y «Más acciones» (el menú de la fila de la conexión).
+  conectada. La fila termina en Conectar. Grabar pasa a la cabecera de Actividad, como botón de
+  icono con su tooltip, sin texto. Sin «Más acciones» en la barra.
+- La tira de pestañas de las dos apps cierra con dividir el grupo a la derecha y la lista de
+  pestañas, como el `strip-tail` del canvas.
 - Las dos apps.
 
 **No hacer.** Tocar las tarjetas del par (fases 1 y 2) ni los campos (fase 5).
@@ -330,6 +332,34 @@ matches packages/ui/src/components/collapsible/CollapsibleHeader.tsx /count/
 **No hacer.** Cambiar qué secciones hay ni su orden.
 
 **Cierre.** `ci:test` de los paquetes tocados; las dos apps en claro y oscuro contra el canvas.
+
+### [ ] Fase 8: Renombrar en blanco y sin foco de color
+
+**Objetivo.** El campo de renombrar en sitio (docs, colecciones, conexiones) es blanco y no
+pinta foco: ni su línea ni la fila que lo lleva se recolorean con el acento. Las filas de lista y
+de árbol y las pestañas tampoco dibujan línea de foco.
+
+```check
+absent packages/ui/src/components/input/InlineNameInput.tsx "data-focus-frame"
+absent packages/ui/src/components/input/InlineNameInput.tsx "bg-transparent"
+absent packages/ui/src/components/row/TreeRow.tsx "data-focus-frame"
+absent packages/ui/src/components/row/ListRow.tsx "data-focus-frame"
+absent packages/ui/src/components/tabs/TabsTab.tsx "data-focus-frame"
+```
+
+**Cambios.**
+
+- `InlineNameInput.tsx`: fondo blanco siempre (la superficie de tarjeta), su línea gris quieta
+  con el foco; es la excepción a la regla de la fase 5 de que un campo toma el fondo del padre.
+- `TreeRow.tsx`, `ListRow.tsx`, `TabsTab.tsx` y las pestañas de la tira: sin `data-focus-frame`.
+  La fila o la pestaña con el foco del teclado se distinguen por su gris de seleccionado, nunca
+  por una línea.
+- Las dos apps.
+
+**No hacer.** Tocar el foco de botones, campos y la barra de dirección.
+
+**Cierre.** `ci:test` de los paquetes tocados; renombrar un doc, una colección y una conexión en
+las dos apps, en claro y oscuro.
 
 ## Deudas
 

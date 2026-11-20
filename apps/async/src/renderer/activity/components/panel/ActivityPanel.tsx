@@ -1,7 +1,7 @@
 import { useMessages } from '@mandor/i18n';
 import type { ResourceUri } from '@mandor/schema';
 import { IconButton, SplitHalf, SplitPane } from '@mandor/ui';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type PropsWithChildren } from 'react';
 
 import type { ActivityEntry } from '../../activity-entry.js';
 import { activityStore } from '../../activity-store.js';
@@ -31,7 +31,7 @@ const TIMELINE_SHARE = 65;
  */
 let dockShare = TIMELINE_SHARE;
 
-type ActivityPanelProps = {
+type ActivityPanelProps = PropsWithChildren<{
     entries: readonly ActivityEntry[];
     /** Clears what the timeline holds, where the entries come from. */
     onClear: () => void;
@@ -41,7 +41,7 @@ type ActivityPanelProps = {
     resource: ResourceUri;
     label: string;
     resizeLabel: string;
-};
+}>;
 
 /**
  * The timeline of a resource, with the dock of the chosen entry under it. The dock exists only
@@ -50,6 +50,7 @@ type ActivityPanelProps = {
  * detail of the chosen entry, picked by its kind.
  */
 export function ActivityPanel({
+    children,
     entries,
     label,
     onClear,
@@ -96,7 +97,9 @@ export function ActivityPanel({
                     activityStore.getState().setNarrowing(resource, next);
                 }}
                 onExport={onExport}
-            />
+            >
+                {children}
+            </ActivityHead>
             <ActivityBody
                 entries={visible}
                 label={label}

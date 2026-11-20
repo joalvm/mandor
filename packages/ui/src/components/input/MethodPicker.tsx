@@ -60,7 +60,7 @@ export function MethodPicker({
     if (typing) {
         return (
             <span
-                className="flex h-field w-28 shrink-0 items-center px-pad-control text-xs font-semibold"
+                className="flex h-field w-21 shrink-0 items-center px-pad-control text-xs font-semibold"
                 data-part="method-picker"
             >
                 <InlineNameInput
@@ -80,7 +80,7 @@ export function MethodPicker({
             <MenuTrigger>
                 <Button
                     aria-label={`${label} ${value}`}
-                    className="h-field w-28 shrink-0 justify-between rounded-r-none border-0 px-pad-control font-semibold"
+                    className="h-field w-21 shrink-0 justify-between rounded-r-none border-0 px-pad-control font-semibold"
                     data-part="method-picker"
                     variant="ghost"
                 >

@@ -135,8 +135,11 @@
     --spacing-row: var(--mandor-height-row);
     --spacing-row-pair: var(--mandor-height-row-pair);
     --spacing-control: var(--mandor-height-control);
+    --spacing-crumb: var(--mandor-height-crumb);
     --spacing-section: var(--mandor-height-section);
+    --spacing-address: var(--mandor-height-address);
     --spacing-header: var(--mandor-height-header);
+    --spacing-toolbar: var(--mandor-height-toolbar);
     --spacing-titlebar: var(--mandor-height-titlebar);
     --spacing-statusbar: var(--mandor-height-statusbar);
     --spacing-sidebar: var(--mandor-width-sidebar);

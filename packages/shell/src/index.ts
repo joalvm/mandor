@@ -59,6 +59,7 @@ export {
     selectTabs,
 } from './selectors.js';
 export { shellStore, type ShellStore } from './shell-store.js';
+export { revealInSidebar } from './sidebar/reveal-in-sidebar.js';
 export { DEFAULT_SHORTCUTS } from './shortcut/default-shortcuts.js';
 export { isApplePlatform } from './shortcut/apple-platform.js';
 export { shortcutLabel } from './shortcut/shortcut-label.js';

@@ -1,6 +1,6 @@
 import { AddressField } from '@mandor/env';
 import { SendIcon } from '@mandor/icons';
-import { AddressActions, AddressBar, Button, IconButton, MethodPicker } from '@mandor/ui';
+import { AddressBar, AddressEnd, Button, IconButton, MethodPicker } from '@mandor/ui';
 import { useState } from 'react';
 
 import { ENTORNO } from './entorno.js';
@@ -36,9 +36,9 @@ export function PeticionDemo() {
                     onVariablesChange={() => undefined}
                     value={url}
                 />
-                <AddressActions>
+                <AddressEnd>
                     <IconButton icon="code" label="Código" />
-                </AddressActions>
+                </AddressEnd>
             </AddressBar>
             <Button variant="primary">
                 <SendIcon size="sm" />

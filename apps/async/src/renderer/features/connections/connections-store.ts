@@ -34,6 +34,26 @@ function without<T>(entries: Record<string, T>, key: string): Record<string, T> 
     return Object.fromEntries(Object.entries(entries).filter(([each]) => each !== key));
 }
 
+/**
+ * The moment each socket opened. It is stamped when the socket lands on open, kept while it stays
+ * there, and forgotten as soon as it is anything else: a socket that opens again counts anew.
+ */
+function updatedOpenings(
+    openings: Record<string, number>,
+    connectionId: string,
+    wsState: WsState,
+): Record<string, number> {
+    if (wsState !== 'open') {
+        return without(openings, connectionId);
+    }
+
+    if (openings[connectionId] !== undefined) {
+        return openings;
+    }
+
+    return { ...openings, [connectionId]: Date.now() };
+}
+
 function updatedFaults(
     faults: Record<string, ConnectionFault>,
     connectionId: string,
@@ -67,6 +87,7 @@ function actionsFor(set: ConnectionsStoreApi['setState']): ConnectionsActions {
                 attempts: without(state.attempts, connectionId),
                 connections: state.connections.filter((entry) => entry.id !== connectionId),
                 faults: without(state.faults, connectionId),
+                openedAt: without(state.openedAt, connectionId),
                 recordings: without(state.recordings, connectionId),
                 renaming: state.renaming === connectionId ? null : state.renaming,
                 states: without(state.states, connectionId),
@@ -95,6 +116,7 @@ function actionsFor(set: ConnectionsStoreApi['setState']): ConnectionsActions {
         setConnectionState: (connectionId, wsState, attempt) => {
             set((state) => ({
                 states: { ...state.states, [connectionId]: wsState },
+                openedAt: updatedOpenings(state.openedAt, connectionId, wsState),
                 attempts:
                     attempt === undefined
                         ? state.attempts

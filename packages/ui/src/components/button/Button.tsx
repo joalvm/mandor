@@ -42,6 +42,7 @@ const buttonStyles = cva(
             size: {
                 sm: 'h-control-sm px-pad-control',
                 md: 'h-control px-3',
+                lg: 'h-address px-4',
             },
         },
         defaultVariants: { variant: 'secondary', size: 'md' },

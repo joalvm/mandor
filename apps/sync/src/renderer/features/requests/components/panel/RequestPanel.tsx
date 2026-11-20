@@ -22,6 +22,7 @@ import { sendItem } from '../../lib/send-item.js';
 import { composeUrlOf, splitUrlOf } from '../../lib/url-query.js';
 import { requestsStore } from '../../requests-store.js';
 import { IDLE_SEND } from '../../responses.slice.js';
+import { RequestActions } from '../bar/RequestActions.js';
 import { RequestBar } from '../bar/RequestBar.js';
 import { RequestBreadcrumb } from '../bar/RequestBreadcrumb.js';
 import { RequestCodeDialog } from '../code/RequestCodeDialog.js';
@@ -85,18 +86,22 @@ export function RequestPanel() {
                 role="group"
             >
                 <Card aria-label={labels('targetLabel')} size="content">
-                    <RequestBreadcrumb name={place.name ?? current.name} trail={place.trail} />
+                    <RequestBreadcrumb name={place.name ?? current.name} trail={place.trail}>
+                        <RequestActions
+                            onKeep={keepResponse(resource, entry, examples.saveResponse)}
+                            onOpenCode={code.show}
+                            resource={resource}
+                        />
+                    </RequestBreadcrumb>
                     <RequestBar
                         environment={environment}
                         method={current.method}
                         onCancel={() => {
                             fireAndForget(cancelItem(resource));
                         }}
-                        onKeep={keepResponse(resource, entry, examples.saveResponse)}
                         onMethod={(method) => {
                             edit({ method });
                         }}
-                        onOpenCode={code.show}
                         onPasteText={pasteCurl}
                         onSend={send}
                         onUrl={(line) => {

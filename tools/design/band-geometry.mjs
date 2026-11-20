@@ -24,8 +24,11 @@ const HEIGHTS = new Set([
     'h-field',
     'h-row',
     'h-control',
+    'h-crumb',
     'h-section',
     'h-header',
+    'h-address',
+    'h-toolbar',
     'h-titlebar',
     'h-statusbar',
 ]);

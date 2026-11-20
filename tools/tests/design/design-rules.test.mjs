@@ -117,6 +117,18 @@ describe('the band geometry rule', () => {
         expect(bandGeometryProblems([bar])).toEqual([]);
     });
 
+    /** The trail, the address and the toolbar of a destination are heights of the scale too. */
+    it('accepts the heights of the rows of a destination', () => {
+        const rows = ['h-crumb', 'h-address', 'h-toolbar'].map((height) =>
+            file(
+                'packages/ui/src/components/Bar.tsx',
+                `<div className="flex ${height} items-center px-pad-panel" />`,
+            ),
+        );
+
+        expect(bandGeometryProblems(rows)).toEqual([]);
+    });
+
     /** A row that never says so leaves a control of fixed height against the top edge. */
     it('reports a row that never says where its contents sit across it', () => {
         const bar = file(

@@ -104,7 +104,7 @@
     gap: var(--mandor-gap-control);
 }
 
-/** The list of tabs closes the band at the far end, at the inset the band opened with. */
+/** The split and the list of tabs close the band at the far end, at the inset it opened with. */
 .dockview-theme-mandor .dv-right-actions-container {
     display: flex;
     align-items: center;

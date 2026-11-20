@@ -12,6 +12,7 @@ describe('the starting point of the connections slice', () => {
             attempts: {},
             connections: [],
             faults: {},
+            openedAt: {},
             recordings: {},
             renaming: null,
             states: {},

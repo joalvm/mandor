@@ -22,6 +22,7 @@ import { shellStore } from '../../shell-store.js';
 import { GroupTab } from './GroupTab.js';
 import { GroupTabContent } from './GroupTabContent.js';
 import { GroupWatermark } from './GroupWatermark.js';
+import { SplitGroupButton } from '../tab-strip/SplitGroupButton.js';
 import { TabListMenu } from '../tab-strip/TabListMenu.js';
 import { TabStripActions } from '../tab-strip/TabStripActions.js';
 
@@ -34,6 +35,16 @@ const COMPONENTS = { [TAB_COMPONENT]: GroupTabContent };
 /** The slot dockview puts right after the tabs: the add of the kinds the strip holds. */
 function LeftHeaderActions(props: Parameters<typeof TabStripActions>[0]) {
     return <TabStripActions {...props} />;
+}
+
+/** The slot at the far end of the strip: the split of the group, and the list of its tabs. */
+function RightHeaderActions(props: Parameters<typeof TabListMenu>[0]) {
+    return (
+        <span className="flex items-center gap-gap-control" data-part="strip-tail">
+            <SplitGroupButton group={props.group} />
+            <TabListMenu {...props} />
+        </span>
+    );
 }
 
 /**
@@ -172,7 +183,7 @@ export function GroupGrid() {
                     onReady={(event: DockviewReadyEvent) => {
                         setApi(event.api);
                     }}
-                    rightHeaderActionsComponent={TabListMenu}
+                    rightHeaderActionsComponent={RightHeaderActions}
                     theme={THEME}
                 />
                 {blanks.map(([groupId, element]) =>

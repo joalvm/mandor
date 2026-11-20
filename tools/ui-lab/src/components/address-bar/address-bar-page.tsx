@@ -84,7 +84,7 @@ export function AddressBarPage() {
                     </li>
                     <li>
                         Lo que actúa sobre la dirección —verla como código— va al final, en{' '}
-                        <code>AddressActions</code>, como botón de icono y sin costura delante.
+                        <code>AddressEnd</code>, como botón de icono y sin costura delante.
                     </li>
                     <li>
                         La dirección se escribe en la fuente de la interfaz, no en monoespaciada: la

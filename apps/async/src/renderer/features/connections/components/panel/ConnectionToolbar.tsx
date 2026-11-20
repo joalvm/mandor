@@ -1,9 +1,13 @@
 import { AddressField, EnvironmentSelect } from '@mandor/env';
-import { ConnectIcon, DisconnectIcon, RecordIcon } from '@mandor/icons';
+import { ConnectIcon, DisconnectIcon } from '@mandor/icons';
 import { useMessages } from '@mandor/i18n';
-import type { RecordStatus } from '@mandor/ipc';
+import type { WsState } from '@mandor/ipc';
 import type { Environment, Variable } from '@mandor/schema';
-import { AddressBar, Button } from '@mandor/ui';
+import { AddressBar, AddressEnd, Badge, Button } from '@mandor/ui';
+
+import { useElapsedSince } from '../../hooks/useElapsedSince.js';
+import { dotStateFor, type DotState } from '../../lib/dot-state.js';
+import { formatElapsed } from '../../lib/format-elapsed.js';
 
 type ConnectionToolbarProps = {
     /** The environment the URL resolves its variables against. */
@@ -14,21 +18,24 @@ type ConnectionToolbarProps = {
     environments: readonly Environment[];
     live: boolean;
     onEnvironmentChange: (environmentId: string) => void;
-    onRecordToggle: () => void;
     onToggle: () => void;
     onUrlChange: (url: string) => void;
     onVariablesChange: (variables: readonly Variable[]) => void;
+    /** When the socket opened; nothing while it is not open. */
+    openedAt: number | undefined;
     pending: boolean;
-    recording: RecordStatus;
     url: string;
+    wsState: WsState;
     /** The namespace a Socket.IO connection joins; the root one is not worth a chip. */
     namespace?: string | undefined;
 };
 
 /**
  * Address bar of the connection: the environment it resolves against, the namespace it joins and
- * the URL it dials, fused the way an address bar is, then the toggle. The transport is not here:
- * a connection is made for one, so it is set in its settings and its logo marks the tab.
+ * the URL it dials, fused the way an address bar is, closed from inside by the state of the
+ * socket and the time it has been connected; then the toggle. The recording heads the activity it
+ * records. The transport is not here: a connection is made for one, so it is set in its settings
+ * and its logo marks the tab.
  */
 export function ConnectionToolbar({
     environment,
@@ -36,13 +43,13 @@ export function ConnectionToolbar({
     environments,
     live,
     onEnvironmentChange,
-    onRecordToggle,
     onToggle,
     onUrlChange,
     onVariablesChange,
+    openedAt,
     pending,
-    recording,
     url,
+    wsState,
     namespace,
 }: ConnectionToolbarProps) {
     const messages = useMessages('connections');
@@ -51,7 +58,7 @@ export function ConnectionToolbar({
 
     return (
         <div
-            className="flex h-header shrink-0 items-center gap-gap-control px-pad-panel"
+            className="flex h-toolbar shrink-0 items-center gap-gap-control pr-2.5 pl-pad-panel"
             data-part="connection-toolbar"
         >
             <AddressBar className="flex-1">
@@ -68,13 +75,16 @@ export function ConnectionToolbar({
                     onVariablesChange={onVariablesChange}
                     value={url}
                 />
+                <AddressEnd>
+                    <ConnectionStatePill openedAt={openedAt} wsState={wsState} />
+                </AddressEnd>
             </AddressBar>
-            <Button onClick={onRecordToggle} variant={recording.active ? 'secondary' : 'ghost'}>
-                <RecordIcon size="sm" />
-                {recording.active ? messages('recording') : messages('record')}
-                <RecordingCount recording={recording} />
-            </Button>
-            <Button loading={pending} onClick={onToggle} variant={live ? 'secondary' : 'primary'}>
+            <Button
+                loading={pending}
+                onClick={onToggle}
+                size="lg"
+                variant={live ? 'secondary' : 'primary'}
+            >
                 <Glyph size="sm" />
                 {messages(live ? 'disconnect' : 'connect')}
             </Button>
@@ -97,14 +107,39 @@ function ConnectionNamespace({ namespace }: Pick<ConnectionToolbarProps, 'namesp
     );
 }
 
-function RecordingCount({ recording }: Pick<ConnectionToolbarProps, 'recording'>) {
-    if (!recording.active) {
+/** The face of the pill for each state of the socket worth one; the others draw none. */
+const PILL_BY_DOT_STATE: Partial<
+    Record<DotState, { label: 'stateConnected' | 'stateConnecting'; tone: 'success' | 'warning' }>
+> = {
+    connected: { label: 'stateConnected', tone: 'success' },
+    connecting: { label: 'stateConnecting', tone: 'warning' },
+};
+
+/**
+ * The state of the socket inside the end of the address, and how long it has been connected. A
+ * closed connection shows nothing there: the toggle beside already says it can connect.
+ */
+function ConnectionStatePill({
+    openedAt,
+    wsState,
+}: Pick<ConnectionToolbarProps, 'openedAt' | 'wsState'>) {
+    const messages = useMessages('connections');
+    const elapsed = useElapsedSince(openedAt);
+    const pill = PILL_BY_DOT_STATE[dotStateFor(wsState)];
+
+    if (pill === undefined) {
         return null;
     }
 
+    const said =
+        openedAt === undefined
+            ? messages(pill.label)
+            : `${messages(pill.label)} · ${formatElapsed(elapsed)}`;
+
     return (
-        <span className="tabular-nums" data-part="connection-recording-count">
-            {recording.entries}
-        </span>
+        <Badge className="h-5 gap-gap-icon-text px-1.5 font-semibold tabular-nums" tone={pill.tone}>
+            <span aria-hidden className="size-1.5 rounded-full bg-current" />
+            <span data-part="connection-state">{said}</span>
+        </Badge>
     );
 }

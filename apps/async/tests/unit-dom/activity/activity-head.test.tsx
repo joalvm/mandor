@@ -184,4 +184,24 @@ describe('the head of the timeline', () => {
         expect(onExport).toHaveBeenCalledOnce();
         expect(onClear).toHaveBeenCalledOnce();
     });
+
+    it('puts what its owner gives it first among the actions', () => {
+        render(
+            <Wrapper>
+                <ActivityHead
+                    exportable
+                    narrowing={ALL_SIDES}
+                    onClear={vi.fn()}
+                    onNarrowingChange={vi.fn()}
+                    onExport={vi.fn()}
+                >
+                    <button type="button">Grabar</button>
+                </ActivityHead>
+            </Wrapper>,
+        );
+
+        const actions = document.querySelector('[data-part="activity-head-actions"]');
+
+        expect(actions?.firstElementChild).toBe(screen.getByRole('button', { name: 'Grabar' }));
+    });
 });

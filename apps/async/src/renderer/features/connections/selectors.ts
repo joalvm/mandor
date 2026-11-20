@@ -19,6 +19,13 @@ export function selectConnectionStateFor(
     return (state) => state.states[connectionId] ?? 'idle';
 }
 
+/** When the socket of the connection opened; nothing while it is not open. */
+export function selectOpenedAtFor(
+    connectionId: string,
+): (state: ConnectionsStore) => number | undefined {
+    return (state) => state.openedAt[connectionId];
+}
+
 export function selectAttemptFor(
     connectionId: string,
 ): (state: ConnectionsStore) => number | undefined {

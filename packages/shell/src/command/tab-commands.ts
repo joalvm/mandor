@@ -6,6 +6,7 @@ import { keptTab } from '../grid/leaf-preview.js';
 import { tabKind } from '../tab/tab-kind-registry.js';
 import type { Command } from './command-registry.js';
 import type { ShellStore } from '../shell-store.js';
+import { revealInSidebar } from '../sidebar/reveal-in-sidebar.js';
 import type { Tab } from '../tab/tab.js';
 import {
     closableTabs,
@@ -183,10 +184,10 @@ export const TAB_COMMANDS: readonly Command[] = [
         },
         (state, tab) => {
             const section = tabKind(tab.kind)?.section;
-            const collapsed = state.panels.collapsedSections;
 
-            state.setPanels({ collapsedSections: collapsed.filter((id) => id !== section) });
-            state.setRevealing(tab.resource);
+            if (section !== undefined) {
+                revealInSidebar(state, section, tab.resource);
+            }
         },
     ),
 ];

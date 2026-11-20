@@ -3,7 +3,7 @@ import { useMessages } from '@mandor/i18n';
 import type { ResourceUri } from '@mandor/schema';
 import { useFailureToast, useResourceSection, useSplit } from '@mandor/shell';
 import { Card, SplitHalf, SplitPane, useToast } from '@mandor/ui';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import { useStore } from 'zustand';
 
 import { FaultActionsContext } from '../../../../activity/fault-actions.js';
@@ -22,6 +22,7 @@ import { ConnectionActivity } from './ConnectionActivity.js';
 import { ConnectionCrumbs } from './ConnectionCrumbs.js';
 import { ConnectionToolbar } from './ConnectionToolbar.js';
 import { NoEventOpen } from './NoEventOpen.js';
+import { RecordButton } from './RecordButton.js';
 
 type ConnectionPanelProps = {
     connectionId: string;
@@ -39,7 +40,10 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
     const toast = useToast();
     const scope = useWorkspaceScope();
     const environments = useStore(envStore, (state) => state.environments);
-    const { connection, timeline, wsState } = useConnectionPanelState(connectionId, resource);
+    const { connection, openedAt, timeline, wsState } = useConnectionPanelState(
+        connectionId,
+        resource,
+    );
     const {
         composerEvent,
         crumbs,
@@ -103,13 +107,13 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
                     environments={environments}
                     live={live}
                     onEnvironmentChange={onEnvironmentChange}
-                    onRecordToggle={onRecordToggle}
                     onToggle={onToggle}
                     onUrlChange={onUrlChange}
                     onVariablesChange={onVariablesChange}
+                    openedAt={openedAt}
                     pending={wsState === 'connecting' || wsState === 'closing'}
-                    recording={recording}
                     url={connection.url}
+                    wsState={wsState}
                     namespace={namespaceOf(connection)}
                 />
             </Card>
@@ -136,20 +140,24 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
                     split={split}
                     timeline={timeline}
                     transport={connection.transport}
-                />
+                >
+                    <RecordButton onToggle={onRecordToggle} recording={recording} />
+                </ComposerArea>
             </FaultActionsContext>
         </div>
     );
 }
 
-type ComposerAreaProps = Omit<ComponentProps<typeof ConnectionStrip>, 'payloadType'> & {
-    crumbs: readonly string[];
-    onClose: () => void;
-    onSplitChange: (split: number) => void;
-    resource: ResourceUri;
-    split: number;
-    timeline: ComponentProps<typeof ConnectionActivity>['timeline'];
-};
+type ComposerAreaProps = PropsWithChildren<
+    Omit<ComponentProps<typeof ConnectionStrip>, 'payloadType'> & {
+        crumbs: readonly string[];
+        onClose: () => void;
+        onSplitChange: (split: number) => void;
+        resource: ResourceUri;
+        split: number;
+        timeline: ComponentProps<typeof ConnectionActivity>['timeline'];
+    }
+>;
 
 /**
  * What sits under the card of the connection: the event beside the activity, each on a card of
@@ -157,6 +165,7 @@ type ComposerAreaProps = Omit<ComponentProps<typeof ConnectionStrip>, 'payloadTy
  * it stays whether an event is open or not; only the half of the event changes.
  */
 function ComposerArea({
+    children,
     crumbs,
     onClose,
     onSplitChange,
@@ -183,7 +192,9 @@ function ComposerArea({
             </SplitHalf>
             <SplitHalf>
                 <Card aria-label={messages('activityLog')}>
-                    <ConnectionActivity resource={resource} timeline={timeline} />
+                    <ConnectionActivity resource={resource} timeline={timeline}>
+                        {children}
+                    </ConnectionActivity>
                 </Card>
             </SplitHalf>
         </SplitPane>

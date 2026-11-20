@@ -11,6 +11,8 @@ export type ConnectionsSlice = {
     attempts: Record<string, number>;
     connections: Connection[];
     faults: Record<string, ConnectionFault>;
+    /** When each open socket opened, for the time it has been connected. */
+    openedAt: Record<string, number>;
     recordings: Record<string, RecordStatus>;
     /** The connection whose row is being renamed in place, if any. */
     renaming: string | null;
@@ -23,6 +25,7 @@ export function initialConnectionsSlice(): ConnectionsSlice {
         attempts: {},
         connections: [],
         faults: {},
+        openedAt: {},
         recordings: {},
         renaming: null,
         states: {},

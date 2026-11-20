@@ -9,6 +9,7 @@ import {
     MenuTrigger,
     SearchInput,
 } from '@mandor/ui';
+import type { PropsWithChildren } from 'react';
 
 import {
     RESTING_NARROWING,
@@ -16,7 +17,7 @@ import {
     type TimelineSides,
 } from '../../lib/timeline-narrowing.js';
 
-type ActivityHeadProps = {
+type ActivityHeadProps = PropsWithChildren<{
     /** False while the timeline holds nothing: there would be nothing to act on. */
     exportable: boolean;
     narrowing: TimelineNarrowing;
@@ -25,15 +26,16 @@ type ActivityHeadProps = {
     onNarrowingChange: (next: TimelineNarrowing) => void;
     /** Writes the timeline out of the app, where the user says. */
     onExport: () => void;
-};
+}>;
 
 /**
  * The head of the timeline: what it draws, written small — a filter that hides whole sides,
  * keeps only what breaks its schema, and the line the search asks for, and the two actions on
- * what the timeline holds. The state of the head is the panel's: this reads it and says what
+ * what the timeline holds, after whatever its owner puts first. The state of the head is the panel's: this reads it and says what
  * changed, and the timeline draws the answer.
  */
 export function ActivityHead({
+    children,
     exportable,
     narrowing,
     onClear,
@@ -71,6 +73,7 @@ export function ActivityHead({
                 {messages('activityLog')}
             </span>
             <div className="flex items-center gap-gap-control" data-part="activity-head-actions">
+                {children}
                 <Menu checkable>
                     <MenuTrigger>
                         <IconButton icon="filter" label={messages('filter')} size="md" />

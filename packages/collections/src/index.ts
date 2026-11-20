@@ -1,5 +1,6 @@
 export { collectionStore } from './collection-store.js';
 export { CollectionSidebar } from './components/sidebar/CollectionSidebar.js';
+export { ItemActionsMenu } from './components/tab/ItemActionsMenu.js';
 export { ItemTab } from './components/tab/ItemTab.js';
 export { WorkspaceCollection } from './components/workspace/WorkspaceCollection.js';
 export { ItemBody } from './components/item-kind/ItemBody.js';

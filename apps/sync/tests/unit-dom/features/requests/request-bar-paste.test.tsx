@@ -21,9 +21,7 @@ function sendBar(overrides: Partial<React.ComponentProps<typeof RequestBar>> = {
             environment={undefined}
             method="GET"
             onCancel={() => undefined}
-            onKeep={undefined}
             onMethod={() => undefined}
-            onOpenCode={() => undefined}
             onPasteText={() => false}
             onSend={() => undefined}
             onUrl={() => undefined}
@@ -35,40 +33,7 @@ function sendBar(overrides: Partial<React.ComponentProps<typeof RequestBar>> = {
     );
 }
 
-describe('the code and the paste of the bar', () => {
-    it('opens the request as code from the icon at the end of the address', () => {
-        const onOpenCode = vi.fn();
-
-        draw(sendBar({ onOpenCode }));
-
-        const button = screen.getByRole('button', { name: 'Code' });
-
-        fireEvent.click(button);
-
-        expect(onOpenCode).toHaveBeenCalledTimes(1);
-        expect(button.closest('[data-part="address-actions"]')).not.toBeNull();
-    });
-
-    it('writes the code with a name nobody defined, as it writes the send', () => {
-        const onOpenCode = vi.fn();
-
-        draw(sendBar({ onOpenCode, url: '{{nobody}}/pedidos' }));
-
-        const button = screen.getByRole('button', { name: 'Code' });
-
-        expect(button).toBeEnabled();
-
-        fireEvent.click(button);
-
-        expect(onOpenCode).toHaveBeenCalledTimes(1);
-    });
-
-    it('stays at hand while a send is on its way', () => {
-        draw(sendBar({ sending: true }));
-
-        expect(screen.getByRole('button', { name: 'Code' })).toBeEnabled();
-    });
-
+describe('the paste of the bar', () => {
     it('lets the owner take what is pasted into the url, and then inserts nothing', () => {
         const onPasteText = vi.fn(() => true);
         const onUrl = vi.fn();
