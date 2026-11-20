@@ -94,14 +94,28 @@ export function MovimientoPage() {
             </DocSection>
 
             <DocSection
-                heading="Sin movimiento, si no se pide"
-                intent="Las tres duraciones bajan a cero cuando el sistema pide menos movimiento: el lab no es una excepción."
+                heading="Menos movimiento"
+                intent="Pedir menos movimiento quita el viaje, nunca el fundido: lo que flota deja de subir y de crecer, y aun así se disuelve al ritmo de la escala."
             >
                 <ul className="flex list-disc flex-col gap-gap-tight pl-4 text-sm text-text-secondary">
                     <li>
-                        <code className="font-mono text-xs">scales.css</code> anula las duraciones
-                        bajo{' '}
-                        <code className="font-mono text-xs">prefers-reduced-motion: reduce</code>.
+                        Lo pide Ajustes › Temas › Animaciones, que escribe{' '}
+                        <code className="font-mono text-xs">data-motion</code> en la raíz:{' '}
+                        <code className="font-mono text-xs">reduced</code> o{' '}
+                        <code className="font-mono text-xs">full</code>. Sin elección, decide{' '}
+                        <code className="font-mono text-xs">prefers-reduced-motion</code> del
+                        sistema.
+                    </li>
+                    <li>
+                        <code className="font-mono text-xs">reduced</code> deja a cero el
+                        desplazamiento, la escala y la duración del viaje; las duraciones de fundido
+                        se quedan. <code className="font-mono text-xs">full</code> mueve aunque el
+                        sistema pida menos.
+                    </li>
+                    <li>
+                        Las utilidades <code className="font-mono text-xs">motion-reduce:</code> y{' '}
+                        <code className="font-mono text-xs">motion-safe:</code> leen las dos cosas,
+                        la elección y el sistema: el Tema del lab las cambia en vivo.
                     </li>
                     <li>
                         Nada se mueve al cargar una vista: el primer dibujo ya es el definitivo.

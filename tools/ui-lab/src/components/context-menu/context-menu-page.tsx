@@ -41,7 +41,8 @@ export function ContextMenuPage() {
             lead="Las órdenes de una superficie, donde cayó el puntero. Mismo corte que el Menu —
                 misma altura de línea, mismo texto— pero no cuelga de un botón: la superficie
                 entera es el disparador. Sus líneas son texto y nada más, porque el menú se mide
-                en sus palabras."
+                en sus palabras. Capa sólida con borde tenue; recorrerla con teclado vela la línea
+                en gris, sin contorno."
             title="ContextMenu"
         >
             <Demo

@@ -35,7 +35,7 @@ const SHEETS: readonly { role: string; sheet: string }[] = [
 
 const RULES: readonly string[] = [
     'El nombre dice el papel, no el color: bg-surface-card, nunca bg-white. Una paleta cruda de Tailwind no pasa la comprobación de contratos.',
-    'El acento entra solo en foco, selección, activo y primario: teal en Realtime, naranja en Request. El editor no lleva acento.',
+    'El acento entra solo en foco, acción primaria, lo encendido y la marca —teal en Realtime, naranja en Request—; los estados son gris. El editor no lleva acento.',
     'Un estado nunca se comunica solo con color: lleva texto o icono al lado.',
     'La escala es cerrada: ninguna altura, hueco o radio fuera de ella. Un escalón nuevo es un token en scales.css, un alias en el tema de Tailwind y npm run tokens.',
     'Los tokens se generan: npm run tokens reescribe las hojas desde token-values.ts, y verify falla si alguna quedó atrás.',

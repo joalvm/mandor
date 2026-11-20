@@ -245,7 +245,7 @@ matches tools/ui-lab/src/components/table /reveal="always"/
 **Cierre.** `npx prettier --write tools/ui-lab/src` y `npm run ci:check -- tools/ui-lab/src`.
 `npm run dev:lab`: las cinco páginas en claro, oscuro y compacto, con teclado.
 
-### [ ] Fase 5: La prosa de capas, diálogos, avisos y ajustes dice lo que hay
+### [x] Fase 5: La prosa de capas, diálogos, avisos y ajustes dice lo que hay
 
 **Objetivo.** Ninguna página del lab contradice a las apps: medidas, superficies, acento y
 movimiento de lo que flota, tal como quedaron.

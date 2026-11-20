@@ -74,9 +74,9 @@ export function FocoPage() {
                         sin relevo no pasa la comprobación de diseño.
                     </li>
                     <li>
-                        El acento vive en foco, selección, activo y primario, y en ningún otro
-                        sitio: un texto en acento que no es ni enlace ni acción es un segundo foco
-                        mentiroso.
+                        El acento vive en foco, acción primaria, lo encendido y la marca de la app,
+                        y en ningún otro sitio; seleccionado y activo son gris: un texto en acento
+                        que no es ni enlace ni acción es un segundo foco mentiroso.
                     </li>
                 </ul>
             </DocSection>

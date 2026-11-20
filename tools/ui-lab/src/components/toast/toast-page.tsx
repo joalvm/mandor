@@ -74,6 +74,11 @@ export function ToastPage() {
 
             <DocSection heading="Reglas">
                 <ul className="flex list-disc flex-col gap-gap-tight pl-4 text-sm text-text-secondary">
+                    <li>
+                        Una tarjeta de 380 contra la esquina inferior derecha. Se apilan tres, los
+                        de atrás asomando bajo el último; la pila se abre al apuntarla o al llegar
+                        con el foco, y lo que no cabe se cuenta.
+                    </li>
                     <li>El error no caduca; los demás sí, cada uno según su gravedad.</li>
                     <li>
                         Pausan al pasar el puntero y al enfocar: nada se cierra debajo de la mano.

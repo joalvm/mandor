@@ -40,7 +40,8 @@ export function SelectPage() {
                 flota sobre lo que la abrió, al menos tan ancha como él. La línea elegida va en
                 peso, no en glifo. Sin elección muestra el placeholder atenuado; con error toma el
                 borde del campo; apagado dice su motivo en el tooltip. El foco del teclado recorre
-                la lista con las flechas y elige con Enter, como el nativo."
+                la lista con las flechas y elige con Enter, como el nativo: la línea recorrida se
+                vela en gris, sin contorno, y mide lo que un control."
             title="Select"
         >
             <Demo

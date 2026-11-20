@@ -114,6 +114,10 @@ export function MenuPage() {
                         demás y puntos suspensivos: nada en rojo dentro de un menú.
                     </li>
                     <li>
+                        Capa sólida con borde tenue; cada línea mide lo que un control. Recorrerla
+                        con teclado vela la línea en gris, sin contorno.
+                    </li>
+                    <li>
                         Máximo doce items. Más es un submenú o trabajo para la paleta de comandos.
                     </li>
                     <li>
