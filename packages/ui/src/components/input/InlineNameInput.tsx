@@ -81,16 +81,16 @@ export function InlineNameInput({
             aria-invalid={invalid}
             aria-label={label}
             className={cn(
-                // It stands where the name stood: no border, no height of its own — the type and
+                // It stands where the name stood: no visible border, no height of its own — the type and
                 // the line are the row's. The one box it wears is a solid surface, so the hover
-                // of the row behind never bleeds through the field; the focus takes the ring of
-                // `focus.css`, and a draft the row rejects wears the wavy underline of a word
+                // of the row behind never bleeds through the field; the focus recolours its
+                // transparent line, and a draft the row rejects wears the wavy underline of a word
                 // the spellchecker doubts.
-                'min-w-0 flex-1 bg-surface-sunken px-1 outline-none',
+                'min-w-0 flex-1 border border-transparent bg-surface-sunken px-1 outline-none',
                 invalid && 'underline decoration-border-error decoration-wavy underline-offset-2',
             )}
             contentEditable="plaintext-only"
-            data-focus-ring=""
+            data-focus-frame=""
             data-part="inline-name-input"
             onBlur={commitOrLetGo}
             onClick={(event) => {

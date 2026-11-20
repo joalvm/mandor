@@ -49,11 +49,11 @@ export function TreeRow({ children }: TreeRowProps) {
             aria-selected={line.selected}
             className={cn(
                 'group flex min-w-0 cursor-pointer items-center gap-gap-icon-text pe-pad-control',
-                'h-row border-0 text-sm text-text-primary',
+                'h-row border border-transparent text-sm text-text-primary',
                 'transition-colors duration-fast hover:veil',
                 line.selected === true ? 'bg-surface-selected' : 'bg-transparent',
             )}
-            data-focus-ring=""
+            data-focus-frame=""
             data-level={String(line.level)}
             data-part="tree-row"
             onClick={(event) => {

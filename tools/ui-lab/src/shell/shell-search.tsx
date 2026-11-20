@@ -127,12 +127,12 @@ export function ShellSearch() {
                             return (
                                 <a
                                     aria-selected={marked}
-                                    className={`flex h-control shrink-0 items-center gap-gap-control px-pad-control text-sm ${
+                                    className={`flex h-control shrink-0 items-center gap-gap-control border border-transparent px-pad-control text-sm ${
                                         marked
                                             ? 'bg-surface-selected text-text-primary'
                                             : 'text-text-secondary hover:bg-surface-control-hover'
                                     }`}
-                                    data-focus-ring=""
+                                    data-focus-frame=""
                                     href={hit.hash}
                                     key={hit.hash}
                                     onClick={() => {

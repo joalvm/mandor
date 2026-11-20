@@ -158,7 +158,7 @@ matches apps/async/src/renderer/features/connections/components/panel/Connection
 `npm run ci:check` con las rutas tocadas. Con `npm run dev:async`: una conexión abierta, enviar un
 mensaje y ver la actividad en su tarjeta.
 
-### [ ] Fase 3: El foco nunca dibuja fuera de la caja
+### [x] Fase 3: El foco nunca dibuja fuera de la caja
 
 **Objetivo.** Ninguna pieza de la ventana dibuja un anillo de foco por fuera: todas recolorean su
 borde o su línea, y el chequeo de diseño impide volver al anillo.

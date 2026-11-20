@@ -22,8 +22,8 @@ export function Disclosure({ children, defaultOpen = false, label }: DisclosureP
             defaultOpen={defaultOpen}
         >
             <CollapsiblePrimitive.Trigger
-                className="flex w-fit cursor-pointer items-center gap-gap-icon-text rounded-sm border-0 bg-transparent text-sm font-semibold text-text-secondary hover:text-text-primary"
-                data-focus-ring=""
+                className="flex w-fit cursor-pointer items-center gap-gap-icon-text rounded-sm border border-transparent bg-transparent text-sm font-semibold text-text-secondary hover:text-text-primary"
+                data-focus-frame=""
             >
                 <span
                     className="flex shrink-0 items-center transition-transform duration-fast"

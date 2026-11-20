@@ -25,7 +25,7 @@ type TabsTabProps = PropsWithChildren<{
  * width would put air around short names and leave the strip looking padded at random.
  */
 const TAB =
-    'relative flex h-tab max-w-60 shrink-0 cursor-pointer items-center gap-gap-icon-text rounded-md border-0 px-pad-control text-sm transition-colors duration-fast';
+    'relative flex h-tab max-w-60 shrink-0 cursor-pointer items-center gap-gap-icon-text rounded-md border border-transparent px-pad-control text-sm transition-colors duration-fast';
 
 /**
  * One section of the strip. After the name comes what the section has to say and nothing more —
@@ -42,7 +42,7 @@ export function TabsTab({ broken, children, count, dirty, filled, label, value }
             data-broken={broken === true ? '' : undefined}
             data-count={count === undefined || count === 0 ? undefined : String(count)}
             data-dirty={dirty === true ? '' : undefined}
-            data-focus-ring=""
+            data-focus-frame=""
             data-label={label}
             data-part="tabs-trigger"
             data-value={value}

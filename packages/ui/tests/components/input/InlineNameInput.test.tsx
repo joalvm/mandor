@@ -16,12 +16,13 @@ describe('the inline name in place of a row name', () => {
 
         const line = screen.getByRole('textbox', { name: 'Nombre' });
 
-        expect(line).not.toHaveClass('border');
+        // The only line it carries is transparent: the focus recolours it, nothing else shows.
+        expect(line).toHaveClass('border', 'border-transparent');
         expect(line).not.toHaveClass('rounded-md');
         expect(line).not.toHaveClass('h-control-xs');
         // The surface is solid on purpose: the hover of the row behind must not bleed through.
         expect(line).toHaveClass('bg-surface-sunken');
-        expect(line).toHaveAttribute('data-focus-ring');
+        expect(line).toHaveAttribute('data-focus-frame');
     });
 
     it('paints a draft the row rejects until the line changes', () => {

@@ -37,11 +37,25 @@ describe('the focus ring rule', () => {
     it('reports a focus rule that paints the ring inside the box', () => {
         const runtime = file(
             'packages/ui/src/styles/runtime.css',
-            '[data-focus-ring]:focus-visible { box-shadow: inset 0 0 0 1px red; }',
+            '[data-focus-frame]:focus-visible { box-shadow: inset 0 0 0 1px red; }',
         );
 
         expect(focusRingProblems([runtime])).toHaveLength(1);
         expect(focusRingProblems([runtime])[0]).toContain('inside');
+    });
+
+    /**
+     * A spread shadow with no offset and no blur is a ring drawn outside the box: it overlaps
+     * the neighbour and leaves the four pixel grid, the same fault as an outline.
+     */
+    it('reports a focus rule that paints the ring outside the box', () => {
+        const runtime = file(
+            'packages/ui/src/styles/focus.css',
+            '[data-part="row"]:focus-visible { box-shadow: 0 0 0 1px var(--focus-ring); }',
+        );
+
+        expect(focusRingProblems([runtime])).toHaveLength(1);
+        expect(focusRingProblems([runtime])[0]).toContain('outside');
     });
 
     it('accepts a focus rule that recolours the border it lands on', () => {

@@ -35,7 +35,11 @@ export function ShellHeader({ activeRoot, children }: ShellHeaderProps) {
             className="flex h-16 items-center gap-10 border-b border-border-subtle bg-surface-app px-6"
             data-part="shell-header"
         >
-            <a className="flex items-baseline gap-2 rounded-md" data-focus-ring="" href={HOME}>
+            <a
+                className="flex items-baseline gap-2 rounded-md border border-transparent"
+                data-focus-frame=""
+                href={HOME}
+            >
                 <span className="text-lab-lead font-semibold text-text-primary">Mandor</span>
                 <span className="text-md text-text-secondary">Sistema de diseño</span>
             </a>
@@ -50,8 +54,8 @@ export function ShellHeader({ activeRoot, children }: ShellHeaderProps) {
                     return (
                         <a
                             aria-current={SECTION_CURRENT[state]}
-                            className={`relative flex items-center text-md ${SECTION_CLASSES[state]}`}
-                            data-focus-ring=""
+                            className={`relative flex items-center border border-transparent text-md ${SECTION_CLASSES[state]}`}
+                            data-focus-frame=""
                             href={`#/${group.root}/${group.pages[0]?.id ?? ''}`}
                             key={group.root}
                         >

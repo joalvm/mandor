@@ -50,6 +50,11 @@
     border-color: var(--border-error);
 }
 
-[data-focus-ring]:focus-visible {
-    box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring);
+/**
+ * A handle has no box to frame: it is the line it draws. The focus recolours that line, the way
+ * the pointer darkens it, and nothing is drawn around it.
+ */
+[data-part='split-handle']:focus-visible::before,
+[data-part='sidebar-handle']:focus-visible::before {
+    background-color: var(--focus-ring);
 }

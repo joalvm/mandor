@@ -86,7 +86,7 @@ export const SOLIDS: readonly TokenRow[] = [
 export const FOCUS: readonly TokenRow[] = [
     {
         token: '--focus-ring',
-        utility: 'data-focus-frame / data-focus-ring',
+        utility: 'data-focus-frame',
         note: 'el anillo: el borde del control, pintado de acento',
     },
     {

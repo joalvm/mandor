@@ -45,8 +45,8 @@ export function PageOutline({ article }: { article: RefObject<HTMLElement | null
                 {entries.map((entry) => (
                     <li className={DEPTH_CLASSES[entry.depth]} key={entry.id}>
                         <a
-                            className="block rounded-sm py-0.5 text-sm text-text-secondary hover:text-text-primary"
-                            data-focus-ring=""
+                            className="block rounded-sm border border-transparent py-0.5 text-sm text-text-secondary hover:text-text-primary"
+                            data-focus-frame=""
                             href={`#${entry.id}`}
                             onClick={(event) => {
                                 event.preventDefault();

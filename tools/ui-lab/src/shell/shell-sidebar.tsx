@@ -42,8 +42,8 @@ export function ShellSidebar({ activeId, group }: ShellSidebarProps) {
                         <li key={entry.id}>
                             <a
                                 aria-current={ENTRY_CURRENT[state]}
-                                className={`flex h-8 items-center gap-2.5 rounded-md px-3 text-md ${ENTRY_CLASSES[state]}`}
-                                data-focus-ring=""
+                                className={`flex h-8 items-center gap-2.5 rounded-md border border-transparent px-3 text-md ${ENTRY_CLASSES[state]}`}
+                                data-focus-frame=""
                                 href={`#/${group.root}/${entry.id}`}
                             >
                                 <Icon name={entry.icon} size="md" />

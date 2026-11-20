@@ -30,13 +30,13 @@ export function DialogNavItem({ children, icon, label, onSelect, selected }: Dia
             aria-label={label}
             aria-selected={selected}
             className={cn(
-                'group flex h-row min-w-0 shrink-0 cursor-pointer items-center gap-gap-icon-text rounded-md px-pad-control',
+                'group flex h-row min-w-0 shrink-0 cursor-pointer items-center gap-gap-icon-text rounded-md border border-transparent px-pad-control',
                 'text-sm transition-colors duration-fast ease-out hover:veil',
                 selected
                     ? 'bg-surface-dialog-nav-active text-text-primary'
                     : 'text-text-secondary hover:text-text-primary',
             )}
-            data-focus-ring=""
+            data-focus-frame=""
             data-part="dialog-nav-item"
             onClick={onSelect}
             onKeyDown={(event) => {
