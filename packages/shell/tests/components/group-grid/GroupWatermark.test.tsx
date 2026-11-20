@@ -15,6 +15,7 @@ describe('what a group with no tab in it shows', () => {
         render(<GroupWatermark />);
 
         expect(byPart('group-watermark').textContent).toBe('');
+        expect(byPart('group-watermark').querySelector("[data-part='card']")).toBeNull();
     });
 
     it('draws what the window declared for a group with nothing in it', () => {
@@ -28,5 +29,21 @@ describe('what a group with no tab in it shows', () => {
         );
 
         expect(screen.getByText('Seleccione o cree una conexión')).toBeVisible();
+    });
+
+    it('lays what the window declared on a card, as the body of a tab', () => {
+        render(
+            <>
+                <EmptyGroup>
+                    <p>Seleccione o cree una conexión</p>
+                </EmptyGroup>
+                <GroupWatermark />
+            </>,
+        );
+
+        const card = byPart('card');
+
+        expect(byPart('group-watermark')).toContainElement(card);
+        expect(card).toContainElement(screen.getByText('Seleccione o cree una conexión'));
     });
 });
