@@ -202,6 +202,20 @@ describe('the control primitives', () => {
         );
     });
 
+    /** The secondary button is the strong gray of a control: a fill, never an outline. */
+    it('fills the secondary button with the strong gray of a control and draws no outline', () => {
+        render(<Button variant="secondary">Cancelar</Button>);
+
+        const button = screen.getByRole('button', { name: 'Cancelar' });
+
+        expect(button).toHaveClass(
+            'border-transparent',
+            'bg-surface-control-active',
+            'enabled:hover:bg-surface-control-hover',
+        );
+        expect(button).not.toHaveClass('border-border-strong');
+    });
+
     it('underlines a link button under the pointer unless it is told not to', () => {
         render(
             <>

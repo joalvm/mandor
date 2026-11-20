@@ -29,7 +29,7 @@ export function Textarea({
             className={
                 'w-full resize-none rounded-md border border-border-strong bg-transparent ' +
                 'p-pad-control font-ui text-sm text-text-primary transition-colors duration-fast ' +
-                'hover:border-border-hover ' +
+                'enabled:hover:border-border-hover ' +
                 'disabled:cursor-not-allowed disabled:border-border-subtle disabled:bg-surface-control disabled:text-text-disabled ' +
                 (mono ? 'font-mono text-code ' : '') +
                 (className ?? '')

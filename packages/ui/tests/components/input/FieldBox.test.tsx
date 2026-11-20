@@ -116,4 +116,27 @@ describe('the box a one-line field lives in', () => {
         expect(byPart('input')).not.toHaveAttribute('data-focus-frame');
         expect(byPart('input').className).toContain('border-0');
     });
+
+    /** A field draws its line and keeps the ground of whatever holds it: white on white, gray on gray. */
+    it('draws the line of a text field over the ground of its parent', () => {
+        render(
+            <FieldBox disabled={false} invalid={false} variant="text">
+                <EditableLine
+                    disabled={false}
+                    invalid={false}
+                    label="Nombre"
+                    onValueChange={vi.fn()}
+                    value=""
+                />
+            </FieldBox>,
+        );
+
+        expect(byPart('input')).toHaveClass(
+            'border-border-strong',
+            'bg-transparent',
+            'hover:border-border-hover',
+        );
+        expect(byPart('input')).not.toHaveClass('bg-surface-sunken', 'bg-surface-control');
+        expect(byPart('input')).toHaveAttribute('data-focus-frame', '');
+    });
 });

@@ -233,17 +233,23 @@ contains packages/ui/src/styles/scales.css "[data-density='compact']"
 `npm run ci:check` con las rutas tocadas. Con las dos apps: cambiar a compacta y ver la rejilla
 pegada con líneas; volver a cómoda; reiniciar la app y que se conserve.
 
-### [ ] Fase 5: Los controles se rellenan y no dibujan borde
+### [x] Fase 5: Los campos toman el fondo de su padre y el botón secundario se rellena
 
-**Objetivo.** Campos, desplegables, áreas de texto, la barra de dirección y el botón secundario
-se ven como un relleno gris sin contorno; el foco y el error siguen recoloreando su línea.
+**Objetivo.** Campos, desplegables, áreas de texto, la barra de dirección y el nombre en sitio
+dibujan su línea sobre el fondo de lo que los contiene: blancos en una tarjeta blanca, grises en
+el gris del lateral. El botón secundario es un relleno gris sin contorno. El foco y el error
+siguen recoloreando la línea.
+
+Desviación del canvas, decidida por el usuario: el canvas rellena los campos de gris sin borde;
+aquí todo campo lleva borde y el fondo de su padre, como antes. El secundario sí sigue al canvas
+(`--ctl-a`). `surface-raised` oscuro sigue igual al relleno de control, como en el canvas: el
+puntero es lo que separa un control de un menú.
 
 ```check
-absent packages/ui/src/components/input/FieldBox.tsx "border-border-strong"
-contains packages/ui/src/components/input/FieldBox.tsx "bg-surface-control hover:bg-surface-control-hover"
-absent packages/ui/src/components/input/Select.tsx "border-border-strong bg-surface-sunken"
-absent packages/ui/src/components/input/Textarea.tsx "border-border-strong"
-absent packages/ui/src/components/input/AddressBar.tsx "border-border-strong"
+contains packages/ui/src/components/input/FieldBox.tsx "text: 'border-border-strong bg-transparent hover:border-border-hover'"
+absent packages/ui/src/components/input/FieldBox.tsx "bg-surface-sunken"
+absent packages/ui/src/components/input/Select.tsx "bg-surface-sunken"
+absent packages/ui/src/components/input/AddressBar.tsx "bg-surface-sunken"
 absent packages/ui/src/components/button/Button.tsx "'border-border-strong bg-transparent"
 absent packages/ui/src/components/input/InlineNameInput.tsx "bg-surface-sunken"
 matches packages/ui/tests/styles/contrast.test.ts /filled control/
@@ -251,30 +257,79 @@ matches packages/ui/tests/styles/contrast.test.ts /filled control/
 
 **Cambios.**
 
-- `FieldBox.tsx`: `text` pasa a `border-transparent bg-surface-control hover:bg-surface-control-hover`;
-  `outline` (solo `SearchInput`) pasa a `border-transparent bg-surface-card`, con el mismo hover.
-  El comentario de `FieldVariant` dice relleno en vez de borde. `invalid` y `disabled` no cambian.
-- `Select.tsx` (`TRIGGER_BOX`), `Textarea.tsx` y `AddressBar.tsx`: el mismo relleno; el hover y
-  `aria-expanded` suben al paso `hover`/`active` del relleno en vez de oscurecer el borde.
-  `AddressSeam` no cambia.
-- `Button.tsx`: `secondary` pasa a `border-transparent bg-surface-control` con el hover y el
-  pulsado que ya tiene; `disabled` sin borde.
-- `InlineNameInput.tsx`: `bg-surface-control` en vez de `bg-surface-sunken`.
-- `surface-sunken` se queda solo si algo más lo pinta; si no, sale de las tres hojas semánticas,
-  de `index.css` y de `BASE_SURFACES` en los dos tests de contraste, y `npm run tokens`.
-- `contrast.test.ts`: un caso «filled control» que exige, en cada modo, que `surface-control` no
-  sea igual a `surface-card` ni a `surface-raised`, y que `surface-control-hover` tampoco.
-- Tests que fijaban el borde: `Select.test.tsx:35`, `SearchInput.test.tsx:33-34`,
-  `InlineNameInput.test.tsx:23`; un caso en `FieldBox.test.tsx` y otro en `controls.test.tsx`
-  (el `Button` `secondary` sin `border-border-strong`).
+- `FieldBox.tsx`: `text` y `search` (antes `outline`, solo `SearchInput`) pasan a
+  `border-border-strong bg-transparent hover:border-border-hover`; `search` conserva el foco
+  callado. `invalid` y `disabled` no cambian.
+- `Select.tsx` (`TRIGGER_BOX`) y `AddressBar.tsx`: `bg-transparent` en vez de `bg-surface-sunken`.
+  `Textarea.tsx` ya era transparente. `InlineNameInput.tsx`: línea `border-border-strong` y
+  `bg-transparent`.
+- `Button.tsx`: `secondary` pasa a `border-transparent bg-surface-control-active`, hover
+  `bg-surface-control-hover`; `disabled` sin borde.
+- `surface-sunken` se queda: lo pintan otros.
+- `contrast.test.ts`: caso «filled control»: `surface-control` y `-hover` distintos de
+  `surface-card` en cada modo, y `-hover` distinto de `surface-raised`.
+- Tests: `Select.test.tsx`, `SearchInput.test.tsx`, `InlineNameInput.test.tsx`, un caso en
+  `FieldBox.test.tsx` y otro en `controls.test.tsx`.
 
-**No hacer.** Tocar `Table` ni `table.css` (la celda es la caja del campo), los menús y popovers
-(plan 04), el foco (fase 3) ni la casilla y el interruptor, que conservan su línea de control.
+**No hacer.** Tocar `Table` ni `table.css`, los menús y popovers (plan 04), el foco (fase 3) ni
+la casilla y el interruptor.
 
-**Cierre.** `npm run ci:test -- packages/ui/tests/components/input packages/ui/tests/components/button packages/ui/tests/styles`;
-`npm run ci:verify` al cerrar el plan. Con las dos apps en claro, oscuro y contraste alto: la
-barra de dirección, un desplegable de ajustes, un área de texto, el buscador del lateral y un
-diálogo con campos se leen como relleno sobre su tarjeta; Tab recolorea su línea sin moverlos.
+**Cierre.** `npm run ci:test -- packages/ui/tests/components packages/ui/tests/styles`; con las
+dos apps en claro y oscuro: la barra de dirección, el buscador del lateral y el de actividad se
+leen como línea sobre su fondo; Tab recolorea su línea sin moverlos.
+
+### [ ] Fase 6: La tarjeta de destino mide como el canvas
+
+**Objetivo.** La dirección y su acción principal miden 34 px. En Request, la tarjeta de destino
+lleva una fila de miga de 30 px con sus iconos (código, guardar, más) y la fila de la dirección;
+en Realtime, una sola fila de 48 px con la dirección y sus botones.
+
+```check
+contains packages/ui/src/styles/scales.css "--mandor-height-address: 34px"
+contains packages/ui/src/styles/index.css "--spacing-address"
+matches packages/ui/src/components/input/AddressBar.tsx /h-address/
+```
+
+**Cambios.**
+
+- `scales.css`: token `--mandor-height-address: 34px`; alias `--spacing-address` en `index.css`;
+  `npm run tokens`.
+- `AddressBar.tsx`: `h-address`. El botón Enviar/Conectar a la misma altura.
+- Request: fila de miga de 30 px; a su derecha, código, guardar el response (si hay uno) y «Más
+  acciones», que abre el menú de la fila del árbol del request (sin él en un request suelto). La
+  dirección pierde esos iconos; método de 84 px de ancho.
+- Realtime: fila de 48 px; dentro de la dirección, una pastilla con el estado y el tiempo
+  conectada. Grabar queda como botón de icono con su tooltip, sin texto. A la derecha, dividir
+  (abre la pestaña en el grupo de al lado) y «Más acciones» (el menú de la fila de la conexión).
+- Las dos apps.
+
+**No hacer.** Tocar las tarjetas del par (fases 1 y 2) ni los campos (fase 5).
+
+**Cierre.** `ci:test` de los paquetes tocados; las dos apps en claro, oscuro y compacta contra el
+canvas `Main` y `Realtime`.
+
+### [ ] Fase 7: Cabeceras en tipo frase con conteo
+
+**Objetivo.** Las cabeceras de sección del lateral y la de la actividad se escriben en tipo
+frase, 12 px y 600, con su conteo en gris al lado, sin mayúsculas ni línea entre secciones.
+
+```check
+absent packages/ui/src/components/collapsible/CollapsibleHeader.tsx "uppercase"
+absent apps/async/src/renderer/activity/components/panel/ActivityHead.tsx "uppercase"
+matches packages/ui/src/components/collapsible/CollapsibleHeader.tsx /count/
+```
+
+**Cambios.**
+
+- `CollapsibleHeader.tsx`: 28 px, `text-xs font-semibold`, sin `uppercase` ni `tracking-wide`;
+  prop `count` opcional pintada en `text-text-tertiary`.
+- Las secciones del lateral pasan su conteo; sin línea entre secciones.
+- `ActivityHead.tsx`: «Actividad», el conteo y la meta de bytes a la derecha.
+- Las dos apps.
+
+**No hacer.** Cambiar qué secciones hay ni su orden.
+
+**Cierre.** `ci:test` de los paquetes tocados; las dos apps en claro y oscuro contra el canvas.
 
 ## Deudas
 

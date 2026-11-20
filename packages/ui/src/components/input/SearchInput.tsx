@@ -20,8 +20,8 @@ type SearchInputProps = {
  * The glyph is not a decoration the caller chose to hang on a plain field, it is what tells this
  * field apart from every other one-line field in the window. So it is drawn here and it is not
  * optional — a search field without it is a search field nobody recognises, and a field that took
- * it as a prop would be two components sharing a name. It narrows what the panel around it shows,
- * so it keeps that panel's surface and only draws its edge.
+ * it as a prop would be two components sharing a name. It draws its line like every field and
+ * keeps the ground of whatever holds it.
  */
 export function SearchInput({
     className,
@@ -32,7 +32,7 @@ export function SearchInput({
     value,
 }: SearchInputProps) {
     return (
-        <FieldBox className={className} disabled={false} invalid={false} variant="outline">
+        <FieldBox className={className} disabled={false} invalid={false} variant="search">
             <FilterIcon size="sm" />
             <EditableLine
                 disabled={false}

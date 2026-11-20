@@ -24,7 +24,7 @@ export function AddressBar({ children, className }: AddressBarProps) {
         // band-policy: fused-control — the parts carry their own inset; the bar only joins them.
         <div
             className={cn(
-                'flex h-control min-w-0 items-center rounded-md border border-border-strong bg-surface-sunken',
+                'flex h-control min-w-0 items-center rounded-md border border-border-strong bg-transparent',
                 'transition-colors duration-fast hover:border-border-hover',
                 className,
             )}

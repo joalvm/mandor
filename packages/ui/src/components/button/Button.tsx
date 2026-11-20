@@ -33,7 +33,7 @@ const buttonStyles = cva(
                 primary:
                     'border-transparent bg-solid-accent text-text-on-solid-accent enabled:hover:bg-solid-accent-hover enabled:active:bg-solid-accent-active disabled:bg-surface-control',
                 secondary:
-                    'border-border-strong bg-transparent text-text-primary enabled:hover:border-border-hover enabled:hover:bg-surface-control-hover enabled:active:bg-surface-control-active disabled:border-border-subtle',
+                    'border-transparent bg-surface-control-active text-text-primary enabled:hover:bg-surface-control-hover enabled:active:bg-surface-control-active',
                 danger: 'border-transparent bg-solid-danger text-text-on-solid-danger enabled:hover:bg-solid-danger-hover enabled:active:bg-solid-danger-active disabled:bg-surface-control',
                 ghost: 'border-transparent bg-transparent text-text-primary enabled:hover:bg-surface-control-hover enabled:active:bg-surface-control-active',
                 chrome: 'border-border-chrome bg-surface-chrome-control text-text-primary enabled:hover:bg-surface-chrome-control-hover',

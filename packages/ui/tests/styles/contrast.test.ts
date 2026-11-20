@@ -125,6 +125,25 @@ describe.each(['teal', 'orange'] as const)('the semantic theme contrast, %s acce
     });
 
     /**
+     * A secondary button is a fill and no outline: what tells it from the card it stands on is
+     * its gray alone, at rest and under the pointer. A menu floats on the gray of a control in the
+     * dark scheme, so there the pointer is what lifts it off.
+     */
+    it.each(MODES)(
+        'keeps a filled control a step apart from its ground in %s mode',
+        async (mode) => {
+            const theme = await themeOf(mode, accent);
+
+            for (const fill of ['surface-control', 'surface-control-hover'] as const) {
+                expect(theme[fill], fill).toBeDefined();
+                expect(theme[fill], `${fill} on card`).not.toBe(theme['surface-card']);
+            }
+
+            expect(theme['surface-control-hover']).not.toBe(theme['surface-raised']);
+        },
+    );
+
+    /**
      * The pointer lays one veil over whatever a thing shows: a faint tint on bare ground, and the
      * fill of a thing selected or open a step deeper, so the pointer is seen on it too. A veil
      * that is not faint darkens what it lies on; an opaque one hides it.

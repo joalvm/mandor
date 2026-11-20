@@ -66,12 +66,12 @@ function SelectGroup({ first, group }: { first: boolean; group: OptionGroup }) {
 }
 
 /**
- * The box of an input (`FieldBox`): its border, its sunken ground, its height and its quiet
+ * The box of an input (`FieldBox`): its line, the ground of its parent, its height and its quiet
  * disabled state. Only the chevron and the text nobody types tell the two apart.
  */
 const TRIGGER_BOX = [
     'flex h-field min-w-0 items-center justify-between gap-gap-icon-text overflow-hidden px-pad-control',
-    'rounded-md border border-border-strong bg-surface-sunken font-ui text-sm text-text-primary text-justify',
+    'rounded-md border border-border-strong bg-transparent font-ui text-sm text-text-primary text-justify',
     'transition-colors duration-fast enabled:hover:border-border-hover aria-expanded:border-border-hover',
     'disabled:cursor-not-allowed disabled:border-border-subtle disabled:bg-surface-control disabled:text-text-disabled',
 ].join(' ');
