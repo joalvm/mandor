@@ -837,3 +837,74 @@ textarea,
 [data-part='dialog'][data-state='closed'] {
     animation: mandor-dialog-out var(--mandor-duration-exit) var(--mandor-ease-in);
 }
+
+/*
+ * Notices stack in their corner: the newest in front and the two before it peeking out above, a
+ * step smaller each, with what they say faded out. With the pointer or the focus on the stack it
+ * opens into a list, each notice lifted by the heights `useToastStack` measured; what does not
+ * fit is counted above it. A notice moves by the travel of the scale, which a system asking for
+ * less motion stills, and fades by a duration that stays.
+ */
+[data-part='toast-viewport'] {
+    block-size: calc(var(--toast-front-height, 0px) + 20px);
+    pointer-events: none;
+    transition: block-size var(--mandor-duration-travel) var(--mandor-ease-out);
+}
+
+/* The air above the front notice takes no click; once the stack is open, its gaps keep it open. */
+[data-part='toast-viewport'] > *,
+[data-part='toast-viewport']:hover,
+[data-part='toast-viewport']:focus-within {
+    pointer-events: auto;
+}
+
+[data-part='toast-viewport'] > [data-part='toast'] {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    transform-origin: 50% 0;
+    transition:
+        transform var(--mandor-duration-travel) var(--mandor-ease-out),
+        opacity var(--mandor-duration-base) var(--mandor-ease-out);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:not(:last-child) {
+    block-size: var(--toast-front-height);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:not(:last-child) > * {
+    opacity: 0;
+    transition: opacity var(--mandor-duration-base) var(--mandor-ease-out);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:nth-last-child(2) {
+    transform: translateY(-10px) scale(0.95);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:nth-last-child(3) {
+    transform: translateY(-20px) scale(0.9);
+    opacity: 0.7;
+}
+
+[data-part='toast-viewport']:hover,
+[data-part='toast-viewport']:focus-within {
+    block-size: var(--toast-stack-height);
+}
+
+[data-part='toast-viewport']:hover > [data-part='toast'],
+[data-part='toast-viewport']:focus-within > [data-part='toast'] {
+    block-size: auto;
+    opacity: 1;
+    transform: translateY(calc(-1 * var(--toast-offset)));
+}
+
+[data-part='toast-viewport']:hover > [data-part='toast'] > *,
+[data-part='toast-viewport']:focus-within > [data-part='toast'] > * {
+    opacity: 1;
+}
+
+[data-part='toast-viewport'] > [data-part='toast-overflow'] {
+    position: absolute;
+    inset-block-end: calc(100% + var(--mandor-gap-control));
+    inset-inline-end: 0;
+}

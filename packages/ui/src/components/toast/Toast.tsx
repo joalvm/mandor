@@ -10,14 +10,15 @@ import {
 } from '../../lib/toast-queue.js';
 
 import { ToastItem } from './ToastItem.js';
+import { useToastStack } from './useToastStack.js';
 
 type ToastMessages = {
     close: string;
     more: (count: number) => string;
 };
 
-const VIEWPORT_STYLES =
-    'fixed right-gap-group bottom-gap-group z-toast flex w-toast list-none flex-col gap-gap-control';
+/** Where the stack stands; how it piles up and opens is written in `runtime.css`. */
+const VIEWPORT_STYLES = 'fixed right-gap-group bottom-gap-group z-toast w-toast list-none';
 
 type ToastProviderProps = PropsWithChildren<{
     messages: ToastMessages;
@@ -32,6 +33,7 @@ type ToastProviderProps = PropsWithChildren<{
 export function ToastProvider({ children, messages, onNotify }: ToastProviderProps) {
     const [queue, setQueue] = useState<readonly ToastSpec[]>([]);
     const issued = useRef(0);
+    const viewport = useRef<HTMLOListElement>(null);
 
     const dismiss = useCallback((id: string) => {
         setQueue((current) => current.filter((toast) => toast.id !== id));
@@ -52,11 +54,17 @@ export function ToastProvider({ children, messages, onNotify }: ToastProviderPro
     const api = useMemo<ToastApi>(() => ({ dismiss, notify }), [dismiss, notify]);
     const { hidden, shown } = visibleToasts(queue);
 
+    useToastStack(viewport, shown.map((toast) => toast.id).join(' '));
+
     return (
         <ToastContext.Provider value={api}>
             <ToastPrimitive.Provider swipeDirection="right">
                 {children}
-                <ToastPrimitive.Viewport className={VIEWPORT_STYLES}>
+                <ToastPrimitive.Viewport
+                    className={VIEWPORT_STYLES}
+                    data-part="toast-viewport"
+                    ref={viewport}
+                >
                     <ToastOverflow hidden={hidden} messages={messages} />
                     {shown.map((toast) => (
                         <ToastItem

@@ -110,6 +110,7 @@ export const scaleTokenValues = {
     'mandor-duration-base': '120ms',
     'mandor-duration-slow': '200ms',
     'mandor-duration-exit': '150ms',
+    'mandor-duration-travel': '200ms',
     'mandor-delay-handle': '300ms',
     'mandor-motion-shift': '6px',
     'mandor-motion-scale': '0.98',

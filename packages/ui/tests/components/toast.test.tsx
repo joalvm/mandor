@@ -69,6 +69,11 @@ describe('the toast channel', () => {
             expect.stringContaining('Cinco'),
         ]);
         expect(byPart('toast-overflow')).toHaveTextContent('2 más');
+        // One list in the corner, in the order they came: a screen reader reads them so.
+        expect(byPart('toast-overflow').parentElement).toHaveAttribute(
+            'data-part',
+            'toast-viewport',
+        );
     });
 
     it('closes a notice from its close control', () => {

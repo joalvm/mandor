@@ -45,7 +45,8 @@ sigue con el dibujo anterior, y la dirección B lo cambia en cuatro sitios:
 - **Movimiento.** Entrada de 200 ms con `--mandor-ease-out`, de `opacity: 0; scale(0.96)` a
   reposo; salida de 150 ms a lo mismo. Desde el centro, sin deslizar. Los valores son tokens
   (`--mandor-motion-scale-overlay: 0.96`, `--mandor-duration-exit: 150ms`): el movimiento
-  reducido quita la escala y conserva el fundido, nunca pone a cero una duración.
+  reducido quita la escala y conserva el fundido: solo `--mandor-duration-travel`, la del
+  desplazamiento, cae a cero.
 - **Las capas entran y salen.** Menús, menús contextuales, popovers, hover cards, tooltips,
   select y paleta entran en `--mandor-duration-base` con `--mandor-ease-out`, de `opacity: 0;
 scale(var(--mandor-motion-scale))` a reposo, desde el origen que Radix calcula para cada uno;
@@ -64,9 +65,9 @@ scale(var(--mandor-motion-scale))` a reposo, desde el origen que Radix calcula p
   en `bg-surface-control`.
 - **Pila de tres.** En reposo se ve el aviso más nuevo y, detrás, los dos anteriores asomando:
   `translateY(-10px) scale(0.95)` y `translateY(-20px) scale(0.9)`. Con el puntero o el foco en
-  la pila, se abren en lista con su hueco. «N más» sigue para lo que no cabe. Las transiciones
-  usan los tokens de duración, que el bloque `prefers-reduced-motion` de `scales.css` ya pone a
-  cero.
+  la pila, se abren en lista con su hueco. «N más» sigue para lo que no cabe. El desplazamiento
+  usa `--mandor-duration-travel`, que el bloque `prefers-reduced-motion` de `scales.css` pone a
+  cero; el fundido conserva su duración.
 - **Menús sólidos.** `border-border-subtle`, `rounded-panel`, filas `h-control text-sm` con
   `data-highlighted:bg-surface-selected`. Lo mismo en `Select`, `SuggestList` y la paleta.
 - **Acciones siempre a la vista, solo donde se piden.** `TableRowActions` gana
@@ -197,7 +198,7 @@ matches packages/ui/src/components/toast/ToastItem.tsx /data-part="toast-count"/
 **Cierre.** `npm run ci:test -- packages/ui/tests/components/toast`; `npm run ci:check` con las
 rutas tocadas. En `tools/ui-lab`: los cuatro tonos, con y sin acción, con `×3`.
 
-### [ ] Fase 4: Los avisos se apilan
+### [x] Fase 4: Los avisos se apilan
 
 **Objetivo.** Con varios avisos, el más nuevo va delante y los dos anteriores asoman detrás;
 con el puntero o el foco en la pila se abren en lista.
@@ -212,14 +213,20 @@ contains packages/ui/src/styles/runtime.css "translateY(-20px) scale(0.9)"
 
 - `Toast.tsx`: el `Viewport` lleva `data-part="toast-viewport"`. El orden del DOM no cambia: el
   lector de pantalla los sigue leyendo en orden.
+- `useToastStack.ts` (nuevo, con test): mide la altura entera de cada aviso y escribe
+  `--toast-offset` en cada uno y `--toast-front-height` y `--toast-stack-height` en el visor;
+  vuelve a medir con `ResizeObserver`.
 - `runtime.css`: en reposo, los avisos se superponen en la esquina; el último a la vista va en
   reposo, el penúltimo `translateY(-10px) scale(0.95)` y el anterior
-  `translateY(-20px) scale(0.9)`, con `transform-origin` abajo al centro. Con
-  `:hover` o `:focus-within` en el visor, vuelven a la columna con `gap-gap-control`.
-  Transición de `transform` y `opacity` con `--mandor-duration-base` y `--mandor-ease-out`.
+  `translateY(-20px) scale(0.9)`, recortados a la altura del de delante y con su contenido
+  fundido, `transform-origin` arriba al centro (como el lienzo). Con `:hover` o `:focus-within`
+  en el visor, cada uno sube `--toast-offset`. El aire sobre la pila no toma clics. `transform`
+  con `--mandor-duration-travel` (nuevo, 200 ms; 0 con movimiento reducido) y `opacity` con
+  `--mandor-duration-base`, ambos con `--mandor-ease-out`.
 - `ToastOverflow` («N más») queda encima de la pila en los dos estados.
-- Test de `Toast` en `packages/ui/tests/components/toast/`: con cinco avisos se ven tres y «2
-  más»; el visor lleva su `data-part`.
+- Tests: con cinco avisos se ven tres y «2 más» dentro del visor con su `data-part`
+  (`toast.test.tsx`); las reglas de la pila (`styles/toast-runtime.test.ts`); las medidas
+  (`toast/useToastStack.test.tsx`).
 
 **No hacer.** Cambiar cuántos avisos se ven: lo decide `visibleToasts` y no se toca.
 

@@ -81,7 +81,9 @@ describe('how a dialog moves and where its parts sit', () => {
         );
         const runtime = await cssOf('runtime.css');
 
-        expect(reduced).not.toMatch(/--mandor-duration-/);
+        // The one duration that falls to zero is the travel itself: a fade keeps its pace.
+        expect(reduced).not.toMatch(/--mandor-duration-(?!travel)/);
+        expect(reduced).toMatch(/--mandor-duration-travel:\s*0ms/);
         expect(reduced).toMatch(/--mandor-motion-shift:\s*0px/);
         expect(reduced).toMatch(/--mandor-motion-scale:\s*1;/);
         expect(reduced).toMatch(/--mandor-motion-scale-overlay:\s*1;/);
