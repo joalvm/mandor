@@ -112,6 +112,7 @@ export function Demo({
                 </div>
                 <div
                     className={`flex min-h-40 flex-col gap-6 p-8 ${GROUND_CLASSES[ground]} ${CANVAS_LAYOUT[layout]} ${PANEL_CLASSES[stateOf('canvas', view)]}`}
+                    data-part="demo-canvas"
                 >
                     {children}
                 </div>

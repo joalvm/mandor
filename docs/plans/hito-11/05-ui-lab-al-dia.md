@@ -213,7 +213,7 @@ contains tools/ui-lab/src/main.tsx "./lab-bridge.js"
 **Cierre.** `npx prettier --write tools/ui-lab/src` y `npm run ci:check -- tools/ui-lab/src`.
 `npm run dev:lab`: recorrer Componentes y Bloques en claro, oscuro y compacto.
 
-### [ ] Fase 4: Card, Table, SettingsGroup, HoverCard y SuggestList tienen su página
+### [x] Fase 4: Card, Table, SettingsGroup, HoverCard y SuggestList tienen su página
 
 **Objetivo.** Los cinco componentes de `@mandor/ui` que las apps montan y el lab no enseñaba se
 pueden mirar, con sus estados, en Componentes.

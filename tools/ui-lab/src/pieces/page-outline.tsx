@@ -9,13 +9,18 @@ const DEPTH_CLASSES: Record<OutlineEntry['depth'], string> = {
     section: '',
 };
 
-/** Los títulos con ancla de la página, en orden: secciones y, debajo, sus demos. */
+/**
+ * Los títulos con ancla de la página, en orden: secciones y, debajo, sus demos. Los títulos que
+ * una pieza pinta dentro de su demo (el de un grupo de ajustes) son de la pieza, no de la página.
+ */
 function entriesOf(article: HTMLElement): OutlineEntry[] {
-    return [...article.querySelectorAll<HTMLElement>('h2[id], h3[id]')].map((heading) => ({
-        depth: DEPTH[heading.tagName] ?? 'section',
-        id: heading.id,
-        label: heading.textContent,
-    }));
+    return [...article.querySelectorAll<HTMLElement>('h2[id], h3[id]')]
+        .filter((heading) => heading.closest("[data-part='demo-canvas']") === null)
+        .map((heading) => ({
+            depth: DEPTH[heading.tagName] ?? 'section',
+            id: heading.id,
+            label: heading.textContent,
+        }));
 }
 
 /**
