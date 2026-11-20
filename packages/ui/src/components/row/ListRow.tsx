@@ -84,7 +84,6 @@ export function ListRow({
                 level === undefined && 'ps-pad-control',
                 className,
             )}
-            data-focus-frame=""
             data-level={level === undefined ? undefined : String(level)}
             data-part="list-row"
             id={id}

@@ -14,6 +14,19 @@
 }
 
 /**
+ * A row of a list or a tree, a notice and a section tab draw no line for the focus: the keyboard
+ * reaches them the way a click does, so the one it rests on wears the grey of the selected line.
+ */
+:is(
+    [data-part='list-row'],
+    [data-part='tree-row'],
+    [data-part='notice'],
+    [data-part='tabs-trigger']:not([data-state='active'])
+):focus-visible {
+    background-color: var(--surface-selected);
+}
+
+/**
  * A field that only narrows what its panel shows takes the focus without the accent: its edge
  * darkens a step and it comes forward to the surface of the page, the way a field on the panel
  * rises to be typed in. The accent stays with the fields and controls that change something.

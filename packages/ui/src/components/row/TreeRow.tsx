@@ -53,7 +53,6 @@ export function TreeRow({ children }: TreeRowProps) {
                 'transition-colors duration-fast hover:veil',
                 line.selected === true ? 'bg-surface-selected' : 'bg-transparent',
             )}
-            data-focus-frame=""
             data-level={String(line.level)}
             data-part="tree-row"
             onClick={(event) => {

@@ -16,14 +16,14 @@ describe('the inline name in place of a row name', () => {
 
         const line = screen.getByRole('textbox', { name: 'Nombre' });
 
-        // Like every field it draws its line; the focus recolours it.
+        // It draws its grey line, and the focus leaves that line as it is.
         expect(line).toHaveClass('border', 'border-border-strong');
         expect(line).not.toHaveClass('rounded-md');
         expect(line).not.toHaveClass('h-control-xs');
-        // It keeps the ground of the row it stands in.
-        expect(line).toHaveClass('bg-transparent');
-        expect(line).not.toHaveClass('bg-surface-sunken');
-        expect(line).toHaveAttribute('data-focus-frame');
+        expect(line).not.toHaveAttribute('data-focus-frame');
+        // White on any ground: the name being written stands out of the row it renames.
+        expect(line).toHaveClass('bg-surface-card');
+        expect(line).not.toHaveClass('bg-transparent');
     });
 
     it('paints a draft the row rejects until the line changes', () => {

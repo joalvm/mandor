@@ -82,14 +82,14 @@ export function InlineNameInput({
             aria-label={label}
             className={cn(
                 // It stands where the name stood, with no height of its own: the type and the line
-                // are the row's. Like every field it draws its line over the ground of what holds
-                // it; the focus recolours that line, and a draft the row rejects wears the wavy
-                // underline of a word the spellchecker doubts.
-                'min-w-0 flex-1 border border-border-strong bg-transparent px-1 outline-none',
+                // are the row's. Unlike the other fields it is white on any ground — the name being
+                // written stands out of the row it renames — and its grey line stays put with the
+                // focus: the caret already says where the typing goes. A draft the row rejects
+                // wears the wavy underline of a word the spellchecker doubts.
+                'min-w-0 flex-1 border border-border-strong bg-surface-card px-1 outline-none',
                 invalid && 'underline decoration-border-error decoration-wavy underline-offset-2',
             )}
             contentEditable="plaintext-only"
-            data-focus-frame=""
             data-part="inline-name-input"
             onBlur={commitOrLetGo}
             onClick={(event) => {

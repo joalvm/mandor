@@ -333,7 +333,7 @@ matches packages/ui/src/components/collapsible/CollapsibleHeader.tsx /count/
 
 **Cierre.** `ci:test` de los paquetes tocados; las dos apps en claro y oscuro contra el canvas.
 
-### [ ] Fase 8: Renombrar en blanco y sin foco de color
+### [x] Fase 8: Renombrar en blanco y sin foco de color
 
 **Objetivo.** El campo de renombrar en sitio (docs, colecciones, conexiones) es blanco y no
 pinta foco: ni su línea ni la fila que lo lleva se recolorean con el acento. Las filas de lista y

@@ -31,7 +31,6 @@ export function NoticeRow({ notice, now, onDismiss }: NoticeRowProps) {
     return (
         <li
             className="flex items-start gap-gap-icon-text rounded-md border border-transparent px-pad-control py-1 hover:veil"
-            data-focus-frame=""
             data-part="notice"
             data-tone={tone}
             onKeyDown={(event) => {

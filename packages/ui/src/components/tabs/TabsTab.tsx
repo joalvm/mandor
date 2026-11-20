@@ -42,7 +42,6 @@ export function TabsTab({ broken, children, count, dirty, filled, label, value }
             data-broken={broken === true ? '' : undefined}
             data-count={count === undefined || count === 0 ? undefined : String(count)}
             data-dirty={dirty === true ? '' : undefined}
-            data-focus-frame=""
             data-label={label}
             data-part="tabs-trigger"
             data-value={value}
