@@ -361,6 +361,26 @@ absent packages/ui/src/components/tabs/TabsTab.tsx "data-focus-frame"
 **Cierre.** `ci:test` de los paquetes tocados; renombrar un doc, una colección y una conexión en
 las dos apps, en claro y oscuro.
 
+### [x] Fase 9: Las tarjetas llevan un borde tenue
+
+**Objetivo.** Cada tarjeta se cierra con una línea de 1 px en `--color-border-subtle`, en claro y
+en oscuro: sin ella la tarjeta no termina de leerse sobre el marco. Es decisión del usuario y se
+aparta del canvas, que las deja sin borde.
+
+```check
+matches packages/ui/src/styles/runtime.css /\[data-part='card'\] \{\s*border: 1px solid var\(--color-border-subtle\)/
+```
+
+**Cambios.**
+
+- `runtime.css`: `[data-part='card']` con el borde; en densidad compacta el borde se va y quedan
+  las líneas que ya separan las tarjetas que se tocan.
+- Las dos apps.
+
+**No hacer.** Cambiar el tono de la tarjeta o del marco, ni el radio.
+
+**Cierre.** `ci:test` de `ui`; las dos apps en claro, oscuro y compacta.
+
 ## Deudas
 
 Ninguna todavía.

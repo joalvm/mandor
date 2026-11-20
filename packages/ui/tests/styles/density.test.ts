@@ -52,3 +52,17 @@ describe('the compact density', () => {
         );
     });
 });
+
+/** Without a line the card never quite ends on the frame; packed, the lines between cards do it. */
+describe('the edge of a card', () => {
+    it('closes every card with a faint line, and lets the compact density drop it', async () => {
+        const runtime = await cssOf('runtime.css');
+
+        expect(runtime).toMatch(
+            /^\[data-part='card'\]\s*{\s*border:\s*1px solid var\(--color-border-subtle\)/m,
+        );
+        expect(runtime).toMatch(
+            /\[data-density='compact'\]\s*\[data-part='card'\]\s*{\s*border-width:\s*0/,
+        );
+    });
+});

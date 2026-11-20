@@ -331,6 +331,16 @@ textarea,
     background-color: transparent;
 }
 
+/* A card closes with a faint line of its own: without it the card never quite ends on the frame.
+   Compact, the cards touch and the lines between them part them instead. */
+[data-part='card'] {
+    border: 1px solid var(--color-border-subtle);
+}
+
+:root[data-density='compact'] [data-part='card'] {
+    border-width: 0;
+}
+
 /* Compact, the gutter is gone and two cards touch: a line parts them instead, the one of the
    handle between two halves, and a border over a card that stands under something else (the
    console under the grid). The card of the destination opens its tab and needs none. */
