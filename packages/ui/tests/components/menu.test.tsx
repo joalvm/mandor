@@ -150,9 +150,9 @@ describe('a menu written as a tree of parts', () => {
         const item = await screen.findByRole('menuitem', { name: /Copiar/ });
 
         expect(item).toBeVisible();
-        expect(item).toHaveClass('h-row-xs', 'text-xs');
-        expect(item).not.toHaveClass('h-row');
-        expect(item).not.toHaveClass('text-sm');
+        expect(item).toHaveClass('h-control', 'text-sm');
+        expect(item).not.toHaveClass('h-row-xs');
+        expect(item).not.toHaveClass('text-xs');
         fireEvent.click(item);
         expect(onSelect).toHaveBeenCalledWith('copy');
     });

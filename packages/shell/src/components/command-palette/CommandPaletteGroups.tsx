@@ -33,6 +33,7 @@ export function CommandPaletteGroups({
             </span>
             {group.commands.map((command) => (
                 <ListRow
+                    className="h-control"
                     id={paletteRowId(listId, command.id)}
                     key={command.id}
                     onSelect={() => {

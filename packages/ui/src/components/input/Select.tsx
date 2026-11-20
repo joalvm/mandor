@@ -20,7 +20,7 @@ type OptionGroup<V extends string = string> = {
 };
 
 const ITEM =
-    'flex h-row-xs cursor-pointer items-center whitespace-nowrap rounded-md px-2 text-xs data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-control-hover text-justify';
+    'flex h-control cursor-pointer items-center outline-none whitespace-nowrap rounded-md px-2 text-sm data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-selected text-justify';
 
 function SelectItem({ option }: { option: Option }) {
     return (
@@ -135,7 +135,7 @@ export function Select<V extends string>({
             </DisabledControlTooltip>
             <SelectPrimitive.Portal>
                 <SelectPrimitive.Content
-                    className="z-dropdown overflow-hidden rounded-lg border border-border-strong bg-surface-raised text-text-primary shadow-popover"
+                    className="z-dropdown overflow-hidden rounded-panel border border-border-subtle bg-surface-raised text-text-primary shadow-popover"
                     data-part="select-content"
                     position="popper"
                     sideOffset={4}

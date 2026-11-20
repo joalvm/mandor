@@ -24,7 +24,7 @@ function draw(recent: readonly string[] = []) {
     render(
         <MessagesProvider preferences={{ language: 'en' }}>
             <TooltipProvider>
-                <CommandPaletteList onClose={onClose} onRun={onRun} recent={recent} />
+                <CommandPaletteList active onClose={onClose} onRun={onRun} recent={recent} />
             </TooltipProvider>
         </MessagesProvider>,
     );

@@ -18,7 +18,8 @@ export function PopoverPanel({ autofocus = true, children, label }: PopoverPanel
             <PopoverPrimitive.Content
                 align="start"
                 aria-label={label}
-                className="z-popover w-80 rounded-lg border border-border-strong bg-surface-raised p-3 text-sm text-text-primary shadow-popover"
+                className="z-popover w-80 rounded-panel border border-border-subtle bg-surface-raised p-3 text-sm text-text-primary shadow-popover"
+                data-part="popover-panel"
                 onOpenAutoFocus={(event) => {
                     if (!autofocus) {
                         event.preventDefault();

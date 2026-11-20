@@ -234,7 +234,7 @@ contains packages/ui/src/styles/runtime.css "translateY(-20px) scale(0.9)"
 rutas tocadas. En `tools/ui-lab`: disparar cinco avisos, pasar el puntero, recorrerlos con
 `F8` (atajo del visor de Radix); con movimiento reducido del sistema, sin animación.
 
-### [ ] Fase 5: Menús, capas y paleta sólidos
+### [x] Fase 5: Menús, capas y paleta sólidos
 
 **Objetivo.** Todo menú, capa, sugerencia, select, tooltip y la paleta dibuja un borde fino,
 radio de panel y filas de control con selección gris; los menús, las capas, el select, el
@@ -259,14 +259,20 @@ matches packages/shell/src/components/command-palette/CommandPalette.tsx /data-s
   y `rounded-panel`; el resto igual.
 - `Tooltip.tsx`: `border-border-subtle`, radio sin cambio.
 - `MenuItem.tsx`, `ContextMenuItem.tsx`, las opciones de `Select` y de `SuggestList` y las filas
-  de la paleta: `h-control text-sm` y `data-highlighted:bg-surface-selected`.
+  de la paleta: `h-control text-sm` y `data-highlighted:bg-surface-selected`. Los ítems de menú y
+  de select llevan `outline-none`: el gris ya marca el teclado y el navegador pintaba encima su
+  contorno naranja. La opción activa de `SuggestList` pasa a `--surface-selected` en
+  `runtime.css`; la lista gana `data-part="suggest-list"` y no anima, porque aparece al teclear.
 - Tests de menú y select que miran alturas o clases, si los hay.
 - `runtime.css`: `@keyframes mandor-layer-in` y `mandor-layer-out` según las decisiones, sobre
   `data-state` de cada capa (`menu-content`, `context-menu-content`, `hover-card-panel`,
   `select-content`, y los `data-part` que ganan `PopoverPanel` y `Tooltip`), con
-  `transform-origin` en la variable de origen de Radix de cada una.
+  `transform-origin` en la variable de origen de Radix de cada una. El tooltip solo funde al
+  abrirse con retardo (`delayed-open`); al abrirse al instante, sale sin animación.
 - `CommandPalette.tsx`: escribe `data-state` y, al cerrarse, se desmonta cuando termina su
-  salida; `Escape` y el clic fuera siguen cerrándola en el acto para el teclado.
+  salida; `Escape` y el clic fuera siguen cerrándola en el acto para el teclado: la caja pasa a
+  `inert` y `useFocusReturn(id, active)` devuelve el foco al dejar de estar activa. Si la hoja no
+  la anima, se va enseguida (`phase-on-closing.ts`, con test).
 
 **No hacer.** Cambiar contenidos, atajos u orden de ningún menú.
 

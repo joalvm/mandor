@@ -132,7 +132,7 @@ textarea,
  */
 [data-part='suggest-option'][data-active='true'],
 [data-part='suggest-option']:hover {
-    background: var(--surface-control);
+    background: var(--surface-selected);
 }
 
 /**
@@ -836,6 +836,80 @@ textarea,
 
 [data-part='dialog'][data-state='closed'] {
     animation: mandor-dialog-out var(--mandor-duration-exit) var(--mandor-ease-in);
+}
+
+/*
+ * Menus, popovers, hover cards, selects, tooltips and the palette fade in and grow a step from
+ * the side they hang from, and fade out quicker than they came. Radix works out that side for
+ * each layer; the palette hangs from its top edge. The step is the motion scale, which a system
+ * asking for less motion sets to nothing, so only the fade is left. A tooltip that opens at
+ * once, because the pointer moved over from another, shows at once: a row of tooltips is read,
+ * not watched.
+ */
+@keyframes mandor-layer-in {
+    from {
+        opacity: 0;
+        transform: scale(var(--mandor-motion-scale));
+    }
+}
+
+@keyframes mandor-layer-out {
+    to {
+        opacity: 0;
+        transform: scale(var(--mandor-motion-scale));
+    }
+}
+
+[data-part='menu-content'] {
+    transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+}
+
+[data-part='context-menu-content'] {
+    transform-origin: var(--radix-context-menu-content-transform-origin);
+}
+
+[data-part='popover-panel'] {
+    transform-origin: var(--radix-popover-content-transform-origin);
+}
+
+[data-part='hover-card-panel'] {
+    transform-origin: var(--radix-hover-card-content-transform-origin);
+}
+
+[data-part='select-content'] {
+    transform-origin: var(--radix-select-content-transform-origin);
+}
+
+[data-part='tooltip'] {
+    transform-origin: var(--radix-tooltip-content-transform-origin);
+}
+
+[data-part='command-palette'] {
+    transform-origin: 50% 0;
+}
+
+:is(
+    [data-part='menu-content'],
+    [data-part='context-menu-content'],
+    [data-part='popover-panel'],
+    [data-part='hover-card-panel'],
+    [data-part='select-content'],
+    [data-part='command-palette']
+)[data-state='open'],
+[data-part='tooltip'][data-state='delayed-open'] {
+    animation: mandor-layer-in var(--mandor-duration-base) var(--mandor-ease-out);
+}
+
+:is(
+    [data-part='menu-content'],
+    [data-part='context-menu-content'],
+    [data-part='popover-panel'],
+    [data-part='hover-card-panel'],
+    [data-part='select-content'],
+    [data-part='command-palette'],
+    [data-part='tooltip']
+)[data-state='closed'] {
+    animation: mandor-layer-out var(--mandor-duration-fast) var(--mandor-ease-in);
 }
 
 /*

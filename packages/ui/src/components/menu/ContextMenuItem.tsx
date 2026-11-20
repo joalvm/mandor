@@ -21,7 +21,7 @@ export function ContextMenuItem({
 }: ContextMenuItemProps) {
     return (
         <ContextMenuPrimitive.Item
-            className="flex h-row-xs cursor-pointer items-center gap-gap-icon-text rounded-md px-2 text-xs data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-control-hover"
+            className="flex h-control cursor-pointer items-center outline-none gap-gap-icon-text rounded-md px-2 text-sm data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-selected"
             data-part="context-menu-item"
             disabled={disabled === true}
             onSelect={onSelect}

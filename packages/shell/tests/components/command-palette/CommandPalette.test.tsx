@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MessagesProvider } from '@mandor/i18n';
 import { TooltipProvider } from '@mandor/ui';
-import { rowName } from '@mandor/ui/testing';
+import { byPart, rowName } from '@mandor/ui/testing';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -149,6 +149,48 @@ describe('the command palette', () => {
 
         expect(screen.queryByRole('listbox')).toBeNull();
         expect(document.activeElement).toBe(origin);
+    });
+
+    it('hangs as a solid panel that says it is open, with lines as tall as a control', () => {
+        render(<Harness />, { wrapper: Wrapper });
+        openPalette();
+
+        const palette = byPart('command-palette');
+
+        expect(palette).toHaveAttribute('data-state', 'open');
+        expect(palette).toHaveClass('rounded-panel', 'border-border-subtle', 'bg-surface-raised');
+        expect(screen.getAllByRole('option')[0]).toHaveClass('h-control', 'text-sm');
+    });
+
+    /**
+     * Where the sheet fades the palette out, it stays on screen until its fade ends, closed to
+     * the pointer and to readers; the focus is back where it was from the moment it closed.
+     */
+    it('fades out after handing the focus back, and goes once its fade ended', () => {
+        const sheet = document.createElement('style');
+
+        sheet.textContent = "[data-part='command-palette'] { animation-name: mandor-layer-in; }";
+        document.head.append(sheet);
+
+        try {
+            render(<Harness />, { wrapper: Wrapper });
+
+            const origin = openPalette();
+
+            press('Escape');
+
+            const palette = byPart('command-palette');
+
+            expect(palette).toHaveAttribute('data-state', 'closed');
+            expect(palette).toHaveAttribute('inert');
+            expect(document.activeElement).toBe(origin);
+
+            fireEvent.animationEnd(palette);
+
+            expect(document.querySelector("[data-part='command-palette']")).toBeNull();
+        } finally {
+            sheet.remove();
+        }
     });
 
     /**
