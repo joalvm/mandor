@@ -1,45 +1,89 @@
 /**
- * El conmutador de tema del lab repite el mecanismo de `PreferencesApplication` en `@mandor/prefs`:
- * un atributo `data-theme` en la raíz del documento, y quitado para seguir al sistema. Mismas
- * hojas, mismas variables: lo que cambia de tema aquí cambia de tema en las apps.
+ * La apariencia del lab repite el mecanismo de `PreferencesApplication` en `@mandor/prefs`: tres
+ * atributos en la raíz del documento —`data-theme`, `data-density` y `data-motion`—, y el tema y
+ * las animaciones quitados para seguir al sistema. Mismas hojas, mismas variables: lo que cambia
+ * aquí cambia igual en las apps.
  */
-export type ThemeChoice = 'system' | 'light' | 'dark';
+type ThemeChoice = 'system' | 'light' | 'dark';
 
-const STORAGE_KEY = 'ui-lab.theme';
+type DensityChoice = 'comfortable' | 'compact';
 
-const CHOICES: readonly ThemeChoice[] = ['system', 'light', 'dark'];
+type MotionChoice = 'system' | 'full' | 'reduced';
 
-export function readStoredTheme(): ThemeChoice {
+export type Appearance = {
+    density: DensityChoice;
+    motion: MotionChoice;
+    theme: ThemeChoice;
+};
+
+type AppearanceKey = keyof Appearance;
+
+/** Lo que vale cada elección, la que manda sin nada guardado y si esa se escribe en la raíz. */
+const CHOICES: { [K in AppearanceKey]: readonly Appearance[K][] } = {
+    density: ['comfortable', 'compact'],
+    motion: ['system', 'full', 'reduced'],
+    theme: ['system', 'light', 'dark'],
+};
+
+const DEFAULTS: Appearance = { density: 'comfortable', motion: 'system', theme: 'system' };
+
+/** La elección que se deja en manos del sistema no se escribe: el atributo se quita. */
+const FOLLOWS_SYSTEM: Record<AppearanceKey, string | undefined> = {
+    density: undefined,
+    motion: 'system',
+    theme: 'system',
+};
+
+const KEYS: readonly AppearanceKey[] = ['density', 'motion', 'theme'];
+
+function storageKey(key: AppearanceKey): string {
+    return `ui-lab.${key}`;
+}
+
+function readStored<K extends AppearanceKey>(key: K): Appearance[K] {
     try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        const choice = CHOICES.find((candidate) => candidate === stored);
+        const stored = localStorage.getItem(storageKey(key));
 
-        return choice ?? 'system';
+        return CHOICES[key].find((candidate) => candidate === stored) ?? DEFAULTS[key];
     } catch {
-        return 'system';
+        return DEFAULTS[key];
     }
 }
 
-function applyTheme(choice: ThemeChoice): void {
+export function readStoredAppearance(): Appearance {
+    return {
+        density: readStored('density'),
+        motion: readStored('motion'),
+        theme: readStored('theme'),
+    };
+}
+
+function apply(key: AppearanceKey, value: string): void {
     const root = document.documentElement;
 
-    if (choice === 'system') {
-        root.removeAttribute('data-theme');
-    } else {
-        root.dataset['theme'] = choice;
+    if (value === FOLLOWS_SYSTEM[key]) {
+        root.removeAttribute(`data-${key}`);
+
+        return;
+    }
+
+    root.dataset[key] = value;
+}
+
+export function applyStoredAppearance(): void {
+    const appearance = readStoredAppearance();
+
+    for (const key of KEYS) {
+        apply(key, appearance[key]);
     }
 }
 
-export function applyStoredTheme(): void {
-    applyTheme(readStoredTheme());
-}
-
-export function storeTheme(choice: ThemeChoice): void {
-    applyTheme(choice);
+export function storeAppearance<K extends AppearanceKey>(key: K, value: Appearance[K]): void {
+    apply(key, value);
 
     try {
-        localStorage.setItem(STORAGE_KEY, choice);
+        localStorage.setItem(storageKey(key), value);
     } catch {
-        // Sin almacenamiento, el tema vive solo en esta vista.
+        // Sin almacenamiento, la elección vive solo en esta vista.
     }
 }

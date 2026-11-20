@@ -1,13 +1,19 @@
+import { Card } from '@mandor/ui';
 import type { PropsWithChildren } from 'react';
 
 /**
- * The scrolling content track. Width overflow belongs to the pieces inside; the track itself
- * stays inside its lane and scrolls only vertically.
+ * The content track, drawn like the work of the apps: one card on the frame, apart from its edges
+ * by the gutter the body leaves. Width overflow belongs to the pieces inside; the card keeps its
+ * lane and only its inside scrolls, vertically.
  */
 export function ShellContent({ children }: PropsWithChildren) {
     return (
-        <main className="min-w-0 overflow-y-auto bg-surface-app" data-part="shell-content">
-            {children}
+        <main className="flex min-h-0 min-w-0" data-part="shell-content">
+            <Card>
+                <div className="min-h-0 flex-1 overflow-y-auto" data-part="shell-scroll">
+                    {children}
+                </div>
+            </Card>
         </main>
     );
 }

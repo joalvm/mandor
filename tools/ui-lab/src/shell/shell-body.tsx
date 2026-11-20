@@ -7,7 +7,10 @@ import type { PropsWithChildren } from 'react';
  */
 export function ShellBody({ children }: PropsWithChildren) {
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] overflow-hidden" data-part="shell-body">
+        <div
+            className="grid grid-cols-[auto_minmax(0,1fr)] overflow-hidden pr-gap-gutter pb-gap-gutter"
+            data-part="shell-body"
+        >
             {children}
         </div>
     );

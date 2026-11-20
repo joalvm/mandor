@@ -9,7 +9,7 @@ import { ShellContent } from './shell/shell-content.js';
 import { ShellHeader } from './shell/shell-header.js';
 import { ShellSidebar } from './shell/shell-sidebar.js';
 import { ThemeMenu } from './shell/theme-menu.js';
-import { readStoredTheme, type ThemeChoice } from './theme.js';
+import { readStoredAppearance, type Appearance } from './theme.js';
 
 function currentRoute(): string {
     const id = location.hash.split('/').at(-1) ?? '';
@@ -30,12 +30,12 @@ function OpenPage({ page: Page }: { page: ComponentType | undefined }) {
 
 /**
  * The composition root of the platform: it owns the two states — which page is open, which
- * theme is chosen — and nests the shell pieces. Structure travels through the tree, like HTML;
+ * appearance is chosen — and nests the shell pieces. Structure travels through the tree, like HTML;
  * only data travels through props.
  */
 export function LabApp() {
     const [pageId, setPageId] = useState(currentRoute);
-    const [theme, setTheme] = useState<ThemeChoice>(readStoredTheme);
+    const [appearance, setAppearance] = useState<Appearance>(readStoredAppearance);
 
     useEffect(() => {
         const followRoute = () => {
@@ -58,9 +58,9 @@ export function LabApp() {
             <LabShell>
                 <ShellHeader activeRoot={group.root}>
                     <ThemeMenu
-                        theme={theme}
+                        appearance={appearance}
                         onPick={(pick) => {
-                            setTheme(pick);
+                            setAppearance(pick);
                         }}
                     />
                 </ShellHeader>

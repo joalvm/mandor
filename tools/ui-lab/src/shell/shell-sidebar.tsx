@@ -10,9 +10,9 @@ type ShellSidebarProps = {
 
 type EntryState = 'current' | 'rest';
 
-/** La página abierta se tiñe de acento, como el índice de una web de documentación. */
+/** La página abierta se marca en gris, como la fila seleccionada de una app. */
 const ENTRY_CLASSES: Record<EntryState, string> = {
-    current: 'bg-surface-accent-tint font-semibold text-text-accent hover:veil',
+    current: 'bg-surface-selected font-semibold text-text-primary hover:veil',
     rest: 'text-text-secondary hover:veil hover:text-text-primary',
 };
 
@@ -30,7 +30,7 @@ export function ShellSidebar({ activeId, group }: ShellSidebarProps) {
     return (
         <nav
             aria-label={group.label}
-            className="flex w-64 flex-col gap-2 overflow-y-auto border-r border-border-subtle px-4 py-6"
+            className="flex w-64 flex-col gap-2 overflow-y-auto px-4 pt-2 pb-6"
             data-part="shell-sidebar"
         >
             <p className="px-3 text-xs font-semibold text-text-secondary">{group.label}</p>

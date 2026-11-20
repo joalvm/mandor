@@ -6,7 +6,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { LabApp } from './lab-app.js';
-import { applyStoredTheme } from './theme.js';
+import { applyStoredAppearance } from './theme.js';
 
 const rootElement = document.getElementById('root');
 
@@ -14,8 +14,8 @@ if (rootElement === null) {
     throw new Error('the lab root is missing');
 }
 
-// Antes del primer pintado, para que no haya un destello del tema equivocado.
-applyStoredTheme();
+// Antes del primer pintado, para que no haya un destello de la apariencia equivocada.
+applyStoredAppearance();
 
 const root = createRoot(rootElement);
 
