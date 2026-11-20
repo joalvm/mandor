@@ -160,9 +160,10 @@ type ComposerAreaProps = PropsWithChildren<
 >;
 
 /**
- * What sits under the card of the connection: the event beside the activity, each on a card of
- * its own with the gutter of the frame between them. The activity belongs to the connection, so
- * it stays whether an event is open or not; only the half of the event changes.
+ * What sits under the card of the connection: the event beside the activity, or over it when the
+ * group is too narrow for both, each on a card of its own with the gutter of the frame between
+ * them. The activity belongs to the connection, so it stays whether an event is open or not; only
+ * the half of the event changes.
  */
 function ComposerArea({
     children,
@@ -179,6 +180,7 @@ function ComposerArea({
     return (
         <SplitPane
             className="min-h-0 flex-1"
+            direction="fit"
             gap="gutter"
             initial={MESSAGE_SHARE}
             label={messages('resizeSplit')}

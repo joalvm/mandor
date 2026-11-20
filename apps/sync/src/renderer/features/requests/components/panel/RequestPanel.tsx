@@ -116,6 +116,7 @@ export function RequestPanel() {
                 </Card>
                 <SplitPane
                     className="min-h-0 flex-1"
+                    direction="fit"
                     gap="gutter"
                     initial={REQUEST_SHARE}
                     label={labels('resizeSplit')}
