@@ -280,7 +280,7 @@ matches packages/shell/src/components/command-palette/CommandPalette.tsx /data-s
 `npm run ci:check` con las rutas tocadas y `npm run design`. Con las dos apps: menú contextual
 del árbol, un select de ajustes, la paleta y un tooltip, en claro y en oscuro.
 
-### [ ] Fase 6: Acciones siempre a la vista en Orígenes y Workspaces
+### [x] Fase 6: Acciones siempre a la vista en Orígenes y Workspaces
 
 **Objetivo.** En las tablas de Orígenes y Workspaces las acciones de cada fila se ven siempre;
 en las demás tablas siguen apareciendo con el puntero o el foco.

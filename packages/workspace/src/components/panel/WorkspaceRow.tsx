@@ -45,7 +45,7 @@ export function WorkspaceRow({
             <td className="tabular-nums text-text-secondary">
                 {formatModified(workspace.modifiedAt, language)}
             </td>
-            <TableRowActions>
+            <TableRowActions reveal="always">
                 <WorkspaceRowMenu onDelete={onDelete} onRename={onRenameRequest} />
             </TableRowActions>
         </tr>

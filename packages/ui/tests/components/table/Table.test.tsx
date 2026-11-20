@@ -186,6 +186,38 @@ describe('a table', () => {
         );
     });
 
+    /**
+     * A listing whose rows are things to act on keeps their actions in sight; a table of fields
+     * shows them only under the pointer or the focus. `table.css` reads the mark.
+     */
+    it('keeps the actions of a row in sight only when the row asks for it', () => {
+        render(
+            <TooltipProvider>
+                <Table columns={COLUMNS} label="Listing">
+                    <tbody>
+                        <tr>
+                            <td>Team</td>
+                            <TableRowActions reveal="always">
+                                <IconButton icon="copy" label="Copy team" size="sm" />
+                            </TableRowActions>
+                        </tr>
+                        <tr>
+                            <td>accept</td>
+                            <TableRowActions>
+                                <IconButton icon="copy" label="Copy accept" size="sm" />
+                            </TableRowActions>
+                        </tr>
+                    </tbody>
+                </Table>
+            </TooltipProvider>,
+        );
+
+        const [always, hover] = allByPart('table-row-actions');
+
+        expect(always).toHaveAttribute('data-reveal', 'always');
+        expect(hover).toHaveAttribute('data-reveal', 'hover');
+    });
+
     it('refuses a cell of the head outside a table', () => {
         const quiet = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 

@@ -1,5 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { TooltipProvider } from '@mandor/ui';
+import { byPart } from '@mandor/ui/testing';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -51,6 +52,13 @@ describe('one row of the workspace table', () => {
         render(row({ active: true }), { wrapper: Wrapper });
 
         expect(screen.getByRole('row', { name: /Events/ })).toHaveAttribute('data-active', 'true');
+    });
+
+    /** A workspace is a thing to act on: its menu stands in sight at rest, not only on hover. */
+    it('keeps its actions in sight', () => {
+        render(row(), { wrapper: Wrapper });
+
+        expect(byPart('table-row-actions')).toHaveAttribute('data-reveal', 'always');
     });
 
     it('keeps its date column empty when nothing touched the workspace', () => {
