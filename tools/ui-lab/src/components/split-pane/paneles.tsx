@@ -18,7 +18,7 @@ export function PanelesDemo() {
                     onValueChange={setAncho}
                     value={ancho}
                 >
-                    <SplitHalf className="flex items-center justify-center bg-surface-panel text-sm text-text-secondary">
+                    <SplitHalf className="flex items-center justify-center text-sm text-text-secondary">
                         Componer
                     </SplitHalf>
                     <SplitHalf className="flex items-center justify-center text-sm text-text-secondary">
@@ -38,7 +38,7 @@ export function PanelesDemo() {
                     onValueChange={setAlto}
                     value={alto}
                 >
-                    <SplitHalf className="flex items-center justify-center bg-surface-panel text-sm text-text-secondary">
+                    <SplitHalf className="flex items-center justify-center text-sm text-text-secondary">
                         Petición
                     </SplitHalf>
                     <SplitHalf className="flex items-center justify-center text-sm text-text-secondary">

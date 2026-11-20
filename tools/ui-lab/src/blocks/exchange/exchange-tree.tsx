@@ -96,7 +96,7 @@ export function ExchangeTree({
                     />
                 </div>
             </div>
-            <div className="box-content flex h-96 flex-col rounded-md border border-border-subtle bg-surface-panel p-2">
+            <div className="box-content flex h-96 flex-col rounded-md border border-border-subtle bg-surface-raised p-2">
                 <Tree
                     chevrons={chevrons}
                     label={label}

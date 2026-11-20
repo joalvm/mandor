@@ -34,7 +34,7 @@ const SHEETS: readonly { role: string; sheet: string }[] = [
 ];
 
 const RULES: readonly string[] = [
-    'El nombre dice el papel, no el color: bg-surface-panel, nunca bg-white. Una paleta cruda de Tailwind no pasa la comprobación de contratos.',
+    'El nombre dice el papel, no el color: bg-surface-card, nunca bg-white. Una paleta cruda de Tailwind no pasa la comprobación de contratos.',
     'El acento entra solo en foco, selección, activo y primario: teal en Realtime, naranja en Request. El editor no lleva acento.',
     'Un estado nunca se comunica solo con color: lleva texto o icono al lado.',
     'La escala es cerrada: ninguna altura, hueco o radio fuera de ella. Un escalón nuevo es un token en scales.css, un alias en el tema de Tailwind y npm run tokens.',
@@ -66,12 +66,12 @@ export function OverviewPage() {
                     </li>
                     <li>
                         Los <strong className="text-text-primary">semánticos</strong> les ponen
-                        nombre de papel: <Term>--surface-panel</Term> es «el fondo de un panel», en
-                        claro y en oscuro.
+                        nombre de papel: <Term>--surface-card</Term> es «el fondo de una tarjeta»,
+                        en claro y en oscuro.
                     </li>
                     <li>
                         El <strong className="text-text-primary">tema de Tailwind</strong> los
-                        publica como utilidades: <Term>bg-surface-panel</Term>,{' '}
+                        publica como utilidades: <Term>bg-surface-card</Term>,{' '}
                         <Term>text-text-primary</Term>, <Term>h-control</Term>,{' '}
                         <Term>rounded-md</Term>.
                     </li>

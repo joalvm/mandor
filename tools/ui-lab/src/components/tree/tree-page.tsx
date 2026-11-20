@@ -83,6 +83,7 @@ export function TreePage() {
         >
             <Demo
                 code={exploradorCode}
+                ground="frame"
                 heading="La colección, como en el explorador"
                 intent="Un clic sobre la carpeta la pliega y la toma; Ctrl añade; Shift toma el rango; ← → pliegan desde el teclado. Pliega una carpeta con algo tomado dentro: la selección suelta lo que se esconde."
             >

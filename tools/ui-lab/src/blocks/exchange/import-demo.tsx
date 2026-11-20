@@ -16,7 +16,7 @@ type ImportDemoProps = {
 function Dropzone({ formats, onPick }: { formats: string; onPick: () => void }) {
     return (
         <div
-            className="flex flex-col items-center gap-gap-control rounded-md border border-dashed border-border-strong bg-surface-panel p-pad-panel"
+            className="flex flex-col items-center gap-gap-control rounded-md border border-dashed border-border-strong bg-surface-raised p-pad-panel"
             data-part="import-dropzone"
         >
             <ImportIcon size="lg" />
@@ -33,7 +33,7 @@ function Dropzone({ formats, onPick }: { formats: string; onPick: () => void }) 
 function Loaded({ file, onPick }: { file: string; onPick: () => void }) {
     return (
         <div
-            className="flex h-header items-center gap-gap-control rounded-md border border-border-subtle bg-surface-panel px-pad-panel"
+            className="flex h-header items-center gap-gap-control rounded-md border border-border-subtle bg-surface-raised px-pad-panel"
             data-part="import-file"
         >
             <span

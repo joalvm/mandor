@@ -9,7 +9,7 @@ import { Breadcrumbs } from '@mandor/ui';
 export function MigasDemo() {
     return (
         <div className="flex flex-col gap-gap-control">
-            <div className="flex h-section items-center bg-surface-panel px-pad-panel">
+            <div className="flex h-section items-center px-pad-panel">
                 <Breadcrumbs
                     label="Ubicación de la petición"
                     parts={['Invian', 'Session', 'Login']}
@@ -19,13 +19,13 @@ export function MigasDemo() {
                     </span>
                 </Breadcrumbs>
             </div>
-            <div className="flex h-section items-center bg-surface-panel px-pad-panel">
+            <div className="flex h-section items-center px-pad-panel">
                 <Breadcrumbs
                     label="Ubicación de la conexión"
                     parts={['gateway-local', 'eventos', 'device-request']}
                 />
             </div>
-            <div className="flex h-section items-center bg-surface-panel px-pad-panel">
+            <div className="flex h-section items-center px-pad-panel">
                 <Breadcrumbs
                     label="Ubicación con tramos largos"
                     parts={['gateway-local-produccion-este', 'eventos', 'device-request-reintento']}

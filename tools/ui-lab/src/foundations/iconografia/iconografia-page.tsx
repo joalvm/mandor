@@ -29,7 +29,7 @@ export function IconografiaPage() {
 
                         return (
                             <li
-                                className="flex items-center gap-gap-control rounded-md border border-border-subtle bg-surface-panel px-pad-control py-gap-control"
+                                className="flex items-center gap-gap-control rounded-md border border-border-subtle bg-surface-card px-pad-control py-gap-control"
                                 key={name}
                             >
                                 <Glyph size="md" />

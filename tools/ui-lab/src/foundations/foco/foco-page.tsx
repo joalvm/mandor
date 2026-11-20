@@ -49,7 +49,7 @@ export function FocoPage() {
                 <div className="flex items-center gap-gap-group">
                     <span
                         aria-hidden="true"
-                        className="flex h-control w-24 items-center justify-center rounded-md border bg-surface-panel"
+                        className="flex h-control w-24 items-center justify-center rounded-md border bg-surface-card"
                         style={{ borderColor: 'var(--focus-ring)' }}
                     >
                         <code className="font-mono text-2xs text-text-secondary">frame</code>

@@ -166,7 +166,7 @@ contains tools/ui-lab/src/foundations/radios/radios-page.tsx "Los ocho"
 `npm run dev:lab`: Alturas en cómoda y compacta, `--mandor-height-strip` pasa de 38 a 32 sin
 recargar.
 
-### [ ] Fase 3: Demos y piezas sobre tarjeta, sin gris de panel
+### [x] Fase 3: Demos y piezas sobre tarjeta, sin gris de panel
 
 **Objetivo.** Cada demo se ve sobre la superficie donde la pieza vive en la app: tarjeta para el
 contenido, marco para el cromo, capa para lo que flota.
@@ -179,6 +179,8 @@ matches tools/ui-lab/src/components/tree /ground="frame"/
 no-match tools/ui-lab/src/components /bg-surface-panel/
 no-match tools/ui-lab/src/blocks /bg-surface-panel/
 no-match tools/ui-lab/src/pieces /rounded-xl|bg-surface-panel|border-border-strong/
+file tools/ui-lab/src/lab-bridge.ts
+contains tools/ui-lab/src/main.tsx "./lab-bridge.js"
 ```
 
 **Cambios.**
@@ -194,6 +196,12 @@ no-match tools/ui-lab/src/pieces /rounded-xl|bg-surface-panel|border-border-stro
 - `blocks/exchange/exchange-tree.tsx` e `import-demo.tsx`: árbol y cajas en `bg-surface-raised`,
   como `ChoiceTree` e `ImportDropzone`; la zona de soltar conserva el borde discontinuo
   `border-border-strong` y la insignia teñida de acento, porque así los pinta la app.
+- `lab-bridge.ts` (nuevo), importado el primero en `main.tsx`: instala `createFakeBridge()` de
+  `@mandor/ipc/testing` en `window.mandor`. Sin él, la página de AddressBar tumbaba el lab:
+  `AddressField` se suscribe a los cambios del disco por `bridge.repo` y en el navegador no hay
+  puente.
+- `foundations/color-semanticos/superficies.tsx`, `tema/dos-temas.tsx`, `capas/apiladas.tsx` y
+  `elevacion/elevacion-page.tsx`: marco, tarjeta y lo que flota en lugar de lienzo y panel.
 - `foundations/elevacion/sombras.tsx`: la muestra de cada sombra en `bg-surface-raised`, la
   superficie de lo que flota.
 - `foundations/{espaciado/composicion,foco/foco-page,iconografia/iconografia-page,movimiento/transiciones,tema/dos-temas,overview/overview-page}.tsx`:

@@ -3,7 +3,7 @@ import { Badge, Button, StatusDot } from '@mandor/ui';
 function Muestra({ theme }: { theme: 'dark' | 'light' }) {
     return (
         <div
-            className="flex flex-1 flex-col gap-gap-control rounded-md border border-border-subtle bg-surface-app p-pad-panel"
+            className="flex flex-1 flex-col gap-gap-control rounded-panel bg-surface-frame p-pad-panel"
             data-theme={theme}
         >
             <div className="flex items-center gap-gap-control">
@@ -12,8 +12,8 @@ function Muestra({ theme }: { theme: 'dark' | 'light' }) {
                 <Badge tone="accent">Acento</Badge>
                 <Badge tone="warning">Aviso</Badge>
             </div>
-            <div className="rounded-md border border-border-subtle bg-surface-panel p-pad-panel">
-                <p className="text-2xs text-text-secondary">bg-surface-panel</p>
+            <div className="rounded-panel border border-border-subtle bg-surface-card p-pad-panel">
+                <p className="text-2xs text-text-secondary">bg-surface-card</p>
                 <div className="mt-1 flex h-field items-center rounded-md border border-border-subtle bg-surface-sunken px-pad-control">
                     <p className="text-2xs text-text-secondary">bg-surface-sunken</p>
                 </div>

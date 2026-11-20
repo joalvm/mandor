@@ -18,7 +18,7 @@ export function PeticionDemo() {
     const [url, setUrl] = useState('{{base_url}}session');
 
     return (
-        <div className="flex h-header w-full items-center gap-gap-control bg-surface-panel px-pad-panel">
+        <div className="flex h-header w-full items-center gap-gap-control px-pad-panel">
             <AddressBar className="flex-1">
                 <MethodPicker
                     accepts={(verbo) => /^[A-Z][A-Z0-9-]*$/.test(verbo)}

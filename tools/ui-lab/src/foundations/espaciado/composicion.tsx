@@ -8,7 +8,7 @@ export function ComposicionDemo() {
     const [keepalive, setKeepalive] = useState(true);
 
     return (
-        <div className="w-72 rounded-md border border-border-subtle bg-surface-panel p-pad-panel">
+        <div className="w-72 rounded-md border border-border-subtle bg-surface-card p-pad-panel">
             <div className="flex h-section items-center">
                 <h4 className="text-sm font-semibold text-text-primary">Conexión</h4>
             </div>

@@ -20,7 +20,7 @@ export function ColorSemanticosPage() {
             <Demo
                 code={superficiesCode}
                 heading="Las superficies, encajadas"
-                intent="App sobre la que se apoya un panel; dentro del panel, algo se hunde y algo se alza."
+                intent="El marco sobre el que se apoya una tarjeta; dentro de ella algo se hunde, y aparte, lo que flota."
             >
                 <SuperficiesDemo />
             </Demo>

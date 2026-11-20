@@ -1,3 +1,4 @@
+import './lab-bridge.js';
 import '@mandor/env/styles/key-value.css';
 
 import './lab.css';

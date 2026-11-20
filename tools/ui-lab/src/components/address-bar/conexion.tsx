@@ -15,7 +15,7 @@ export function ConexionDemo() {
     const elegido = [ENTORNO, STAGING].find((each) => each.id === entorno);
 
     return (
-        <div className="flex h-header w-full items-center bg-surface-panel px-pad-panel">
+        <div className="flex h-header w-full items-center px-pad-panel">
             <AddressBar className="flex-1">
                 <EnvironmentSelect
                     onChange={setEntorno}

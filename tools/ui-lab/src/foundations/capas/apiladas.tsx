@@ -13,7 +13,7 @@ const STEP = {
 } as const;
 
 /**
- * Seis capas apiladas en desplazamiento. Cada caja es el panel con algo de transparencia: la
+ * Seis capas apiladas en desplazamiento. Cada caja es la superficie de lo que flota con algo de transparencia: la
  * capa de debajo se adivina a través de la que llega después, y el cruce cuenta el apilamiento
  * sin un color sólido que lo esconda ni una veladura que lo tiña todo.
  */
@@ -28,7 +28,7 @@ export function ApiladasDemo() {
                         left: `${(index * 44).toString()}px`,
                         top: `${(index * 24).toString()}px`,
                         zIndex: `var(${layer.token})`,
-                        background: 'color-mix(in srgb, var(--surface-panel) 72%, transparent)',
+                        background: 'color-mix(in srgb, var(--surface-raised) 72%, transparent)',
                     }}
                 >
                     <code className="font-mono text-2xs text-text-primary">{layer.name}</code>
