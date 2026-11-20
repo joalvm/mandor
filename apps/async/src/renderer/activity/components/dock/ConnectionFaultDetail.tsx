@@ -4,6 +4,7 @@ import { use } from 'react';
 
 import type { ConnectionFault, ConnectionFaultEntry } from '../../activity-entry.js';
 import { FaultActionsContext } from '../../fault-actions.js';
+import { DockBand } from './DockBand.js';
 
 type ConnectionFaultDetailProps = {
     entry: ConnectionFaultEntry;
@@ -21,14 +22,17 @@ export function ConnectionFaultDetail({ entry }: ConnectionFaultDetailProps) {
     const fault = entry.detail;
 
     return (
-        <div
-            className="flex min-h-0 flex-1 flex-col gap-gap-group overflow-auto px-pad-panel py-pad-control"
-            data-format="text"
-            data-part="activity-detail"
-        >
-            <p className="text-sm text-text-error">{errorMessages(fault.code)}</p>
-            <ConnectWithoutScripts fault={fault} />
-        </div>
+        <>
+            <DockBand entry={entry} />
+            <div
+                className="flex min-h-0 flex-1 flex-col gap-gap-group overflow-auto px-pad-panel py-pad-control"
+                data-format="text"
+                data-part="activity-detail"
+            >
+                <p className="text-sm text-text-error">{errorMessages(fault.code)}</p>
+                <ConnectWithoutScripts fault={fault} />
+            </div>
+        </>
     );
 }
 

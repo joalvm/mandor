@@ -8,6 +8,7 @@ import type { PropsWithChildren } from 'react';
 
 import type { ConnectionScriptEntry } from '../../activity-entry.js';
 import { scriptErrorPlace, scriptNoteFigures } from '../../lib/script-note-words.js';
+import { DockBand } from './DockBand.js';
 
 type CountKey = 'scriptDroppedDetail' | 'scriptSwitchedOff';
 
@@ -29,30 +30,33 @@ export function ConnectionScriptDetail({ entry }: ConnectionScriptDetailProps) {
     ];
 
     return (
-        <div
-            className="flex min-h-0 flex-1 flex-col gap-gap-group overflow-auto px-pad-panel py-pad-control"
-            data-format="text"
-            data-part="activity-detail"
-        >
-            <p className="text-sm text-text-secondary">{scriptNoteFigures(note, labels)}</p>
-            <BrokeMark note={note} />
-            <DestinationMark note={note} />
-            <PollingMark note={note} />
-            <SkippedMark note={note} />
-            <Mark shown={note.withheld.length > 0}>
-                {labels('scriptWithheld', { names: note.withheld.join(', ') })}
-            </Mark>
-            {counts.map(([key, count]) => (
-                <Mark key={key} shown={count > 0}>
-                    {labels(key, { count })}
+        <>
+            <DockBand entry={entry} />
+            <div
+                className="flex min-h-0 flex-1 flex-col gap-gap-group overflow-auto px-pad-panel py-pad-control"
+                data-format="text"
+                data-part="activity-detail"
+            >
+                <p className="text-sm text-text-secondary">{scriptNoteFigures(note, labels)}</p>
+                <BrokeMark note={note} />
+                <DestinationMark note={note} />
+                <PollingMark note={note} />
+                <SkippedMark note={note} />
+                <Mark shown={note.withheld.length > 0}>
+                    {labels('scriptWithheld', { names: note.withheld.join(', ') })}
                 </Mark>
-            ))}
-            <p className="flex items-center">
-                <Button onClick={showConsole} size="sm">
-                    {labels('openConsole')}
-                </Button>
-            </p>
-        </div>
+                {counts.map(([key, count]) => (
+                    <Mark key={key} shown={count > 0}>
+                        {labels(key, { count })}
+                    </Mark>
+                ))}
+                <p className="flex items-center">
+                    <Button onClick={showConsole} size="sm">
+                        {labels('openConsole')}
+                    </Button>
+                </p>
+            </div>
+        </>
     );
 }
 

@@ -139,17 +139,18 @@ actividad en dos tarjetas abajo.
 ```check
 matches apps/async/src/renderer/features/connections/components/panel/ConnectionPanel.tsx /<Card/
 matches apps/async/src/renderer/features/connections/components/panel/ConnectionPanel.tsx /gap="gutter"/
-matches apps/async/src/renderer/features/connections/components/panel/ConnectionPanel.tsx /activityLog/
+matches apps/async/src/renderer/activity/components/panel/ActivityPanel.tsx /<Card aria-label/
 ```
 
 **Cambios.**
 
 - `ConnectionPanel.tsx`: igual que Request. Arriba `<Card aria-label={messages('urlLabel')}>`
   con `ConnectionToolbar`; abajo el `SplitPane` con `gap="gutter"`, `EventHalf` en una `Card`
-  (`message`) y `ConnectionActivity` en otra (`activityLog`).
+  (`message`) y `ConnectionActivity` al lado.
 - `ConnectionTabKind.tsx` quita la `Card` del plan 02.
-- El `SplitPane` de `apps/async/src/renderer/activity/components/panel/ActivityPanel.tsx` se
-  queda sin hueco, dentro de su tarjeta.
+- `apps/async/src/renderer/activity/components/panel/ActivityPanel.tsx` pone sus propias
+  tarjetas: la lista (`activityLog`) y, con una entrada elegida, su detalle (`activityDetail`),
+  con el hueco del marco entre las dos.
 - Tests de `apps/async/tests/unit-dom/` del panel: las tres tarjetas por rol y nombre.
 
 **No hacer.** Cambiar lo que dibuja la actividad, ni el detalle del marco.

@@ -1,8 +1,8 @@
 import { useMessages } from '@mandor/i18n';
 import type { HttpResponse } from '@mandor/schema';
+import { useCopyText } from '@mandor/shell';
 import { EmptyState } from '@mandor/ui';
 
-import { useCopyText } from './hooks/useCopyText.js';
 import { cookieAttributesOf } from './lib/cookie-attributes.js';
 import { ResponseTable } from './ResponseTable.js';
 

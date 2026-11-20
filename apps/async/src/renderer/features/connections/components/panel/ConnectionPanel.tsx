@@ -193,11 +193,9 @@ function ComposerArea({
                 </Card>
             </SplitHalf>
             <SplitHalf>
-                <Card aria-label={messages('activityLog')}>
-                    <ConnectionActivity resource={resource} timeline={timeline}>
-                        {children}
-                    </ConnectionActivity>
-                </Card>
+                <ConnectionActivity resource={resource} timeline={timeline}>
+                    {children}
+                </ConnectionActivity>
             </SplitHalf>
         </SplitPane>
     );

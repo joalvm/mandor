@@ -36,6 +36,7 @@ export { useResourceSection } from './hooks/useResourceSection.js';
 export { useShellStore } from './hooks/useShellStore.js';
 export { useSplit } from './hooks/useSplit.js';
 export { useUnfoldSection } from './hooks/useUnfoldSection.js';
+export { useCopyText } from './hooks/useCopyText.js';
 export { useFailureToast } from './hooks/useFailureToast.js';
 export { useRepoChanged } from './hooks/useRepoChanged.js';
 export { useShortcuts } from './hooks/useShortcuts.js';

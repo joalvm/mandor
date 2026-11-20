@@ -1,8 +1,8 @@
 import { MessagesProvider } from '@mandor/i18n';
 import type { ActivityRecord } from '@mandor/ipc';
 import type { ResourceUri } from '@mandor/schema';
-import { TooltipProvider } from '@mandor/ui';
-import { allByPart } from '@mandor/ui/testing';
+import { ToastProvider, TooltipProvider } from '@mandor/ui';
+import { allByPart, byPart } from '@mandor/ui/testing';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -30,14 +30,18 @@ function draw(): void {
     render(
         <MessagesProvider preferences={{ language: 'es' }}>
             <TooltipProvider>
-                <ActivityPanel
-                    entries={ENTRIES}
-                    label="Actividad"
-                    onClear={vi.fn()}
-                    onExport={vi.fn()}
-                    resource={RESOURCE}
-                    resizeLabel="Redimensionar"
-                />
+                <ToastProvider
+                    messages={{ close: 'Cerrar aviso', more: (count) => `+${String(count)}` }}
+                >
+                    <ActivityPanel
+                        entries={ENTRIES}
+                        label="Actividad"
+                        onClear={vi.fn()}
+                        onExport={vi.fn()}
+                        resource={RESOURCE}
+                        resizeLabel="Redimensionar"
+                    />
+                </ToastProvider>
             </TooltipProvider>
         </MessagesProvider>,
     );
@@ -102,5 +106,20 @@ describe('the dock of the timeline', () => {
         fireEvent.click(rows()[0] ?? document.body);
 
         expect(allByPart('activity-dock')).toHaveLength(0);
+    });
+
+    /** The list and the detail are two panels: each its own card, the gutter between them. */
+    it('draws the dock in a card of its own, apart from the card of the timeline', () => {
+        draw();
+
+        fireEvent.click(rows()[0] ?? document.body);
+
+        const dock = byPart('activity-dock');
+
+        expect(screen.getByRole('region', { name: 'Detalle' })).toContainElement(dock);
+        expect(screen.getByRole('region', { name: 'Actividad' })).not.toContainElement(dock);
+        expect(screen.getByRole('region', { name: 'Actividad' })).toContainElement(
+            screen.getByRole('log', { name: 'Actividad' }),
+        );
     });
 });
