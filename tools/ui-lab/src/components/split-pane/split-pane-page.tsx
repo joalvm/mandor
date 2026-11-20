@@ -18,9 +18,9 @@ const SPLIT_PANE_API = [
     },
     {
         name: 'direction',
-        type: "'row' | 'column'",
+        type: "'row' | 'column' | 'fit'",
         def: "'row'",
-        note: 'Dónde cae la segunda mitad: al lado o debajo.',
+        note: 'Dónde cae la segunda mitad: al lado, debajo, o fit: al lado mientras el panel mide 640 px o más, debajo si no.',
     },
     {
         name: 'min / max',
@@ -78,6 +78,12 @@ export function SplitPanePage() {
                     <li>
                         El teclado es obligatorio, no un extra: flechas 8 px, con Shift 32. Doble
                         clic, el centro.
+                    </li>
+                    <li>
+                        El centro de las dos apps y la vista previa de un doc van en{' '}
+                        <code className="font-mono text-xs">fit</code>: un grupo entre cuatro o un
+                        panel estrecho apila las mitades en vez de dejar dos columnas ilegibles. Se
+                        mide la caja del panel, no la ventana.
                     </li>
                     <li>
                         La posición se persiste en preferencias por el llamador — en píxeles de

@@ -12,12 +12,13 @@ export const DIALOG_SCRIM =
 
 /**
  * The surface: a step of light above the window, the faintest line the system draws at its edge
- * and a shadow with distance in it. The corners are rounder than a control's, because a dialog
- * is an object that floats over the window and not a part of it. The grid it lays its parts on,
+ * and a shadow with distance in it. The corners are the round of everything that floats over the
+ * window, rounder than a card's, because a dialog is an object over the window and not a part of
+ * it. Column, title, body and actions share this one ground. The grid it lays its parts on,
  * and the size it takes from what it holds, are named in `runtime.css`.
  */
 export const DIALOG_SURFACE =
-    'relative grid max-h-full max-w-full min-h-0 overflow-hidden rounded-xl border border-border-subtle bg-surface-dialog text-text-primary shadow-dialog';
+    'relative grid max-h-full max-w-full min-h-0 overflow-hidden rounded-overlay border border-border-subtle bg-surface-dialog text-text-primary shadow-dialog';
 
 /**
  * The name of the dialog: the largest words on it, and the only bold. It wraps instead of

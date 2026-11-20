@@ -26,12 +26,12 @@ describe('the field a list is narrowed with', () => {
         expect(glyph).toHaveAttribute('aria-hidden', 'true');
     });
 
-    /** It narrows what the panel shows, so it sits on the panel's own surface, drawn by its edge. */
-    it('keeps the surface of the panel it stands on', () => {
+    /** A field like any other: its line, over the ground of whatever holds it. */
+    it('draws its line over the ground of what holds it', () => {
         render(<SearchInput label="Filtrar" onValueChange={vi.fn()} value="" />);
 
-        expect(byPart('input')).toHaveClass('bg-transparent', 'border-border-strong');
-        expect(byPart('input')).not.toHaveClass('bg-surface-sunken');
+        expect(byPart('input')).toHaveClass('border-border-strong', 'bg-transparent');
+        expect(byPart('input')).not.toHaveClass('bg-surface-sunken', 'bg-surface-control');
     });
 
     /** It changes nothing, so the focus darkens its edge and lifts it, without the accent. */

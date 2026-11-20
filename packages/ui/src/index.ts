@@ -1,10 +1,11 @@
-export { AddressActions } from './components/input/AddressActions.js';
+export { AddressEnd } from './components/input/AddressEnd.js';
 export { AddressBar } from './components/input/AddressBar.js';
 export { AppBody } from './components/layout/AppBody.js';
 export { AppShell } from './components/layout/AppShell.js';
 export { Badge } from './components/indicator/Badge.js';
 export { Breadcrumbs } from './components/panel/Breadcrumbs.js';
 export { Button, type ButtonVariant } from './components/button/Button.js';
+export { Card } from './components/layout/Card.js';
 export { Collapsible } from './components/collapsible/Collapsible.js';
 export { CollapsibleBody } from './components/collapsible/CollapsibleBody.js';
 export { CollapsibleHeader } from './components/collapsible/CollapsibleHeader.js';

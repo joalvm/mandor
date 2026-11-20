@@ -8,7 +8,7 @@ import { toggledTask } from '../../lib/toggle-task.js';
 import { DocEditor } from '../editor/DocEditor.js';
 import { DocPage } from '../view/DocPage.js';
 
-type DocWriteSplitProps = { direction: 'column' | 'row'; doc: DocSurfaceDoc };
+type DocWriteSplitProps = { doc: DocSurfaceDoc };
 
 /** How the two halves stand when the page is first asked for, and while nobody drags the line. */
 const EVEN = 50;
@@ -18,7 +18,7 @@ const EVEN = 50;
  * is not a second document: it draws the text being typed, so what it shows is what will be on
  * disk once the pause is over, and the two halves are kept on the same part of it.
  */
-export function DocWriteSplit({ direction, doc }: DocWriteSplitProps) {
+export function DocWriteSplit({ doc }: DocWriteSplitProps) {
     const messages = useMessages('docs');
     const editorRef = useRef<CodeEditorHandle>(null);
     const pageRef = useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export function DocWriteSplit({ direction, doc }: DocWriteSplitProps) {
     return (
         <SplitPane
             className="h-full"
-            direction={direction}
+            direction="fit"
             label={messages('splitHandle')}
             onValueChange={setSplit}
             value={split}

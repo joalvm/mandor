@@ -1,4 +1,6 @@
 {
+    "appearance-density-comfortable": "Comfortable",
+    "appearance-density-compact": "Compact",
     "appearance-language-en": "English",
     "appearance-language-es": "Spanish",
     "appearance-themeMode-manual": "Hold one theme",
@@ -6,6 +8,9 @@
     "close": "Close settings",
     "inheritedFrom": "Default from",
     "inheritedPlace": "Settings",
+    "density": "Density",
+    "densityGroup": "Spacing",
+    "densityHelp": "Compact packs the panels together and takes away the gap between them.",
     "language": "Language",
     "languageHelp": "Sets the language Mandor uses.",
     "section-shortcuts": "Shortcuts",
@@ -108,5 +113,11 @@
     "forgetApprovalsButton": "Forget approvals",
     "forgetApprovalsTitle": "Forget every approval?",
     "forgetApprovalsDetail": "Every script asks to be approved again on this machine. The scripts themselves stay as they are.",
-    "forgetApprovalsConfirm": "Forget"
+    "forgetApprovalsConfirm": "Forget",
+    "appearance-motion-full": "Full",
+    "appearance-motion-reduced": "Reduced",
+    "appearance-motion-system": "System",
+    "motion": "Animations",
+    "motionGroup": "Motion",
+    "motionHelp": "System does what the system asks. Reduced takes away sliding and growing and keeps the fades."
 }

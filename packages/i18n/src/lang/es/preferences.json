@@ -1,4 +1,6 @@
 {
+    "appearance-density-comfortable": "Cómoda",
+    "appearance-density-compact": "Compacta",
     "appearance-language-en": "Inglés",
     "appearance-language-es": "Español",
     "appearance-themeMode-manual": "Fijar un tema",
@@ -6,6 +8,9 @@
     "close": "Cerrar ajustes",
     "inheritedFrom": "Por defecto en",
     "inheritedPlace": "Ajustes",
+    "density": "Densidad",
+    "densityGroup": "Espaciado",
+    "densityHelp": "Compacta pega los paneles y quita el hueco entre ellos.",
     "language": "Idioma",
     "languageHelp": "Define el idioma que usa Mandor.",
     "section-shortcuts": "Atajos",
@@ -108,5 +113,11 @@
     "forgetApprovalsButton": "Olvidar aprobaciones",
     "forgetApprovalsTitle": "¿Olvidar todas las aprobaciones?",
     "forgetApprovalsDetail": "Cada script vuelve a pedir aprobación en esta máquina. Los scripts quedan como están.",
-    "forgetApprovalsConfirm": "Olvidar"
+    "forgetApprovalsConfirm": "Olvidar",
+    "appearance-motion-full": "Completas",
+    "appearance-motion-reduced": "Reducidas",
+    "appearance-motion-system": "Sistema",
+    "motion": "Animaciones",
+    "motionGroup": "Movimiento",
+    "motionHelp": "Sistema hace lo que pida el sistema. Reducidas quita desplazamientos y crecimientos y deja los fundidos."
 }

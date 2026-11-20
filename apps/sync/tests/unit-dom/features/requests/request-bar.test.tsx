@@ -21,8 +21,6 @@ function sendBar(overrides: Partial<React.ComponentProps<typeof RequestBar>> = {
             environment={undefined}
             method="GET"
             onCancel={() => undefined}
-            onKeep={undefined}
-            onOpenCode={() => undefined}
             onPasteText={() => false}
             onMethod={() => undefined}
             onSend={() => undefined}
@@ -36,18 +34,18 @@ function sendBar(overrides: Partial<React.ComponentProps<typeof RequestBar>> = {
 }
 
 describe('the bar of the request', () => {
-    it('offers to keep the answer beside the code only once there is one', () => {
-        const onKeep = vi.fn();
-
+    /** The verb beside the address stands as tall as it: one line, read as one. */
+    it('sends from a button as tall as the address', () => {
         draw(sendBar());
 
-        expect(screen.queryByRole('button', { name: 'Save response as example' })).toBeNull();
+        expect(screen.getByRole('button', { name: 'Send' })).toHaveClass('h-address');
+    });
 
-        cleanup();
-        draw(sendBar({ onKeep }));
-        fireEvent.click(screen.getByRole('button', { name: 'Save response as example' }));
+    /** What is done with the request as a whole lives on the row of its trail, not here. */
+    it('holds nothing at the end of the address', () => {
+        draw(sendBar());
 
-        expect(onKeep).toHaveBeenCalledOnce();
+        expect(screen.queryByRole('button', { name: 'Code' })).toBeNull();
     });
 
     it('names the method and the destination, and the destination is one field', () => {

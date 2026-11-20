@@ -3,18 +3,19 @@ import type { PropsWithChildren } from 'react';
 import { cn } from '../../lib/cn.js';
 
 /**
- * How much of a box a field draws: a sunken one for prose; only the edge, over the surface of the
- * panel, for a field that narrows what that panel shows (`SearchInput`); a transparent line for a
- * cell that still takes the focus on its own edge; or nothing at all, for a field inside a frame
- * that already draws the edge and takes the focus for everything it holds (`AddressBar`).
+ * How much of a box a field draws: its line over the ground of whatever holds it, for prose and
+ * for a field that narrows what its panel shows (`SearchInput`) — white on a white panel, gray on
+ * the gray of the sidebar; a transparent line for a cell that still takes the focus on its own
+ * edge; or nothing at all, for a field inside a frame that already draws the edge and takes the
+ * focus for everything it holds (`AddressBar`).
  */
-export type FieldVariant = 'bare' | 'flat' | 'outline' | 'text';
+export type FieldVariant = 'bare' | 'flat' | 'search' | 'text';
 
 const VARIANT_CLASSES = {
     bare: 'border-0 bg-transparent',
     flat: 'border-transparent bg-transparent',
-    outline: 'border-border-strong bg-transparent hover:border-border-hover',
-    text: 'border-border-strong bg-surface-sunken hover:border-border-hover',
+    search: 'border-border-strong bg-transparent hover:border-border-hover',
+    text: 'border-border-strong bg-transparent hover:border-border-hover',
 } as const;
 
 /**
@@ -24,7 +25,7 @@ const VARIANT_CLASSES = {
 const FOCUS_FRAME_OF_VARIANT = {
     bare: undefined,
     flat: '',
-    outline: 'quiet',
+    search: 'quiet',
     text: '',
 } as const;
 

@@ -15,7 +15,7 @@ const PETICIONES = [
  */
 export function CompactoDemo() {
     return (
-        <ul className="m-0 flex w-64 list-none flex-col bg-surface-panel p-0 text-sm">
+        <ul className="m-0 flex w-64 list-none flex-col p-0 text-sm">
             <li className="flex h-row items-center gap-gap-icon-text px-pad-panel">
                 <FolderIcon size="sm" />
                 <span className="truncate">Session</span>

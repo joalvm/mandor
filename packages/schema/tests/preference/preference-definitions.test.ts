@@ -41,6 +41,33 @@ describe('PREFERENCE_DEFINITIONS', () => {
         }
     });
 
+    it('offers two densities, the comfortable one by default', () => {
+        const density = PREFERENCE_DEFINITIONS.find(
+            (definition) => definition.key === 'appearance.density',
+        );
+
+        expect(density).toMatchObject({
+            defaultValue: 'comfortable',
+            section: 'themes',
+            type: 'select',
+            values: ['comfortable', 'compact'],
+        });
+    });
+
+    /** The window moves as the system asks unless the reader says otherwise, either way. */
+    it('offers three ways to move, following the system by default', () => {
+        const motion = PREFERENCE_DEFINITIONS.find(
+            (definition) => definition.key === 'appearance.motion',
+        );
+
+        expect(motion).toMatchObject({
+            defaultValue: 'system',
+            section: 'themes',
+            type: 'select',
+            values: ['system', 'full', 'reduced'],
+        });
+    });
+
     it('keeps every preference at the level of the app', () => {
         expect(new Set(PREFERENCE_DEFINITIONS.map((definition) => definition.scope))).toEqual(
             new Set(['app']),

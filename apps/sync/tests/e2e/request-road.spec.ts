@@ -27,7 +27,7 @@ import {
 import { launch, makeSandbox, type Sandbox } from './support/launch-app.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
 import { aim, createEnvironment, createRequest, responseOf } from './support/send-flow.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 /** The folder of the sandbox the save dialog of the app answers with. */
 const EXPORTS = 'exports';

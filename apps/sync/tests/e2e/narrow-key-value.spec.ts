@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { expect, test, type ElectronApplication, type Page } from '@playwright/test';
 
 import { createRequest, launchSync } from './support/send-flow.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 let root = '';
 let app: ElectronApplication;

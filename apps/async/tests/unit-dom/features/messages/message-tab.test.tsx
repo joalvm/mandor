@@ -2,6 +2,7 @@ import { ItemTab, collectionStore, itemResource } from '@mandor/collections';
 import { success } from '@mandor/ipc';
 import { MESSAGE_ITEM_KIND, type CollectionNode } from '@mandor/schema';
 import { originName, shellStore, TabProvider } from '@mandor/shell';
+import { byPart } from '@mandor/ui/testing';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -59,7 +60,7 @@ function readsBack(channel: string) {
 }
 
 describe('the tab of a message', () => {
-    it('names the channel the message goes out on', async () => {
+    it('names the channel the message goes out on, on the card the body rests on', async () => {
         readsBack('pedidos.creado');
 
         render(
@@ -71,6 +72,7 @@ describe('the tab of a message', () => {
         await flush();
 
         expect(screen.getByText('pedidos.creado')).toBeInTheDocument();
+        expect(byPart('card')).toContainElement(screen.getByText('pedidos.creado'));
     });
 
     /** Two views of one item are one file: reading it twice would be two answers about one truth. */

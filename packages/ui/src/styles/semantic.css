@@ -4,11 +4,11 @@
     color-scheme: light;
     --surface-app: var(--primitive-neutral-light-1);
     --surface-panel: var(--primitive-neutral-light-2);
+    --surface-frame: var(--primitive-neutral-light-2);
+    --surface-card: var(--primitive-neutral-light-1);
     --surface-sunken: var(--primitive-neutral-light-1);
     --surface-raised: var(--primitive-neutral-light-1);
     --surface-dialog: var(--primitive-neutral-light-1);
-    --surface-dialog-nav: var(--primitive-neutral-light-2);
-    --surface-dialog-nav-active: var(--primitive-neutral-light-5);
     --surface-control: var(--primitive-neutral-light-3);
     --surface-control-hover: var(--primitive-neutral-light-4);
     --surface-control-active: var(--primitive-neutral-light-5);
@@ -58,6 +58,7 @@
     --border-hover: var(--primitive-neutral-light-8);
     --border-control: var(--primitive-neutral-light-9);
     --border-control-hover: var(--primitive-neutral-light-10);
+    --border-handle: var(--primitive-handle);
     --border-error: var(--primitive-red-light-9);
     --solid-accent: var(--primitive-accent-light-9);
     --solid-accent-hover: var(--primitive-accent-light-10);

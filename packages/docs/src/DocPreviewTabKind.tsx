@@ -1,4 +1,5 @@
 import { TabBody, TabKind } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 
 import { DOCS_SECTION_ID } from './components/sidebar/DocsSection.js';
 import { DocPreviewTab } from './components/tab/DocPreviewTab.js';
@@ -19,7 +20,9 @@ export function DocPreviewTabKind() {
             title={docPreviewTitle}
         >
             <TabBody>
-                <DocPreviewTab />
+                <Card>
+                    <DocPreviewTab />
+                </Card>
             </TabBody>
         </TabKind>
     );

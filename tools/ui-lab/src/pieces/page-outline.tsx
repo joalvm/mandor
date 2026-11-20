@@ -9,13 +9,18 @@ const DEPTH_CLASSES: Record<OutlineEntry['depth'], string> = {
     section: '',
 };
 
-/** Los títulos con ancla de la página, en orden: secciones y, debajo, sus demos. */
+/**
+ * Los títulos con ancla de la página, en orden: secciones y, debajo, sus demos. Los títulos que
+ * una pieza pinta dentro de su demo (el de un grupo de ajustes) son de la pieza, no de la página.
+ */
 function entriesOf(article: HTMLElement): OutlineEntry[] {
-    return [...article.querySelectorAll<HTMLElement>('h2[id], h3[id]')].map((heading) => ({
-        depth: DEPTH[heading.tagName] ?? 'section',
-        id: heading.id,
-        label: heading.textContent,
-    }));
+    return [...article.querySelectorAll<HTMLElement>('h2[id], h3[id]')]
+        .filter((heading) => heading.closest("[data-part='demo-canvas']") === null)
+        .map((heading) => ({
+            depth: DEPTH[heading.tagName] ?? 'section',
+            id: heading.id,
+            label: heading.textContent,
+        }));
 }
 
 /**
@@ -45,8 +50,8 @@ export function PageOutline({ article }: { article: RefObject<HTMLElement | null
                 {entries.map((entry) => (
                     <li className={DEPTH_CLASSES[entry.depth]} key={entry.id}>
                         <a
-                            className="block rounded-sm py-0.5 text-sm text-text-secondary hover:text-text-primary"
-                            data-focus-ring=""
+                            className="block rounded-sm border border-transparent py-0.5 text-sm text-text-secondary hover:text-text-primary"
+                            data-focus-frame=""
                             href={`#${entry.id}`}
                             onClick={(event) => {
                                 event.preventDefault();

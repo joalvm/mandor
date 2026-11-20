@@ -188,3 +188,13 @@
     > :has(+ [data-part='table-row-actions']) {
     --table-cell-covered: var(--table-row-actions-width, 0px);
 }
+
+/* Un listado cuyas filas son cosas sobre las que actuar deja sus acciones a la vista en reposo,
+   y la celda de debajo termina donde empiezan también en reposo. */
+[data-part='table'] [data-part='table-row-actions'][data-reveal='always'] {
+    opacity: 1;
+}
+
+[data-part='table'] tr > :has(+ [data-part='table-row-actions'][data-reveal='always']) {
+    --table-cell-covered: var(--table-row-actions-width, 0px);
+}

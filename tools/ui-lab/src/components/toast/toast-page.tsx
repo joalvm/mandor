@@ -16,7 +16,7 @@ const TOAST_API = [
     {
         name: 'tone',
         type: "'success' | 'info' | 'warning' | 'error'",
-        note: 'El filo de color y el glifo.',
+        note: 'La insignia teñida y su glifo.',
     },
     { name: 'detail', type: 'string', note: 'La segunda línea; corta, sin mejorar el título.' },
     {
@@ -52,7 +52,7 @@ export function ToastPage() {
             <Demo
                 code={tonosCode}
                 heading="Los cuatro tonos"
-                intent="Icono, primera línea y cierre alineados en una lectura; el título corta en dos líneas y el detalle en tres — pruébalo con el botón largo. Success e info se van a los 4 segundos; warning a los 6; error se queda. Con el cursor encima el conteo se detiene y sigue al salir."
+                intent="Insignia, título y cierre en una lectura; repetir un tono suma ×N; el título corta en dos líneas y el detalle en tres — pruébalo con el botón largo. Success e info se van a los 4 segundos; warning a los 6; error se queda. Con el cursor encima el conteo se detiene y sigue al salir."
                 layout="stretch"
             >
                 <TonosDemo />
@@ -61,7 +61,7 @@ export function ToastPage() {
             <Demo
                 code={accionCode}
                 heading="La vuelta atrás"
-                intent="El action vive dentro del toast y participa de su orden de tab."
+                intent="Una sola acción, como botón secundario bajo el texto; entra al orden de tab del toast."
                 layout="start"
             >
                 <AccionDemo />
@@ -74,6 +74,11 @@ export function ToastPage() {
 
             <DocSection heading="Reglas">
                 <ul className="flex list-disc flex-col gap-gap-tight pl-4 text-sm text-text-secondary">
+                    <li>
+                        Una tarjeta de 380 contra la esquina inferior derecha. Se apilan tres, los
+                        de atrás asomando bajo el último; la pila se abre al apuntarla o al llegar
+                        con el foco, y lo que no cabe se cuenta.
+                    </li>
                     <li>El error no caduca; los demás sí, cada uno según su gravedad.</li>
                     <li>
                         Pausan al pasar el puntero y al enfocar: nada se cierra debajo de la mano.
@@ -82,7 +87,7 @@ export function ToastPage() {
                         El título corta en dos líneas y el detalle en tres: lo que no cabe no se lee
                         en un aviso.
                     </li>
-                    <li>El tono va en el filo y el glifo; la superficie no cambia.</li>
+                    <li>El tono va en la insignia y su glifo; la superficie no cambia.</li>
                     <li>
                         Nunca es el único lugar donde un dato vive: siempre hay registro detrás.
                     </li>

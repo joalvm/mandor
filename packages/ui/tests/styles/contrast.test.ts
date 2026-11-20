@@ -6,6 +6,8 @@ import { themeOf, type ThemeMode } from './theme-values.js';
 const SURFACES = [
     'app',
     'panel',
+    'frame',
+    'card',
     'sunken',
     'raised',
     'dialog',
@@ -13,10 +15,8 @@ const SURFACES = [
     'control-hover',
     'control-active',
     'selected',
-    'dialog-nav',
-    'dialog-nav-active',
 ] as const;
-const BASE_SURFACES = ['app', 'panel', 'sunken', 'raised', 'dialog'] as const;
+const BASE_SURFACES = ['app', 'panel', 'frame', 'card', 'sunken', 'raised', 'dialog'] as const;
 const SUPPORTING_TEXTS = ['secondary', 'accent', 'success', 'warning', 'error', 'info'] as const;
 const SOLIDS = ['success', 'warning', 'error', 'info'] as const;
 /** Every theme the window can wear passes the same floor; the contrast ones raise it further elsewhere. */
@@ -92,21 +92,45 @@ describe.each(['teal', 'orange'] as const)('the semantic theme contrast, %s acce
     });
 
     /**
-     * The column of sections of a dialog is a layer of its own, and so is the fill of the section
-     * open. Two contiguous layers with one value is the flat dark the design system exists to
-     * prevent: the column would read as the dialog itself, and a section would open without
-     * anything changing.
+     * A dialog is one surface: its column of sections shares the ground of the rest, and the
+     * section open wears the grey of a selection in the window. That grey has to stand off the
+     * dialog, or a section would open without anything changing.
+     */
+    it.each(MODES)('marks the open section of a dialog apart from it in %s mode', async (mode) => {
+        const theme = await themeOf(mode, accent);
+
+        expect(theme['surface-dialog-nav']).toBeUndefined();
+        expect(theme['surface-selected']).not.toBe(theme['surface-dialog']);
+    });
+
+    /**
+     * The window is a frame with cards on it, and what tells a card from the frame is its tone:
+     * no line goes around a card. One value for both is content painted on the frame.
+     */
+    it.each(MODES)('keeps a card a step apart from the frame in %s mode', async (mode) => {
+        const theme = await themeOf(mode, accent);
+
+        expect(theme['surface-frame']).toBeDefined();
+        expect(theme['surface-card']).toBeDefined();
+        expect(theme['surface-card']).not.toBe(theme['surface-frame']);
+    });
+
+    /**
+     * A secondary button is a fill and no outline: what tells it from the card it stands on is
+     * its gray alone, at rest and under the pointer. A menu floats on the gray of a control in the
+     * dark scheme, so there the pointer is what lifts it off.
      */
     it.each(MODES)(
-        'keeps the column of sections a step apart from its dialog in %s mode',
+        'keeps a filled control a step apart from its ground in %s mode',
         async (mode) => {
             const theme = await themeOf(mode, accent);
-            const nav = theme['surface-dialog-nav'];
-            const active = theme['surface-dialog-nav-active'];
 
-            expect(nav).toBeDefined();
-            expect(nav).not.toBe(theme['surface-dialog']);
-            expect(active).not.toBe(nav);
+            for (const fill of ['surface-control', 'surface-control-hover'] as const) {
+                expect(theme[fill], fill).toBeDefined();
+                expect(theme[fill], `${fill} on card`).not.toBe(theme['surface-card']);
+            }
+
+            expect(theme['surface-control-hover']).not.toBe(theme['surface-raised']);
         },
     );
 

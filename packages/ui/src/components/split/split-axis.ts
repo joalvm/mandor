@@ -23,7 +23,7 @@ export const SPLIT_AXES: Record<SplitDirection, SplitAxis> = {
     column: {
         back: 'ArrowUp',
         forward: 'ArrowDown',
-        handle: 'border-y before:inset-x-0 before:top-1/2 before:h-px before:-translate-y-1/2',
+        handle: 'border-y before:inset-x-0 before:top-1/2 before:-translate-y-1/2',
         orientation: 'horizontal',
         pointOf: (event) => event.clientY,
         startOf: (bounds) => bounds.top,
@@ -32,7 +32,7 @@ export const SPLIT_AXES: Record<SplitDirection, SplitAxis> = {
     row: {
         back: 'ArrowLeft',
         forward: 'ArrowRight',
-        handle: 'border-x before:inset-y-0 before:left-1/2 before:w-px before:-translate-x-1/2',
+        handle: 'border-x before:inset-y-0 before:left-1/2 before:-translate-x-1/2',
         orientation: 'vertical',
         pointOf: (event) => event.clientX,
         startOf: (bounds) => bounds.left,

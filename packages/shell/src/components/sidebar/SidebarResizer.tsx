@@ -6,9 +6,9 @@ import type { KeyboardEvent } from 'react';
 import { useShellStore } from '../../hooks/useShellStore.js';
 
 /**
- * The edge of the sidebar, dragged in pixels. It is the seam itself: one line, the same one the
- * zone would have drawn, and the zones on either side draw none. What the pointer may grab is
- * wider than the line — `runtime.css` lends it the room — so a hairline still takes a drag.
+ * The edge of the sidebar, dragged in pixels. It is the gutter of the frame between the lateral
+ * and the first card, and draws nothing at rest: the gutter already separates them. Pointed at,
+ * a line shows down its middle, so the drag is found where it is.
  *
  * The width it moves is the one the session keeps, so the handle reads and writes it where it
  * lives instead of being handed it by whoever drew the window.
@@ -46,8 +46,7 @@ export function SidebarResizer() {
             aria-valuemax={SIDEBAR_WIDTH.max}
             aria-valuemin={SIDEBAR_WIDTH.min}
             aria-valuenow={Math.round(width)}
-            className="w-px shrink-0 z-splitter bg-border-subtle transition-colors duration-fast hover:bg-border-hover"
-            data-focus-ring=""
+            className="w-gap-gutter shrink-0 z-splitter before:absolute before:inset-y-0 before:left-1/2 before:-translate-x-1/2"
             data-part="sidebar-handle"
             {...drag}
             onDoubleClick={() => {

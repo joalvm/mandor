@@ -9,10 +9,14 @@
  * An inset shadow puts it inside, a pixel in from the border, and the control ends up wearing two
  * lines where the design has one. That is what the ring used to look like and what it must not
  * look like again.
+ *
+ * A spread shadow that opens with `0 0 0` is the outline again under another name: a ring drawn
+ * outside the box, over the neighbour.
  */
 
 const OUTLINE = /\boutline(?:-[\w-]+)?\s*:/;
 const INSET = /\binset\b/;
+const SPREAD = /box-shadow\s*:\s*0\s+0\s+0\b/;
 const RESET = 'packages/ui/src/styles/base.css';
 
 /** Every rule of a stylesheet, as the selector that opens it and the body it declares. */
@@ -45,9 +49,23 @@ function outlineProblemsOf(file) {
     ];
 }
 
+function spreadRingProblems(file) {
+    return rulesOf(file.text)
+        .filter((rule) => rule.selector.includes('focus') && SPREAD.test(rule.body))
+        .map(
+            () =>
+                `${file.path}: draws the focus ring outside the box with a spread shadow. The ` +
+                'ring replaces the border it lands on, so recolour the border instead.',
+        );
+}
+
 /** @param {readonly {path: string, text: string}[]} files */
 export function focusRingProblems(files) {
     return files
         .filter((file) => file.path.endsWith('.css'))
-        .flatMap((file) => [...outlineProblemsOf(file), ...insetRingProblems(file)]);
+        .flatMap((file) => [
+            ...outlineProblemsOf(file),
+            ...insetRingProblems(file),
+            ...spreadRingProblems(file),
+        ]);
 }

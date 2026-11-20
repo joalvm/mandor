@@ -1,6 +1,16 @@
 import type { TokenRow } from '../../pieces/token-table.js';
 
 export const SURFACES: readonly TokenRow[] = [
+    {
+        token: '--surface-frame',
+        utility: 'bg-surface-frame',
+        note: 'el marco de la ventana: barra de título, lateral, pestañas y barra de estado',
+    },
+    {
+        token: '--surface-card',
+        utility: 'bg-surface-card',
+        note: 'la tarjeta sobre el marco, donde se dibuja cada pestaña y la consola',
+    },
     { token: '--surface-app', utility: 'bg-surface-app', note: 'el lienzo de la aplicación' },
     {
         token: '--surface-panel',
@@ -23,12 +33,6 @@ export const SURFACES: readonly TokenRow[] = [
         note: 'lo que se alza sobre el panel',
     },
     { token: '--surface-dialog', utility: 'bg-surface-dialog', note: 'el cuerpo de un diálogo' },
-    {
-        token: '--surface-dialog-nav',
-        utility: 'bg-surface-dialog-nav',
-        note: 'el lateral de un diálogo',
-    },
-    { token: '--surface-dialog-nav-active', utility: 'bg-surface-dialog-nav-active' },
     {
         token: '--surface-control',
         utility: 'bg-surface-control',

@@ -79,7 +79,7 @@ function SaveRequestForm({ asking }: { asking: SaveToAsking }) {
                         </div>
                     </div>
                     <div
-                        className="box-content flex h-64 flex-col rounded-md border border-border-subtle bg-surface-panel p-2"
+                        className="box-content flex h-64 flex-col rounded-md border border-border-subtle bg-surface-raised p-2"
                         data-part="save-request-tree"
                     >
                         <Tree

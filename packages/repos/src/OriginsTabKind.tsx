@@ -1,4 +1,5 @@
 import { registerSurface, TabBody, TabKind } from '@mandor/shell';
+import { Card } from '@mandor/ui';
 import { useEffect } from 'react';
 
 import { OriginsPanel } from './components/panel/OriginsPanel.js';
@@ -30,7 +31,9 @@ export function OriginsTabKind({ onSwitch }: OriginsTabKindProps) {
             title={(_resource, translate) => translate('origins:heading')}
         >
             <TabBody>
-                <OriginsPanel onSwitch={onSwitch} />
+                <Card>
+                    <OriginsPanel onSwitch={onSwitch} />
+                </Card>
             </TabBody>
         </TabKind>
     );

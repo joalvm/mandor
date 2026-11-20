@@ -39,7 +39,7 @@ function scriptRows() {
 }
 
 function consolePanel() {
-    return page.locator('[data-part="console-panel"]');
+    return page.getByRole('region', { name: 'Console' });
 }
 
 /** Where the connection lives in the repo, by the name the screen shows. */

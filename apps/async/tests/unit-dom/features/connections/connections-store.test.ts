@@ -6,6 +6,7 @@ import {
     selectConnectionStateFor,
     selectConnections,
     selectFaultFor,
+    selectOpenedAtFor,
     selectRecordingFor,
 } from '../../../../src/renderer/features/connections/index.js';
 
@@ -67,6 +68,35 @@ describe('the connections store', () => {
         store.getState().setConnectionState('alpha', 'open');
 
         expect(selectConnectionStateFor('alpha')(store.getState())).toBe('open');
+    });
+
+    /** The time a connection has been connected counts from the push that opened it. */
+    it('stamps the moment the socket opened and keeps it while it stays open', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-08-24T10:00:00.000Z'));
+
+        const store = createConnectionsStore();
+
+        store.getState().setConnectionState('alpha', 'connecting');
+
+        expect(selectOpenedAtFor('alpha')(store.getState())).toBeUndefined();
+
+        store.getState().setConnectionState('alpha', 'open');
+        vi.setSystemTime(new Date('2026-08-24T10:00:05.000Z'));
+        store.getState().setConnectionState('alpha', 'open');
+
+        expect(selectOpenedAtFor('alpha')(store.getState())).toBe(
+            Date.parse('2026-08-24T10:00:00.000Z'),
+        );
+    });
+
+    it('forgets the moment once the socket is anything but open', () => {
+        const store = createConnectionsStore();
+
+        store.getState().setConnectionState('alpha', 'open');
+        store.getState().setConnectionState('alpha', 'reconnecting');
+
+        expect(selectOpenedAtFor('alpha')(store.getState())).toBeUndefined();
     });
 
     it('replaces a connection that already exists and adds one that does not', () => {

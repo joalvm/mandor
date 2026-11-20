@@ -202,6 +202,27 @@ describe('the control primitives', () => {
         );
     });
 
+    /** The verb beside an address stands as tall as the address and a little wider. */
+    it('draws the large button at the height of an address', () => {
+        render(<Button size="lg">Enviar</Button>);
+
+        expect(screen.getByRole('button', { name: 'Enviar' })).toHaveClass('h-address', 'px-4');
+    });
+
+    /** The secondary button is the strong gray of a control: a fill, never an outline. */
+    it('fills the secondary button with the strong gray of a control and draws no outline', () => {
+        render(<Button variant="secondary">Cancelar</Button>);
+
+        const button = screen.getByRole('button', { name: 'Cancelar' });
+
+        expect(button).toHaveClass(
+            'border-transparent',
+            'bg-surface-control-active',
+            'enabled:hover:bg-surface-control-hover',
+        );
+        expect(button).not.toHaveClass('border-border-strong');
+    });
+
     it('underlines a link button under the pointer unless it is told not to', () => {
         render(
             <>

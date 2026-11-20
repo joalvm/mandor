@@ -14,13 +14,15 @@ import { CommandPaletteGroups } from './CommandPaletteGroups.js';
 const FIELD_ID = 'command-palette-field';
 
 type CommandPaletteListProps = {
+    /** False while the palette fades out: the focus is already back where it came from. */
+    active: boolean;
     onClose: () => void;
     onRun: (id: string) => void;
     recent: readonly string[];
 };
 
 /** Narrows the register with what is typed and runs whatever ends up highlighted. */
-export function CommandPaletteList({ onClose, onRun, recent }: CommandPaletteListProps) {
+export function CommandPaletteList({ active, onClose, onRun, recent }: CommandPaletteListProps) {
     const messages = useMessages('shell');
     const commands = useNamedCommands();
     const [highlight, setHighlight] = useState(0);
@@ -34,7 +36,7 @@ export function CommandPaletteList({ onClose, onRun, recent }: CommandPaletteLis
     // The focus never leaves the field: aria-activedescendant names the row the arrows reached.
     const activeRow = activeId === undefined ? undefined : paletteRowId(listId, activeId);
 
-    useFocusReturn(FIELD_ID);
+    useFocusReturn(FIELD_ID, active);
 
     function run(command: NamedCommand | undefined): void {
         if (command === undefined) {

@@ -1,10 +1,19 @@
 /**
  * The focus of the product is the border of the control in another colour, so the native outline
- * goes. Under forced colours the system paints every border alike and drops every shadow: there
- * the native outline is the one mark of focus left, and it stays.
+ * goes; on a handle the focus is the line it draws, so it goes there too. Under forced colours
+ * the system paints every border alike and drops every shadow: there the native outline is the
+ * one mark of focus left, and it stays.
  */
 @media not (forced-colors: active) {
-    :where(button, [role='button'], [role='option'], [role='treeitem'], [contenteditable]) {
+    :where(
+        button,
+        [role='button'],
+        [role='option'],
+        [role='treeitem'],
+        [role='separator'],
+        [contenteditable],
+        [data-focus-frame]
+    ) {
         outline: none;
     }
 }

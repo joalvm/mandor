@@ -7,7 +7,7 @@ import { expect, test, type ElectronApplication, type Page } from '@playwright/t
 import { editorLines } from '../../../../packages/ui/tests/support/editor-lines.js';
 import { itemFile, localRepo, PERSONAL } from './support/disk-names.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 import {
     aim,
     createEnvironment,
@@ -52,7 +52,7 @@ async function send(): Promise<void> {
 }
 
 function consolePanel() {
-    return page.locator('[data-part="console-panel"]');
+    return page.getByRole('region', { name: 'Console' });
 }
 
 /** Opens the console from the status bar, reads it, and puts it away again. */

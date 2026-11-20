@@ -1,16 +1,16 @@
 # Components
 
-Capas, variantes, estados, marcado, roles y teclado. Cómo se escribe el archivo → skill de
-componentes React.
+Capas, variantes, estados, foco, marcado, roles, teclado, pestañas y tablas. Cómo se escribe el
+archivo → skill de componentes React.
 
 ## Capas
 
-| Capa      | Es                                                 | Sabe de dominio | Ejemplos                              |
-| --------- | -------------------------------------------------- | --------------- | ------------------------------------- |
-| Primitiva | un control o una forma, tematizado, con su teclado | no              | botón, campo, desplegable, menú, fila |
-| Cromo     | la estructura de la ventana                        | no              | rejilla, pestañas, lateral, paleta    |
-| Compuesto | primitivas montadas para una tarea                 | sí              | barra de URL, tabla de pares, visor   |
-| Pantalla  | compuestos en zonas                                | sí              | la pestaña de una petición            |
+| Capa      | Es                                                 | Sabe de dominio | Ejemplos                                 |
+| --------- | -------------------------------------------------- | --------------- | ---------------------------------------- |
+| Primitiva | un control o una forma, tematizado, con su teclado | no              | botón, campo, desplegable, menú, tarjeta |
+| Cromo     | el marco de la ventana                             | no              | rejilla, pestañas, lateral, paleta       |
+| Compuesto | primitivas montadas para una tarea                 | sí              | barra de destino, tabla de pares, visor  |
+| Pantalla  | compuestos en tarjetas                             | sí              | la pestaña de una petición               |
 
 - Una capa importa solo de las de arriba en la tabla. Una primitiva nunca conoce un compuesto.
 - **Antes de dibujar, buscar la primitiva**; casi siempre existe. Orden: primitiva propia →
@@ -18,8 +18,8 @@ componentes React.
   completo (flechas, Enter, Escape, foco atrapado y devuelto, ARIA, clic fuera).
 - Extraer en el segundo uso real. La misma lista larga de clases en varios sitios es un
   componente o un token que falta.
-- **Composición en árbol**: contenedor + partes hijas, como HTML. Es una regla dura con sus
-  antipatrones en la skill de componentes React; aquí no se repite.
+- **Composición en árbol**: contenedor + partes hijas, como HTML. Regla dura con sus antipatrones
+  en la skill de componentes React.
 - Ningún control nativo de formulario fuera de las primitivas: lo pinta el sistema y escapa del
   tema, del radio y de la tipografía.
 
@@ -27,64 +27,73 @@ componentes React.
 
 Ejes pocos y ortogonales:
 
-| Eje     | Valores                                                    |
-| ------- | ---------------------------------------------------------- |
-| Énfasis | sólido (primaria), contorno (secundaria), fantasma (resto) |
-| Tamaño  | 2–3 escalones de la escalera de alturas                    |
-| Tono    | neutro, acento, peligro                                    |
+| Eje     | Valores                                                      |
+| ------- | ------------------------------------------------------------ |
+| Énfasis | sólido (primaria), relleno (secundaria), fantasma (resto)    |
+| Tamaño  | 2–3 escalones de la escalera de alturas                      |
+| Tono    | neutro, acento; peligro solo en el verbo de una confirmación |
 
-- **Fantasma por defecto.** En una herramienta densa casi todo es fantasma: sin fondo ni borde
-  en reposo, fondo al apuntar, fondo más fuerte pulsado o abierto.
-- Una sola acción sólida por vista (enviar, guardar). Sólido o contorno, nunca los dos.
-- **Desplegable = botón fantasma** con el valor elegido y un chevrón pegado al texto; abre una
-  lista con aspecto de menú y marca la opción elegida. Dentro de un formulario toma la altura de
-  los campos vecinos.
-- **Campo de texto**: hundido un escalón con borde de paso 7 cuando es un formulario; sin caja
-  propia cuando vive en una tabla o una banda (la celda es la caja).
+- **Fantasma por defecto.** En una herramienta densa casi todo es fantasma: sin fondo en reposo,
+  velo al apuntar, velo más fuerte pulsado o abierto.
+- **Una sola acción sólida por vista** (enviar, conectar, guardar), en el acento. La secundaria
+  es relleno gris de control, sin borde.
+- **Acciones de una barra = botón de icono** con tooltip. Nunca un texto con aspecto de enlace.
+- **Campo de texto = control relleno**, sin borde en reposo, gris de control; al apuntar, un paso
+  más; con el foco, su línea interior en color de foco. Dentro de una tabla o una banda no lleva
+  caja propia: la celda es la caja.
+- **Desplegable = control relleno** con el valor elegido y un chevrón pegado al texto; abre una
+  lista con aspecto de menú y marca la opción elegida con un check. Toma la altura de los
+  controles vecinos.
+- **Ajustes = filas de ajuste**: etiqueta y ayuda a la izquierda, control alineado a la derecha.
+  Encender o apagar es un interruptor, nunca una casilla. Las filas van en grupos blancos con
+  divisores tenues.
 
 ## Estados
 
-Todo control interactivo los trae todos, distinguibles en claro y en oscuro:
+Todo control interactivo los trae todos, distinguibles en claro, oscuro y contraste alto. Todos
+en gris salvo lo que la tabla dice:
 
-| Estado        | Señal                                                   |
-| ------------- | ------------------------------------------------------- |
-| reposo        | lo mínimo: texto e icono                                |
-| hover         | fondo paso 3–4                                          |
-| pulsado       | fondo paso 5                                            |
-| abierto       | fondo de pulsado mientras su capa está abierta          |
-| foco visible  | la línea existente cambia a color de foco               |
-| seleccionado  | fondo paso 4–5 (acento suave en listas); no es foco     |
-| activo        | marca de acento: lo actual de un conjunto               |
-| deshabilitado | texto apagado ≥ 3:1, sin puntero; explica por qué       |
-| cargando      | conserva su etiqueta; el indicador sustituye a su icono |
-| error         | color de error en texto o icono; nunca bloquea          |
+| Estado        | Señal                                                          |
+| ------------- | -------------------------------------------------------------- |
+| reposo        | lo mínimo: texto e icono; sin relleno salvo controles          |
+| hover         | velo neutro tenue sobre lo que haya                            |
+| pulsado       | velo un paso más fuerte                                        |
+| abierto       | el velo de pulsado mientras su capa está abierta               |
+| foco visible  | la línea propia, o una interior de 1 px, en color de foco      |
+| seleccionado  | gris de selección; seleccionado + hover = selección + velo     |
+| encendido     | acento: casilla marcada, interruptor encendido                 |
+| deshabilitado | texto apagado ≥ 3:1, sin puntero; explica por qué              |
+| cargando      | conserva su etiqueta; el indicador sustituye a su icono        |
+| error         | color de error en texto o icono de lo que falló; nunca bloquea |
 
 - Precedencia: deshabilitado > cargando > pulsado > foco > hover > reposo.
-- Seleccionado, activo, foco y hover son cuatro señales distintas.
+- Seleccionado, foco y hover son tres señales distintas y se suman sin taparse.
 - Vistas de datos traen también: cargando (esqueleto), vacío (dice el siguiente paso), error
   (nombra el problema y la salida), escaso, denso y contenido muy largo.
 
 ## Foco
 
-- **El foco recolorea la línea que ya existe**: misma posición, mismo grosor, otro color. Un
-  control sin borde propio recibe un anillo de 1–2 px en el color de foco. Solo con
-  `:focus-visible`. La regla se escribe una vez, en la hoja base del tema.
+- **El foco vive dentro de la caja.** Recolorea la línea que el control ya tiene: mismo sitio,
+  mismo grosor, otro color. Un control sin línea propia (campo relleno, fila, pestaña, botón)
+  recibe una línea interior de 1 px en el color de foco. Solo con `:focus-visible`.
+- La regla se escribe una vez, en la hoja base del tema; ningún componente dibuja su foco.
 - Una celda editable sin caja propia **tiene línea igualmente**: su borde interior se recolorea
   con `:focus-within`. Navegar con flechas sin ver dónde se está no es navegar.
-- Ni `outline` que pisa al vecino, ni sombra `inset` que dibuja dos líneas, ni borde que cambia
-  de grosor.
+- El color de foco es un token del tema con 3:1 contra la superficie que lo rodea.
+- Un control con borde no suma línea interior: serían dos líneas. Nada por fuera de la caja: ni
+  `outline`, ni anillo con separación, ni sombra exterior, ni borde que cambia de grosor.
 
 ## Marcado
 
 Antes de abrir una etiqueta: **¿qué trabajo hace esta caja?**
 
-| Trabajo    | Hace                                | Elemento                                                 |
-| ---------- | ----------------------------------- | -------------------------------------------------------- |
-| Zona       | ocupa un sitio fijo de la ventana   | `header` `nav` `aside` `main` `footer`, solo en el cromo |
-| Superficie | sube o baja un escalón de elevación | `div` con token de superficie                            |
-| Sección    | agrupa contenido con nombre         | `section` + `aria-labelledby` a su encabezado visible    |
-| Ritmo      | reparte espacio                     | `div` con clases de maquetación                          |
-| Control    | responde a la entrada               | una primitiva                                            |
+| Trabajo    | Hace                          | Elemento                                                 |
+| ---------- | ----------------------------- | -------------------------------------------------------- |
+| Zona       | ocupa un sitio fijo del marco | `header` `nav` `aside` `main` `footer`, solo en el cromo |
+| Superficie | es una tarjeta o un grupo     | `div` con token de superficie                            |
+| Sección    | agrupa contenido con nombre   | `section` + `aria-labelledby` a su encabezado visible    |
+| Ritmo      | reparte espacio               | `div` con clases de maquetación                          |
+| Control    | responde a la entrada         | una primitiva                                            |
 
 - La caja sin trabajo se borra. Ningún `div` sin atributos. **Tres niveles de caja como
   máximo** dentro de un componente; el cuarto es un componente sin extraer.
@@ -92,10 +101,10 @@ Antes de abrir una etiqueta: **¿qué trabajo hace esta caja?**
   propio nombre.
 - Cada raíz lleva un nombre estable de parte (`data-part`) que nombra el sitio, nunca la caja
   (`wrapper`, `container`). Leídos en orden, son el índice del componente.
-- Landmarks una vez, en el cromo. Dentro de un panel: sección con encabezado o `div`. Sin
+- Landmarks una vez, en el cromo. Dentro de una tarjeta: sección con encabezado o `div`. Sin
   encabezado visible no hay sección.
 - Niveles de encabezado sin saltos: uno principal por pestaña (cada pestaña es un documento), el
-  siguiente en sus paneles.
+  siguiente en sus tarjetas.
 
 Antipatrones de marcado:
 
@@ -133,20 +142,33 @@ Un rol es una **promesa de teclado**: se escribe con su teclado o no se escribe.
 
 ## Pestañas
 
-- Sin fondo ni borde en reposo; solo se ve el estado (abierta, señalada), cada uno con su
-  relleno. Radio de control: ni píldora ni recta. Sin subrayado ni barra de acento.
+- Viven en la tira del marco, en una sola línea. Radio de pestaña; ni píldora ni recta; sin
+  subrayado ni barra de acento.
+- **Inactiva**: sin relleno. **Inactiva al apuntar**: el gris de selección. **Activa**: un paso
+  más de gris, y no cambia al apuntar.
 - Ancho = contenido: icono, título y **una ranura final** del ancho de un icono, reservada
-  siempre. En reposo muestra el estado de lo abierto; al apuntar o enfocar, el cierre.
+  siempre. En reposo muestra el estado de lo abierto (sin guardar, conectado); al apuntar o
+  enfocar, el cierre.
 - Pestaña de vista previa (la reemplaza el siguiente clic simple): título en cursiva, nada más.
+- Lo que no cabe se desplaza en la tira; nunca abre una segunda fila.
 
-## Listas de pares
+## Tablas
 
-Toda lista de pares (parámetros, cabeceras, campos, variables) es **una misma tabla**:
+**Una sola tabla** para todo dato en filas y columnas. Su forma (borde, línea bajo cada fila,
+línea entre celdas, cabecera, radio) es una, y una pantalla no la rediseña: elige entre las dos
+variantes de abajo.
+
+| Variante | Filas son                         | Acciones de fila                | Hover de fila |
+| -------- | --------------------------------- | ------------------------------- | ------------- |
+| Listado  | cosas (orígenes, espacios, items) | siempre visibles                | sí            |
+| Campos   | pares que se editan               | al apuntar o con el foco dentro | no            |
+
+Listas de pares (parámetros, cabeceras, campos, variables) son la variante de campos:
 
 - Clave, valor e interruptor: el interruptor apaga sin borrar; la clave nunca se apaga.
 - Termina en una fila vacía permanente: escribir en ella crea la línea y otra vacía ocupa su
   lugar. Sin botón «añadir».
-- Acciones de la fila (tirador, tipo, quitar) solo al apuntar o con el foco dentro.
+- Acciones de la fila (tirador, tipo, quitar) en un sitio reservado: aparecer no mueve nada.
 - Metadatos que no se envían (tipo, descripción): junto a lo que describen, nunca en otra fila
   ni en un diálogo. Si la lista no lleva tipos, no hay botón de tipo.
 - Edición masiva como texto: un par por línea, `clave:valor`, los apagados comentados.

@@ -20,7 +20,7 @@ import {
     saveRequest,
 } from './support/send-flow.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 test.describe.configure({ mode: 'serial' });
 

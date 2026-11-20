@@ -30,7 +30,7 @@ export function MenuItem({
     return (
         <DropdownMenu.Item
             className={cn(
-                'flex h-row-xs cursor-pointer items-center gap-gap-icon-text rounded-md px-2 text-xs data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-control-hover',
+                'flex h-control cursor-pointer items-center outline-none gap-gap-icon-text rounded-md px-2 text-sm data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-selected',
                 checkable && checked && 'font-semibold',
             )}
             data-part="menu-item"

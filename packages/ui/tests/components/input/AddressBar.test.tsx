@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-    AddressActions,
     AddressBar,
+    AddressEnd,
     Button,
     IconButton,
     Input,
@@ -38,15 +38,26 @@ describe('the fused address bar (AddressBar)', () => {
         expect(document.querySelectorAll('[data-part="address-bar-seam"]')).toHaveLength(1);
     });
 
-    it('draws no seam before the AddressActions at its end, which act on the address', () => {
+    /** The address and the verb beside it stand at one height, taller than a field. */
+    it('stands at the height of an address', () => {
+        render(
+            <AddressBar>
+                <Input label="URL" onValueChange={vi.fn()} value="" variant="bare" />
+            </AddressBar>,
+        );
+
+        expect(document.querySelector('[data-part="address-bar"]')).toHaveClass('h-address');
+    });
+
+    it('draws no seam before the AddressEnd, which closes the address from inside', () => {
         render(
             <TooltipProvider>
                 <AddressBar>
                     <Button variant="ghost">GET</Button>
                     <Input label="URL" onValueChange={vi.fn()} value="" variant="bare" />
-                    <AddressActions>
+                    <AddressEnd>
                         <IconButton icon="code" label="Code" />
-                    </AddressActions>
+                    </AddressEnd>
                 </AddressBar>
             </TooltipProvider>,
         );

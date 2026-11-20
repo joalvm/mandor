@@ -1,5 +1,6 @@
 export { AppIcon } from './components/title-bar/AppIcon.js';
 export { AppMenuButton } from './components/title-bar/AppMenuButton.js';
+export { CommandCenter } from './components/title-bar/CommandCenter.js';
 export { CommandPalette } from './components/command-palette/CommandPalette.js';
 export { GroupGrid } from './components/group-grid/GroupGrid.js';
 export { OriginSwitching } from './components/overlay/OriginSwitching.js';
@@ -58,6 +59,7 @@ export {
     selectTabs,
 } from './selectors.js';
 export { shellStore, type ShellStore } from './shell-store.js';
+export { revealInSidebar } from './sidebar/reveal-in-sidebar.js';
 export { DEFAULT_SHORTCUTS } from './shortcut/default-shortcuts.js';
 export { isApplePlatform } from './shortcut/apple-platform.js';
 export { shortcutLabel } from './shortcut/shortcut-label.js';

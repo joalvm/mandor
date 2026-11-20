@@ -1,7 +1,7 @@
 import { useMessages } from '@mandor/i18n';
 import type { ResourceUri } from '@mandor/schema';
 import { IconButton, SplitHalf, SplitPane } from '@mandor/ui';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type PropsWithChildren } from 'react';
 
 import type { ActivityEntry } from '../../activity-entry.js';
 import { activityStore } from '../../activity-store.js';
@@ -31,7 +31,7 @@ const TIMELINE_SHARE = 65;
  */
 let dockShare = TIMELINE_SHARE;
 
-type ActivityPanelProps = {
+type ActivityPanelProps = PropsWithChildren<{
     entries: readonly ActivityEntry[];
     /** Clears what the timeline holds, where the entries come from. */
     onClear: () => void;
@@ -41,7 +41,7 @@ type ActivityPanelProps = {
     resource: ResourceUri;
     label: string;
     resizeLabel: string;
-};
+}>;
 
 /**
  * The timeline of a resource, with the dock of the chosen entry under it. The dock exists only
@@ -50,6 +50,7 @@ type ActivityPanelProps = {
  * detail of the chosen entry, picked by its kind.
  */
 export function ActivityPanel({
+    children,
     entries,
     label,
     onClear,
@@ -89,14 +90,16 @@ export function ActivityPanel({
     return (
         <div className="flex h-full min-h-0 min-w-0 flex-col" data-part="activity-panel">
             <ActivityHead
-                exportable={entries.length > 0}
+                entries={entries}
                 narrowing={narrowing}
                 onClear={onClear}
                 onNarrowingChange={(next) => {
                     activityStore.getState().setNarrowing(resource, next);
                 }}
                 onExport={onExport}
-            />
+            >
+                {children}
+            </ActivityHead>
             <ActivityBody
                 entries={visible}
                 label={label}
@@ -110,7 +113,7 @@ export function ActivityPanel({
                 selectedId={selectedId}
                 split={split}
             />
-            <ActivityFoot entries={entries} hidden={hidden} onShowAll={onShowAll} />
+            <ActivityFoot hidden={hidden} onShowAll={onShowAll} />
         </div>
     );
 }
@@ -183,7 +186,7 @@ function ActivityDock({ entry, onClose }: { entry: ActivityEntry; onClose: () =>
 
     return (
         <div
-            className="flex h-full min-h-0 min-w-0 flex-col bg-surface-panel"
+            className="flex h-full min-h-0 min-w-0 flex-col bg-surface-card"
             data-part="activity-dock"
         >
             <div

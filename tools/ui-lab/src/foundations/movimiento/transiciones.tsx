@@ -73,7 +73,7 @@ export function TransicionesDemo() {
                         }`}
                     >
                         <div className="overflow-hidden">
-                            <div className="mt-gap-control max-w-sm rounded-md border border-border-subtle bg-surface-panel p-pad-panel text-xs text-text-secondary">
+                            <div className="mt-gap-control max-w-sm rounded-md border border-border-subtle bg-surface-card p-pad-panel text-xs text-text-secondary">
                                 El panel se despliega con duration-slow: lo que viaja se toma su
                                 tiempo, y ninguna otra pieza de la interfaz se mueve con él.
                             </div>

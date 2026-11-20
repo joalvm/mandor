@@ -2,6 +2,8 @@ import { createDeclarations, type Declared } from '../declare/declarations.js';
 
 /** What a section of the lateral decides: where it sits, its title and what folds with it. */
 export type SidebarSectionLogic = {
+    /** How many things the section holds, said after its title. */
+    count?: number;
     /**
      * Whether the section takes the height the others leave. The rest are as tall as what they
      * hold, up to a cap; one section of the lateral fills, the one people keep the most in.

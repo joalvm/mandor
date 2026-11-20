@@ -6,7 +6,6 @@ import { useRef } from 'react';
 
 import type { DocSide } from '../../doc-view-state.js';
 import { usePreviewChord } from '../../hooks/usePreviewChord.js';
-import { useSideBySide } from '../../hooks/useSideBySide.js';
 import { DocEditor } from '../editor/DocEditor.js';
 import { DocBand } from './DocBand.js';
 import { DocWriteSplit } from './DocWriteSplit.js';
@@ -27,7 +26,6 @@ const PREVIEW_CHORD = '$mod+KeyK KeyV';
 export function DocWrite({ doc, onView, view }: DocWriteProps) {
     const messages = useMessages('docs');
     const box = useRef<HTMLDivElement>(null);
-    const sideBySide = useSideBySide(box);
     const togglePreview = (): void => {
         onView({ preview: !view.preview });
     };
@@ -58,23 +56,15 @@ export function DocWrite({ doc, onView, view }: DocWriteProps) {
                 </Button>
             </DocBand>
             <div className="min-h-0 flex-1" data-part="doc-body">
-                <DocWriteBody doc={doc} preview={view.preview} sideBySide={sideBySide} />
+                <DocWriteBody doc={doc} preview={view.preview} />
             </div>
         </div>
     );
 }
 
-function DocWriteBody({
-    doc,
-    preview,
-    sideBySide,
-}: {
-    doc: DocWriteProps['doc'];
-    preview: boolean;
-    sideBySide: boolean;
-}) {
+function DocWriteBody({ doc, preview }: { doc: DocWriteProps['doc']; preview: boolean }) {
     if (preview) {
-        return <DocWriteSplit direction={sideBySide ? 'row' : 'column'} doc={doc} />;
+        return <DocWriteSplit doc={doc} />;
     }
 
     return (

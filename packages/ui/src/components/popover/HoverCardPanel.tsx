@@ -10,7 +10,7 @@ export function HoverCardPanel({ children }: PropsWithChildren) {
         <HoverCardPrimitive.Portal>
             <HoverCardPrimitive.Content
                 align="start"
-                className="z-popover w-72 rounded-lg border border-border-strong bg-surface-raised p-3 text-sm text-text-primary shadow-popover"
+                className="z-popover w-72 rounded-panel border border-border-subtle bg-surface-raised p-3 text-sm text-text-primary shadow-popover"
                 collisionPadding={8}
                 data-part="hover-card-panel"
                 sideOffset={4}

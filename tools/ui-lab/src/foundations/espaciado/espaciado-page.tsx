@@ -9,27 +9,32 @@ const GAPS: readonly { note?: string; token: string; utility?: string }[] = [
     {
         token: '--mandor-gap-tight',
         utility: 'gap-gap-tight',
-        note: '4 px — pegado: la etiqueta y su mensaje de campo',
+        note: 'pegado: la etiqueta y su mensaje de campo',
     },
     {
         token: '--mandor-gap-icon-text',
         utility: 'gap-gap-icon-text',
-        note: '6 px — un icono y el texto que nombra',
+        note: 'un icono y el texto que nombra',
     },
     {
         token: '--mandor-gap-control',
         utility: 'gap-gap-control',
-        note: '8 px — entre controles hermanos',
+        note: 'entre controles hermanos',
+    },
+    {
+        token: '--mandor-gap-gutter',
+        utility: 'gap-gap-gutter',
+        note: 'el hueco del marco entre dos tarjetas; cero en la densidad compacta',
     },
     {
         token: '--mandor-gap-group',
         utility: 'gap-gap-group',
-        note: '16 px — entre grupos y entre demos',
+        note: 'entre grupos y entre demos',
     },
     {
         token: '--mandor-gap-section',
         utility: 'gap-gap-section',
-        note: '24 px — entre secciones de una vista',
+        note: 'entre secciones de una vista',
     },
 ];
 
@@ -37,22 +42,22 @@ const PADS: readonly { note?: string; token: string; utility?: string }[] = [
     {
         token: '--mandor-pad-inline-control',
         utility: 'px-pad-control',
-        note: '8 px — dentro de un control: caja, botón, fila',
+        note: 'dentro de un control: caja, botón, fila',
     },
     {
         token: '--mandor-pad-inline-panel',
         utility: 'p-pad-panel',
-        note: '12 px — dentro de un panel y de este lienzo',
+        note: 'dentro de un panel y de este lienzo',
     },
     {
         token: '--mandor-pad-inline-dialog',
         utility: 'p-pad-dialog',
-        note: '16 px — dentro de un diálogo',
+        note: 'dentro de un diálogo',
     },
     {
         token: '--mandor-indent-tree',
         utility: 'pl-indent-tree',
-        note: '12 px — un nivel del árbol',
+        note: 'un nivel del árbol',
     },
 ];
 

@@ -1,9 +1,10 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { createEnvironment } from '@mandor/schema';
+import type { WsState } from '@mandor/ipc';
 import { TooltipProvider } from '@mandor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ConnectionToolbar } from '../../../../src/renderer/features/connections/components/panel/ConnectionToolbar.js';
 
@@ -29,8 +30,8 @@ type DrawOptions = {
     environment?: typeof ENVIRONMENT;
     onEnvironmentChange?: (environmentId: string) => void;
     namespace?: string;
-    recording?: { active: boolean; entries: number };
-    onRecordToggle?: () => void;
+    openedAt?: number;
+    wsState?: WsState;
 };
 
 function draw({
@@ -38,8 +39,8 @@ function draw({
     environment = ENVIRONMENT,
     onEnvironmentChange = () => undefined,
     namespace,
-    recording = { active: false, entries: 0 },
-    onRecordToggle = () => undefined,
+    openedAt,
+    wsState = 'idle',
 }: DrawOptions) {
     return render(
         <Wrapper>
@@ -50,13 +51,13 @@ function draw({
                 live={false}
                 namespace={namespace}
                 onEnvironmentChange={onEnvironmentChange}
-                onRecordToggle={onRecordToggle}
                 onToggle={() => undefined}
                 onUrlChange={() => undefined}
                 onVariablesChange={() => undefined}
+                openedAt={openedAt}
                 pending={false}
-                recording={recording}
                 url={url}
+                wsState={wsState}
             />
         </Wrapper>,
     );
@@ -86,23 +87,20 @@ describe('the toolbar of a connection', () => {
         expect(await screen.findByRole('dialog', { name: '{{baseUrl}}' })).toBeInTheDocument();
     });
 
-    it('offers the recording of the connection while it holds none', () => {
-        const onRecordToggle = vi.fn();
+    it('stands at the height of a toolbar', () => {
+        const { container } = draw({ url: 'ws://127.0.0.1:3000' });
 
-        draw({ url: 'ws://127.0.0.1:3000', onRecordToggle });
-
-        fireEvent.click(screen.getByRole('button', { name: 'Grabar' }));
-
-        expect(onRecordToggle).toHaveBeenCalledOnce();
+        expect(container.querySelector('[data-part="connection-toolbar"]')).toHaveClass(
+            'h-toolbar',
+        );
     });
 
-    it('says that the connection is recording, and how much the file holds', () => {
-        draw({ url: 'ws://127.0.0.1:3000', recording: { active: true, entries: 123 } });
+    /** The bar ends at the toggle: the recording heads the activity it records. */
+    it('ends at the toggle, with no recording on the bar', () => {
+        draw({ url: 'ws://127.0.0.1:3000' });
 
-        // The gap between the words is CSS: the accessible name keeps the texts apart loosely.
-        const recording = screen.getByRole('button', { name: /Grabando\s*123/ });
-
-        expect(recording).toBeVisible();
+        expect(screen.queryByRole('button', { name: 'Grabar' })).toBeNull();
+        expect(screen.getByRole('button', { name: 'Conectar' })).toBeVisible();
     });
 
     it('joins the environment, the namespace and the URL into one address bar', () => {
@@ -143,5 +141,43 @@ describe('the environment select of the toolbar', () => {
         await screen.findByRole('menuitem', { name: 'staging' });
 
         expect(screen.queryByRole('menuitem', { name: /Administrar/u })).not.toBeInTheDocument();
+    });
+});
+
+describe('the state inside the address of a connection', () => {
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('says how long an open connection has been connected', () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(Date.parse('2026-08-24T10:00:42.000Z'));
+
+        const { container } = draw({
+            openedAt: Date.parse('2026-08-24T10:00:00.000Z'),
+            url: 'ws://127.0.0.1:3000',
+            wsState: 'open',
+        });
+
+        const pill = container.querySelector('[data-part="address-end"] [data-part="badge"]');
+
+        expect(pill).toHaveTextContent('Conectada · 00:42');
+        expect(pill).toHaveAttribute('data-tone', 'success');
+    });
+
+    it('says a connection is on its way while it dials', () => {
+        const { container } = draw({ url: 'ws://127.0.0.1:3000', wsState: 'connecting' });
+
+        const pill = container.querySelector('[data-part="address-end"] [data-part="badge"]');
+
+        expect(pill).toHaveTextContent('Conectando');
+        expect(pill).toHaveAttribute('data-tone', 'warning');
+    });
+
+    /** The toggle beside already says a closed connection can connect. */
+    it('says nothing for a connection that is closed', () => {
+        const { container } = draw({ url: 'ws://127.0.0.1:3000', wsState: 'closed' });
+
+        expect(container.querySelector('[data-part="address-end"] [data-part="badge"]')).toBeNull();
     });
 });

@@ -242,4 +242,21 @@ describe('the sections of the sidebar', () => {
 
         expect(screen.queryByRole('separator')).toBeNull();
     });
+
+    /** The header sets a section apart from the one above it; a line would be a second border. */
+    it('counts what each section holds in its header, with no line between sections', () => {
+        keep(
+            mountSidebarSection({
+                body: <span>docs</span>,
+                count: 2,
+                id: 'docs',
+                order: 10,
+                title: 'shell:commandPalette',
+            }),
+        );
+        render(sections([], vi.fn()));
+
+        expect(byPart('collapsible-count')).toHaveTextContent('2');
+        expect(byPart('sidebar-slot').className).not.toMatch(/border/);
+    });
 });

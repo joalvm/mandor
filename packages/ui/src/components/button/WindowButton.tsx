@@ -5,7 +5,7 @@ import { cn } from '../../lib/cn.js';
 
 const windowButtonStyles = cva(
     [
-        'flex h-full w-12 shrink-0 cursor-pointer items-center justify-center bg-transparent',
+        'flex h-full w-12 shrink-0 cursor-pointer items-center justify-center border border-transparent bg-transparent',
         'text-text-primary transition-colors duration-fast ease-out',
     ],
     {
@@ -40,7 +40,7 @@ export function WindowButton({ icon, label, onClick, variant }: WindowButtonProp
         <button
             aria-label={label}
             className={cn(windowButtonStyles({ variant }))}
-            data-focus-ring=""
+            data-focus-frame=""
             data-part="window-button"
             onClick={onClick}
             type="button"

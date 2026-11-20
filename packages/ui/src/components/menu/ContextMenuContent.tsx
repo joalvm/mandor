@@ -8,7 +8,7 @@ export function ContextMenuContent({ children }: ContextMenuContentProps) {
     return (
         <ContextMenuPrimitive.Portal>
             <ContextMenuPrimitive.Content
-                className="z-dropdown rounded-lg border border-border-strong bg-surface-raised p-1 text-text-primary shadow-popover"
+                className="z-dropdown rounded-panel border border-border-subtle bg-surface-raised p-1 text-text-primary shadow-popover"
                 data-part="context-menu-content"
             >
                 {children}

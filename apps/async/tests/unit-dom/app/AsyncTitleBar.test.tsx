@@ -116,7 +116,20 @@ describe('the top row of Mandor Realtime', () => {
     it('keeps the room of the search empty', () => {
         draw();
 
-        expect(byPart('title-search')).toBeEmptyDOMElement();
+        expect(byPart('title-search')).toContainElement(
+            screen.getByRole('button', { name: 'Buscar comandos' }),
+        );
+    });
+
+    it('stands the command centre on the middle of the window, between two halves of one weight', () => {
+        draw();
+
+        // Both ends grow from nothing by the same share, and the end keeps on its inner side the
+        // air the row opens with, so what is left between them is the middle of the window.
+        expect(byPart('title-start')).toHaveClass('flex-1', 'basis-0');
+        expect(byPart('title-end')).toHaveClass('flex-1', 'basis-0', 'pl-pad-panel');
+        expect(byPart('titlebar')).toHaveClass('pl-pad-panel');
+        expect(byPart('title-start')).not.toHaveClass('pl-pad-panel');
     });
 
     it('opens the settings from the gear at the far end', () => {

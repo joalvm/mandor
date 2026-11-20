@@ -6,9 +6,12 @@ import {
     type Rect,
     type Virtualizer,
 } from '@tanstack/react-virtual';
-import { scaleTokenValues } from '../styles/token-scale-values.js';
+import { useEffect, useRef } from 'react';
 
-/** A row is one row of the scale tall; the window measures the whole list from that. */
+import { scaleTokenValues } from '../styles/token-scale-values.js';
+import { useRowHeight } from './useRowHeight.js';
+
+/** What an unmeasured scroller is worth is counted in lines of the comfortable density. */
 const ROW_HEIGHT = Number.parseFloat(scaleTokenValues['mandor-height-row']);
 const OVERSCAN = 8;
 
@@ -47,7 +50,10 @@ type RowWindowOptions = {
     /** The rows that stay drawn out of sight: the one that holds the focus, and the like. */
     kept?: readonly number[] | undefined;
     keyOf: (index: number) => number | string;
-    /** How tall a row stands before it is measured, when it is not a line of the scale. */
+    /**
+     * How tall a row stands before it is measured, when it is not a line of the scale. Without
+     * it, a row is a line of the density the window is drawn in.
+     */
     rowHeight?: number | undefined;
     /** The box that scrolls the list, asked once it is laid out. */
     scroller: () => HTMLElement | null;
@@ -99,10 +105,14 @@ export function useRowWindow({
     followsEnd = false,
     kept = [],
     keyOf,
-    rowHeight = ROW_HEIGHT,
+    rowHeight: givenHeight,
     scroller,
     scrollMargin = 0,
 }: RowWindowOptions): RowWindow {
+    // A list of lines takes the line of the density the window is drawn in, which can change
+    // under it: the rows counted at the old height are counted again.
+    const lineHeight = useRowHeight();
+    const rowHeight = givenHeight ?? lineHeight;
     const virtualizer = useVirtualizer({
         count,
         estimateSize: () => rowHeight,
@@ -118,6 +128,17 @@ export function useRowWindow({
         rangeExtractor: rangeKeeping(kept),
         scrollMargin,
     });
+
+    const countedAt = useRef(rowHeight);
+
+    useEffect(() => {
+        if (countedAt.current === rowHeight) {
+            return;
+        }
+
+        countedAt.current = rowHeight;
+        virtualizer.measure();
+    }, [rowHeight, virtualizer]);
 
     return {
         drawn: virtualizer

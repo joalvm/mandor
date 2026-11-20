@@ -7,7 +7,7 @@ import {
     type Variable,
 } from '@mandor/schema';
 import { fireAndForget, useFailureToast, useKeepTab, useTab } from '@mandor/shell';
-import { SplitHalf, SplitPane } from '@mandor/ui';
+import { Card, SplitHalf, SplitPane } from '@mandor/ui';
 import { useState, type KeyboardEvent } from 'react';
 
 import { useExample } from '../../hooks/useExample.js';
@@ -84,51 +84,58 @@ export function ExamplePanel() {
     return (
         <div
             aria-label={labels('examplePanelLabel')}
-            className="flex h-full min-h-0 flex-col"
+            className="flex h-full min-h-0 flex-col gap-gap-gutter"
             data-part="example-panel"
             onKeyDownCapture={onKeyDownCapture}
             role="group"
         >
-            <RequestBreadcrumb
-                name={example.name}
-                trail={[...place.trail, place.name ?? parent.name]}
-            />
-            <ExampleBar
-                environment={environment}
-                method={parent.method}
-                onCancel={cancel}
-                onSend={send}
-                requestName={place.name ?? parent.name}
-                sending={sending}
-                url={composeUrlOf(parent.url, request.query)}
-            />
+            <Card aria-label={labels('targetLabel')} size="content">
+                <RequestBreadcrumb
+                    name={example.name}
+                    trail={[...place.trail, place.name ?? parent.name]}
+                />
+                <ExampleBar
+                    environment={environment}
+                    method={parent.method}
+                    onCancel={cancel}
+                    onSend={send}
+                    requestName={place.name ?? parent.name}
+                    sending={sending}
+                    url={composeUrlOf(parent.url, request.query)}
+                />
+            </Card>
             <SplitPane
                 className="min-h-0 flex-1"
+                gap="gutter"
                 label={labels('resizeSplit')}
                 onValueChange={setSplit}
                 value={split}
             >
                 <SplitHalf>
-                    <RequestSections
-                        environment={environment}
-                        onChange={onChange}
-                        onVariablesChange={declare}
-                        request={request}
-                        resource={resource}
-                    />
+                    <Card aria-label={labels('panelLabel')}>
+                        <RequestSections
+                            environment={environment}
+                            onChange={onChange}
+                            onVariablesChange={declare}
+                            request={request}
+                            resource={resource}
+                        />
+                    </Card>
                 </SplitHalf>
                 <SplitHalf>
-                    <ExampleResponse
-                        comparison={comparison}
-                        entry={entry}
-                        example={example}
-                        modelKey={resource}
-                        onChange={onResponse}
-                        onSection={setSection}
-                        review={review}
-                        schema={schema}
-                        section={section}
-                    />
+                    <Card aria-label={labels('responseLabel')}>
+                        <ExampleResponse
+                            comparison={comparison}
+                            entry={entry}
+                            example={example}
+                            modelKey={resource}
+                            onChange={onResponse}
+                            onSection={setSection}
+                            review={review}
+                            schema={schema}
+                            section={section}
+                        />
+                    </Card>
                 </SplitHalf>
             </SplitPane>
         </div>

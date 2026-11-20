@@ -2,6 +2,7 @@ import { rm } from 'node:fs/promises';
 
 import { expect, test, type ElectronApplication } from '@playwright/test';
 import { launch, makeSandbox } from './support/launch-app.js';
+import { speakSpanish } from './support/spanish-flow.js';
 
 /** The settings of Sync are its own: the language chosen there is the one it opens in again. */
 test('changes the language from its settings and keeps it after relaunch', async () => {
@@ -14,13 +15,7 @@ test('changes the language from its settings and keeps it after relaunch', async
 
         running = first.app;
 
-        await page.getByRole('button', { name: 'Settings', exact: true }).click();
-        await page.getByRole('combobox', { name: 'Language' }).click();
-        await page.getByRole('option', { name: 'Spanish' }).click();
-        await page.keyboard.press('Escape');
-        await expect(
-            page.getByRole('button', { name: 'Configuración', exact: true }),
-        ).toBeVisible();
+        await speakSpanish(page);
         await running.close();
         running = undefined;
 

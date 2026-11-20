@@ -1,6 +1,7 @@
 import { SendIcon } from '@mandor/icons';
 import { success } from '@mandor/ipc';
 import { bridge, shellStore, TabProvider } from '@mandor/shell';
+import { allByPart, byPart } from '@mandor/ui/testing';
 import { act, cleanup, render, renderHook, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -132,6 +133,32 @@ describe('a kind of item declared in the tree', () => {
         }).not.toThrow();
 
         expect(screen.getByText(/kind "message"/)).toBeInTheDocument();
+    });
+
+    /** The tab lays no card: the page of an unknown kind brings its own, and a declared body its. */
+    it('rests the page of an unknown kind on a card, and lays none under a declared body', () => {
+        const view = render(
+            <TabProvider value={{ resource: PEDIDO, tabId: PEDIDO }}>
+                <ItemTab />
+            </TabProvider>,
+            { wrapper: AppProviders },
+        );
+
+        expect(byPart('card')).toContainElement(screen.getByText(/kind "message"/));
+
+        view.unmount();
+        render(
+            <>
+                <MessageKind />
+                <TabProvider value={{ resource: PEDIDO, tabId: PEDIDO }}>
+                    <ItemTab />
+                </TabProvider>
+            </>,
+            { wrapper: AppProviders },
+        );
+
+        expect(screen.getByText(PEDIDO)).toBeInTheDocument();
+        expect(allByPart('card')).toHaveLength(0);
     });
 
     it('draws an item of a kind nobody declared in the tree all the same', async () => {

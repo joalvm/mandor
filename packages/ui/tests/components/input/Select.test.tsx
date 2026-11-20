@@ -32,8 +32,8 @@ describe('the Select trigger', () => {
 
         const trigger = screen.getByRole('combobox', { name: 'Transporte' });
 
-        expect(trigger).toHaveClass('border-border-strong', 'bg-surface-sunken', 'h-field');
-        expect(trigger).not.toHaveClass('border-transparent', 'bg-transparent');
+        expect(trigger).toHaveClass('border-border-strong', 'bg-transparent', 'h-field');
+        expect(trigger).not.toHaveClass('border-transparent', 'bg-surface-sunken');
 
         fireEvent.keyDown(trigger, { key: 'ArrowDown' });
 

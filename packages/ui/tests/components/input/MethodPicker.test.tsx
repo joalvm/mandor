@@ -30,6 +30,13 @@ function open(): void {
 }
 
 describe('the verb of the address bar (MethodPicker)', () => {
+    /** The verb takes a narrow column of its own: the address keeps the rest. */
+    it('keeps the verb in a narrow column', () => {
+        renderPicker('GET');
+
+        expect(document.querySelector('[data-part="method-picker"]')).toHaveClass('w-21');
+    });
+
     it('says the verb in force, in its hue, on the trigger', () => {
         renderPicker('POST');
 

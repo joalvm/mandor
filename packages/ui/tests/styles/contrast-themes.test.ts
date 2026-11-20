@@ -6,6 +6,8 @@ import { themeOf, type ThemeMode } from './theme-values.js';
 const SURFACES = [
     'app',
     'panel',
+    'frame',
+    'card',
     'sunken',
     'raised',
     'dialog',
@@ -13,10 +15,8 @@ const SURFACES = [
     'control-hover',
     'control-active',
     'selected',
-    'dialog-nav',
-    'dialog-nav-active',
 ] as const;
-const BASE_SURFACES = ['app', 'panel', 'sunken', 'raised', 'dialog'] as const;
+const BASE_SURFACES = ['app', 'panel', 'frame', 'card', 'sunken', 'raised', 'dialog'] as const;
 const LINES = ['subtle', 'chrome', 'strong', 'hover', 'control', 'control-hover', 'error'] as const;
 const CONTRAST_MODES = ['light-contrast', 'dark-contrast'] as const;
 /** The scheme each high-contrast theme is laid over. */

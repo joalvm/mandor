@@ -22,7 +22,7 @@ export function SeccionDemo() {
     return (
         <div className="flex h-60 flex-col border border-border-subtle">
             <Collapsible onOpenChange={setAbierta} open={abierta}>
-                <CollapsibleHeader title="Conexiones">
+                <CollapsibleHeader count={CONEXIONES.length} title="Conexiones">
                     <IconButton icon="add" label="Nueva conexión" />
                     <IconButton icon="import" label="Importar conexiones" />
                 </CollapsibleHeader>

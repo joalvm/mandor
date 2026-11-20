@@ -14,6 +14,13 @@ function Popup() {
     return <input aria-label="Field" id="popup-field" />;
 }
 
+/** Drawn all along, and only holding the focus while it says it is active. */
+function Lasting({ active }: { active: boolean }) {
+    useFocusReturn('lasting-field', active);
+
+    return <input aria-label="Lasting" id="lasting-field" />;
+}
+
 function Harness({ withField = true }: { withField?: boolean }) {
     const [open, setOpen] = useState(false);
 
@@ -46,6 +53,36 @@ describe('moving the focus while something is drawn', () => {
         fireEvent.click(origin);
 
         expect(document.activeElement).toBe(origin);
+    });
+
+    it('hands the focus back the moment it stops being active, while still drawn', () => {
+        const { rerender } = render(
+            <>
+                <button type="button">Origin</button>
+                <Lasting active={false} />
+            </>,
+        );
+        const origin = screen.getByRole('button', { name: 'Origin' });
+
+        origin.focus();
+        rerender(
+            <>
+                <button type="button">Origin</button>
+                <Lasting active />
+            </>,
+        );
+
+        expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'Lasting' }));
+
+        rerender(
+            <>
+                <button type="button">Origin</button>
+                <Lasting active={false} />
+            </>,
+        );
+
+        expect(document.activeElement).toBe(origin);
+        expect(screen.getByRole('textbox', { name: 'Lasting' })).toBeInTheDocument();
     });
 
     it('leaves the focus where it was when the element it names is not there', () => {

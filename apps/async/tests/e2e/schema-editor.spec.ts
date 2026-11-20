@@ -5,6 +5,7 @@ import { expect, test, type ElectronApplication, type Page } from '@playwright/t
 
 import { startEchoServer } from '../../../../packages/transport-async/tests/support/echo-server.js';
 import { editorLines } from '../../../../packages/ui/tests/support/editor-lines.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 import { composerOf, createEvent, openEvent } from './support/collection-event.js';
 import { createConnection, expectFirstRun } from './support/first-run.js';
 import { launch, makeSandbox, type Sandbox } from './support/launch-app.js';
@@ -41,7 +42,7 @@ async function written(root: string, text: string): Promise<boolean> {
 }
 
 async function showSchema(page: Page): Promise<void> {
-    await page.getByRole('tab', { name: 'Schema' }).click();
+    await openSection(page, 'Schema');
 
     await expect(schemaLines(page)).toBeVisible();
 }
@@ -70,7 +71,7 @@ async function expectIntellisense(page: Page): Promise<void> {
 
 /** The body the schema asks for: applies or asks, and the answer does the replacement. */
 async function generatePayload(page: Page, asks: boolean): Promise<void> {
-    await page.getByRole('tab', { name: 'Message' }).click();
+    await openSection(page, 'Message');
     await page.getByRole('button', { name: 'Generate from schema' }).click();
 
     const payload = editorLines(composerOf(page), 'schema-pane-editor');
@@ -133,7 +134,7 @@ test('the schema is a tab: written with the standard, generated in both directio
 
 /** The generated body meets the schema it came from: the send passes, and the echo answers. */
 async function sendAndSeeEcho(page: Page): Promise<void> {
-    await page.getByRole('tab', { name: 'Message' }).click();
+    await openSection(page, 'Message');
     await page.getByRole('button', { exact: true, name: 'Connect' }).press('Enter');
 
     await expect(page.getByRole('button', { exact: true, name: 'Disconnect' })).toBeVisible();

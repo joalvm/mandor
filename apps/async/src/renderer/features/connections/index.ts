@@ -15,5 +15,6 @@ export {
     selectConnectionStateFor,
     selectConnections,
     selectFaultFor,
+    selectOpenedAtFor,
     selectRecordingFor,
 } from './selectors.js';

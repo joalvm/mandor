@@ -48,6 +48,14 @@ describe('a section in the column of a dialog', () => {
         );
     });
 
+    it('wears the grey of a selection in the window when it is the one open', () => {
+        draw(true);
+
+        expect(screen.getByRole('option', { name: 'Cabeceras' })).toHaveClass(
+            'bg-surface-selected',
+        );
+    });
+
     it('says it is not open when another section is', () => {
         draw(false);
 

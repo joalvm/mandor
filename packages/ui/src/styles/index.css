@@ -22,16 +22,43 @@
 @source '../../../';
 @source '../../../../apps';
 
+/* The motion utilities read the choice of the reader as well as the system: `motion-reduce:`
+   holds when the system asks for less and the reader does not hold full motion, or when the
+   reader holds less; `motion-safe:`, the other way round. */
+@custom-variant motion-reduce {
+    @media (prefers-reduced-motion: reduce) {
+        &:where(:root:not([data-motion='full']), :root:not([data-motion='full']) *) {
+            @slot;
+        }
+    }
+
+    &:where(:root[data-motion='reduced'], :root[data-motion='reduced'] *) {
+        @slot;
+    }
+}
+
+@custom-variant motion-safe {
+    @media (prefers-reduced-motion: no-preference) {
+        &:where(:root:not([data-motion='reduced']), :root:not([data-motion='reduced']) *) {
+            @slot;
+        }
+    }
+
+    &:where(:root[data-motion='full'], :root[data-motion='full'] *) {
+        @slot;
+    }
+}
+
 @theme inline {
     --color-*: initial;
     --font-*: initial;
     --color-surface-app: var(--surface-app);
     --color-surface-panel: var(--surface-panel);
+    --color-surface-frame: var(--surface-frame);
+    --color-surface-card: var(--surface-card);
     --color-surface-sunken: var(--surface-sunken);
     --color-surface-raised: var(--surface-raised);
     --color-surface-dialog: var(--surface-dialog);
-    --color-surface-dialog-nav: var(--surface-dialog-nav);
-    --color-surface-dialog-nav-active: var(--surface-dialog-nav-active);
     --color-surface-control: var(--surface-control);
     --color-surface-control-hover: var(--surface-control-hover);
     --color-surface-control-active: var(--surface-control-active);
@@ -81,6 +108,7 @@
     --color-border-hover: var(--border-hover);
     --color-border-control: var(--border-control);
     --color-border-control-hover: var(--border-control-hover);
+    --color-border-handle: var(--border-handle);
     --color-border-error: var(--border-error);
     --color-solid-accent: var(--solid-accent);
     --color-solid-accent-hover: var(--solid-accent-hover);
@@ -123,6 +151,8 @@
     --font-weight-semibold: var(--mandor-weight-semibold);
     --spacing: var(--mandor-space-base);
     --spacing-tab: var(--mandor-height-tab);
+    --spacing-grid-tab: var(--mandor-height-grid-tab);
+    --spacing-strip: var(--mandor-height-strip);
     --spacing-row-xs: var(--mandor-height-row-xs);
     --spacing-control-xs: var(--mandor-height-control-xs);
     --spacing-control-sm: var(--mandor-height-control-sm);
@@ -130,14 +160,19 @@
     --spacing-row: var(--mandor-height-row);
     --spacing-row-pair: var(--mandor-height-row-pair);
     --spacing-control: var(--mandor-height-control);
+    --spacing-crumb: var(--mandor-height-crumb);
     --spacing-section: var(--mandor-height-section);
+    --spacing-address: var(--mandor-height-address);
     --spacing-header: var(--mandor-height-header);
+    --spacing-toolbar: var(--mandor-height-toolbar);
     --spacing-titlebar: var(--mandor-height-titlebar);
     --spacing-statusbar: var(--mandor-height-statusbar);
     --spacing-sidebar: var(--mandor-width-sidebar);
     --spacing-settings-nav: var(--mandor-width-settings-nav);
     --spacing-form: var(--mandor-width-form);
     --spacing-toggle: var(--mandor-width-toggle);
+    --spacing-command-center: var(--mandor-width-command-center);
+    --spacing-toast: var(--mandor-width-toast);
     --spacing-pad-toggle: var(--mandor-pad-toggle);
     --grid-template-columns-settings: var(--mandor-width-settings-nav) minmax(0, 1fr);
     --grid-template-columns-setting-row: minmax(0, 1fr) var(--mandor-width-setting-control);
@@ -151,6 +186,7 @@
     --spacing-gap-control: var(--mandor-gap-control);
     --spacing-gap-group: var(--mandor-gap-group);
     --spacing-gap-section: var(--mandor-gap-section);
+    --spacing-gap-gutter: var(--mandor-gap-gutter);
     --spacing-icon-sm: var(--mandor-icon-sm);
     --spacing-icon-md: var(--mandor-icon-md);
     --spacing-icon-lg: var(--mandor-icon-lg);
@@ -159,6 +195,8 @@
     --radius-md: var(--mandor-radius-md);
     --radius-lg: var(--mandor-radius-lg);
     --radius-xl: var(--mandor-radius-xl);
+    --radius-panel: var(--mandor-radius-panel);
+    --radius-overlay: var(--mandor-radius-overlay);
     --radius-full: var(--mandor-radius-full);
     --shadow-none: var(--mandor-shadow-none);
     --shadow-popover: var(--mandor-shadow-popover);

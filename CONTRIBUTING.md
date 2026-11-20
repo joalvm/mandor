@@ -186,8 +186,8 @@ Project rules (`tools/eslint-rules/`; the ones about file shape apply to `src/` 
 - Interface strings live in `packages/i18n/src/lang/`, in English and Spanish. None of them uses
   version-control vocabulary or contains an absolute path: a test checks it.
 - Tokens live in `packages/ui/src/styles/`; `scales.css` is the source of every height. Glyphs
-  live in `packages/icons/src/glyph/`. The accent colour is for focus, selection, active and
-  primary only.
+  live in `packages/icons/src/glyph/`. The accent colour is for focus, the primary action, what
+  is switched on (checkbox, switch) and the app mark only; hover, selection and active are grey.
 - `npm run design` checks markup and tokens; exceptions carry `// band-policy:` or
   `// markup-policy:` with the reason.
 - The design standard is the `ui-design` skill. Its project hooks: the focus rule lives once in

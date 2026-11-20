@@ -4,7 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 
 import { saveRequest } from './send-flow.js';
 import { writeBody, writeHeaderValue } from './spanish-flow.js';
-import { openSection } from './open-section.js';
+import { openSection } from '../../../../../packages/ui/tests/support/open-section.js';
 
 /** The few words the bottom bar says of how the window stands. */
 export function statusOf(page: Page): Locator {

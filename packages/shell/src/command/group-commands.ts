@@ -35,7 +35,8 @@ function focusCommand(index: number): Command {
 export const GROUP_COMMANDS: readonly Command[] = [
     {
         category: CATEGORY,
-        icon: 'split-vertical',
+        // A codicon names the way the halves line up: side by side is horizontal.
+        icon: 'split-horizontal',
         id: 'group.splitRight',
         run: (state) => {
             state.splitGroup(state.activeGroupId, 'row');
@@ -44,7 +45,7 @@ export const GROUP_COMMANDS: readonly Command[] = [
     },
     {
         category: CATEGORY,
-        icon: 'split-horizontal',
+        icon: 'split-vertical',
         id: 'group.splitDown',
         run: (state) => {
             state.splitGroup(state.activeGroupId, 'column');

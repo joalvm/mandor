@@ -26,6 +26,7 @@ export function ConsoleDock({ children }: PropsWithChildren) {
             className="flex-1"
             collapsed={!open}
             direction="column"
+            gap="gutter"
             initial={CONSOLE_SPLIT}
             label={messages('consoleResize')}
             max={85}

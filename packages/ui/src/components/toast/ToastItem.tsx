@@ -14,17 +14,21 @@ const TONE_URGENCY: Record<ToastTone, 'background' | 'foreground'> = {
     warning: 'background',
 };
 
-/** The glyph alone carries the state; the surface and its edge stay the same for every tone. */
-const TONE_ICON_COLORS: Record<ToastTone, string> = {
-    error: 'text-text-error',
-    info: 'text-text-info',
-    success: 'text-text-success',
-    warning: 'text-text-warning',
+/**
+ * The badge alone carries the state, tinted with its tone like a badge of status; the surface and
+ * its edge stay the same for every tone.
+ */
+const TONE_BADGE_COLORS: Record<ToastTone, string> = {
+    error: 'bg-surface-error-tint text-text-error',
+    info: 'bg-surface-info-tint text-text-info',
+    success: 'bg-surface-success-tint text-text-success',
+    warning: 'bg-surface-warning-tint text-text-warning',
 };
 
+/** A card that floats over the window: the round of a dialog, the padding of a card. */
 const ROOT_STYLES = [
-    'flex items-start gap-gap-icon-text overflow-hidden rounded-lg',
-    'border border-border-subtle bg-surface-raised py-2 pr-2 pl-3 shadow-popover',
+    'flex items-start gap-pad-panel overflow-hidden rounded-overlay',
+    'border border-border-subtle bg-surface-raised p-pad-panel shadow-dialog',
 ];
 
 type ToastItemProps = {
@@ -51,25 +55,32 @@ export function ToastItem({ closeLabel, onDismiss, toast }: ToastItemProps) {
             open
             type={TONE_URGENCY[toast.tone]}
         >
-            {/* One read, one line: the glyph, the first line of the title and the way out share
-                it, each centred on it. The title cuts at two lines and the detail at three, so
-                the tallest a notice ever grows is known before it is written. */}
-            <span className={cn('shrink-0', TONE_ICON_COLORS[toast.tone])}>
+            {/* One read: the badge, the title and the way out share the band of the badge, so a
+                notice of one line stands centred on it. The title cuts at two lines and the
+                detail at three, so the tallest a notice ever grows is known before it is written. */}
+            <span
+                className={cn(
+                    'flex size-8 shrink-0 items-center justify-center rounded-xl',
+                    TONE_BADGE_COLORS[toast.tone],
+                )}
+                data-part="toast-badge"
+            >
                 <Glyph />
             </span>
-            <div className="flex min-w-0 flex-1 flex-col gap-gap-tight">
-                <ToastPrimitive.Title className="line-clamp-2 text-sm text-text-primary">
+            <div className="flex min-h-8 min-w-0 flex-1 flex-col justify-center gap-gap-tight">
+                <ToastPrimitive.Title className="line-clamp-2 text-sm font-semibold text-text-primary">
                     {toast.title}
                     <ToastCount count={toast.count} />
                 </ToastPrimitive.Title>
                 <ToastDetail detail={toast.detail} />
                 <ToastAction action={toast.action} />
             </div>
-            <ToastPrimitive.Close asChild>
-                {/* The square rides up half its own padding, so the cross sits on the title's
-                    line: a 24px hit area, centred on a 16px line of text. */}
-                <IconButton className="-mt-1 shrink-0" icon="close" label={closeLabel} />
-            </ToastPrimitive.Close>
+            {/* The way out stands centred in the band of the badge, whatever the text below. */}
+            <span className="flex min-h-8 shrink-0 flex-col justify-center">
+                <ToastPrimitive.Close asChild>
+                    <IconButton icon="close" label={closeLabel} />
+                </ToastPrimitive.Close>
+            </span>
         </ToastPrimitive.Root>
     );
 }
@@ -79,8 +90,12 @@ function ToastCount({ count }: { count: ToastSpec['count'] }) {
         return null;
     }
 
+    // A pill of its own beside the title, so the count never reads as part of the sentence.
     return (
-        <span className="ml-gap-icon-text text-xs text-text-secondary">{`×${String(count)}`}</span>
+        <span
+            className="ml-gap-icon-text inline-flex rounded-full bg-surface-control px-1.5 align-middle text-2xs font-semibold text-text-secondary"
+            data-part="toast-count"
+        >{`×${String(count)}`}</span>
     );
 }
 
@@ -101,14 +116,10 @@ function ToastAction({ action }: { action: ToastSpec['action'] }) {
         return null;
     }
 
-    // The verb reads as a link in the text it follows, so its word starts where the title does.
+    // One secondary button under the text, a step below it; never a link and never a second row.
     return (
-        <ToastPrimitive.Action
-            altText={action.label}
-            asChild
-            className="-ml-pad-control self-start"
-        >
-            <Button onClick={action.onSelect} size="sm" variant="link">
+        <ToastPrimitive.Action altText={action.label} asChild className="mt-1.5 self-start">
+            <Button onClick={action.onSelect} variant="secondary">
                 {action.label}
             </Button>
         </ToastPrimitive.Action>

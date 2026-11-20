@@ -121,4 +121,25 @@ describe('the window of a long list of rows, under a tree (useRowWindow)', () =>
 
         expect(screen.getByRole('status', { name: 'Total' })).toHaveTextContent(String(500 * ROW));
     });
+
+    /** The compact density packs the lines tighter, and a list already open follows it. */
+    it('counts the lines at the height of the density the window changes to', async () => {
+        const sheet = document.createElement('style');
+
+        sheet.textContent = ":root[data-density='compact'] { --mandor-height-row: 22px; }";
+        document.head.append(sheet);
+        const { unmount } = render(<TallRows />);
+
+        await act(async () => {
+            document.documentElement.dataset['density'] = 'compact';
+            await Promise.resolve();
+        });
+
+        expect(screen.getByRole('status', { name: 'Total' })).toHaveTextContent(String(500 * 22));
+
+        // The list goes first: a density taken away under it is an update outside act.
+        unmount();
+        sheet.remove();
+        document.documentElement.removeAttribute('data-density');
+    });
 });

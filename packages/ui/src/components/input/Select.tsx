@@ -20,7 +20,7 @@ type OptionGroup<V extends string = string> = {
 };
 
 const ITEM =
-    'flex h-row-xs cursor-pointer items-center whitespace-nowrap rounded-md px-2 text-xs data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-control-hover text-justify';
+    'flex h-control cursor-pointer items-center outline-none whitespace-nowrap rounded-md px-2 text-sm data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-selected text-justify';
 
 function SelectItem({ option }: { option: Option }) {
     return (
@@ -66,12 +66,12 @@ function SelectGroup({ first, group }: { first: boolean; group: OptionGroup }) {
 }
 
 /**
- * The box of an input (`FieldBox`): its border, its sunken ground, its height and its quiet
+ * The box of an input (`FieldBox`): its line, the ground of its parent, its height and its quiet
  * disabled state. Only the chevron and the text nobody types tell the two apart.
  */
 const TRIGGER_BOX = [
     'flex h-field min-w-0 items-center justify-between gap-gap-icon-text overflow-hidden px-pad-control',
-    'rounded-md border border-border-strong bg-surface-sunken font-ui text-sm text-text-primary text-justify',
+    'rounded-md border border-border-strong bg-transparent font-ui text-sm text-text-primary text-justify',
     'transition-colors duration-fast enabled:hover:border-border-hover aria-expanded:border-border-hover',
     'disabled:cursor-not-allowed disabled:border-border-subtle disabled:bg-surface-control disabled:text-text-disabled',
 ].join(' ');
@@ -135,7 +135,7 @@ export function Select<V extends string>({
             </DisabledControlTooltip>
             <SelectPrimitive.Portal>
                 <SelectPrimitive.Content
-                    className="z-dropdown overflow-hidden rounded-lg border border-border-strong bg-surface-raised text-text-primary shadow-popover"
+                    className="z-dropdown overflow-hidden rounded-panel border border-border-subtle bg-surface-raised text-text-primary shadow-popover"
                     data-part="select-content"
                     position="popper"
                     sideOffset={4}

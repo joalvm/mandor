@@ -27,3 +27,20 @@ describe('the ring over filled frames', () => {
         expect(css).toContain('[aria-invalid');
     });
 });
+
+/**
+ * A row, a notice and a section tab are reached by the keyboard the way a click reaches them: the
+ * one the focus rests on wears the grey of the selected line, and none of them draws a line.
+ */
+describe('the focus of rows and tabs', () => {
+    it('lays the grey of the selection over them instead of a line', async () => {
+        const css = await cssOf('focus.css');
+        const rule = /:is\(([^)]*\)[^)]*)\):focus-visible\s*\{([^}]*)\}/.exec(css);
+
+        expect(rule?.[2]).toContain('background-color: var(--surface-selected)');
+
+        for (const part of ['list-row', 'tree-row', 'notice', 'tabs-trigger']) {
+            expect(rule?.[1], part).toContain(`[data-part='${part}']`);
+        }
+    });
+});

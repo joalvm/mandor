@@ -2,6 +2,7 @@ import { ItemProvider, itemResource } from '@mandor/collections';
 import { envStore } from '@mandor/env';
 import { success } from '@mandor/ipc';
 import { shellStore } from '@mandor/shell';
+import { byPart } from '@mandor/ui/testing';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -59,6 +60,29 @@ describe('the panel of a request', () => {
             await screen.findByRole('checkbox', { name: 'Send this entry' }),
         ).toBeInTheDocument();
         expect(screen.getByRole('checkbox', { name: 'Send this entry' })).not.toBeChecked();
+    });
+
+    /**
+     * The destination rests on a card of its own above the pair, and what is asked and what comes
+     * back each rest on theirs: three cards, each a zone a screen reader can land on.
+     */
+    it('draws the destination, the request and its response on three named cards', async () => {
+        render(
+            <ItemProvider value={{ resource: RESOURCE, saved: undefined }}>
+                <RequestPanel />
+            </ItemProvider>,
+            { wrapper: AppProviders },
+        );
+
+        const target = await screen.findByRole('region', { name: 'Target' });
+        const request = screen.getByRole('region', { name: 'Request' });
+        const response = screen.getByRole('region', { name: 'Response' });
+
+        expect(target).toContainElement(screen.getByRole('textbox', { name: 'URL' }));
+        expect(target).toHaveAttribute('data-size', 'content');
+        expect(request).toContainElement(screen.getByRole('tab', { name: 'Params' }));
+        expect(response).not.toContainElement(screen.getByRole('tab', { name: 'Params' }));
+        expect(byPart('request-panel')).toHaveClass('gap-gap-gutter');
     });
 
     it('a name nothing declares leaves the destination as it is and the send open', async () => {

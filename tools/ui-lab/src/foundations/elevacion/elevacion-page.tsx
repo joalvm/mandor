@@ -27,8 +27,8 @@ export function ElevacionPage() {
                 <ul className="flex flex-col gap-gap-control text-sm">
                     {[
                         {
-                            pair: 'shadow-none + surface-panel',
-                            use: 'el panel en reposo: pegado, con su borde sutil',
+                            pair: 'shadow-none + surface-card',
+                            use: 'la tarjeta: sin sombra, la separa del marco el tono y su borde tenue',
                         },
                         {
                             pair: 'shadow-popover + surface-raised',

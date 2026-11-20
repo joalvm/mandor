@@ -3,11 +3,11 @@
         color-scheme: dark;
         --surface-app: var(--primitive-neutral-dark-1);
         --surface-panel: var(--primitive-neutral-dark-2);
+        --surface-frame: var(--primitive-neutral-dark-1);
+        --surface-card: var(--primitive-neutral-dark-2);
         --surface-sunken: var(--primitive-neutral-dark-1);
         --surface-raised: var(--primitive-neutral-dark-3);
         --surface-dialog: var(--primitive-neutral-dark-3);
-        --surface-dialog-nav: var(--primitive-neutral-dark-2);
-        --surface-dialog-nav-active: var(--primitive-neutral-dark-5);
         --surface-control: var(--primitive-neutral-dark-3);
         --surface-control-hover: var(--primitive-neutral-dark-4);
         --surface-control-active: var(--primitive-neutral-dark-5);
@@ -57,6 +57,7 @@
         --border-hover: var(--primitive-neutral-dark-8);
         --border-control: var(--primitive-neutral-dark-10);
         --border-control-hover: var(--primitive-neutral-dark-11);
+        --border-handle: var(--primitive-handle);
         --border-error: var(--primitive-red-dark-9);
         --solid-accent: var(--primitive-accent-dark-9);
         --solid-accent-hover: var(--primitive-accent-dark-10);
@@ -78,11 +79,11 @@
     color-scheme: dark;
     --surface-app: var(--primitive-neutral-dark-1);
     --surface-panel: var(--primitive-neutral-dark-2);
+    --surface-frame: var(--primitive-neutral-dark-1);
+    --surface-card: var(--primitive-neutral-dark-2);
     --surface-sunken: var(--primitive-neutral-dark-1);
     --surface-raised: var(--primitive-neutral-dark-3);
     --surface-dialog: var(--primitive-neutral-dark-3);
-    --surface-dialog-nav: var(--primitive-neutral-dark-2);
-    --surface-dialog-nav-active: var(--primitive-neutral-dark-5);
     --surface-control: var(--primitive-neutral-dark-3);
     --surface-control-hover: var(--primitive-neutral-dark-4);
     --surface-control-active: var(--primitive-neutral-dark-5);
@@ -132,6 +133,7 @@
     --border-hover: var(--primitive-neutral-dark-8);
     --border-control: var(--primitive-neutral-dark-10);
     --border-control-hover: var(--primitive-neutral-dark-11);
+    --border-handle: var(--primitive-handle);
     --border-error: var(--primitive-red-dark-9);
     --solid-accent: var(--primitive-accent-dark-9);
     --solid-accent-hover: var(--primitive-accent-dark-10);

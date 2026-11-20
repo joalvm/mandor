@@ -132,7 +132,7 @@ textarea,
  */
 [data-part='suggest-option'][data-active='true'],
 [data-part='suggest-option']:hover {
-    background: var(--surface-control);
+    background: var(--surface-selected);
 }
 
 /**
@@ -173,10 +173,9 @@ textarea,
 }
 
 /**
- * The handle is the seam: one line wide, and the only line between the lateral and the
- * workbench. What the pointer may grab is wider than what the eye sees — the room is lent by a
- * layer over the boundary, which draws nothing and moves nothing — so a hairline still takes a
- * drag without a track being reserved beside it.
+ * The handle is the gutter between the lateral and the workbench, and the pointer may grab a
+ * little past it on either side: the room is lent by a layer over the boundary, which draws
+ * nothing and moves nothing.
  */
 [data-part='sidebar-handle'] {
     position: relative;
@@ -253,6 +252,52 @@ textarea,
     width: 4px;
 }
 
+/* The colour and the thickness of the line live here, beside the gutter rule that hides it: a
+   utility sits in a later layer and would paint over that rule whatever its weight. */
+[data-part='split-handle']::before {
+    width: 1px;
+    background-color: var(--color-border-subtle);
+}
+
+[data-direction='column'] > [data-part='split-handle']::before {
+    width: auto;
+    height: 1px;
+}
+
+/**
+ * Pointed at, a divider waits a moment and then fades into a thin blue line, so a pointer on its
+ * way elsewhere paints nothing; it fades back out once the pointer leaves. A press is a grab, and
+ * the line is there at once: an image, which no transition waits for, over the same blue.
+ */
+[data-part='split-handle']::before,
+[data-part='sidebar-handle']::before {
+    transition:
+        background-color var(--mandor-duration-slow) var(--mandor-ease-out),
+        width 0s,
+        height 0s;
+}
+
+[data-part='split-handle']:hover::before,
+[data-part='sidebar-handle']:hover::before {
+    background-color: var(--color-border-handle);
+    transition-delay: var(--mandor-delay-handle);
+}
+
+[data-part='split-handle']:active::before,
+[data-part='sidebar-handle']:active::before {
+    background-image: linear-gradient(var(--color-border-handle), var(--color-border-handle));
+}
+
+[data-part='split-handle']:is(:hover, :active)::before,
+[data-part='sidebar-handle']:is(:hover, :active)::before {
+    width: var(--mandor-width-handle);
+}
+
+[data-direction='column'] > [data-part='split-handle']:is(:hover, :active)::before {
+    width: auto;
+    height: var(--mandor-width-handle);
+}
+
 [data-direction='column'] > [data-part='split-handle'] {
     cursor: row-resize;
     inset-block: auto;
@@ -260,6 +305,53 @@ textarea,
     inset-inline: 0;
     width: auto;
     height: 4px;
+}
+
+/* Two cards on the frame: the gutter stands between the halves, and the handle lies in its
+   middle. The gutter already parts them, so the line of the handle stays unpainted until it is
+   pointed at or dragged. */
+[data-part='split-pane'][data-gap='gutter'] {
+    gap: var(--mandor-gap-gutter);
+}
+
+[data-gap='gutter'] > [data-part='split-handle'] {
+    inset-inline-start: calc(
+        attr(data-position type(<percentage>), 50%) + var(--mandor-gap-gutter) / 2 - 2px
+    );
+}
+
+[data-direction='column'][data-gap='gutter'] > [data-part='split-handle'] {
+    inset-inline-start: 0;
+    inset-block-start: calc(
+        attr(data-position type(<percentage>), 50%) + var(--mandor-gap-gutter) / 2 - 2px
+    );
+}
+
+[data-gap='gutter'] > [data-part='split-handle']:not(:hover, :active)::before {
+    background-color: transparent;
+}
+
+/* A card closes with a faint line of its own: without it the card never quite ends on the frame.
+   Compact, the cards touch and the lines between them part them instead. */
+[data-part='card'] {
+    border: 1px solid var(--color-border-subtle);
+}
+
+:root[data-density='compact'] [data-part='card'] {
+    border-width: 0;
+}
+
+/* Compact, the gutter is gone and two cards touch: a line parts them instead, the one of the
+   handle between two halves, and a border over a card that stands under something else (the
+   console under the grid). The card of the destination opens its tab and needs none. */
+:root[data-density='compact']
+    [data-gap='gutter']
+    > [data-part='split-handle']:not(:hover, :active)::before {
+    background-color: var(--color-border-subtle);
+}
+
+:root[data-density='compact'] * + [data-part='card'] {
+    border-block-start: 1px solid var(--color-border-subtle);
 }
 
 /**
@@ -620,6 +712,7 @@ textarea,
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     width: var(--mandor-width-dialog-form);
+    --mandor-height-control: var(--mandor-height-control-dialog);
 }
 
 [data-part='dialog'][role='alertdialog'] {
@@ -699,9 +792,9 @@ textarea,
 }
 
 /**
- * One authored moment: the scrim settles while the surface rises the last few pixels into place,
- * and on the way out both let go faster than they came. The durations are the tokens of the
- * scale, so a system that asks for less motion gets a dialog that simply appears.
+ * One authored moment: the scrim settles while the surface grows from its centre into place,
+ * and on the way out both let go faster than they came. Durations and growth are tokens of the
+ * scale, so a system that asks for less motion gets a dialog that only fades.
  */
 @keyframes mandor-dialog-scrim-in {
     from {
@@ -718,14 +811,14 @@ textarea,
 @keyframes mandor-dialog-in {
     from {
         opacity: 0;
-        transform: translateY(6px) scale(0.98);
+        transform: scale(var(--mandor-motion-scale-overlay));
     }
 }
 
 @keyframes mandor-dialog-out {
     to {
         opacity: 0;
-        transform: scale(0.98);
+        transform: scale(var(--mandor-motion-scale-overlay));
     }
 }
 
@@ -734,7 +827,7 @@ textarea,
 }
 
 [data-part='dialog-scrim'][data-state='closed'] {
-    animation: mandor-dialog-scrim-out var(--mandor-duration-base) var(--mandor-ease-in);
+    animation: mandor-dialog-scrim-out var(--mandor-duration-exit) var(--mandor-ease-in);
 }
 
 [data-part='dialog'][data-state='open'] {
@@ -742,5 +835,150 @@ textarea,
 }
 
 [data-part='dialog'][data-state='closed'] {
-    animation: mandor-dialog-out var(--mandor-duration-base) var(--mandor-ease-in);
+    animation: mandor-dialog-out var(--mandor-duration-exit) var(--mandor-ease-in);
+}
+
+/*
+ * Menus, popovers, hover cards, selects, tooltips and the palette fade in and grow a step from
+ * the side they hang from, and fade out quicker than they came. Radix works out that side for
+ * each layer; the palette hangs from its top edge. The step is the motion scale, which a system
+ * asking for less motion sets to nothing, so only the fade is left. A tooltip that opens at
+ * once, because the pointer moved over from another, shows at once: a row of tooltips is read,
+ * not watched.
+ */
+@keyframes mandor-layer-in {
+    from {
+        opacity: 0;
+        transform: scale(var(--mandor-motion-scale));
+    }
+}
+
+@keyframes mandor-layer-out {
+    to {
+        opacity: 0;
+        transform: scale(var(--mandor-motion-scale));
+    }
+}
+
+[data-part='menu-content'] {
+    transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+}
+
+[data-part='context-menu-content'] {
+    transform-origin: var(--radix-context-menu-content-transform-origin);
+}
+
+[data-part='popover-panel'] {
+    transform-origin: var(--radix-popover-content-transform-origin);
+}
+
+[data-part='hover-card-panel'] {
+    transform-origin: var(--radix-hover-card-content-transform-origin);
+}
+
+[data-part='select-content'] {
+    transform-origin: var(--radix-select-content-transform-origin);
+}
+
+[data-part='tooltip'] {
+    transform-origin: var(--radix-tooltip-content-transform-origin);
+}
+
+[data-part='command-palette'] {
+    transform-origin: 50% 0;
+}
+
+:is(
+    [data-part='menu-content'],
+    [data-part='context-menu-content'],
+    [data-part='popover-panel'],
+    [data-part='hover-card-panel'],
+    [data-part='select-content'],
+    [data-part='command-palette']
+)[data-state='open'],
+[data-part='tooltip'][data-state='delayed-open'] {
+    animation: mandor-layer-in var(--mandor-duration-base) var(--mandor-ease-out);
+}
+
+:is(
+    [data-part='menu-content'],
+    [data-part='context-menu-content'],
+    [data-part='popover-panel'],
+    [data-part='hover-card-panel'],
+    [data-part='select-content'],
+    [data-part='command-palette'],
+    [data-part='tooltip']
+)[data-state='closed'] {
+    animation: mandor-layer-out var(--mandor-duration-fast) var(--mandor-ease-in);
+}
+
+/*
+ * Notices stack in their corner: the newest in front and the two before it peeking out above, a
+ * step smaller each, with what they say faded out. With the pointer or the focus on the stack it
+ * opens into a list, each notice lifted by the heights `useToastStack` measured; what does not
+ * fit is counted above it. A notice moves by the travel of the scale, which a system asking for
+ * less motion stills, and fades by a duration that stays.
+ */
+[data-part='toast-viewport'] {
+    block-size: calc(var(--toast-front-height, 0px) + 20px);
+    pointer-events: none;
+    transition: block-size var(--mandor-duration-travel) var(--mandor-ease-out);
+}
+
+/* The air above the front notice takes no click; once the stack is open, its gaps keep it open. */
+[data-part='toast-viewport'] > *,
+[data-part='toast-viewport']:hover,
+[data-part='toast-viewport']:focus-within {
+    pointer-events: auto;
+}
+
+[data-part='toast-viewport'] > [data-part='toast'] {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    transform-origin: 50% 0;
+    transition:
+        transform var(--mandor-duration-travel) var(--mandor-ease-out),
+        opacity var(--mandor-duration-base) var(--mandor-ease-out);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:not(:last-child) {
+    block-size: var(--toast-front-height);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:not(:last-child) > * {
+    opacity: 0;
+    transition: opacity var(--mandor-duration-base) var(--mandor-ease-out);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:nth-last-child(2) {
+    transform: translateY(-10px) scale(0.95);
+}
+
+[data-part='toast-viewport'] > [data-part='toast']:nth-last-child(3) {
+    transform: translateY(-20px) scale(0.9);
+    opacity: 0.7;
+}
+
+[data-part='toast-viewport']:hover,
+[data-part='toast-viewport']:focus-within {
+    block-size: var(--toast-stack-height);
+}
+
+[data-part='toast-viewport']:hover > [data-part='toast'],
+[data-part='toast-viewport']:focus-within > [data-part='toast'] {
+    block-size: auto;
+    opacity: 1;
+    transform: translateY(calc(-1 * var(--toast-offset)));
+}
+
+[data-part='toast-viewport']:hover > [data-part='toast'] > *,
+[data-part='toast-viewport']:focus-within > [data-part='toast'] > * {
+    opacity: 1;
+}
+
+[data-part='toast-viewport'] > [data-part='toast-overflow'] {
+    position: absolute;
+    inset-block-end: calc(100% + var(--mandor-gap-control));
+    inset-inline-end: 0;
 }

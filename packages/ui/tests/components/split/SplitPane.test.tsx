@@ -110,4 +110,37 @@ describe('the split pane grid', () => {
 
         expect(screen.getByRole('separator').getAttribute('data-position')).toBe('70%');
     });
+
+    /**
+     * Two cards on the frame stand apart by its gutter, and the handle lives in that gutter. A
+     * split inside one card has no gutter to give: its halves meet, as they always did.
+     */
+    it('opens no gap between its halves unless it is told to', () => {
+        render(
+            <SplitPane value={40} onValueChange={vi.fn()} label="Resize panels">
+                <SplitHalf>first half</SplitHalf>
+                <SplitHalf>second half</SplitHalf>
+            </SplitPane>,
+        );
+
+        expect(screen.getByRole('separator').parentElement).toHaveAttribute('data-gap', 'none');
+        expect(runtimeCss).not.toContain("[data-gap='none']");
+    });
+
+    it('opens the gutter of the frame between two cards and lays the handle in it', () => {
+        render(
+            <SplitPane gap="gutter" value={40} onValueChange={vi.fn()} label="Resize panels">
+                <SplitHalf>first half</SplitHalf>
+                <SplitHalf>second half</SplitHalf>
+            </SplitPane>,
+        );
+
+        expect(screen.getByRole('separator').parentElement).toHaveAttribute('data-gap', 'gutter');
+        expect(ruleOf("[data-part='split-pane'][data-gap='gutter'] {")).toContain(
+            'gap: var(--mandor-gap-gutter)',
+        );
+        expect(ruleOf("[data-gap='gutter'] > [data-part='split-handle'] {")).toContain(
+            'var(--mandor-gap-gutter) / 2',
+        );
+    });
 });

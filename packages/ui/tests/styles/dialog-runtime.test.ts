@@ -50,9 +50,9 @@ describe('how a dialog moves and where its parts sit', () => {
     });
 
     /**
-     * The durations are the tokens of the scale, which `prefers-reduced-motion` sets to zero in
-     * one place. A dialog timed by a number of its own would keep moving for whoever asked the
-     * system to stop it.
+     * The durations are the tokens of the scale, and so is the way the surface travels: a dialog
+     * timed or moved by a number of its own would keep moving for whoever asked the system for
+     * less motion.
      */
     it('times the scrim and the surface from the motion scale, both ways', async () => {
         const runtime = await cssOf('runtime.css');
@@ -66,6 +66,76 @@ describe('how a dialog moves and where its parts sit', () => {
                 );
             }
         }
+    });
+
+    /**
+     * Asking for less motion takes the travel away, never the fade: the surface stops rising and
+     * growing, and still dissolves in and out at the pace of the scale. A window where every
+     * layer snaps in and out reads as rigid, and a fade moves nothing across the eye.
+     */
+    it('keeps the fades and drops only the travel when the system asks for less motion', async () => {
+        const scales = await cssOf('scales.css');
+        const reduced = blockAfter(
+            scales,
+            scales.indexOf('@media (prefers-reduced-motion: reduce)'),
+        );
+        const runtime = await cssOf('runtime.css');
+
+        // The one duration that falls to zero is the travel itself: a fade keeps its pace.
+        expect(reduced).not.toMatch(/--mandor-duration-(?!travel)/);
+        expect(reduced).toMatch(/--mandor-duration-travel:\s*0ms/);
+        expect(reduced).toMatch(/--mandor-motion-shift:\s*0px/);
+        expect(reduced).toMatch(/--mandor-motion-scale:\s*1;/);
+        expect(reduced).toMatch(/--mandor-motion-scale-overlay:\s*1;/);
+
+        for (const name of ['mandor-dialog-in', 'mandor-dialog-out']) {
+            expect(blockAfter(runtime, runtime.indexOf(`@keyframes ${name}`)), name).toMatch(
+                /transform:[^;]*var\(--mandor-motion-scale-overlay\)/,
+            );
+        }
+    });
+
+    /**
+     * A dialog floats over the window, so it grows from its centre and does not slide in from
+     * anywhere; it leaves a step faster than it came, and both paces are tokens of the scale.
+     */
+    it('grows from its centre and lets go faster than it came', async () => {
+        const runtime = await cssOf('runtime.css');
+        const scales = await cssOf('scales.css');
+
+        for (const name of ['mandor-dialog-in', 'mandor-dialog-out']) {
+            const body = blockAfter(runtime, runtime.indexOf(`@keyframes ${name}`));
+
+            expect(body, name).not.toMatch(/translate/);
+            expect(body, name).toMatch(
+                /transform:\s*scale\(var\(--mandor-motion-scale-overlay\)\)/,
+            );
+        }
+
+        expect(scales).toContain('--mandor-motion-scale-overlay: 0.96;');
+        expect(scales).toContain('--mandor-duration-exit: 150ms;');
+        expect(ruleFor(runtime, "[data-part='dialog'][data-state='open']")).toContain(
+            'var(--mandor-duration-slow) var(--mandor-ease-out)',
+        );
+
+        for (const part of ['dialog', 'dialog-scrim']) {
+            expect(ruleFor(runtime, `[data-part='${part}'][data-state='closed']`), part).toContain(
+                'var(--mandor-duration-exit) var(--mandor-ease-in)',
+            );
+        }
+    });
+
+    /**
+     * A dialog is read up close and worked with the pointer: its controls stand a step taller
+     * than the ones of the window, so every control drawn inside it takes the height of the step.
+     */
+    it('gives the controls of a dialog the taller step of the scale', async () => {
+        const runtime = await cssOf('runtime.css');
+
+        expect(await cssOf('scales.css')).toContain('--mandor-height-control-dialog: 32px;');
+        expect(ruleFor(runtime, "[data-part='dialog']")).toContain(
+            '--mandor-height-control: var(--mandor-height-control-dialog);',
+        );
     });
 
     /**

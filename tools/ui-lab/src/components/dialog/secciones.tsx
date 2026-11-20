@@ -30,7 +30,7 @@ function detalle(seccion: Seccion): ReactElement {
 }
 
 /**
- * El diálogo con columna de secciones: 800 × 480, marco quieto mientras se cambia de sección.
+ * El diálogo con columna de secciones: 880 × 700, marco quieto mientras se cambia de sección.
  * La lista es la dueña de las flechas y solo la sección abierta entra en el orden de
  * tabulación.
  */

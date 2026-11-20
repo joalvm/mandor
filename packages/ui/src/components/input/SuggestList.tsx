@@ -37,7 +37,8 @@ export function SuggestList({
             <PopoverPrimitive.Content
                 align="start"
                 aria-label={label}
-                className="z-dropdown min-w-48 rounded-lg border border-border-strong bg-surface-raised p-1 text-sm text-text-primary shadow-popover"
+                className="z-dropdown min-w-48 rounded-panel border border-border-subtle bg-surface-raised p-1 text-sm text-text-primary shadow-popover"
+                data-part="suggest-list"
                 onOpenAutoFocus={(event) => {
                     event.preventDefault();
                 }}
@@ -51,7 +52,7 @@ export function SuggestList({
                         return (
                             <div
                                 aria-selected={active}
-                                className="flex h-row cursor-default items-center gap-gap-control rounded-sm px-pad-control"
+                                className="flex h-control cursor-default items-center gap-gap-control rounded-md px-pad-control"
                                 data-active={active ? 'true' : undefined}
                                 data-part="suggest-option"
                                 key={option.name}

@@ -10,26 +10,28 @@
  * there is, because every letter of the window is drawn at the one weight the system has.
  */
 .dockview-theme-mandor {
-    --dv-active-sash-color: var(--border-hover);
+    --dv-active-sash-color: var(--border-handle);
+    --dv-active-sash-transition-delay: var(--mandor-delay-handle);
+    --dv-active-sash-transition-duration: var(--mandor-duration-slow);
     --dv-activegroup-hiddenpanel-tab-background-color: transparent;
     --dv-activegroup-hiddenpanel-tab-color: var(--text-secondary);
     --dv-activegroup-visiblepanel-tab-background-color: var(--surface-tab-active);
     --dv-activegroup-visiblepanel-tab-color: var(--text-primary);
     --dv-drag-over-background-color: var(--surface-accent-tint);
     --dv-drag-over-border-color: var(--focus-ring);
-    --dv-group-view-background-color: var(--surface-app);
+    --dv-group-view-background-color: var(--surface-frame);
     --dv-icon-hover-background-color: var(--surface-control-hover);
     --dv-inactivegroup-hiddenpanel-tab-background-color: transparent;
     --dv-inactivegroup-hiddenpanel-tab-color: var(--text-disabled);
     --dv-inactivegroup-visiblepanel-tab-background-color: transparent;
     --dv-inactivegroup-visiblepanel-tab-color: var(--text-secondary);
     --dv-sash-color: transparent;
-    --dv-separator-border: var(--border-subtle);
+    --dv-separator-border: transparent;
     --dv-tab-divider-color: transparent;
     --dv-tab-font-size: var(--mandor-text-xs-size);
-    --dv-tabs-and-actions-container-background-color: var(--surface-panel);
+    --dv-tabs-and-actions-container-background-color: var(--surface-frame);
     --dv-tabs-and-actions-container-font-size: var(--mandor-text-xs-size);
-    --dv-tabs-and-actions-container-height: var(--mandor-height-header);
+    --dv-tabs-and-actions-container-height: var(--mandor-height-strip);
     --dv-transition-duration: var(--mandor-duration-fast);
 }
 
@@ -60,10 +62,10 @@
     flex: 0 1 auto;
     width: var(--mandor-width-tab);
     min-width: var(--mandor-width-tab-min);
-    height: var(--mandor-height-tab);
+    height: var(--mandor-height-grid-tab);
     margin-block: auto;
     padding: 0;
-    border-radius: var(--mandor-radius-md);
+    border-radius: var(--mandor-radius-xl);
 }
 
 .dockview-theme-mandor .dv-tab > * {
@@ -84,12 +86,13 @@
 }
 
 /**
- * The band opens at the same inset as every other band of the window, and what sits after its
- * tabs is centred. The library leaves its ends stretching, which drops a control of fixed height
- * against the top edge instead of the middle of the band.
+ * The strip sits on the frame over the card it opens, so its first tab starts where the card
+ * starts and not an inset further in. What sits after its tabs is centred: the library leaves
+ * its ends stretching, which drops a control of fixed height against the top edge instead of the
+ * middle of the band.
  */
 .dockview-theme-mandor .dv-tabs-container {
-    padding-inline-start: var(--mandor-pad-inline-panel);
+    padding-inline-start: 0;
 }
 
 /** The add of the strip takes a breath after the tab it sits beside, like any sibling would. */
@@ -101,7 +104,7 @@
     gap: var(--mandor-gap-control);
 }
 
-/** The list of tabs closes the band at the far end, at the inset the band opened with. */
+/** The split and the list of tabs close the band at the far end, at the inset it opened with. */
 .dockview-theme-mandor .dv-right-actions-container {
     display: flex;
     align-items: center;
@@ -110,29 +113,73 @@
 }
 
 /**
- * Two groups side by side are two zones, so a hairline stands between them. The handle over it
- * shows itself, stronger, when it is pointed at or focused.
+ * Two groups side by side are two cards, so the gutter of the frame stands between them and no
+ * line does. Each side keeps half of it, so the handle the library lays on the seam sits in the
+ * middle of the gutter, and shows itself, stronger, when it is pointed at or focused.
  */
+.dockview-theme-mandor .dv-split-view-container > .dv-view-container > .dv-view {
+    box-sizing: border-box;
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-horizontal
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    padding-inline-start: calc(var(--mandor-gap-gutter) / 2);
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-horizontal
+    > .dv-view-container
+    > .dv-view:not(:last-child) {
+    padding-inline-end: calc(var(--mandor-gap-gutter) / 2);
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-vertical
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    padding-block-start: calc(var(--mandor-gap-gutter) / 2);
+}
+
+.dockview-theme-mandor
+    .dv-split-view-container.dv-vertical
+    > .dv-view-container
+    > .dv-view:not(:last-child) {
+    padding-block-end: calc(var(--mandor-gap-gutter) / 2);
+}
+
 .dockview-theme-mandor .dv-sash {
     touch-action: none;
 }
 
-.dockview-theme-mandor .dv-sash:hover {
-    background-color: var(--border-hover);
+/* A sash is wider than its line: it paints only its middle two pixels, the line every divider of
+   the window draws, and a press shows it at once, the way a split does. */
+.dockview-theme-mandor .dv-split-view-container.dv-horizontal > .dv-sash-container > .dv-sash {
+    padding-inline: calc((4px - var(--mandor-width-handle)) / 2);
+    background-clip: content-box;
+}
+
+.dockview-theme-mandor .dv-split-view-container.dv-vertical > .dv-sash-container > .dv-sash {
+    padding-block: calc((4px - var(--mandor-width-handle)) / 2);
+    background-clip: content-box;
+}
+
+.dockview-theme-mandor .dv-sash:active {
+    background-image: linear-gradient(var(--border-handle), var(--border-handle));
 }
 
 /**
- * Pointed at, a tab takes the veil every other thing of the window takes, the open tab too. The
- * library paints the fill of the tabs with rules stronger than any plain selector of ours; the
- * veil is an image over that fill, so it lies on whichever fill the library chose.
+ * Pointed at or reached with the keyboard, a tab that is not in front takes the gray of a control
+ * of the chrome, a step short of the tab in front; the tab in front keeps its fill under the
+ * pointer, so pointing never makes two tabs read as open. No tab draws a line for the focus.
+ * The library paints the fill of the tabs with rules stronger than any plain selector of ours;
+ * the veil is an image over that fill, so it lies on whichever fill the library chose.
  */
-.dockview-theme-mandor .dv-tab:hover {
-    --tab-veil: var(--surface-veil);
-}
-
-/** The strip of tabs closes with a line, the way the title row above it does. */
-.dockview-theme-mandor .dv-tabs-and-actions-container {
-    border-bottom: 1px solid var(--border-subtle);
+.dockview-theme-mandor .dv-tab:not(.dv-active-tab):hover,
+.dockview-theme-mandor .dv-tab:not(.dv-active-tab):focus-visible {
+    --tab-fill: var(--surface-chrome-control);
+    --tab-veil: var(--tab-fill);
 }
 
 /**
@@ -178,4 +225,40 @@
     font-size: var(--mandor-text-3xs-size);
     line-height: var(--mandor-text-3xs-line);
     letter-spacing: var(--mandor-text-3xs-tracking);
+}
+
+/**
+ * Compact, the strip is a band of the frame closed by a line, and its tabs are square, touch one
+ * another and fill the band. Two groups side by side have no gutter left, so a line parts them.
+ */
+:root[data-density='compact'] .dockview-theme-mandor .dv-tabs-and-actions-container {
+    box-sizing: border-box;
+    border-block-end: 1px solid var(--border-subtle);
+}
+
+:root[data-density='compact'] .dockview-theme-mandor .dv-tab {
+    align-self: stretch;
+    height: auto;
+    margin-block: 0;
+    border-radius: 0;
+}
+
+:root[data-density='compact'] .dockview-theme-mandor .dv-tab + .dv-tab {
+    margin-inline-start: 0;
+}
+
+:root[data-density='compact']
+    .dockview-theme-mandor
+    .dv-split-view-container.dv-horizontal
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    border-inline-start: 1px solid var(--border-subtle);
+}
+
+:root[data-density='compact']
+    .dockview-theme-mandor
+    .dv-split-view-container.dv-vertical
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    border-block-start: 1px solid var(--border-subtle);
 }

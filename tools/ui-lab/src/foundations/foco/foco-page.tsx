@@ -33,10 +33,10 @@ export function FocoPage() {
                         </span>
                     </li>
                     <li className="flex gap-gap-control">
-                        <code className="w-44 shrink-0 font-mono text-xs">data-focus-ring</code>
+                        <code className="w-44 shrink-0 font-mono text-xs">split-handle</code>
                         <span className="text-text-secondary">
-                            el control sin borde propio recibe el anillo como sombra, donde su borde
-                            habría estado: Checkbox, StatusDot, la fila de lista.
+                            un asa no tiene caja: el foco recolorea la línea que ya pinta, la del
+                            split y la del lateral. Nada se dibuja por fuera de una caja.
                         </span>
                     </li>
                 </ul>
@@ -49,17 +49,10 @@ export function FocoPage() {
                 <div className="flex items-center gap-gap-group">
                     <span
                         aria-hidden="true"
-                        className="flex h-control w-24 items-center justify-center rounded-md border bg-surface-panel"
+                        className="flex h-control w-24 items-center justify-center rounded-md border bg-surface-card"
                         style={{ borderColor: 'var(--focus-ring)' }}
                     >
                         <code className="font-mono text-2xs text-text-secondary">frame</code>
-                    </span>
-                    <span
-                        aria-hidden="true"
-                        className="flex h-control w-24 items-center justify-center rounded-md bg-surface-panel"
-                        style={{ boxShadow: '0 0 0 var(--focus-ring-width) var(--focus-ring)' }}
-                    >
-                        <code className="font-mono text-2xs text-text-secondary">ring</code>
                     </span>
                     <span className="text-xs text-text-secondary">
                         la muestra no está enfocada: el color es el mismo, el estado lo pone el
@@ -81,9 +74,9 @@ export function FocoPage() {
                         sin relevo no pasa la comprobación de diseño.
                     </li>
                     <li>
-                        El acento vive en foco, selección, activo y primario, y en ningún otro
-                        sitio: un texto en acento que no es ni enlace ni acción es un segundo foco
-                        mentiroso.
+                        El acento vive en foco, acción primaria, lo encendido y la marca de la app,
+                        y en ningún otro sitio; seleccionado y activo son gris: un texto en acento
+                        que no es ni enlace ni acción es un segundo foco mentiroso.
                     </li>
                 </ul>
             </DocSection>

@@ -14,6 +14,10 @@ describe('the summary card of a loaded document', () => {
         });
 
         expect(screen.getByText('Pasarela')).toBeVisible();
+        // A box of white on the dialog, never the grey of a panel.
+        expect(screen.getByText('Pasarela').closest("[data-part='import-summary']")).toHaveClass(
+            'bg-surface-raised',
+        );
 
         fireEvent.click(screen.getByRole('button', { name: 'Browse' }));
 

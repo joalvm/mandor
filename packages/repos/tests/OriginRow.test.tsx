@@ -2,6 +2,7 @@ import { MessagesProvider } from '@mandor/i18n';
 import { createLocalOrigin, createOrigin } from '@mandor/schema';
 import type { SyncNotice } from '@mandor/shell';
 import { TooltipProvider } from '@mandor/ui';
+import { byPart } from '@mandor/ui/testing';
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -54,6 +55,13 @@ describe('one origin of the table (OriginRow)', () => {
 
         expect(screen.getByRole('cell', { name: 'Team' })).toBeVisible();
         expect(screen.getByRole('cell', { name: 'https://github.com/team/api.git' })).toBeVisible();
+    });
+
+    /** An origin is a thing to act on: its menu stands in sight at rest, not only on hover. */
+    it('keeps its actions in sight', () => {
+        row();
+
+        expect(byPart('table-row-actions')).toHaveAttribute('data-reveal', 'always');
     });
 
     it('says the local one lives on this machine instead of an address', () => {

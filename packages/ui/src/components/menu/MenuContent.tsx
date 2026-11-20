@@ -22,7 +22,7 @@ export function MenuContent({ children, fitTrigger = false }: MenuContentProps) 
         <DropdownMenu.Portal>
             <DropdownMenu.Content
                 align={fitTrigger ? 'start' : 'center'}
-                className="z-dropdown rounded-lg border border-border-strong bg-surface-raised p-1 text-text-primary shadow-popover"
+                className="z-dropdown rounded-panel border border-border-subtle bg-surface-raised p-1 text-text-primary shadow-popover"
                 data-fit-trigger={fitTrigger ? '' : undefined}
                 data-part="menu-content"
                 onCloseAutoFocus={(event) => {

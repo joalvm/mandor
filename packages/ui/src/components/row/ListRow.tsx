@@ -78,13 +78,12 @@ export function ListRow({
             className={cn(
                 'group flex min-w-0 cursor-pointer items-center',
                 DENSITY[density],
-                'border-0 bg-transparent text-sm text-text-primary',
+                'border border-transparent bg-transparent text-sm text-text-primary',
                 'transition-colors duration-fast hover:veil',
                 selected && 'bg-surface-selected',
                 level === undefined && 'ps-pad-control',
                 className,
             )}
-            data-focus-ring=""
             data-level={level === undefined ? undefined : String(level)}
             data-part="list-row"
             id={id}

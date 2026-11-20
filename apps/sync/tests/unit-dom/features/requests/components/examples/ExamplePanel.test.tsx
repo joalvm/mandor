@@ -71,6 +71,19 @@ describe('the panel of an example', () => {
         expect(screen.getByText('POST')).toBeVisible();
     });
 
+    it('draws the destination above the request and the response, each on a named card', async () => {
+        draw();
+
+        const target = await screen.findByRole('region', { name: 'Target' });
+
+        expect(target).toContainElement(screen.getByRole('textbox', { name: 'URL' }));
+        expect(target).toHaveAttribute('data-size', 'content');
+        expect(screen.getByRole('region', { name: 'Request' })).toContainElement(
+            await screen.findByRole('tab', { name: 'Params' }),
+        );
+        expect(screen.getByRole('region', { name: 'Response' })).toBeInTheDocument();
+    });
+
     it('names the example at the end of the breadcrumb, under its request', async () => {
         draw();
 

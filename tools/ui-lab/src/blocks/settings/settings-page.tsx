@@ -82,7 +82,7 @@ export function SettingsPage() {
                     </li>
                     <li>
                         <strong>Sin marcas de novedad.</strong> Lo nuevo no se anuncia en la fila:
-                        el acento queda para foco, selección y acción primaria.
+                        el acento queda para foco, acción primaria, lo encendido y la marca.
                     </li>
                 </ul>
             </DocSection>

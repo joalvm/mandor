@@ -7,7 +7,7 @@ import { expect, test, type ElectronApplication, type Page } from '@playwright/t
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
 import { createEnvironment, createRequest, launchSync, responseOf } from './support/send-flow.js';
 import { writeNewRow } from './support/variable-row.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 /**
  * No secret variable takes part, on purpose: declaring one asks the keychain of the system to keep

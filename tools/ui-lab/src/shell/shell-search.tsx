@@ -112,7 +112,7 @@ export function ShellSearch() {
             {open ? (
                 <div
                     aria-label="Resultados"
-                    className="absolute inset-x-0 top-full z-popover mt-gap-tight flex max-h-80 flex-col overflow-y-auto rounded-md border border-border-subtle bg-surface-panel py-gap-tight shadow-popover"
+                    className="absolute inset-x-0 top-full z-popover mt-gap-tight flex max-h-80 flex-col overflow-y-auto rounded-panel border border-border-subtle bg-surface-raised p-1 shadow-popover"
                     data-part="shell-search-hits"
                     role="listbox"
                 >
@@ -127,12 +127,12 @@ export function ShellSearch() {
                             return (
                                 <a
                                     aria-selected={marked}
-                                    className={`flex h-control shrink-0 items-center gap-gap-control px-pad-control text-sm ${
+                                    className={`flex h-control shrink-0 items-center gap-gap-control rounded-md border border-transparent px-pad-control text-sm ${
                                         marked
                                             ? 'bg-surface-selected text-text-primary'
-                                            : 'text-text-secondary hover:bg-surface-control-hover'
+                                            : 'text-text-secondary hover:veil'
                                     }`}
-                                    data-focus-ring=""
+                                    data-focus-frame=""
                                     href={hit.hash}
                                     key={hit.hash}
                                     onClick={() => {

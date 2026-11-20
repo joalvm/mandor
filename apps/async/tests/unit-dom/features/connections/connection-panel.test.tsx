@@ -4,6 +4,7 @@ import { ROOT_GROUP_ID } from '@mandor/ipc';
 import type { FakeBridge } from '@mandor/ipc/testing';
 import { shellStore } from '@mandor/shell';
 import { ToastProvider, TooltipProvider } from '@mandor/ui';
+import { byPart } from '@mandor/ui/testing';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -81,6 +82,22 @@ afterEach(() => {
 });
 
 describe('the connection panel', () => {
+    /**
+     * The connection rests on a card above the pair, and the message and the activity each on
+     * theirs: three cards, each a zone a screen reader can land on.
+     */
+    it('draws the connection, the message and the activity on three named cards', () => {
+        const target = screen.getByRole('region', { name: 'URL de la conexión' });
+
+        expect(target).toContainElement(
+            screen.getByRole('textbox', { name: 'URL de la conexión' }),
+        );
+        expect(target).toHaveAttribute('data-size', 'content');
+        expect(screen.getByRole('region', { name: 'Mensaje' })).toBeInTheDocument();
+        expect(screen.getByRole('region', { name: 'Actividad' })).not.toContainElement(target);
+        expect(byPart('connection-panel')).toHaveClass('gap-gap-gutter');
+    });
+
     /** A header switched off stays in the table and never reaches the handshake. */
     it('opens with the untouched template and the workspace/environment pair', async () => {
         const open = vi.spyOn(asyncBridge.ws, 'open');

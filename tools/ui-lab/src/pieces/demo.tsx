@@ -14,6 +14,17 @@ const CANVAS_LAYOUT: Record<DemoLayout, string> = {
     stretch: 'items-stretch',
 };
 
+/**
+ * La superficie donde la pieza vive en la app: el contenido sobre la tarjeta, el cromo (la tira
+ * de pestañas, las barras del marco) sobre el marco.
+ */
+type DemoGround = 'card' | 'frame';
+
+const GROUND_CLASSES: Record<DemoGround, string> = {
+    card: 'bg-surface-card',
+    frame: 'bg-surface-frame',
+};
+
 /** Lo que la tarjeta muestra: la pieza funcionando o su código. */
 type DemoView = 'canvas' | 'code';
 
@@ -43,6 +54,8 @@ type DemoProps = PropsWithChildren<{
     /** La fuente de la demo, importada del mismo archivo que la pinta. */
     code: string;
     layout?: DemoLayout;
+    /** La superficie del lienzo; el cromo se mira sobre el marco. */
+    ground?: DemoGround;
 }>;
 
 /**
@@ -55,7 +68,14 @@ type DemoProps = PropsWithChildren<{
  * variante, con su leyenda debajo cuando el control no se nombra solo. El lienzo centra siempre
  * en vertical, así que lo que se ve distinto es el componente y no el montaje.
  */
-export function Demo({ children, code, heading, intent, layout = 'stretch' }: DemoProps) {
+export function Demo({
+    children,
+    code,
+    ground = 'card',
+    heading,
+    intent,
+    layout = 'stretch',
+}: DemoProps) {
     const [view, setView] = useState<DemoView>('canvas');
 
     return (
@@ -69,10 +89,10 @@ export function Demo({ children, code, heading, intent, layout = 'stretch' }: De
                 </h3>
                 <Intent text={intent} />
             </div>
-            <div className="overflow-hidden rounded-xl border border-border-subtle">
+            <div className="overflow-hidden rounded-panel border border-border-subtle">
                 <div
                     aria-label="Vista o código"
-                    className="flex h-10 items-center gap-1 border-b border-border-subtle bg-surface-panel px-2"
+                    className="flex h-section items-center gap-1 border-b border-border-subtle px-2"
                     role="group"
                 >
                     {VIEWS.map((entry) => (
@@ -91,7 +111,8 @@ export function Demo({ children, code, heading, intent, layout = 'stretch' }: De
                     ))}
                 </div>
                 <div
-                    className={`flex min-h-40 flex-col gap-6 bg-surface-app p-8 ${CANVAS_LAYOUT[layout]} ${PANEL_CLASSES[stateOf('canvas', view)]}`}
+                    className={`flex min-h-40 flex-col gap-6 p-8 ${GROUND_CLASSES[ground]} ${CANVAS_LAYOUT[layout]} ${PANEL_CLASSES[stateOf('canvas', view)]}`}
+                    data-part="demo-canvas"
                 >
                     {children}
                 </div>

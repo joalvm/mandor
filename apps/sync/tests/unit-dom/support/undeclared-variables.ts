@@ -36,14 +36,8 @@ export async function settled(): Promise<void> {
     });
 }
 
-/**
- * The pointer comes to rest on the token of `name`, and the wait before its panel comes up is
- * paid at once instead of on the clock: four tenths of a second of nothing, in every test, was
- * most of what these files took.
- */
-export async function restOn(name: string): Promise<void> {
-    const token = await tokenOf(name);
-
+/** The pointer comes over one token and the wait before its panel is paid at once. */
+async function hoverOnce(token: HTMLElement): Promise<void> {
     vi.useFakeTimers({ shouldAdvanceTime: true, toFake: ['setTimeout', 'clearTimeout'] });
 
     try {
@@ -54,4 +48,23 @@ export async function restOn(name: string): Promise<void> {
     } finally {
         vi.useRealTimers();
     }
+}
+
+/**
+ * The pointer comes to rest on the token of `name`, and the wait before its panel comes up is
+ * paid at once instead of on the clock: four tenths of a second of nothing, in every test, was
+ * most of what these files took.
+ *
+ * A section that reads something on arrival can redraw after `settled` on a busy machine, and
+ * the redraw replaces the token under the pointer: the panel of the old one never comes up. So
+ * the pointer rests again on the token that stands now, until its panel is there.
+ */
+export async function restOn(name: string): Promise<void> {
+    await waitFor(async () => {
+        await hoverOnce(await tokenOf(name));
+
+        if (document.querySelector(`[role="dialog"][aria-label="{{${name}}}"]`) === null) {
+            throw new Error(`no panel over ${name}`);
+        }
+    });
 }

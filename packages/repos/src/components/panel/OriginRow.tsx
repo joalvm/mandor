@@ -77,7 +77,7 @@ export function OriginRow({
                 />
                 <span className="min-w-0 truncate">{messages(notice ?? STATUS_KEYS[health])}</span>
             </td>
-            <TableRowActions>
+            <TableRowActions reveal="always">
                 <OriginRowMenu
                     onCheck={onCheck}
                     onEmpty={onEmpty}

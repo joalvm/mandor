@@ -2,8 +2,8 @@ import { envStore } from '@mandor/env';
 import { useMessages } from '@mandor/i18n';
 import type { ResourceUri } from '@mandor/schema';
 import { useFailureToast, useResourceSection, useSplit } from '@mandor/shell';
-import { SplitHalf, SplitPane, useToast } from '@mandor/ui';
-import type { ComponentProps } from 'react';
+import { Card, SplitHalf, SplitPane, useToast } from '@mandor/ui';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import { useStore } from 'zustand';
 
 import { FaultActionsContext } from '../../../../activity/fault-actions.js';
@@ -22,12 +22,16 @@ import { ConnectionActivity } from './ConnectionActivity.js';
 import { ConnectionCrumbs } from './ConnectionCrumbs.js';
 import { ConnectionToolbar } from './ConnectionToolbar.js';
 import { NoEventOpen } from './NoEventOpen.js';
+import { RecordButton } from './RecordButton.js';
 
 type ConnectionPanelProps = {
     connectionId: string;
     /** The timeline is filed under the resource, so a tab moved between groups keeps it. */
     resource: ResourceUri;
 };
+
+/** The message takes two fifths: the activity is what is read at length. */
+const MESSAGE_SHARE = 40;
 
 /** Root of the connections feature: the only component that reads the store. Children get props. */
 export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps) {
@@ -36,7 +40,10 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
     const toast = useToast();
     const scope = useWorkspaceScope();
     const environments = useStore(envStore, (state) => state.environments);
-    const { connection, timeline, wsState } = useConnectionPanelState(connectionId, resource);
+    const { connection, openedAt, timeline, wsState } = useConnectionPanelState(
+        connectionId,
+        resource,
+    );
     const {
         composerEvent,
         crumbs,
@@ -48,7 +55,7 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
         onPayloadTypeChange,
     } = useComposerEvent(connectionId);
     const [section, setSection] = useResourceSection(resource, DEFAULT_CONNECTION_SECTION);
-    const [split, setSplit] = useSplit('connection', 50);
+    const [split, setSplit] = useSplit('connection', MESSAGE_SHARE);
     const live = wsState === 'open' || wsState === 'connecting';
     const {
         environment,
@@ -88,26 +95,28 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
     return (
         <div
             aria-label={messages('panelLabel')}
-            className="flex h-full min-h-0 flex-col"
+            className="flex h-full min-h-0 flex-col gap-gap-gutter"
             data-part="connection-panel"
             onKeyDown={onSaveShortcut}
             role="group"
         >
-            <ConnectionToolbar
-                environment={environment}
-                environmentId={connection.environmentId ?? null}
-                environments={environments}
-                live={live}
-                onEnvironmentChange={onEnvironmentChange}
-                onRecordToggle={onRecordToggle}
-                onToggle={onToggle}
-                onUrlChange={onUrlChange}
-                onVariablesChange={onVariablesChange}
-                pending={wsState === 'connecting' || wsState === 'closing'}
-                recording={recording}
-                url={connection.url}
-                namespace={namespaceOf(connection)}
-            />
+            <Card aria-label={messages('urlLabel')} size="content">
+                <ConnectionToolbar
+                    environment={environment}
+                    environmentId={connection.environmentId ?? null}
+                    environments={environments}
+                    live={live}
+                    onEnvironmentChange={onEnvironmentChange}
+                    onToggle={onToggle}
+                    onUrlChange={onUrlChange}
+                    onVariablesChange={onVariablesChange}
+                    openedAt={openedAt}
+                    pending={wsState === 'connecting' || wsState === 'closing'}
+                    url={connection.url}
+                    wsState={wsState}
+                    namespace={namespaceOf(connection)}
+                />
+            </Card>
             <FaultActionsContext value={{ connectWithoutScripts: onConnectWithoutScripts }}>
                 <ComposerArea
                     connectionId={connectionId}
@@ -131,27 +140,33 @@ export function ConnectionPanel({ connectionId, resource }: ConnectionPanelProps
                     split={split}
                     timeline={timeline}
                     transport={connection.transport}
-                />
+                >
+                    <RecordButton onToggle={onRecordToggle} recording={recording} />
+                </ComposerArea>
             </FaultActionsContext>
         </div>
     );
 }
 
-type ComposerAreaProps = Omit<ComponentProps<typeof ConnectionStrip>, 'payloadType'> & {
-    crumbs: readonly string[];
-    onClose: () => void;
-    onSplitChange: (split: number) => void;
-    resource: ResourceUri;
-    split: number;
-    timeline: ComponentProps<typeof ConnectionActivity>['timeline'];
-};
+type ComposerAreaProps = PropsWithChildren<
+    Omit<ComponentProps<typeof ConnectionStrip>, 'payloadType'> & {
+        crumbs: readonly string[];
+        onClose: () => void;
+        onSplitChange: (split: number) => void;
+        resource: ResourceUri;
+        split: number;
+        timeline: ComponentProps<typeof ConnectionActivity>['timeline'];
+    }
+>;
 
 /**
- * What sits under the toolbar: the event beside the activity, the line between them running up
- * to the toolbar. The activity belongs to the connection, so it stays whether an event is open
- * or not; only the half of the event changes.
+ * What sits under the card of the connection: the event beside the activity, or over it when the
+ * group is too narrow for both, each on a card of its own with the gutter of the frame between
+ * them. The activity belongs to the connection, so it stays whether an event is open or not; only
+ * the half of the event changes.
  */
 function ComposerArea({
+    children,
     crumbs,
     onClose,
     onSplitChange,
@@ -165,15 +180,24 @@ function ComposerArea({
     return (
         <SplitPane
             className="min-h-0 flex-1"
+            direction="fit"
+            gap="gutter"
+            initial={MESSAGE_SHARE}
             label={messages('resizeSplit')}
             onValueChange={onSplitChange}
             value={split}
         >
             <SplitHalf>
-                <EventHalf crumbs={crumbs} onClose={onClose} {...strip} />
+                <Card aria-label={messages('message')}>
+                    <EventHalf crumbs={crumbs} onClose={onClose} {...strip} />
+                </Card>
             </SplitHalf>
             <SplitHalf>
-                <ConnectionActivity resource={resource} timeline={timeline} />
+                <Card aria-label={messages('activityLog')}>
+                    <ConnectionActivity resource={resource} timeline={timeline}>
+                        {children}
+                    </ConnectionActivity>
+                </Card>
             </SplitHalf>
         </SplitPane>
     );

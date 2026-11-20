@@ -107,7 +107,7 @@ export function DialogPage() {
             <Demo
                 code={seccionesCode}
                 heading="La columna de secciones"
-                intent="800 × 480 con el marco quieto mientras se cambia. La lista se recorre con flechas sin elegir; Intro o espacio abren, y el tab para una sola vez."
+                intent="880 × 700, nunca más alto que la ventana menos 48 arriba y abajo, con el marco quieto mientras se cambia. La lista se recorre con flechas sin elegir; Intro o espacio abren, y el tab para una sola vez."
                 layout="center"
             >
                 <SeccionesDemo />
@@ -139,8 +139,13 @@ export function DialogPage() {
                         botón menos destructivo — lo garantiza la alerta debajo.
                     </li>
                     <li>
-                        El tamaño lo decide el contenido: 400 la confirmación, 520 el formulario,
-                        800 × 480 el de secciones. Ningún consumidor elige ancho.
+                        El tamaño lo decide el contenido y sale de{' '}
+                        <code className="font-mono text-xs">scales.css</code>: 400 la confirmación,
+                        520 el formulario, 880 × 700 el de secciones. Ningún consumidor elige ancho.
+                    </li>
+                    <li>
+                        Una sola superficie, sin bandas de otro tono; los controles de dentro miden
+                        32, un escalón más que en la ventana.
                     </li>
                     <li>
                         El título es el único texto en negrita y envuelve hacia abajo: un nombre

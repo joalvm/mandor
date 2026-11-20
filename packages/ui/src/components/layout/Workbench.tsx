@@ -7,12 +7,14 @@ type WorkbenchProps = PropsWithChildren;
  *
  * It is a single box on purpose. What fills it — one group of tabs, four of them, a single
  * document — is the decision of whoever writes it in, and a zone that named a composer and a
- * result panel would have forbidden every other arrangement.
+ * result panel would have forbidden every other arrangement. It has no surface of its own: it
+ * shows the frame, and the cards inside it carry theirs. It keeps the gutter of the frame under
+ * the last card, the way the body of the window keeps it at the right edge.
  */
 export function Workbench({ children }: WorkbenchProps) {
     return (
         <main
-            className="flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden bg-surface-app"
+            className="flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden bg-surface-frame pb-gap-gutter"
             data-part="workbench"
         >
             {children}

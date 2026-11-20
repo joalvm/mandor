@@ -1,5 +1,5 @@
 import { useMessages } from '@mandor/i18n';
-import { IconButton, LogLines } from '@mandor/ui';
+import { Card, IconButton, LogLines } from '@mandor/ui';
 import { useMemo } from 'react';
 import { useStore } from 'zustand';
 
@@ -12,7 +12,8 @@ const BAND =
 /**
  * The console itself: every run that wrote something, oldest first, the newest at the bottom
  * where the eye looks for it. It is emptied by hand and put away by hand; nothing in it opens or
- * closes on its own.
+ * closes on its own. It is a card of its own under the work, apart from it by the gutter of the
+ * frame and not by a line.
  */
 export function ConsolePanel() {
     const messages = useMessages('shell');
@@ -22,11 +23,7 @@ export function ConsolePanel() {
     const lines = useMemo(() => consoleLinesOf(runs), [runs]);
 
     return (
-        <section
-            aria-label={messages('consoleTitle')}
-            className="flex h-full min-h-0 min-w-0 flex-col border-t border-border-subtle bg-surface-app"
-            data-part="console-panel"
-        >
+        <Card aria-label={messages('consoleTitle')}>
             <div className={BAND} data-part="console-header">
                 <span className="min-w-0 truncate">{messages('consoleTitle')}</span>
                 <div className="ml-auto flex shrink-0 items-center gap-gap-tight">
@@ -54,6 +51,6 @@ export function ConsolePanel() {
                     lines={lines}
                 />
             </div>
-        </section>
+        </Card>
     );
 }

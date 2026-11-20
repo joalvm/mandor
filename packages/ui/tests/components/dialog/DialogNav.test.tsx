@@ -21,4 +21,10 @@ describe('the column of sections of a dialog', () => {
         expect(names).toEqual(['General', 'Avanzado']);
         expect(screen.getByRole('button', { name: 'General' })).toBeVisible();
     });
+
+    it('stands on the ground of its dialog, with no fill of its own', () => {
+        render(<DialogNav>General</DialogNav>);
+
+        expect(byPart('dialog-nav').className).not.toMatch(/(^|\s)bg-/);
+    });
 });

@@ -13,6 +13,8 @@ type PreferencesApplicationProps = PropsWithChildren;
 export function PreferencesApplication({ children }: PreferencesApplicationProps) {
     const { values } = usePreferences();
     const language = values['appearance.language'];
+    const density = values['appearance.density'];
+    const motion = values['appearance.motion'];
     const { source, theme } = useAppliedTheme();
     const mode = values['updates.mode'];
     const channel = values['updates.channel'];
@@ -37,6 +39,34 @@ export function PreferencesApplication({ children }: PreferencesApplicationProps
             root.removeAttribute('data-theme');
         };
     }, [theme]);
+
+    // Before the first paint too: the compact density moves every panel, so drawing the window
+    // comfortable first would make it jump.
+    useLayoutEffect(() => {
+        const root = document.documentElement;
+
+        root.dataset['density'] = density;
+
+        return () => {
+            root.removeAttribute('data-density');
+        };
+    }, [density]);
+
+    // Before the first paint as well, so a layer opened at once already moves as chosen. Following
+    // the system names nothing: the stylesheets then read what the system asks for.
+    useLayoutEffect(() => {
+        const root = document.documentElement;
+
+        if (motion === 'system') {
+            root.removeAttribute('data-motion');
+        } else {
+            root.dataset['motion'] = motion;
+        }
+
+        return () => {
+            root.removeAttribute('data-motion');
+        };
+    }, [motion]);
 
     // Main draws what the window cannot reach: its frame, its menus, its native dialogs. It follows
     // the system unless the reader holds a theme, and the window reads the system's appearance

@@ -20,7 +20,7 @@ export function ColorSemanticosPage() {
             <Demo
                 code={superficiesCode}
                 heading="Las superficies, encajadas"
-                intent="App sobre la que se apoya un panel; dentro del panel, algo se hunde y algo se alza."
+                intent="El marco sobre el que se apoya una tarjeta; dentro de ella algo se hunde, y aparte, lo que flota."
             >
                 <SuperficiesDemo />
             </Demo>
@@ -70,7 +70,7 @@ export function ColorSemanticosPage() {
                 heading="Foco"
                 intent="El anillo no es un color de más: es el borde del control, pintado de acento. El runtime lo escribe una vez; aquí solo se ve el token."
             >
-                <TokenTable caption="Foco" preview="value" rows={FOCUS} />
+                <TokenTable caption="Foco" rows={FOCUS} />
             </DocSection>
         </DocPage>
     );

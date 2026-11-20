@@ -60,7 +60,8 @@ export function PopoverPage() {
             lead="El formulario corto anclado a lo que lo abrió: crear, cambiar, filtrar. Es lo que
                 sustituye al modal —la política del workbench lo deja para tres casos y todo lo
                 demás cae aquí—. Cierra con Esc y con clic fuera, y el foco vuelve al control que
-                lo abrió. Un popover no abre otro popover."
+                lo abrió. Un popover no abre otro popover. Es sólido, con borde tenue y la sombra
+                de lo que flota: ni vidrio ni gris de panel."
             title="Popover"
         >
             <Demo

@@ -16,7 +16,7 @@ type SettingInheritanceLineProps = {
 };
 
 const LINK =
-    'cursor-pointer rounded-sm text-text-secondary underline underline-offset-2 hover:text-text-primary';
+    'cursor-pointer rounded-sm border border-transparent text-text-secondary underline underline-offset-2 hover:text-text-primary';
 
 /**
  * The line under a control that says whose value it shows. While it follows the default it
@@ -29,8 +29,8 @@ export function SettingInheritanceLine({ inheritance }: SettingInheritanceLinePr
     if (reset !== undefined) {
         return (
             <button
-                className="inline-flex cursor-pointer items-center gap-gap-icon-text rounded-sm text-xs text-text-secondary hover:text-text-primary"
-                data-focus-ring=""
+                className="inline-flex cursor-pointer items-center gap-gap-icon-text rounded-sm border border-transparent text-xs text-text-secondary hover:text-text-primary"
+                data-focus-frame=""
                 data-part="setting-reset"
                 onClick={reset.onReset}
                 type="button"
@@ -47,7 +47,7 @@ export function SettingInheritanceLine({ inheritance }: SettingInheritanceLinePr
             data-part="setting-inherited"
         >
             {caption}
-            <button className={LINK} data-focus-ring="" onClick={onFollow} type="button">
+            <button className={LINK} data-focus-frame="" onClick={onFollow} type="button">
                 {place}
             </button>
         </span>

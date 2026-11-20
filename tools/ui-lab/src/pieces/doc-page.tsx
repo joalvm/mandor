@@ -33,7 +33,7 @@ export function DocPage({ children, lead, title, width = 'prose' }: DocPageProps
                 ref={article}
             >
                 <header className="flex flex-col gap-3 border-b border-border-subtle pb-10">
-                    <p className="text-sm font-semibold text-text-accent">{section}</p>
+                    <p className="text-sm font-semibold text-text-secondary">{section}</p>
                     <h1 className="text-lab-display font-semibold text-text-primary">{title}</h1>
                     <p className="max-w-2xl text-lab-lead text-text-secondary">{lead}</p>
                 </header>
