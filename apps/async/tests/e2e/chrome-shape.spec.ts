@@ -1,7 +1,8 @@
 import { rm } from 'node:fs/promises';
 
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type ElectronApplication, type Page } from '@playwright/test';
 
+import { WINDOW_SIZE } from '../../../../packages/host/src/window/window-size.js';
 import { scaleTokenValues } from '../../../../packages/ui/src/styles/token-scale-values.js';
 import { createConnection, expectFirstRun } from './support/first-run.js';
 import { launch, makeSandbox } from './support/launch-app.js';
@@ -95,6 +96,66 @@ async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
     }, parts);
 }
 
+type Drift = { allowed: number; measured: number };
+
+/**
+ * How far the command centre stands from the middle of the window, and how far the two ends of
+ * the title row let it. The ends are halves of the same weight, so the centre stands on the
+ * middle; a half whose pieces need more than its share pushes it aside by that excess and by
+ * nothing else. A screen narrower than the window the app asks for, as on a hosted Windows
+ * runner, is where the push shows.
+ */
+async function centreDrift(page: Page): Promise<Drift> {
+    return page.evaluate(() => {
+        function part(name: string): Element {
+            const found = document.querySelector(`[data-part='${name}']`);
+
+            if (found === null) {
+                throw new Error(`the title row has no ${name}`);
+            }
+
+            return found;
+        }
+
+        const bar = part('titlebar').getBoundingClientRect();
+        const room = bar.width - part('title-search').getBoundingClientRect().width;
+        const gap = parseFloat(getComputedStyle(part('titlebar')).columnGap);
+        const end = part('title-end');
+        const startReach = part('title-start').lastElementChild?.getBoundingClientRect().right;
+        const endReach = end.firstElementChild?.getBoundingClientRect().left;
+        const startNeed = (startReach ?? bar.left) - bar.left + gap;
+        const endNeed =
+            bar.right -
+            (endReach ?? bar.right) +
+            parseFloat(getComputedStyle(end).paddingLeft) +
+            gap;
+        const left = startNeed > room / 2 ? startNeed : Math.min(room / 2, room - endNeed);
+        const centre = part('command-center').getBoundingClientRect();
+
+        return { allowed: left - room / 2, measured: centre.x + centre.width / 2 - innerWidth / 2 };
+    });
+}
+
+/**
+ * The centre where the window opens and again at the narrowest the window goes, where a half can
+ * need more than its share: both times it drifts by what the halves allow and by nothing more.
+ */
+async function expectCentred(app: ElectronApplication, page: Page): Promise<void> {
+    const wide = await centreDrift(page);
+
+    expect(Math.abs(wide.measured - wide.allowed)).toBeLessThanOrEqual(1);
+    await app.evaluate(({ BrowserWindow }, size) => {
+        BrowserWindow.getAllWindows()[0]?.setSize(size.minWidth, size.minHeight);
+    }, WINDOW_SIZE);
+    await expect
+        .poll(() => page.evaluate(() => innerWidth))
+        .toBeLessThanOrEqual(WINDOW_SIZE.minWidth);
+
+    const narrow = await centreDrift(page);
+
+    expect(Math.abs(narrow.measured - narrow.allowed)).toBeLessThanOrEqual(1);
+}
+
 test('rounds its tabs by a step, draws its bands on the frame and centres the command centre', async () => {
     const sandbox = await makeSandbox();
     const { app, page } = await launch(sandbox.userDataDir, sandbox.defaultRepoRoot);
@@ -122,18 +183,7 @@ test('rounds its tabs by a step, draws its bands on the frame and centres the co
 
         // The command centre stands on the middle of the window, not on the middle of the room
         // the two ends leave between them.
-        const centre = await page.evaluate(() => {
-            const box = document
-                .querySelector("[data-part='command-center']")
-                ?.getBoundingClientRect();
-
-            return box === undefined
-                ? null
-                : { middle: box.x + box.width / 2, window: innerWidth / 2 };
-        });
-
-        expect(centre).not.toBeNull();
-        expect(Math.abs((centre?.middle ?? 0) - (centre?.window ?? 0))).toBeLessThanOrEqual(1);
+        await expectCentred(app, page);
         await expect
             .poll(() =>
                 page.evaluate(() => getComputedStyle(document.documentElement).scrollbarWidth),

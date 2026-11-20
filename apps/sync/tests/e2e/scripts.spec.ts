@@ -7,7 +7,7 @@ import { expect, test, type ElectronApplication, type Page } from '@playwright/t
 import { editorLines } from '../../../../packages/ui/tests/support/editor-lines.js';
 import { itemFile, localRepo, PERSONAL } from './support/disk-names.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 import {
     aim,
     createEnvironment,

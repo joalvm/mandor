@@ -8,7 +8,7 @@ import { diskTree, entityNamed, onDisk } from '../../../../tools/workspace/disk-
 import { localRepo, PERSONAL, workspaceDir } from './support/disk-names.js';
 import { pickerOf } from './support/import-flow.js';
 import { createEnvironment, createRequest, launchSync } from './support/send-flow.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 /** Thousands of variables, the table that drew every one of them and froze the dialog. */
 const COUNT = 3000;

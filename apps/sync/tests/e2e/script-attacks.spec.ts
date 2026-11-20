@@ -28,7 +28,7 @@ import { startAttackServer, type AttackHit, type AttackServer } from './support/
 import { itemFile } from './support/disk-names.js';
 import { launch, makeSandbox, type Sandbox } from './support/launch-app.js';
 import { bringToFront } from './support/origin-flow.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 // One app and one hostile origin run through every test: each one starts where the last one left.
 test.describe.configure({ mode: 'serial' });

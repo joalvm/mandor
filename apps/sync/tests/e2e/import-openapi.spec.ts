@@ -19,7 +19,7 @@ import {
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
 import { createEnvironment, launchSync, saveRequest } from './support/send-flow.js';
 import { writeNewRow } from './support/variable-row.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 // One app and one workspace run through every test: each one starts where the last one left.
 test.describe.configure({ mode: 'serial' });

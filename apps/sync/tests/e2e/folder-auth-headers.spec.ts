@@ -8,7 +8,7 @@ import { localRepo, PERSONAL, workspaceDir } from './support/disk-names.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
 import { createEnvironment, launchSync } from './support/send-flow.js';
 import { variableRow, writeNewRow } from './support/variable-row.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 const TOKEN = 't0k3n-del-entorno';
 

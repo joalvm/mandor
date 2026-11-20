@@ -8,7 +8,7 @@ import { itemText, localRepo, PERSONAL } from './support/disk-names.js';
 import { launch, makeSandbox } from './support/launch-app.js';
 import { nameNewRequest, saveRequest } from './support/send-flow.js';
 import { writeNewRow } from './support/variable-row.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 const ITEM_NAMES = ['pedidos', 'crear pedido'];
 const BODY = '{ "cliente": "{{clienteId}}", "total": 42 }';

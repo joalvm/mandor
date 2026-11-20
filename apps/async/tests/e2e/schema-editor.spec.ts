@@ -5,6 +5,7 @@ import { expect, test, type ElectronApplication, type Page } from '@playwright/t
 
 import { startEchoServer } from '../../../../packages/transport-async/tests/support/echo-server.js';
 import { editorLines } from '../../../../packages/ui/tests/support/editor-lines.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 import { composerOf, createEvent, openEvent } from './support/collection-event.js';
 import { createConnection, expectFirstRun } from './support/first-run.js';
 import { launch, makeSandbox, type Sandbox } from './support/launch-app.js';
@@ -41,7 +42,7 @@ async function written(root: string, text: string): Promise<boolean> {
 }
 
 async function showSchema(page: Page): Promise<void> {
-    await page.getByRole('tab', { name: 'Schema' }).click();
+    await openSection(page, 'Schema');
 
     await expect(schemaLines(page)).toBeVisible();
 }

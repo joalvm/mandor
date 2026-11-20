@@ -4,6 +4,7 @@ import { expect, test, type ElectronApplication, type Locator, type Page } from 
 
 import { diskTree, itemNamed, onDisk } from '../../../../tools/workspace/disk-by-name.mjs';
 import { startEchoServer } from '../../../../packages/transport-async/tests/support/echo-server.js';
+import { scaleTokenValues } from '../../../../packages/ui/src/styles/token-scale-values.js';
 import { editorLines } from '../../../../packages/ui/tests/support/editor-lines.js';
 import { nameNewMessage } from './support/collection-event.js';
 import { chooseEnvironment, createEnvironment } from './support/environment.js';
@@ -57,15 +58,16 @@ async function expectHeaderField(page: Page): Promise<void> {
 }
 
 /**
- * The address of the connection is the one field allowed to stand taller: 28. The address is
- * the fused control — environment, url and frame in one band — so the band is what gets measured.
+ * The address of the connection is the one field allowed to stand taller: the height of the
+ * address on the scale. The address is the fused control — environment, url and frame in one
+ * band — so the band is what gets measured.
  */
 async function expectUrlField(page: Page): Promise<void> {
     const box = await page
         .locator('[data-part="connection-toolbar"] [data-part="address-bar"]')
         .boundingBox();
 
-    expect(box?.height).toBe(28);
+    expect(box?.height).toBe(parseFloat(scaleTokenValues['mandor-height-address']));
 }
 
 /** Finding something opens it where it is read, which is a tab: the searcher raises no modal. */

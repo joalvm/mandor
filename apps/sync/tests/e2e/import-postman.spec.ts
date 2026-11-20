@@ -18,7 +18,7 @@ import {
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
 import { launchSync } from './support/send-flow.js';
 import { variableRow, variableValueField } from './support/variable-row.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 // The workspace the Postman files make takes the name of the collection among them.
 const MADE = 'Demo API';
@@ -142,6 +142,8 @@ test('the imported request sends with the environment filled in, and its scripts
 
     await pickerOf(page).click();
     await page.getByRole('menuitem', { name: /^local$/iu }).click();
+    // While the menu fades out the window is hidden from the tree: the row is looked for after.
+    await expect(page.getByRole('menu')).toBeHidden();
 
     const item = page.getByRole('treeitem', { name: 'Get user' });
 

@@ -19,7 +19,7 @@ import {
 import { launch, makeSandbox } from './support/launch-app.js';
 import { startLocalHttpServer } from './support/local-http-server.js';
 import { createEnvironment, saveRequest } from './support/send-flow.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 const FIXTURE = readFileSync(
     fileURLToPath(new URL('./fixtures/petstore-3.1.yaml', import.meta.url)),

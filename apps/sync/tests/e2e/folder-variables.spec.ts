@@ -8,7 +8,7 @@ import { environmentsDir, localRepo, PERSONAL, workspaceDir } from './support/di
 import { expectEnvironmentOnDisk } from './support/exchange-flow.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
 import { createEnvironment, launchSync } from './support/send-flow.js';
-import { openSection } from './support/open-section.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
 
 // One app and one tree run through every test: each one starts where the last one left.
 test.describe.configure({ mode: 'serial' });
