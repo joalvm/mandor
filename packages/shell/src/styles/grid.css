@@ -172,11 +172,12 @@
 /**
  * Pointed at or reached with the keyboard, a tab that is not in front takes the gray of a control
  * of the chrome, a step short of the tab in front; the tab in front keeps its fill under the
- * pointer, so pointing never makes two tabs read as open. No tab draws a line for the focus. The library paints the fill of the tabs with rules stronger than any
- * plain selector of ours; the veil is an image over that fill, so it lies on whichever fill the
- * library chose.
+ * pointer, so pointing never makes two tabs read as open. No tab draws a line for the focus.
+ * The library paints the fill of the tabs with rules stronger than any plain selector of ours;
+ * the veil is an image over that fill, so it lies on whichever fill the library chose.
  */
-.dockview-theme-mandor .dv-tab:not(.dv-active-tab):is(:hover, :focus-visible) {
+.dockview-theme-mandor .dv-tab:not(.dv-active-tab):hover,
+.dockview-theme-mandor .dv-tab:not(.dv-active-tab):focus-visible {
     --tab-fill: var(--surface-chrome-control);
     --tab-veil: var(--tab-fill);
 }
