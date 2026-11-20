@@ -70,7 +70,7 @@ export function ColorSemanticosPage() {
                 heading="Foco"
                 intent="El anillo no es un color de más: es el borde del control, pintado de acento. El runtime lo escribe una vez; aquí solo se ve el token."
             >
-                <TokenTable caption="Foco" preview="value" rows={FOCUS} />
+                <TokenTable caption="Foco" rows={FOCUS} />
             </DocSection>
         </DocPage>
     );

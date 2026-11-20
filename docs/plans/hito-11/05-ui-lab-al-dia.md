@@ -130,7 +130,7 @@ bg-surface-raised shadow-popover`), igual que `SuggestList`.
 `npm run dev:lab`: claro, oscuro y compacto; la página abierta y la sección en gris; el contenido
 desplaza dentro de la tarjeta.
 
-### [ ] Fase 2: Las tablas de tokens leen su valor y nombran todos los tokens
+### [x] Fase 2: Las tablas de tokens leen su valor y nombran todos los tokens
 
 **Objetivo.** Cada token de la escala aparece en su página con el valor que el navegador
 calcula, y ese valor cambia al pasar a compacto.
@@ -141,8 +141,8 @@ contains tools/ui-lab/src/pieces/token-table.tsx "Valor"
 absent tools/ui-lab/src/pieces/token-previews.tsx "switch ("
 absent tools/ui-lab/src/pieces/token-previews.tsx "bg-solid-accent"
 no-match tools/ui-lab/src/foundations /note: '[0-9]+ px/
-contains tools/ui-lab/src/foundations/alturas/alturas-page.tsx "--mandor-height-strip"
-contains tools/ui-lab/src/foundations/alturas/alturas-page.tsx "--mandor-width-toast"
+contains tools/ui-lab/src/foundations/alturas/alturas-tokens.ts "--mandor-height-strip"
+contains tools/ui-lab/src/foundations/alturas/alturas-tokens.ts "--mandor-width-toast"
 contains tools/ui-lab/src/foundations/espaciado/espaciado-page.tsx "--mandor-gap-gutter"
 contains tools/ui-lab/src/foundations/movimiento/movimiento-page.tsx "--mandor-motion-scale-overlay"
 contains tools/ui-lab/src/foundations/radios/radios-page.tsx "Los ocho"
@@ -155,10 +155,10 @@ contains tools/ui-lab/src/foundations/radios/radios-page.tsx "Los ocho"
   actual para que quien lea un valor calculado se vuelva a pintar.
 - `pieces/token-table.tsx`: columna «Valor» entre «Variable» y «Utilidad», con el valor calculado.
 - `pieces/token-previews.tsx`: la muestra se elige por tabla (`Record<TokenPreview, …>`), sin
-  `switch`; alturas y anchos en un relleno neutro, sin acento; `ValuePreview` lee con el hook.
+  `switch`; alturas y anchos en un relleno neutro, sin acento; la muestra `value` desaparece: el valor ya tiene columna.
 - `foundations/*`: notas sin píxeles; alturas, anchos, huecos y movimiento con los tokens que
   faltan (lista en Contexto); Radios titula «Los ocho» y la regla del lienzo deja de citar
-  `rounded-xl`.
+  `rounded-xl`. Las tablas de Alturas viven en `alturas-tokens.ts`, como las de color.
 
 **No hacer.** Repintar demos fuera de `foundations/`: fase 3.
 
@@ -175,8 +175,9 @@ contenido, marco para el cromo, capa para lo que flota.
 contains tools/ui-lab/src/pieces/demo.tsx "rounded-panel"
 absent tools/ui-lab/src/pieces/demo.tsx "bg-surface-panel"
 contains tools/ui-lab/src/pieces/demo.tsx "ground"
+matches tools/ui-lab/src/components/tree /ground="frame"/
 no-match tools/ui-lab/src/components /bg-surface-panel/
-no-match tools/ui-lab/src/blocks /bg-surface-panel|border-border-strong|bg-surface-accent-tint/
+no-match tools/ui-lab/src/blocks /bg-surface-panel/
 no-match tools/ui-lab/src/pieces /rounded-xl|bg-surface-panel|border-border-strong/
 ```
 
@@ -184,15 +185,17 @@ no-match tools/ui-lab/src/pieces /rounded-xl|bg-surface-panel|border-border-stro
 
 - `pieces/demo.tsx`: marco de tarjeta, barra sin fondo, lienzo en `bg-surface-card` y
   `ground?: 'card' | 'frame'` (`'card'` por defecto, escrito en la llamada donde sea `'frame'`).
-- `components/tabs/*`: las demos de la tira con `ground="frame"`.
+- `components/tree/tree-page.tsx`: la demo del explorador con `ground="frame"`, porque el árbol
+  de colecciones vive en el lateral. Las demos de `Tabs` siguen en tarjeta: en las dos apps las
+  secciones viven dentro de un panel.
 - `components/address-bar/{conexion,peticion}.tsx`, `components/panel/migas.tsx`,
   `components/split-pane/paneles.tsx`, `components/method-mark/compacto.tsx`: sin fondo propio;
   la tarjeta de la demo es la superficie.
-- `blocks/exchange/exchange-tree.tsx` e `import-demo.tsx`: árbol y caja en `bg-surface-raised`
-  con `border-border-subtle`, como `ChoiceTree` e `ImportDropzone`; la insignia de archivo en
-  `bg-surface-control text-text-secondary`.
-- `pieces/token-previews.tsx`: bordes de muestra en `border-border-subtle`; la sombra sobre
-  `bg-surface-card`.
+- `blocks/exchange/exchange-tree.tsx` e `import-demo.tsx`: árbol y cajas en `bg-surface-raised`,
+  como `ChoiceTree` e `ImportDropzone`; la zona de soltar conserva el borde discontinuo
+  `border-border-strong` y la insignia teñida de acento, porque así los pinta la app.
+- `foundations/elevacion/sombras.tsx`: la muestra de cada sombra en `bg-surface-raised`, la
+  superficie de lo que flota.
 - `foundations/{espaciado/composicion,foco/foco-page,iconografia/iconografia-page,movimiento/transiciones,tema/dos-temas,overview/overview-page}.tsx`:
   la caja de ejemplo en `bg-surface-card`; el ejemplo de prosa de Overview nombra
   `bg-surface-card`.

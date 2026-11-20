@@ -4,96 +4,12 @@ import { DocPage } from '../../pieces/doc-page.js';
 import { DocSection } from '../../pieces/doc-section.js';
 import { Demo } from '../../pieces/demo.js';
 import { TokenTable } from '../../pieces/token-table.js';
-
-const HEIGHTS: readonly { note?: string; token: string; utility?: string }[] = [
-    {
-        token: '--mandor-height-control-xs',
-        utility: 'h-control-xs',
-        note: '22 px — el control más chico: dentro de una fila apretada',
-    },
-    {
-        token: '--mandor-height-control-sm',
-        utility: 'h-control-sm',
-        note: '24 px — el compacto, alineado con el tab y la statusbar',
-    },
-    { token: '--mandor-height-tab', utility: 'h-tab', note: '24 px — la pestaña de dockview' },
-    {
-        token: '--mandor-height-row-xs',
-        utility: 'h-row-xs',
-        note: '24 px — la fila de árbol comprimida',
-    },
-    { token: '--mandor-height-field', utility: 'h-field', note: '26 px — la caja de campo' },
-    { token: '--mandor-height-row', utility: 'h-row', note: '28 px — la fila de lista' },
-    {
-        token: '--mandor-height-row-pair',
-        utility: 'h-row-pair',
-        note: '44 px — la fila de dos líneas: un nombre y lo que dice de él',
-    },
-    {
-        token: '--mandor-height-control',
-        utility: 'h-control',
-        note: '28 px — el control normal: botón, switch, select',
-    },
-    {
-        token: '--mandor-height-section',
-        utility: 'h-section',
-        note: '32 px — la cabecera de sección',
-    },
-    {
-        token: '--mandor-height-header',
-        utility: 'h-header',
-        note: '40 px — la cabecera de una vista',
-    },
-    {
-        token: '--mandor-height-titlebar',
-        utility: 'h-titlebar',
-        note: '40 px — la barra de título de la ventana',
-    },
-    {
-        token: '--mandor-height-statusbar',
-        utility: 'h-statusbar',
-        note: '24 px — la barra de estado',
-    },
-];
-
-const WIDTHS: readonly { note?: string; token: string; utility?: string }[] = [
-    {
-        token: '--mandor-width-sidebar',
-        utility: 'w-sidebar',
-        note: '260 px — el lateral de navegación',
-    },
-    {
-        token: '--mandor-width-settings-nav',
-        utility: 'w-settings-nav',
-        note: '224 px — el lateral de preferencias',
-    },
-    { token: '--mandor-width-toggle', utility: 'w-toggle', note: '40 px — la pastilla del switch' },
-    {
-        token: '--mandor-width-dialog-confirm',
-        note: '400 px — el diálogo de confirmación; lo pone el diálogo',
-    },
-    {
-        token: '--mandor-width-dialog-form',
-        note: '520 px — el diálogo con formulario; lo pone el diálogo',
-    },
-    {
-        token: '--mandor-width-dialog-sections',
-        note: '880 px — el diálogo de secciones; lo pone el diálogo',
-    },
-    {
-        token: '--mandor-width-dialog-code',
-        note: '880 px — el diálogo que muestra código; mediano, la ventana lo recorta',
-    },
-    {
-        token: '--mandor-width-tooltip',
-        note: '320 px — el ancho máximo del tooltip; lo pone el tooltip',
-    },
-];
+import { HEIGHTS, WIDTHS } from './alturas-tokens.js';
 
 export function AlturasPage() {
     return (
         <DocPage
-            lead="La altura no se adivina: se pide. Once escalones cubren todo lo que la interfaz
+            lead="La altura no se adivina: se pide. Dieciocho escalones cubren todo lo que la interfaz
                 dibuja, de un microcontrol a la barra de título, y el ancho pertenece a quien
                 coloca, no al control. Esta es la página que intraled no necesitó y Mandor sí."
             title="Alturas"
@@ -108,15 +24,15 @@ export function AlturasPage() {
             </Demo>
 
             <DocSection
-                heading="Las once alturas"
-                intent="De chico a grande. La muestra es la altura misma: lo que mide el token, mide la barra."
+                heading="Las dieciocho alturas"
+                intent="De chico a grande en la densidad cómoda. La muestra es la altura misma, y el valor cambia con la densidad: pásala a compacta desde Apariencia."
             >
-                <TokenTable caption="Las doce alturas" preview="height" rows={HEIGHTS} />
+                <TokenTable caption="Las dieciocho alturas" preview="height" rows={HEIGHTS} />
             </DocSection>
 
             <DocSection
                 heading="Los anchos"
-                intent="Dos laterales, la pastilla del switch y los anchos de diálogo. El resto del ancho lo decide la rejilla que coloca."
+                intent="Laterales, pestañas, avisos, columnas y diálogos. El resto del ancho lo decide la rejilla que coloca."
             >
                 <TokenTable caption="Los anchos" preview="width" rows={WIDTHS} />
             </DocSection>

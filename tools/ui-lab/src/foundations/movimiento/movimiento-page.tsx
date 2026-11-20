@@ -3,9 +3,51 @@ import { TransicionesDemo } from './transiciones.js';
 import { DocPage } from '../../pieces/doc-page.js';
 import { DocSection } from '../../pieces/doc-section.js';
 import { Demo } from '../../pieces/demo.js';
-import { TokenTable } from '../../pieces/token-table.js';
+import { TokenTable, type TokenRow } from '../../pieces/token-table.js';
 
-const EASINGS: readonly { note?: string; token: string; utility?: string }[] = [
+const DURATIONS: readonly TokenRow[] = [
+    {
+        token: '--mandor-duration-fast',
+        utility: 'duration-fast',
+        note: 'el hover de un control y la salida de una capa',
+    },
+    {
+        token: '--mandor-duration-base',
+        utility: 'duration-base',
+        note: 'lo que se abre: menú, popover, tooltip, select',
+    },
+    {
+        token: '--mandor-duration-slow',
+        utility: 'duration-slow',
+        note: 'lo que se despliega y la entrada del diálogo',
+    },
+    { token: '--mandor-duration-exit', note: 'la salida del diálogo y de su veladura' },
+    {
+        token: '--mandor-duration-travel',
+        note: 'lo que se desplaza, como la pila de avisos; cero con menos movimiento',
+    },
+    {
+        token: '--mandor-delay-handle',
+        note: 'lo que espera el asa antes de encenderse al apuntarla',
+    },
+];
+
+const DISTANCES: readonly TokenRow[] = [
+    {
+        token: '--mandor-motion-shift',
+        note: 'lo que se desliza una pieza al entrar; cero con menos movimiento',
+    },
+    {
+        token: '--mandor-motion-scale',
+        note: 'desde dónde crece una capa al abrirse; uno con menos movimiento',
+    },
+    {
+        token: '--mandor-motion-scale-overlay',
+        note: 'desde dónde crecen el diálogo y el aviso; uno con menos movimiento',
+    },
+];
+
+const EASINGS: readonly TokenRow[] = [
     {
         token: '--mandor-ease-out',
         utility: 'ease-out',
@@ -17,7 +59,7 @@ const EASINGS: readonly { note?: string; token: string; utility?: string }[] = [
 export function MovimientoPage() {
     return (
         <DocPage
-            lead="Tres duraciones y dos curvas, y con eso se escribe todo el movimiento de la
+            lead="Cinco duraciones, tres distancias y dos curvas, y con eso se escribe todo el movimiento de la
                 interfaz. El movimiento confirma lo que el ojo ya entendió; nunca lo cuenta primero,
                 y nunca pide atención por su cuenta."
             title="Movimiento"
@@ -31,10 +73,24 @@ export function MovimientoPage() {
             </Demo>
 
             <DocSection
+                heading="Las duraciones"
+                intent="Cinco tiempos y una espera. Lo que se hace cien veces al día no pasa de base."
+            >
+                <TokenTable caption="Las duraciones" rows={DURATIONS} />
+            </DocSection>
+
+            <DocSection
+                heading="Las distancias"
+                intent="Cuánto se mueve y cuánto crece lo que entra. Con menos movimiento valen cero y uno: queda el fundido."
+            >
+                <TokenTable caption="Las distancias" rows={DISTANCES} />
+            </DocSection>
+
+            <DocSection
                 heading="Las curvas"
                 intent="Dos direcciones: fuera es como entra lo que aparece, dentro es como se va lo que desaparece."
             >
-                <TokenTable caption="Las curvas" preview="value" rows={EASINGS} />
+                <TokenTable caption="Las curvas" rows={EASINGS} />
             </DocSection>
 
             <DocSection

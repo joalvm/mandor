@@ -6,42 +6,42 @@ const RADII: readonly { note?: string; token: string; utility?: string }[] = [
     {
         token: '--mandor-radius-none',
         utility: 'rounded-none',
-        note: '0 — lo que se funde con la superficie que lo lleva',
+        note: 'lo que se funde con la superficie que lo lleva',
     },
     {
         token: '--mandor-radius-sm',
         utility: 'rounded-sm',
-        note: '2 px — la señal pequeña: badge, token de variable',
+        note: 'la señal pequeña: badge, token de variable',
     },
     {
         token: '--mandor-radius-md',
         utility: 'rounded-md',
-        note: '3 px — el control: botón, campo, celda de esta tabla',
+        note: 'el control: botón, campo, celda de esta tabla',
     },
     {
         token: '--mandor-radius-lg',
         utility: 'rounded-lg',
-        note: '4 px — el tooltip y el hover del editor',
+        note: 'el tooltip y el hover del editor',
     },
     {
         token: '--mandor-radius-xl',
         utility: 'rounded-xl',
-        note: '6 px — la ventana del lienzo de una demo',
+        note: 'la pestaña de trabajo y la insignia del aviso',
     },
     {
         token: '--mandor-radius-panel',
         utility: 'rounded-panel',
-        note: '10 px — la tarjeta, el menú y el popover',
+        note: 'la tarjeta, el menú y el popover',
     },
     {
         token: '--mandor-radius-overlay',
         utility: 'rounded-overlay',
-        note: '12 px — lo que flota sobre la ventana: diálogo y aviso',
+        note: 'lo que flota sobre la ventana: diálogo y aviso',
     },
     {
         token: '--mandor-radius-full',
         utility: 'rounded-full',
-        note: '9999 px — el punto y la pastilla: StatusDot, switch',
+        note: 'el punto y la pastilla: StatusDot, switch',
     },
 ];
 
@@ -53,10 +53,10 @@ export function RadiosPage() {
             title="Radios"
         >
             <DocSection
-                heading="Los seis"
+                heading="Los ocho"
                 intent="La muestra dibuja el radio con su borde: lo que se curva es la esquina del token, no una decisión del dibujo."
             >
-                <TokenTable caption="Los seis radios" preview="radius" rows={RADII} />
+                <TokenTable caption="Los ocho radios" preview="radius" rows={RADII} />
             </DocSection>
 
             <DocSection heading="Reglas">
@@ -66,8 +66,8 @@ export function RadiosPage() {
                         Button, campo, Panel. Un botón con otro radio se lee como otra cosa.
                     </li>
                     <li>
-                        El radio lo lleva la pieza, no el recuadro que la envuelve: un lienzo de
-                        demo lleva <code className="font-mono text-xs">xl</code> y sus controles
+                        El radio lo lleva la pieza, no el recuadro que la envuelve: una tarjeta
+                        lleva <code className="font-mono text-xs">panel</code> y sus controles
                         siguen en <code className="font-mono text-xs">md</code>.
                     </li>
                     <li>
