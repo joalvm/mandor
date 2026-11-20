@@ -1,3 +1,4 @@
+import { SearchIcon } from '@mandor/icons';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -16,12 +17,14 @@ describe('the field a list is narrowed with', () => {
      * The glyph is what tells this field apart from every other one-line field, so it is drawn
      * here and is not a slot: it stands in front of the line, at the small optical size.
      */
-    it('draws its own filter glyph in front of the line', () => {
+    it('draws its own magnifier in front of the line', () => {
         render(<SearchInput label="Filtrar" onValueChange={vi.fn()} value="" />);
 
         const glyph = byPart('input').querySelector('svg');
+        const magnifier = render(<SearchIcon size="sm" />).container.querySelector('path');
 
         expect(glyph).not.toBeNull();
+        expect(glyph?.querySelector('path')).toHaveAttribute('d', magnifier?.getAttribute('d'));
         expect(glyph).toHaveAttribute('width', '14');
         expect(glyph).toHaveAttribute('aria-hidden', 'true');
     });

@@ -206,7 +206,11 @@ describe('the head of the timeline', () => {
         expect(document.querySelector('[data-part="activity-tally"]')).toHaveTextContent('↓1·4 B');
     });
 
-    it('puts what its owner gives it first among the actions', () => {
+    /**
+     * The search leads the actions on the right, what its owner gives it follows, and the filter,
+     * the export and the clear close the row; the left holds the title and its tally alone.
+     */
+    it('lays the search out first, then what its owner gives it, then filter, export and clear', () => {
         render(
             <Wrapper>
                 <ActivityHead
@@ -222,7 +226,31 @@ describe('the head of the timeline', () => {
         );
 
         const actions = document.querySelector('[data-part="activity-head-actions"]');
+        const search = screen.getByRole('searchbox', { name: 'Buscar' });
+        const record = screen.getByRole('button', { name: 'Grabar' });
+        const filter = screen.getByRole('button', { name: 'Filtrar' });
+        const exporting = screen.getByRole('button', { name: 'Exportar' });
+        const clear = screen.getByRole('button', { name: 'Limpiar' });
 
-        expect(actions?.firstElementChild).toBe(screen.getByRole('button', { name: 'Grabar' }));
+        expect(actions).toContainElement(search);
+        expectBefore(search, record);
+        expectBefore(record, filter);
+        expectBefore(filter, exporting);
+        expectBefore(exporting, clear);
+    });
+
+    it('keeps nothing on the left but the title and its tally', () => {
+        draw();
+
+        const title = document.querySelector('[data-part="activity-head-title"]');
+        const left = title?.parentElement;
+
+        expect(left?.children).toHaveLength(2);
+        expect(left).toContainElement(document.querySelector('[data-part="activity-tally"]'));
+        expect(left).not.toContainElement(screen.getByRole('searchbox', { name: 'Buscar' }));
     });
 });
+
+function expectBefore(first: Element, second: Element): void {
+    expect(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+}
