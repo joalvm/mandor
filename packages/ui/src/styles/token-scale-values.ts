@@ -65,6 +65,7 @@ export const scaleTokenValues = {
     'mandor-width-tooltip': '320px',
     'mandor-width-toggle': '40px',
     'mandor-width-tab': '200px',
+    'mandor-width-command-center': '440px',
     'mandor-width-tab-min': '96px',
     'mandor-width-tab-fade': '20px',
     'mandor-pad-toggle': '3px',

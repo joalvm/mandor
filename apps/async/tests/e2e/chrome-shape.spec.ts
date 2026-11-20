@@ -95,7 +95,7 @@ async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
     }, parts);
 }
 
-test('rounds its tabs by a step and draws its bands on the frame of the window', async () => {
+test('rounds its tabs by a step, draws its bands on the frame and centres the command centre', async () => {
     const sandbox = await makeSandbox();
     const { app, page } = await launch(sandbox.userDataDir, sandbox.defaultRepoRoot);
 
@@ -119,6 +119,21 @@ test('rounds its tabs by a step and draws its bands on the frame of the window',
         );
         expect(painted.strip).toBe(painted.frame);
         expect(painted.workbench).toBe(painted.frame);
+
+        // The command centre stands on the middle of the window, not on the middle of the room
+        // the two ends leave between them.
+        const centre = await page.evaluate(() => {
+            const box = document
+                .querySelector("[data-part='command-center']")
+                ?.getBoundingClientRect();
+
+            return box === undefined
+                ? null
+                : { middle: box.x + box.width / 2, window: innerWidth / 2 };
+        });
+
+        expect(centre).not.toBeNull();
+        expect(Math.abs((centre?.middle ?? 0) - (centre?.window ?? 0))).toBeLessThanOrEqual(1);
         await expect
             .poll(() =>
                 page.evaluate(() => getComputedStyle(document.documentElement).scrollbarWidth),

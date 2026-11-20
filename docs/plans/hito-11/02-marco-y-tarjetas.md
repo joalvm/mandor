@@ -250,7 +250,7 @@ contains packages/ui/src/styles/runtime.css "[data-gap='gutter']"
 consola); `npm run ci:check` con las rutas tocadas. Con la app: abrir la consola desde la barra de
 estado, arrastrar el asa, doble clic para volver a su sitio, cerrar y abrir.
 
-### [ ] Fase 5: Centro de comandos en la barra de título
+### [x] Fase 5: Centro de comandos en la barra de título
 
 **Objetivo.** Un botón centrado en la barra de título de las dos apps abre la paleta de comandos y
 muestra su atajo.

@@ -1,5 +1,6 @@
 export { AppIcon } from './components/title-bar/AppIcon.js';
 export { AppMenuButton } from './components/title-bar/AppMenuButton.js';
+export { CommandCenter } from './components/title-bar/CommandCenter.js';
 export { CommandPalette } from './components/command-palette/CommandPalette.js';
 export { GroupGrid } from './components/group-grid/GroupGrid.js';
 export { OriginSwitching } from './components/overlay/OriginSwitching.js';
