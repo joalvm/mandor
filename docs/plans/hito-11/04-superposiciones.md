@@ -43,7 +43,17 @@ sigue con el dibujo anterior, y la dirección B lo cambia en cuatro sitios:
   diálogos de formulario no ganan subtítulo: no tienen texto que lo diga, y ninguna cadena nace
   para el dibujo. `ConfirmDialog` y `SaveChangesDialog` ya tienen su descripción.
 - **Movimiento.** Entrada de 200 ms con `--mandor-ease-out`, de `opacity: 0; scale(0.96)` a
-  reposo; salida de 150 ms a lo mismo. Desde el centro, sin deslizar.
+  reposo; salida de 150 ms a lo mismo. Desde el centro, sin deslizar. Los valores son tokens
+  (`--mandor-motion-scale-overlay: 0.96`, `--mandor-duration-exit: 150ms`): el movimiento
+  reducido quita la escala y conserva el fundido, nunca pone a cero una duración.
+- **Las capas entran y salen.** Menús, menús contextuales, popovers, hover cards, tooltips,
+  select y paleta entran en `--mandor-duration-base` con `--mandor-ease-out`, de `opacity: 0;
+scale(var(--mandor-motion-scale))` a reposo, desde el origen que Radix calcula para cada uno;
+  salen en `--mandor-duration-fast` con `--mandor-ease-in`. Con movimiento reducido solo funden.
+- **Animaciones como preferencia.** `appearance.motion` con `system` (por defecto), `full` y
+  `reduced`, escrito en `data-motion` de la raíz. `system` sigue al sistema; `full` mueve aunque
+  el sistema pida menos; `reduced` quita la escala y el desplazamiento aunque el sistema no lo
+  pida. En las dos apps, en Ajustes › Temas.
 - **Grupos blancos.** Las filas de un grupo de ajustes van en una caja `bg-surface-raised` con
   `border-border-subtle` y `--mandor-radius-panel`, con su línea fina entre filas. El título del
   grupo queda encima, fuera de la caja, sin línea debajo. Árboles y cajas de elegir e importar
@@ -102,6 +112,8 @@ no-match packages/ui/src /surface-dialog-nav/
 no-match tools/ui-lab/src /surface-dialog-nav/
 contains packages/ui/src/styles/scales.css "--mandor-radius-overlay: 12px"
 contains packages/ui/src/styles/scales.css "--mandor-pad-inline-dialog: 24px"
+contains packages/ui/src/styles/scales.css "--mandor-motion-scale-overlay: 0.96"
+contains packages/ui/src/styles/scales.css "--mandor-duration-exit: 150ms"
 contains packages/ui/src/components/dialog/dialog-frame.ts "rounded-overlay"
 absent packages/ui/src/styles/runtime.css "translateY(6px) scale(0.98)"
 ```
@@ -219,7 +231,8 @@ rutas tocadas. En `tools/ui-lab`: disparar cinco avisos, pasar el puntero, recor
 ### [ ] Fase 5: Menús, capas y paleta sólidos
 
 **Objetivo.** Todo menú, capa, sugerencia, select, tooltip y la paleta dibuja un borde fino,
-radio de panel y filas de control con selección gris.
+radio de panel y filas de control con selección gris; los menús, las capas, el select, el
+tooltip y la paleta entran y salen con un fundido corto.
 
 ```check
 no-match packages/ui/src/components/menu /border-border-strong/
@@ -228,6 +241,9 @@ no-match packages/ui/src/components/menu /h-row-xs/
 absent packages/ui/src/components/tooltip/Tooltip.tsx "border-border-strong"
 absent packages/ui/src/components/input/SuggestList.tsx "border-border-strong"
 matches packages/ui/src/components/menu/MenuItem.tsx /data-highlighted:bg-surface-selected/
+contains packages/ui/src/styles/runtime.css "@keyframes mandor-layer-in"
+contains packages/ui/src/styles/runtime.css "@keyframes mandor-layer-out"
+matches packages/shell/src/components/command-palette/CommandPalette.tsx /data-state/
 ```
 
 **Cambios.**
@@ -239,6 +255,12 @@ matches packages/ui/src/components/menu/MenuItem.tsx /data-highlighted:bg-surfac
 - `MenuItem.tsx`, `ContextMenuItem.tsx`, las opciones de `Select` y de `SuggestList` y las filas
   de la paleta: `h-control text-sm` y `data-highlighted:bg-surface-selected`.
 - Tests de menú y select que miran alturas o clases, si los hay.
+- `runtime.css`: `@keyframes mandor-layer-in` y `mandor-layer-out` según las decisiones, sobre
+  `data-state` de cada capa (`menu-content`, `context-menu-content`, `hover-card-panel`,
+  `select-content`, y los `data-part` que ganan `PopoverPanel` y `Tooltip`), con
+  `transform-origin` en la variable de origen de Radix de cada una.
+- `CommandPalette.tsx`: escribe `data-state` y, al cerrarse, se desmonta cuando termina su
+  salida; `Escape` y el clic fuera siguen cerrándola en el acto para el teclado.
 
 **No hacer.** Cambiar contenidos, atajos u orden de ningún menú.
 
@@ -274,8 +296,39 @@ matches packages/ui/tests/components/table/Table.test.tsx /reveal="always"/
 **No hacer.** Tocar las tablas de params, headers o variables, ni el hover de lectura.
 
 **Cierre.** `npm run ci:test -- packages/ui/tests/components/table packages/repos/tests packages/workspace/tests`;
-`npm run ci:verify` al cerrar el plan. Con las dos apps: Orígenes y Workspaces con sus botones
+Con las dos apps: Orígenes y Workspaces con sus botones
 de fila a la vista; los headers de un request, ocultos hasta pasar el puntero.
+
+### [ ] Fase 7: Animaciones como preferencia
+
+**Objetivo.** En Ajustes › Temas de las dos apps, «Animaciones: Sistema · Completas · Reducidas»
+decide si la interfaz se mueve, sin depender de lo que pida el sistema.
+
+```check
+contains packages/schema/src/preference/preference-definitions.ts "appearance.motion"
+matches packages/prefs/src/preferences-application.tsx /dataset\['motion'\]/
+contains packages/ui/src/styles/scales.css ":root[data-motion='reduced']"
+contains packages/i18n/src/lang/es/preferences.json "Animaciones"
+```
+
+**Cambios.**
+
+- `preference-definitions.ts`: `appearance.motion`, `select`, `['system', 'full', 'reduced']`,
+  por defecto `system`, sección `themes`.
+- `preferences-application.tsx`: escribe `data-motion` en la raíz antes del primer pintado,
+  como la densidad; `system` quita el atributo.
+- `scales.css`: `:root[data-motion='reduced']` lleva desplazamiento y escalas a neutro; el
+  bloque `prefers-reduced-motion` se aplica a `:root:not([data-motion='full'])`.
+- `ThemesSection.tsx`: grupo de movimiento con su `SettingRow` y `Select`. Textos en
+  `src/lang/` (es y en) y `npm run i18n`.
+- Tests: la definición, el atributo en la raíz para los tres valores y la fila en Ajustes.
+
+**No hacer.** Tocar duraciones o curvas, ni animar algo que hoy no se anima.
+
+**Cierre.** `npm run ci:test -- packages/schema/tests/preference packages/prefs/tests`;
+`npm run ci:check` con las rutas tocadas; `npm run ci:verify` al cerrar el plan. Con las dos
+apps: con el sistema sin animaciones, «Completas» hace crecer los menús y el diálogo; con
+«Reducidas», solo funden.
 
 ## Deudas
 
