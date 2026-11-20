@@ -191,7 +191,7 @@ contains packages/repos/src/OriginsTabKind.tsx "<Card>"
 contains packages/workspace/src/WorkspacesTabKind.tsx "<Card>"
 contains packages/collections/src/components/tab/ItemTab.tsx "<Card>"
 contains packages/docs/src/DocTabKind.tsx "<Card>"
-contains apps/async/src/renderer/features/connections/ConnectionTabKind.tsx "<Card>"
+contains apps/async/src/renderer/features/connections/components/panel/ConnectionPanel.tsx "<Card"
 contains apps/sync/src/renderer/features/history/HistoryTabKinds.tsx "<Card>"
 ```
 

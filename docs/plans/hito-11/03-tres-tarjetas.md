@@ -131,7 +131,7 @@ matches packages/i18n/src/lang/es/requests.json /"responseLabel": "Response"/
 suelto, un ejemplo y una entrada del historial muestran las tres tarjetas; arrastrar el asa del
 par mueve solo el par.
 
-### [ ] Fase 2: Realtime en tres tarjetas
+### [x] Fase 2: Realtime en tres tarjetas
 
 **Objetivo.** Una pestaña de conexión muestra la conexión en una tarjeta arriba y el mensaje y la
 actividad en dos tarjetas abajo.
