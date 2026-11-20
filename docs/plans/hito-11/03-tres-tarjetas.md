@@ -195,7 +195,7 @@ matches tools/tests/design/design-rules.test.mjs /box-shadow: 0 0 0/
 lateral, las filas del árbol, las pestañas internas de un request, el asa del split y los botones
 de ventana; ningún contorno sale de su caja.
 
-### [ ] Fase 4: Densidad compacta como ajuste
+### [x] Fase 4: Densidad compacta como ajuste
 
 **Objetivo.** En Ajustes → Temas, «Densidad» elige entre cómoda y compacta; compacta pega las
 tarjetas sin hueco ni radio y vuelve a separar las zonas con líneas.
@@ -217,7 +217,9 @@ contains packages/ui/src/styles/scales.css "[data-density='compact']"
 - `preferences-application.tsx`: un `useLayoutEffect` como el del tema escribe
   `root.dataset['density']` y lo quita al desmontar.
 - `scales.css`: un bloque `:root[data-density='compact']` con `--mandor-gap-gutter: 0px`,
-  `--mandor-radius-panel: 0px`, `--mandor-height-strip: 32px` y `--mandor-height-grid-tab: 30px`.
+  `--mandor-radius-panel: 0px`, `--mandor-height-strip: 32px`, `--mandor-height-grid-tab: 30px` y,
+  como el canvas, `--mandor-height-row: 22px`. La lista virtual lee la fila de la ventana
+  (`useRowHeight`) y no del valor generado, que es el de la cómoda.
   `grid.css`: con compacta, la pestaña sin radio y la tira con su línea de abajo; `runtime.css`:
   dos `Card` contiguas se separan con `border-subtle`. Es lo único que la compacta añade.
 - `ThemePreview.tsx` no cambia: la vista previa enseña el tema, no la densidad.

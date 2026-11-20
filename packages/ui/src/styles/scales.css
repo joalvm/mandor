@@ -105,6 +105,18 @@
     --mandor-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
 }
 
+/* The compact density packs the panels together: no gutter between them and no rounding, a
+   shorter strip and shorter lines. What parted the panels comes back as lines (runtime.css and
+   the grid of the shell). The generated values stay the comfortable ones: they read the first
+   declaration of each token. */
+:root[data-density='compact'] {
+    --mandor-gap-gutter: 0px;
+    --mandor-radius-panel: 0px;
+    --mandor-height-grid-tab: 30px;
+    --mandor-height-strip: 32px;
+    --mandor-height-row: 22px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     :root {
         --mandor-duration-fast: 0ms;

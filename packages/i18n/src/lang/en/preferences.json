@@ -1,4 +1,6 @@
 {
+    "appearance-density-comfortable": "Comfortable",
+    "appearance-density-compact": "Compact",
     "appearance-language-en": "English",
     "appearance-language-es": "Spanish",
     "appearance-themeMode-manual": "Hold one theme",
@@ -6,6 +8,9 @@
     "close": "Close settings",
     "inheritedFrom": "Default from",
     "inheritedPlace": "Settings",
+    "density": "Density",
+    "densityGroup": "Spacing",
+    "densityHelp": "Compact packs the panels together and takes away the gap between them.",
     "language": "Language",
     "languageHelp": "Sets the language Mandor uses.",
     "section-shortcuts": "Shortcuts",

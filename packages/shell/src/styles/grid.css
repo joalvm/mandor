@@ -211,3 +211,39 @@
     line-height: var(--mandor-text-3xs-line);
     letter-spacing: var(--mandor-text-3xs-tracking);
 }
+
+/**
+ * Compact, the strip is a band of the frame closed by a line, and its tabs are square, touch one
+ * another and fill the band. Two groups side by side have no gutter left, so a line parts them.
+ */
+:root[data-density='compact'] .dockview-theme-mandor .dv-tabs-and-actions-container {
+    box-sizing: border-box;
+    border-block-end: 1px solid var(--border-subtle);
+}
+
+:root[data-density='compact'] .dockview-theme-mandor .dv-tab {
+    align-self: stretch;
+    height: auto;
+    margin-block: 0;
+    border-radius: 0;
+}
+
+:root[data-density='compact'] .dockview-theme-mandor .dv-tab + .dv-tab {
+    margin-inline-start: 0;
+}
+
+:root[data-density='compact']
+    .dockview-theme-mandor
+    .dv-split-view-container.dv-horizontal
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    border-inline-start: 1px solid var(--border-subtle);
+}
+
+:root[data-density='compact']
+    .dockview-theme-mandor
+    .dv-split-view-container.dv-vertical
+    > .dv-view-container
+    > .dv-view:not(:first-child) {
+    border-block-start: 1px solid var(--border-subtle);
+}

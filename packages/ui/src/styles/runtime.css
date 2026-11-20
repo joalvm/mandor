@@ -295,6 +295,19 @@ textarea,
     background-color: transparent;
 }
 
+/* Compact, the gutter is gone and two cards touch: a line parts them instead, the one of the
+   handle between two halves, and a border over a card that stands under something else (the
+   console under the grid). The card of the destination opens its tab and needs none. */
+:root[data-density='compact']
+    [data-gap='gutter']
+    > [data-part='split-handle']:not(:hover, :active)::before {
+    background-color: var(--color-border-subtle);
+}
+
+:root[data-density='compact'] * + [data-part='card'] {
+    border-block-start: 1px solid var(--color-border-subtle);
+}
+
 /**
  * The brand colors of the known hosts: the one closed table the system accepts from outside
  * its tokens. A host the table does not know, and the local origin, draw in secondary text.

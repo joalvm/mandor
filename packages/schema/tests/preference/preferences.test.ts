@@ -61,6 +61,16 @@ describe('the preference schema', () => {
                 values: ['light', 'light-contrast', 'dark', 'dark-contrast'],
             },
             {
+                defaultValue: 'comfortable',
+                helpKey: 'preferences:densityHelp',
+                key: 'appearance.density',
+                labelKey: 'preferences:density',
+                scope: 'app',
+                section: 'themes',
+                type: 'select',
+                values: ['comfortable', 'compact'],
+            },
+            {
                 defaultValue: 'auto',
                 helpKey: 'preferences:updatesModeHelp',
                 key: 'updates.mode',
@@ -100,6 +110,7 @@ describe('the preference schema', () => {
             'appearance.themeDay': 'light',
             'appearance.themeNight': 'dark',
             'appearance.themeManual': 'dark',
+            'appearance.density': 'comfortable',
             'updates.mode': 'auto',
             'updates.channel': 'stable',
         });
@@ -116,6 +127,7 @@ describe('the preference schema', () => {
             'appearance.themeDay': 'light',
             'appearance.themeNight': 'dark',
             'appearance.themeManual': 'light',
+            'appearance.density': 'comfortable',
             'updates.mode': 'auto',
             'updates.channel': 'stable',
         });

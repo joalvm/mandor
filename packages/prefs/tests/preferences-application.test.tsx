@@ -41,6 +41,7 @@ afterEach(() => {
 
     setTextZoom(0);
     document.documentElement.removeAttribute('data-theme');
+    document.documentElement.removeAttribute('data-density');
     document.documentElement.removeAttribute('lang');
     window.localStorage.clear();
     vi.restoreAllMocks();
@@ -62,6 +63,25 @@ describe('preferences application', () => {
         await waitFor(() => {
             expect(document.documentElement.dataset['theme']).toBe('dark');
         });
+    });
+
+    it('names the density on the window and takes it away when it closes', () => {
+        window.localStorage.setItem(
+            'mandor.preferences',
+            JSON.stringify({ 'appearance.density': 'compact' }),
+        );
+
+        const { unmount } = render(
+            <PreferencesProvider>
+                <PreferencesApplication />
+            </PreferencesProvider>,
+        );
+
+        expect(document.documentElement.dataset['density']).toBe('compact');
+
+        unmount();
+
+        expect(document.documentElement.dataset['density']).toBeUndefined();
     });
 
     /**

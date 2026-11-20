@@ -53,6 +53,16 @@ export const PREFERENCE_DEFINITIONS = [
         values: THEME_IDS,
     },
     {
+        defaultValue: 'comfortable',
+        helpKey: 'preferences:densityHelp',
+        key: 'appearance.density',
+        labelKey: 'preferences:density',
+        scope: 'app',
+        section: 'themes',
+        type: 'select',
+        values: ['comfortable', 'compact'],
+    },
+    {
         defaultValue: 'auto',
         helpKey: 'preferences:updatesModeHelp',
         key: 'updates.mode',

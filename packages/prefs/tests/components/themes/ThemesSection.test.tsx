@@ -57,6 +57,19 @@ describe('the themes of the window', () => {
         expect(screen.queryByRole('combobox', { name: 'Night theme' })).toBeNull();
     });
 
+    it('lets the reader pack the window tighter and writes the density chosen', () => {
+        renderSection();
+
+        const density = screen.getByRole('combobox', { name: 'Density' });
+
+        expect(density).toHaveTextContent('Comfortable');
+
+        fireEvent.keyDown(density, { key: 'ArrowDown' });
+        fireEvent.click(screen.getByRole('option', { name: 'Compact' }));
+
+        expect(stored()).toEqual({ 'appearance.density': 'compact' });
+    });
+
     it('offers the night card the dark themes and writes the one chosen', async () => {
         renderSection();
         fireEvent.keyDown(screen.getByRole('combobox', { name: 'Night theme' }), {

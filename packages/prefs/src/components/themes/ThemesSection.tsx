@@ -11,6 +11,8 @@ const CARDS: Record<ThemeMode, readonly ThemeSlot[]> = {
     system: ['day', 'night'],
 };
 
+const DENSITIES = ['comfortable', 'compact'] as const;
+
 /**
  * The themes of the window: whether the system or the reader picks, and the theme for each place
  * that is picked for, every one with its miniature. A theme changes colour and contrast and
@@ -49,6 +51,40 @@ export function ThemesSection() {
                     <ThemeCard key={slot} slot={slot} />
                 ))}
             </div>
+            <DensityGroup />
         </div>
+    );
+}
+
+/**
+ * How tight the window packs its panels. It sits apart from the themes: a theme only changes
+ * colour, and the density is what moves the panels.
+ */
+function DensityGroup() {
+    const translate = useTranslator();
+    const preferences = usePreferences();
+    const density =
+        DENSITIES.find((each) => each === preferences.values['appearance.density']) ??
+        'comfortable';
+
+    return (
+        <SettingsGroup title={translate('preferences:densityGroup')}>
+            <SettingRow
+                help={translate('preferences:densityHelp')}
+                label={translate('preferences:density')}
+            >
+                <Select
+                    label={translate('preferences:density')}
+                    onValueChange={(next) => {
+                        preferences.writePreference('appearance.density', next);
+                    }}
+                    options={DENSITIES.map((each) => ({
+                        label: translate(`preferences:appearance-density-${each}`),
+                        value: each,
+                    }))}
+                    value={density}
+                />
+            </SettingRow>
+        </SettingsGroup>
     );
 }
