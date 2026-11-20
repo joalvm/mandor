@@ -16,17 +16,27 @@ const RADII: readonly { note?: string; token: string; utility?: string }[] = [
     {
         token: '--mandor-radius-md',
         utility: 'rounded-md',
-        note: '4 px — el control: botón, campo, celda de esta tabla',
+        note: '3 px — el control: botón, campo, celda de esta tabla',
     },
     {
         token: '--mandor-radius-lg',
         utility: 'rounded-lg',
-        note: '6 px — lo que flota: tooltip, hover del editor',
+        note: '4 px — el tooltip y el hover del editor',
     },
     {
         token: '--mandor-radius-xl',
         utility: 'rounded-xl',
-        note: '12 px — la ventana del lienzo de una demo',
+        note: '6 px — la ventana del lienzo de una demo',
+    },
+    {
+        token: '--mandor-radius-panel',
+        utility: 'rounded-panel',
+        note: '10 px — la tarjeta, el menú y el popover',
+    },
+    {
+        token: '--mandor-radius-overlay',
+        utility: 'rounded-overlay',
+        note: '12 px — lo que flota sobre la ventana: diálogo y aviso',
     },
     {
         token: '--mandor-radius-full',
@@ -38,7 +48,7 @@ const RADII: readonly { note?: string; token: string; utility?: string }[] = [
 export function RadiosPage() {
     return (
         <DocPage
-            lead="Seis radios, y cada uno dice cuán cerca del borde está la pieza: del control que
+            lead="Ocho radios, y cada uno dice cuán cerca del borde está la pieza: del control que
                 se funde con su superficie al punto que solo puede ser redondo."
             title="Radios"
         >

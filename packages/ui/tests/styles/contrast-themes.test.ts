@@ -15,8 +15,6 @@ const SURFACES = [
     'control-hover',
     'control-active',
     'selected',
-    'dialog-nav',
-    'dialog-nav-active',
 ] as const;
 const BASE_SURFACES = ['app', 'panel', 'frame', 'card', 'sunken', 'raised', 'dialog'] as const;
 const LINES = ['subtle', 'chrome', 'strong', 'hover', 'control', 'control-hover', 'error'] as const;

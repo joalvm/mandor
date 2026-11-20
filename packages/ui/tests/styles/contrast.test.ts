@@ -15,8 +15,6 @@ const SURFACES = [
     'control-hover',
     'control-active',
     'selected',
-    'dialog-nav',
-    'dialog-nav-active',
 ] as const;
 const BASE_SURFACES = ['app', 'panel', 'frame', 'card', 'sunken', 'raised', 'dialog'] as const;
 const SUPPORTING_TEXTS = ['secondary', 'accent', 'success', 'warning', 'error', 'info'] as const;
@@ -94,23 +92,16 @@ describe.each(['teal', 'orange'] as const)('the semantic theme contrast, %s acce
     });
 
     /**
-     * The column of sections of a dialog is a layer of its own, and so is the fill of the section
-     * open. Two contiguous layers with one value is the flat dark the design system exists to
-     * prevent: the column would read as the dialog itself, and a section would open without
-     * anything changing.
+     * A dialog is one surface: its column of sections shares the ground of the rest, and the
+     * section open wears the grey of a selection in the window. That grey has to stand off the
+     * dialog, or a section would open without anything changing.
      */
-    it.each(MODES)(
-        'keeps the column of sections a step apart from its dialog in %s mode',
-        async (mode) => {
-            const theme = await themeOf(mode, accent);
-            const nav = theme['surface-dialog-nav'];
-            const active = theme['surface-dialog-nav-active'];
+    it.each(MODES)('marks the open section of a dialog apart from it in %s mode', async (mode) => {
+        const theme = await themeOf(mode, accent);
 
-            expect(nav).toBeDefined();
-            expect(nav).not.toBe(theme['surface-dialog']);
-            expect(active).not.toBe(nav);
-        },
-    );
+        expect(theme['surface-dialog-nav']).toBeUndefined();
+        expect(theme['surface-selected']).not.toBe(theme['surface-dialog']);
+    });
 
     /**
      * The window is a frame with cards on it, and what tells a card from the frame is its tone:

@@ -9,8 +9,6 @@
     --surface-sunken: var(--primitive-neutral-light-1);
     --surface-raised: var(--primitive-neutral-light-1);
     --surface-dialog: var(--primitive-neutral-light-1);
-    --surface-dialog-nav: var(--primitive-neutral-light-2);
-    --surface-dialog-nav-active: var(--primitive-neutral-light-5);
     --surface-control: var(--primitive-neutral-light-3);
     --surface-control-hover: var(--primitive-neutral-light-4);
     --surface-control-active: var(--primitive-neutral-light-5);

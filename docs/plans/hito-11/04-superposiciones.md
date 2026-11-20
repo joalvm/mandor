@@ -102,7 +102,7 @@ colección; los eventos de Realtime no.
 
 Ningún paquete, capa ni dependencia nueva.
 
-### [ ] Fase 1: El diálogo es una sola superficie
+### [x] Fase 1: El diálogo es una sola superficie
 
 **Objetivo.** Un diálogo con navegación (Ajustes, Importar) se lee como una pieza: un color, sin
 líneas internas, radio 12, relleno 24, controles de 32 y una entrada que crece desde el centro.

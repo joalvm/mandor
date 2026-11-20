@@ -34,6 +34,21 @@ describe('the frame every modal of the window is drawn in', () => {
         expectFrame(screen.getByRole('dialog', { name: 'Entornos' }), 'Entornos');
     });
 
+    it('rounds the surface like everything that floats over the window', () => {
+        render(
+            <TooltipProvider>
+                <Dialog closeLabel="Cerrar" onOpenChange={vi.fn()} open title="Entornos">
+                    <DialogBody>Contenido</DialogBody>
+                </Dialog>
+            </TooltipProvider>,
+        );
+
+        const surface = screen.getByRole('dialog', { name: 'Entornos' });
+
+        expect(surface).toHaveClass('rounded-overlay', 'bg-surface-dialog');
+        expect(surface).not.toHaveClass('rounded-xl');
+    });
+
     it('cuts a confirmation from the same frame, with the same three bands', () => {
         render(
             <ConfirmDialog

@@ -32,8 +32,6 @@
     --color-surface-sunken: var(--surface-sunken);
     --color-surface-raised: var(--surface-raised);
     --color-surface-dialog: var(--surface-dialog);
-    --color-surface-dialog-nav: var(--surface-dialog-nav);
-    --color-surface-dialog-nav-active: var(--surface-dialog-nav-active);
     --color-surface-control: var(--surface-control);
     --color-surface-control-hover: var(--surface-control-hover);
     --color-surface-control-active: var(--surface-control-active);
@@ -170,6 +168,7 @@
     --radius-lg: var(--mandor-radius-lg);
     --radius-xl: var(--mandor-radius-xl);
     --radius-panel: var(--mandor-radius-panel);
+    --radius-overlay: var(--mandor-radius-overlay);
     --radius-full: var(--mandor-radius-full);
     --shadow-none: var(--mandor-shadow-none);
     --shadow-popover: var(--mandor-shadow-popover);

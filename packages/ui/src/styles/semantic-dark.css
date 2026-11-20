@@ -8,8 +8,6 @@
         --surface-sunken: var(--primitive-neutral-dark-1);
         --surface-raised: var(--primitive-neutral-dark-3);
         --surface-dialog: var(--primitive-neutral-dark-3);
-        --surface-dialog-nav: var(--primitive-neutral-dark-2);
-        --surface-dialog-nav-active: var(--primitive-neutral-dark-5);
         --surface-control: var(--primitive-neutral-dark-3);
         --surface-control-hover: var(--primitive-neutral-dark-4);
         --surface-control-active: var(--primitive-neutral-dark-5);
@@ -86,8 +84,6 @@
     --surface-sunken: var(--primitive-neutral-dark-1);
     --surface-raised: var(--primitive-neutral-dark-3);
     --surface-dialog: var(--primitive-neutral-dark-3);
-    --surface-dialog-nav: var(--primitive-neutral-dark-2);
-    --surface-dialog-nav-active: var(--primitive-neutral-dark-5);
     --surface-control: var(--primitive-neutral-dark-3);
     --surface-control-hover: var(--primitive-neutral-dark-4);
     --surface-control-active: var(--primitive-neutral-dark-5);

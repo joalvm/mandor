@@ -712,6 +712,7 @@ textarea,
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     width: var(--mandor-width-dialog-form);
+    --mandor-height-control: var(--mandor-height-control-dialog);
 }
 
 [data-part='dialog'][role='alertdialog'] {
@@ -791,8 +792,8 @@ textarea,
 }
 
 /**
- * One authored moment: the scrim settles while the surface rises the last few pixels into place,
- * and on the way out both let go faster than they came. Durations and travel are tokens of the
+ * One authored moment: the scrim settles while the surface grows from its centre into place,
+ * and on the way out both let go faster than they came. Durations and growth are tokens of the
  * scale, so a system that asks for less motion gets a dialog that only fades.
  */
 @keyframes mandor-dialog-scrim-in {
@@ -810,14 +811,14 @@ textarea,
 @keyframes mandor-dialog-in {
     from {
         opacity: 0;
-        transform: translateY(var(--mandor-motion-shift)) scale(var(--mandor-motion-scale));
+        transform: scale(var(--mandor-motion-scale-overlay));
     }
 }
 
 @keyframes mandor-dialog-out {
     to {
         opacity: 0;
-        transform: scale(var(--mandor-motion-scale));
+        transform: scale(var(--mandor-motion-scale-overlay));
     }
 }
 
@@ -826,7 +827,7 @@ textarea,
 }
 
 [data-part='dialog-scrim'][data-state='closed'] {
-    animation: mandor-dialog-scrim-out var(--mandor-duration-base) var(--mandor-ease-in);
+    animation: mandor-dialog-scrim-out var(--mandor-duration-exit) var(--mandor-ease-in);
 }
 
 [data-part='dialog'][data-state='open'] {
@@ -834,5 +835,5 @@ textarea,
 }
 
 [data-part='dialog'][data-state='closed'] {
-    animation: mandor-dialog-out var(--mandor-duration-base) var(--mandor-ease-in);
+    animation: mandor-dialog-out var(--mandor-duration-exit) var(--mandor-ease-in);
 }

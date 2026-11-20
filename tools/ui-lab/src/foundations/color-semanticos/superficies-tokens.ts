@@ -34,12 +34,6 @@ export const SURFACES: readonly TokenRow[] = [
     },
     { token: '--surface-dialog', utility: 'bg-surface-dialog', note: 'el cuerpo de un diálogo' },
     {
-        token: '--surface-dialog-nav',
-        utility: 'bg-surface-dialog-nav',
-        note: 'el lateral de un diálogo',
-    },
-    { token: '--surface-dialog-nav-active', utility: 'bg-surface-dialog-nav-active' },
-    {
         token: '--surface-control',
         utility: 'bg-surface-control',
         note: 'el control en reposo: cajas, toggles, chips',

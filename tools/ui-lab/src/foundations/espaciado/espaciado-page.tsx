@@ -47,7 +47,7 @@ const PADS: readonly { note?: string; token: string; utility?: string }[] = [
     {
         token: '--mandor-pad-inline-dialog',
         utility: 'p-pad-dialog',
-        note: '16 px — dentro de un diálogo',
+        note: '24 px — dentro de un diálogo',
     },
     {
         token: '--mandor-indent-tree',
