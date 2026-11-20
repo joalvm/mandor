@@ -4,8 +4,19 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import type { ActivityEntry } from '../../../src/renderer/activity/activity-entry.js';
 import type { TimelineNarrowing } from '../../../src/renderer/activity/lib/timeline-narrowing.js';
 import { ActivityHead } from '../../../src/renderer/activity/components/panel/ActivityHead.js';
+
+const ONE_ENTRY: ActivityEntry[] = [
+    {
+        at: 1,
+        bytes: 4,
+        detail: { at: 1, data: 'hola', direction: 'in', environmentId: null },
+        id: 'one',
+        kind: 'connection-message',
+    },
+];
 
 const ALL_SIDES: TimelineNarrowing = {
     query: '',
@@ -23,7 +34,7 @@ function Wrapper({ children }: { children: ReactNode }) {
 
 function draw(
     narrowing: TimelineNarrowing = ALL_SIDES,
-    exportable = true,
+    entries: ActivityEntry[] = ONE_ENTRY,
 ): {
     onClear: () => void;
     onExport: () => void;
@@ -36,7 +47,7 @@ function draw(
 
     const head = (
         <ActivityHead
-            exportable={exportable}
+            entries={entries}
             narrowing={narrowing}
             onClear={onClear}
             onNarrowingChange={onNarrowingChange}
@@ -53,7 +64,7 @@ function draw(
             view.rerender(
                 <Wrapper>
                     <ActivityHead
-                        exportable={exportable}
+                        entries={entries}
                         narrowing={next}
                         onClear={onClear}
                         onNarrowingChange={onNarrowingChange}
@@ -169,7 +180,7 @@ describe('the head of the timeline', () => {
     });
 
     it('keeps the two actions on what the timeline holds idle while there is nothing to act on', () => {
-        draw(ALL_SIDES, false);
+        draw(ALL_SIDES, []);
 
         expect(screen.getByRole('button', { name: 'Exportar' })).toBeDisabled();
         expect(screen.getByRole('button', { name: 'Limpiar' })).toBeDisabled();
@@ -185,11 +196,21 @@ describe('the head of the timeline', () => {
         expect(onClear).toHaveBeenCalledOnce();
     });
 
+    it('names the timeline in sentence case, with what it holds counted beside', () => {
+        draw();
+
+        const title = document.querySelector('[data-part="activity-head-title"]');
+
+        expect(title).toHaveTextContent('Actividad');
+        expect(title).not.toHaveClass('uppercase');
+        expect(document.querySelector('[data-part="activity-tally"]')).toHaveTextContent('↓1·4 B');
+    });
+
     it('puts what its owner gives it first among the actions', () => {
         render(
             <Wrapper>
                 <ActivityHead
-                    exportable
+                    entries={ONE_ENTRY}
                     narrowing={ALL_SIDES}
                     onClear={vi.fn()}
                     onNarrowingChange={vi.fn()}

@@ -18,7 +18,8 @@ vi.mock('@mandor/repos', async () => {
 /** The header of every section, in the order the sidebar drew them. */
 function sectionTitles(): (string | undefined)[] {
     return allByPart('collapsible').map(
-        (section) => section.querySelector('button')?.textContent ?? undefined,
+        (section) =>
+            section.querySelector('[data-part="collapsible-title"]')?.textContent ?? undefined,
     );
 }
 

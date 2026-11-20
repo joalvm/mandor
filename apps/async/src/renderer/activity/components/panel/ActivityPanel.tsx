@@ -90,7 +90,7 @@ export function ActivityPanel({
     return (
         <div className="flex h-full min-h-0 min-w-0 flex-col" data-part="activity-panel">
             <ActivityHead
-                exportable={entries.length > 0}
+                entries={entries}
                 narrowing={narrowing}
                 onClear={onClear}
                 onNarrowingChange={(next) => {
@@ -113,7 +113,7 @@ export function ActivityPanel({
                 selectedId={selectedId}
                 split={split}
             />
-            <ActivityFoot entries={entries} hidden={hidden} onShowAll={onShowAll} />
+            <ActivityFoot hidden={hidden} onShowAll={onShowAll} />
         </div>
     );
 }

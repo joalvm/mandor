@@ -42,6 +42,7 @@ describe('the section of the docs', () => {
             'true',
         );
         expect(await screen.findByRole('option', { name: 'readme' })).toBeVisible();
+        expect(document.querySelector('[data-part="collapsible-count"]')).toHaveTextContent('1');
 
         view.rerender(
             <>

@@ -22,8 +22,8 @@ type SidebarSectionsProps = {
  *
  * Nothing is resized by hand: a section is as tall as what it holds, up to a cap past which its
  * body scrolls, and the one that fills takes whatever height the others leave, even when it
- * holds a single row. A hairline sets each section apart from the one above it. The header and
- * the body are written here, one after the other, so the section reads as the two bands it is.
+ * holds a single row. No line sets one section apart from the next: its header does. The header
+ * and the body are written here, one after the other, so the section reads as the two bands it is.
  * What a section puts beside its title and what it puts under it are both the section's own:
  * they arrive from the registry, which is how code the shell cannot import gets to draw inside
  * it: each feature declares its `SidebarSection` in the tree.
@@ -40,7 +40,7 @@ export function SidebarSections({ collapsed, onCollapsedChange }: SidebarSection
 
                 return (
                     <div
-                        className="flex min-h-0 flex-col border-t border-border-subtle first:border-t-0"
+                        className="flex min-h-0 flex-col"
                         data-fills={String(open && section.fills === true)}
                         data-part="sidebar-slot"
                         key={section.id}
@@ -56,7 +56,10 @@ export function SidebarSections({ collapsed, onCollapsedChange }: SidebarSection
                                 }}
                                 open={open}
                             >
-                                <CollapsibleHeader title={translate(section.title)}>
+                                <CollapsibleHeader
+                                    count={section.count}
+                                    title={translate(section.title)}
+                                >
                                     {section.actions}
                                 </CollapsibleHeader>
                                 <CollapsibleBody>

@@ -310,7 +310,7 @@ matches packages/ui/src/components/input/AddressBar.tsx /h-address/
 **Cierre.** `ci:test` de los paquetes tocados; las dos apps en claro, oscuro y compacta contra el
 canvas `Main` y `Realtime`.
 
-### [ ] Fase 7: Cabeceras en tipo frase con conteo
+### [x] Fase 7: Cabeceras en tipo frase con conteo
 
 **Objetivo.** Las cabeceras de sección del lateral y la de la actividad se escriben en tipo
 frase, 12 px y 600, con su conteo en gris al lado, sin mayúsculas ni línea entre secciones.

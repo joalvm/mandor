@@ -16,10 +16,12 @@ import {
     type TimelineNarrowing,
     type TimelineSides,
 } from '../../lib/timeline-narrowing.js';
+import type { ActivityEntry } from '../../activity-entry.js';
+import { ActivityTally } from './ActivityTally.js';
 
 type ActivityHeadProps = PropsWithChildren<{
-    /** False while the timeline holds nothing: there would be nothing to act on. */
-    exportable: boolean;
+    /** What the timeline holds: counted beside the title, and nothing to act on while empty. */
+    entries: readonly ActivityEntry[];
     narrowing: TimelineNarrowing;
     /** Clears what the timeline holds, where the entries come from. */
     onClear: () => void;
@@ -29,14 +31,14 @@ type ActivityHeadProps = PropsWithChildren<{
 }>;
 
 /**
- * The head of the timeline: what it draws, written small — a filter that hides whole sides,
+ * The head of the timeline: its title with what the connection moved, then what it draws — a filter that hides whole sides,
  * keeps only what breaks its schema, and the line the search asks for, and the two actions on
  * what the timeline holds, after whatever its owner puts first. The state of the head is the panel's: this reads it and says what
  * changed, and the timeline draws the answer.
  */
 export function ActivityHead({
     children,
-    exportable,
+    entries,
     narrowing,
     onClear,
     onNarrowingChange,
@@ -44,6 +46,7 @@ export function ActivityHead({
 }: ActivityHeadProps) {
     const messages = useMessages('connections');
     const sides = narrowing.sides;
+    const exportable = entries.length > 0;
     const nothingHidden =
         narrowing.query.trim() === '' &&
         !narrowing.schemaOnly &&
@@ -66,11 +69,14 @@ export function ActivityHead({
             className="flex h-header shrink-0 items-center justify-between gap-gap-control px-pad-panel"
             data-part="activity-head"
         >
-            <span
-                className="shrink-0 text-xs font-semibold tracking-wide text-text-secondary uppercase"
-                data-part="activity-head-title"
-            >
-                {messages('activityLog')}
+            <span className="flex min-w-0 items-center gap-gap-icon-text">
+                <span
+                    className="shrink-0 text-xs font-semibold text-text-primary"
+                    data-part="activity-head-title"
+                >
+                    {messages('activityLog')}
+                </span>
+                <ActivityTally entries={entries} />
             </span>
             <div className="flex items-center gap-gap-control" data-part="activity-head-actions">
                 {children}

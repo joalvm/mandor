@@ -30,9 +30,11 @@ describe('a foldable section', () => {
 
         const trigger = screen.getByRole('button', { name: 'Conexiones' });
 
-        // The header reads as a heading: in capitals, smaller and a weight heavier than the rows,
-        // with the same ink — the hierarchy is case, size and weight, never colour.
-        expect(trigger).toHaveClass('text-2xs', 'font-semibold', 'uppercase', 'text-text-primary');
+        // The header reads as a heading in sentence case: a weight heavier than the rows, with the
+        // same ink — the hierarchy is weight, never capitals or colour.
+        expect(trigger).toHaveClass('text-xs', 'font-semibold', 'text-text-primary');
+        expect(trigger).not.toHaveClass('uppercase');
+        expect(byPart('collapsible-header')).toHaveClass('h-control');
         expect(trigger).toHaveAttribute('aria-expanded', 'true');
         expect(screen.getByText('gateway')).toBeVisible();
 
@@ -44,6 +46,30 @@ describe('a foldable section', () => {
         fireEvent.click(trigger);
 
         expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    /** The count is read in passing; the list under it is what a screen reader counts. */
+    it('counts what the region holds after its title, in the lighter ink, and only when told', () => {
+        const { rerender } = render(
+            <Collapsible onOpenChange={vi.fn()} open>
+                <CollapsibleHeader count={3} title="Conexiones" />
+            </Collapsible>,
+        );
+
+        const count = byPart('collapsible-count');
+
+        expect(count).toHaveTextContent('3');
+        expect(count).toHaveClass('text-text-tertiary');
+        expect(count).toHaveAttribute('aria-hidden', 'true');
+        expect(screen.getByRole('button', { name: 'Conexiones' })).toContainElement(count);
+
+        rerender(
+            <Collapsible onOpenChange={vi.fn()} open>
+                <CollapsibleHeader title="Conexiones" />
+            </Collapsible>,
+        );
+
+        expect(document.querySelector('[data-part="collapsible-count"]')).toBeNull();
     });
 
     it('hides the body of a folded section and keeps announcing its header', () => {
