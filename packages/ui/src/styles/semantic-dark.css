@@ -59,6 +59,7 @@
         --border-hover: var(--primitive-neutral-dark-8);
         --border-control: var(--primitive-neutral-dark-10);
         --border-control-hover: var(--primitive-neutral-dark-11);
+        --border-handle: var(--primitive-handle);
         --border-error: var(--primitive-red-dark-9);
         --solid-accent: var(--primitive-accent-dark-9);
         --solid-accent-hover: var(--primitive-accent-dark-10);
@@ -136,6 +137,7 @@
     --border-hover: var(--primitive-neutral-dark-8);
     --border-control: var(--primitive-neutral-dark-10);
     --border-control-hover: var(--primitive-neutral-dark-11);
+    --border-handle: var(--primitive-handle);
     --border-error: var(--primitive-red-dark-9);
     --solid-accent: var(--primitive-accent-dark-9);
     --solid-accent-hover: var(--primitive-accent-dark-10);

@@ -68,6 +68,7 @@ export const scaleTokenValues = {
     'mandor-width-command-center': '440px',
     'mandor-width-tab-min': '96px',
     'mandor-width-tab-fade': '20px',
+    'mandor-width-handle': '2px',
     'mandor-pad-toggle': '3px',
     'mandor-space-base': '4px',
     'mandor-pad-inline-control': '8px',
@@ -102,6 +103,9 @@ export const scaleTokenValues = {
     'mandor-duration-fast': '80ms',
     'mandor-duration-base': '120ms',
     'mandor-duration-slow': '200ms',
+    'mandor-delay-handle': '300ms',
+    'mandor-motion-shift': '6px',
+    'mandor-motion-scale': '0.98',
     'mandor-ease-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
     'mandor-ease-in': 'cubic-bezier(0.7, 0, 0.84, 0)',
 } as const;

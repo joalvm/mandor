@@ -252,14 +252,50 @@ textarea,
     width: 4px;
 }
 
-/* The colour of the line lives here, beside the gutter rule that hides it: a utility sits in a
-   later layer and would paint over that rule whatever its weight. */
+/* The colour and the thickness of the line live here, beside the gutter rule that hides it: a
+   utility sits in a later layer and would paint over that rule whatever its weight. */
 [data-part='split-handle']::before {
+    width: 1px;
     background-color: var(--color-border-subtle);
 }
 
-[data-part='split-handle']:is(:hover, :active)::before {
-    background-color: var(--color-border-hover);
+[data-direction='column'] > [data-part='split-handle']::before {
+    width: auto;
+    height: 1px;
+}
+
+/**
+ * Pointed at, a divider waits a moment and then fades into a thin blue line, so a pointer on its
+ * way elsewhere paints nothing; it fades back out once the pointer leaves. A press is a grab, and
+ * the line is there at once: an image, which no transition waits for, over the same blue.
+ */
+[data-part='split-handle']::before,
+[data-part='sidebar-handle']::before {
+    transition:
+        background-color var(--mandor-duration-slow) var(--mandor-ease-out),
+        width 0s,
+        height 0s;
+}
+
+[data-part='split-handle']:hover::before,
+[data-part='sidebar-handle']:hover::before {
+    background-color: var(--color-border-handle);
+    transition-delay: var(--mandor-delay-handle);
+}
+
+[data-part='split-handle']:active::before,
+[data-part='sidebar-handle']:active::before {
+    background-image: linear-gradient(var(--color-border-handle), var(--color-border-handle));
+}
+
+[data-part='split-handle']:is(:hover, :active)::before,
+[data-part='sidebar-handle']:is(:hover, :active)::before {
+    width: var(--mandor-width-handle);
+}
+
+[data-direction='column'] > [data-part='split-handle']:is(:hover, :active)::before {
+    width: auto;
+    height: var(--mandor-width-handle);
 }
 
 [data-direction='column'] > [data-part='split-handle'] {
@@ -746,8 +782,8 @@ textarea,
 
 /**
  * One authored moment: the scrim settles while the surface rises the last few pixels into place,
- * and on the way out both let go faster than they came. The durations are the tokens of the
- * scale, so a system that asks for less motion gets a dialog that simply appears.
+ * and on the way out both let go faster than they came. Durations and travel are tokens of the
+ * scale, so a system that asks for less motion gets a dialog that only fades.
  */
 @keyframes mandor-dialog-scrim-in {
     from {
@@ -764,14 +800,14 @@ textarea,
 @keyframes mandor-dialog-in {
     from {
         opacity: 0;
-        transform: translateY(6px) scale(0.98);
+        transform: translateY(var(--mandor-motion-shift)) scale(var(--mandor-motion-scale));
     }
 }
 
 @keyframes mandor-dialog-out {
     to {
         opacity: 0;
-        transform: scale(0.98);
+        transform: scale(var(--mandor-motion-scale));
     }
 }
 

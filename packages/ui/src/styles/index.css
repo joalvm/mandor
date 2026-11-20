@@ -83,6 +83,7 @@
     --color-border-hover: var(--border-hover);
     --color-border-control: var(--border-control);
     --color-border-control-hover: var(--border-control-hover);
+    --color-border-handle: var(--border-handle);
     --color-border-error: var(--border-error);
     --color-solid-accent: var(--solid-accent);
     --color-solid-accent-hover: var(--solid-accent-hover);

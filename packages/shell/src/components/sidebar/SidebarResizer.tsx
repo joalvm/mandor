@@ -46,7 +46,7 @@ export function SidebarResizer() {
             aria-valuemax={SIDEBAR_WIDTH.max}
             aria-valuemin={SIDEBAR_WIDTH.min}
             aria-valuenow={Math.round(width)}
-            className="w-gap-gutter shrink-0 z-splitter before:absolute before:inset-y-0 before:left-1/2 before:w-px before:transition-colors before:duration-fast hover:before:bg-border-hover"
+            className="w-gap-gutter shrink-0 z-splitter before:absolute before:inset-y-0 before:left-1/2 before:-translate-x-1/2"
             data-part="sidebar-handle"
             {...drag}
             onDoubleClick={() => {

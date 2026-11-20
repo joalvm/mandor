@@ -114,6 +114,9 @@ function createPrimitives() {
     // along the same hue, and a ramp has no step past 11 that is still that red.
     lines.push('    --primitive-danger-hover: #b9282c;');
     lines.push('    --primitive-danger-active: #a52327;');
+    // The blue of a divider under the pointer: the one hue nothing else in the window wears, so
+    // the line reads as the thing that moves in either scheme, whatever the accent of the app.
+    lines.push('    --primitive-handle: #00a4f4;');
 
     // The page of a doc is GitHub's, and so are its colours.
     for (const [mode, colours] of Object.entries(MARKDOWN_PALETTE)) {

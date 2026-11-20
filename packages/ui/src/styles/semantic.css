@@ -60,6 +60,7 @@
     --border-hover: var(--primitive-neutral-light-8);
     --border-control: var(--primitive-neutral-light-9);
     --border-control-hover: var(--primitive-neutral-light-10);
+    --border-handle: var(--primitive-handle);
     --border-error: var(--primitive-red-light-9);
     --solid-accent: var(--primitive-accent-light-9);
     --solid-accent-hover: var(--primitive-accent-light-10);

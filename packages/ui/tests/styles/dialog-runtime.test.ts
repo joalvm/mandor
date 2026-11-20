@@ -50,9 +50,9 @@ describe('how a dialog moves and where its parts sit', () => {
     });
 
     /**
-     * The durations are the tokens of the scale, which `prefers-reduced-motion` sets to zero in
-     * one place. A dialog timed by a number of its own would keep moving for whoever asked the
-     * system to stop it.
+     * The durations are the tokens of the scale, and so is the way the surface travels: a dialog
+     * timed or moved by a number of its own would keep moving for whoever asked the system for
+     * less motion.
      */
     it('times the scrim and the surface from the motion scale, both ways', async () => {
         const runtime = await cssOf('runtime.css');
@@ -65,6 +65,30 @@ describe('how a dialog moves and where its parts sit', () => {
                     /animation:\s*mandor-dialog-[\w-]+ var\(--mandor-duration-\w+\) var\(--mandor-ease-\w+\)/,
                 );
             }
+        }
+    });
+
+    /**
+     * Asking for less motion takes the travel away, never the fade: the surface stops rising and
+     * growing, and still dissolves in and out at the pace of the scale. A window where every
+     * layer snaps in and out reads as rigid, and a fade moves nothing across the eye.
+     */
+    it('keeps the fades and drops only the travel when the system asks for less motion', async () => {
+        const scales = await cssOf('scales.css');
+        const reduced = blockAfter(
+            scales,
+            scales.indexOf('@media (prefers-reduced-motion: reduce)'),
+        );
+        const runtime = await cssOf('runtime.css');
+
+        expect(reduced).not.toMatch(/--mandor-duration-/);
+        expect(reduced).toMatch(/--mandor-motion-shift:\s*0px/);
+        expect(reduced).toMatch(/--mandor-motion-scale:\s*1;/);
+
+        for (const name of ['mandor-dialog-in', 'mandor-dialog-out']) {
+            expect(blockAfter(runtime, runtime.indexOf(`@keyframes ${name}`)), name).toMatch(
+                /transform:[^;]*var\(--mandor-motion-scale\)/,
+            );
         }
     });
 

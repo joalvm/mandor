@@ -10,7 +10,9 @@
  * there is, because every letter of the window is drawn at the one weight the system has.
  */
 .dockview-theme-mandor {
-    --dv-active-sash-color: var(--border-hover);
+    --dv-active-sash-color: var(--border-handle);
+    --dv-active-sash-transition-delay: var(--mandor-delay-handle);
+    --dv-active-sash-transition-duration: var(--mandor-duration-slow);
     --dv-activegroup-hiddenpanel-tab-background-color: transparent;
     --dv-activegroup-hiddenpanel-tab-color: var(--text-secondary);
     --dv-activegroup-visiblepanel-tab-background-color: var(--surface-tab-active);
@@ -151,8 +153,20 @@
     touch-action: none;
 }
 
-.dockview-theme-mandor .dv-sash:hover {
-    background-color: var(--border-hover);
+/* A sash is wider than its line: it paints only its middle two pixels, the line every divider of
+   the window draws, and a press shows it at once, the way a split does. */
+.dockview-theme-mandor .dv-split-view-container.dv-horizontal > .dv-sash-container > .dv-sash {
+    padding-inline: calc((4px - var(--mandor-width-handle)) / 2);
+    background-clip: content-box;
+}
+
+.dockview-theme-mandor .dv-split-view-container.dv-vertical > .dv-sash-container > .dv-sash {
+    padding-block: calc((4px - var(--mandor-width-handle)) / 2);
+    background-clip: content-box;
+}
+
+.dockview-theme-mandor .dv-sash:active {
+    background-image: linear-gradient(var(--border-handle), var(--border-handle));
 }
 
 /**
