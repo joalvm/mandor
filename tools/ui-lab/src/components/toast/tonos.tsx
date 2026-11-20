@@ -49,7 +49,7 @@ function Botones() {
     );
 }
 
-/** Los cuatro tonos. Icono, primera línea y cierre en una lectura; el hover para el conteo. */
+/** Los cuatro tonos. Insignia, título y cierre en una lectura; el hover para el conteo. */
 export function TonosDemo() {
     return (
         <ToastProvider messages={{ close: 'Cerrar', more: (n) => `${String(n)} más` }}>

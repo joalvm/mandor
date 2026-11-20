@@ -145,6 +145,7 @@
     --spacing-form: var(--mandor-width-form);
     --spacing-toggle: var(--mandor-width-toggle);
     --spacing-command-center: var(--mandor-width-command-center);
+    --spacing-toast: var(--mandor-width-toast);
     --spacing-pad-toggle: var(--mandor-pad-toggle);
     --grid-template-columns-settings: var(--mandor-width-settings-nav) minmax(0, 1fr);
     --grid-template-columns-setting-row: minmax(0, 1fr) var(--mandor-width-setting-control);

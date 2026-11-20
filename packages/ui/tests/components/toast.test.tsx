@@ -104,12 +104,15 @@ describe('the toast channel', () => {
         expect(within(toast).getByText('El server tardó 30 segundos en responder.')).toHaveClass(
             'line-clamp-3',
         );
-        expect(within(toast).getByRole('button', { name: 'Cerrar' })).toHaveClass('-mt-1');
+        // A card that floats over the window: its width and its round are those of the scale.
+        expect(toast).toHaveClass('rounded-overlay');
+        expect(toast.parentElement).toHaveClass('w-toast');
+        expect(toast.parentElement).not.toHaveClass('w-80');
     });
 
     /**
-     * One action at most, and the toast carries it as a link in its text; never a second row of
-     * buttons.
+     * One action at most, and the toast carries it as a secondary button under its text; never a
+     * link, and never a second row of buttons.
      */
     it('runs the single action of a notice', () => {
         const onSelect = vi.fn();
@@ -121,7 +124,7 @@ describe('the toast channel', () => {
         fireEvent.click(action);
 
         expect(onSelect).toHaveBeenCalledOnce();
-        expect(action).toHaveAttribute('data-variant', 'link');
+        expect(action).toHaveAttribute('data-variant', 'secondary');
     });
 
     it('refuses to raise a notice outside a provider', () => {

@@ -43,6 +43,26 @@ describe('one floating notice', () => {
         draw(spec({ count: 3 }));
 
         expect(byPart('toast')).toHaveTextContent('×3');
+        // The count is a pill of its own beside the title, never loose text.
+        expect(byPart('toast-count')).toHaveTextContent('×3');
+        expect(byPart('toast-count')).toHaveClass('rounded-full', 'bg-surface-control');
+    });
+
+    it.each([
+        ['error', 'bg-surface-error-tint', 'text-text-error'],
+        ['info', 'bg-surface-info-tint', 'text-text-info'],
+        ['success', 'bg-surface-success-tint', 'text-text-success'],
+        ['warning', 'bg-surface-warning-tint', 'text-text-warning'],
+    ] as const)('wears its %s tone in a badge beside the title', (tone, fill, ink) => {
+        draw(spec({ tone }));
+
+        const badge = byPart('toast-badge');
+
+        // A square as tall as two lines of text, tinted with the tone; the surface of the
+        // notice itself stays the same for every tone.
+        expect(badge).toHaveClass('size-8', fill, ink);
+        expect(badge.querySelector('svg')).not.toBeNull();
+        expect(byPart('toast')).toHaveClass('bg-surface-raised');
     });
 
     it('does not count a notice raised once', () => {
@@ -62,6 +82,11 @@ describe('one floating notice', () => {
 
         draw(spec({ action: { label: 'Undo', onSelect } }));
         fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
+
+        expect(screen.getByRole('button', { name: 'Undo' })).toHaveAttribute(
+            'data-variant',
+            'secondary',
+        );
 
         expect(onSelect).toHaveBeenCalledOnce();
     });

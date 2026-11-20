@@ -17,7 +17,7 @@ type ToastMessages = {
 };
 
 const VIEWPORT_STYLES =
-    'fixed right-gap-group bottom-gap-group z-toast flex w-80 list-none flex-col gap-gap-control';
+    'fixed right-gap-group bottom-gap-group z-toast flex w-toast list-none flex-col gap-gap-control';
 
 type ToastProviderProps = PropsWithChildren<{
     messages: ToastMessages;

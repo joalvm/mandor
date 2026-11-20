@@ -59,8 +59,8 @@ scale(var(--mandor-motion-scale))` a reposo, desde el origen que Radix calcula p
   clientes de API que el usuario conoce. Árboles y cajas de elegir e importar pasan de
   `bg-surface-panel` a `bg-surface-raised`.
 - **El aviso es una tarjeta.** 380 px (`--mandor-width-toast`), `rounded-overlay`, el glifo de
-  tono dentro de una insignia de 32 px en `bg-surface-control` (el glifo conserva su color de
-  tono; la insignia no se tiñe), una sola acción como `Button` secundario, y el `×N` como píldora
+  tono dentro de una insignia de 32 px teñida con su tono (`bg-surface-<tono>-tint`, como el
+  canvas y la `Badge` de estado), una sola acción como `Button` secundario, y el `×N` como píldora
   en `bg-surface-control`.
 - **Pila de tres.** En reposo se ve el aviso más nuevo y, detrás, los dos anteriores asomando:
   `translateY(-10px) scale(0.95)` y `translateY(-20px) scale(0.9)`. Con el puntero o el foco en
@@ -165,7 +165,7 @@ llevan grupo, y su regla es de este diálogo.
 `npm run ci:check` con las rutas tocadas. Con las dos apps: Ajustes se lee en
 claro y oscuro como lista, sin cajas; Importar y Guardar en… sin gris.
 
-### [ ] Fase 3: El aviso es una tarjeta
+### [x] Fase 3: El aviso es una tarjeta
 
 **Objetivo.** Un aviso mide 380, tiene radio 12, su tono en una insignia de 32, una acción como
 botón secundario y el contador como píldora.
@@ -183,13 +183,14 @@ matches packages/ui/src/components/toast/ToastItem.tsx /data-part="toast-count"/
 - `scales.css`: `--mandor-width-toast: 380px`; alias `--spacing-toast` en `index.css` (o la
   clave que use el `@theme` para anchos). `npm run tokens`.
 - `Toast.tsx`: `VIEWPORT_STYLES` con `w-toast`.
-- `ToastItem.tsx`: `ROOT_STYLES` con `rounded-overlay` y el relleno del lienzo (12 px). El glifo
-  entra en `<span data-part="toast-badge">` de `size-8`, `rounded-lg`, `bg-surface-control`,
-  centrado, con el color de tono en el glifo. `ToastAction` con `Button` secundario `size="sm"`.
+- `ToastItem.tsx`: `ROOT_STYLES` con `rounded-overlay`, el relleno del lienzo (12 px) y la sombra
+  del diálogo. El glifo entra en `<span data-part="toast-badge">` de `size-8`, `rounded-xl` (6 px,
+  el del lienzo), centrado, teñido con su tono. Título en `font-semibold`; el cierre, centrado en
+  la banda de la insignia. `ToastAction` con `Button` secundario de alto de control (28).
   `ToastCount` como `<span data-part="toast-count">` píldora (`rounded-full`,
   `bg-surface-control`, `text-xs`).
-- `packages/ui/tests/components/toast/ToastItem.test.tsx`: la acción es un botón por rol y
-  nombre; el contador sigue diciendo `×N`.
+- `packages/ui/tests/components/toast/ToastItem.test.tsx` y `toast.test.tsx`: la insignia por
+  tono, la píldora `×N`, la acción secundaria, el radio y el ancho.
 
 **No hacer.** La pila (fase 4). Cambiar los textos del aviso, su duración o su urgencia.
 
