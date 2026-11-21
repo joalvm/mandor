@@ -1,17 +1,15 @@
 import { useMessages } from '@mandor/i18n';
 import type { ResourceUri } from '@mandor/schema';
-import { IconButton, SplitHalf, SplitPane } from '@mandor/ui';
+import { Card, SplitHalf, SplitPane } from '@mandor/ui';
 import { useMemo, useState, type PropsWithChildren } from 'react';
 
 import type { ActivityEntry } from '../../activity-entry.js';
 import { activityStore } from '../../activity-store.js';
-import { directionOf } from '../../activity-tally.js';
+import { DockCloseContext } from '../../dock-close.js';
 import { useActivityStore } from '../../hooks/useActivityStore.js';
 import { useSchemaOffenders } from '../../hooks/useSchemaOffenders.js';
 import { selectNarrowingFor } from '../../select-narrowing-for.js';
 import { narrowTimeline, RESTING_NARROWING } from '../../lib/timeline-narrowing.js';
-import { formatActivityTime } from '../../lib/format-activity-time.js';
-import { formatByteSize } from '../../lib/format-byte-size.js';
 import { ActivityDetail } from '../dock/ActivityDetail.js';
 
 import { ActivityFoot } from './ActivityFoot.js';
@@ -44,10 +42,11 @@ type ActivityPanelProps = PropsWithChildren<{
 }>;
 
 /**
- * The timeline of a resource, with the dock of the chosen entry under it. The dock exists only
- * while a line is marked: clicking one opens it, clicking it again closes it, and its own band
- * carries the way out for whoever never guesses the second click. What the dock draws is the
- * detail of the chosen entry, picked by its kind.
+ * The timeline of a resource in its card, with the dock of the chosen entry in a card of its own
+ * under it, the gutter between them. The dock exists only while a line is marked: clicking one
+ * opens it, clicking it again closes it, and its own band carries the way out for whoever never
+ * guesses the second click. What the dock draws is the detail of the chosen entry, picked by its
+ * kind.
  */
 export function ActivityPanel({
     children,
@@ -89,141 +88,70 @@ export function ActivityPanel({
 
     return (
         <div className="flex h-full min-h-0 min-w-0 flex-col" data-part="activity-panel">
-            <ActivityHead
-                entries={entries}
-                narrowing={narrowing}
-                onClear={onClear}
-                onNarrowingChange={(next) => {
-                    activityStore.getState().setNarrowing(resource, next);
-                }}
-                onExport={onExport}
+            <SplitPane
+                className="min-h-0 flex-1"
+                collapsed={selected === undefined}
+                direction="column"
+                gap="gutter"
+                label={resizeLabel}
+                onValueChange={onSplitChange}
+                value={split}
             >
-                {children}
-            </ActivityHead>
-            <ActivityBody
-                entries={visible}
-                label={label}
-                onClose={() => {
-                    setSelectedId(null);
-                }}
-                onSelect={onSelect}
-                onSplitChange={onSplitChange}
-                resizeLabel={resizeLabel}
-                selected={selected}
-                selectedId={selectedId}
-                split={split}
-            />
-            <ActivityFoot hidden={hidden} onShowAll={onShowAll} />
+                <SplitHalf>
+                    <Card aria-label={label}>
+                        <ActivityHead
+                            entries={entries}
+                            narrowing={narrowing}
+                            onClear={onClear}
+                            onNarrowingChange={(next) => {
+                                activityStore.getState().setNarrowing(resource, next);
+                            }}
+                            onExport={onExport}
+                        >
+                            {children}
+                        </ActivityHead>
+                        <div className="min-h-0 flex-1" data-part="activity-body">
+                            <ActivityLog
+                                entries={visible}
+                                label={label}
+                                onSelect={onSelect}
+                                selectedId={selectedId}
+                            />
+                        </div>
+                        <ActivityFoot hidden={hidden} onShowAll={onShowAll} />
+                    </Card>
+                </SplitHalf>
+                <DockHalf
+                    entry={selected}
+                    onClose={() => {
+                        setSelectedId(null);
+                    }}
+                />
+            </SplitPane>
         </div>
     );
 }
 
-type ActivityBodyProps = {
-    entries: readonly ActivityEntry[];
-    label: string;
-    onClose: () => void;
-    onSelect: (entryId: string) => void;
-    onSplitChange: (next: number) => void;
-    resizeLabel: string;
-    selected: ActivityEntry | undefined;
-    selectedId: string | null;
-    split: number;
-};
-
 /**
- * The timeline alone while nothing is marked; split with the dock of the marked entry otherwise.
- * It is the same timeline either way: opening the dock beside it leaves it scrolled where the
- * reader was, and the line they pressed keeps the focus.
+ * The half of the dock exists only while a line is marked. It is a card apart from the timeline,
+ * and every detail draws its band over itself: the way out reaches the band from here.
  */
-function ActivityBody({
-    entries,
-    label,
-    onClose,
-    onSelect,
-    onSplitChange,
-    resizeLabel,
-    selected,
-    selectedId,
-    split,
-}: ActivityBodyProps) {
-    return (
-        <SplitPane
-            className="min-h-0 flex-1"
-            collapsed={selected === undefined}
-            direction="column"
-            label={resizeLabel}
-            onValueChange={onSplitChange}
-            value={split}
-        >
-            <SplitHalf>
-                <ActivityLog
-                    entries={entries}
-                    label={label}
-                    onSelect={onSelect}
-                    selectedId={selectedId}
-                />
-            </SplitHalf>
-            <DockHalf entry={selected} onClose={onClose} />
-        </SplitPane>
-    );
-}
-
-/** The half of the dock exists only while a line is marked. */
 function DockHalf({ entry, onClose }: { entry: ActivityEntry | undefined; onClose: () => void }) {
+    const messages = useMessages('connections');
+
     if (entry === undefined) {
         return null;
     }
 
     return (
         <SplitHalf>
-            <ActivityDock entry={entry} onClose={onClose} />
+            <Card aria-label={messages('activityDetail')}>
+                <DockCloseContext value={onClose}>
+                    <div className="flex h-full min-h-0 min-w-0 flex-col" data-part="activity-dock">
+                        <ActivityDetail entry={entry} />
+                    </div>
+                </DockCloseContext>
+            </Card>
         </SplitHalf>
     );
-}
-
-function ActivityDock({ entry, onClose }: { entry: ActivityEntry; onClose: () => void }) {
-    const messages = useMessages('connections');
-
-    return (
-        <div
-            className="flex h-full min-h-0 min-w-0 flex-col bg-surface-card"
-            data-part="activity-dock"
-        >
-            <div
-                className="flex h-section shrink-0 items-center justify-between gap-gap-control px-pad-panel"
-                data-part="activity-dock-head"
-            >
-                <div
-                    className="flex min-w-0 items-center gap-gap-control text-xs tabular-nums"
-                    data-part="activity-dock-summary"
-                >
-                    <DockDirection
-                        direction={directionOf(entry)}
-                        labels={{ in: messages('directionIn'), out: messages('directionOut') }}
-                    />
-                    <span>{formatByteSize(entry.bytes)}</span>
-                    <span className="text-text-secondary">{formatActivityTime(entry.at)}</span>
-                </div>
-                <IconButton icon="close" label={messages('close')} onClick={onClose} />
-            </div>
-            <div className="min-h-0 flex-1 overflow-hidden">
-                <ActivityDetail entry={entry} />
-            </div>
-        </div>
-    );
-}
-
-/** The band over the dock says of the entry what the row said: what crossed, its weight, its moment. */
-function DockDirection({
-    direction,
-    labels,
-}: {
-    direction: ReturnType<typeof directionOf>;
-    labels: Record<'in' | 'out', string>;
-}) {
-    if (direction === undefined) {
-        return null;
-    }
-
-    return <span className="truncate">{labels[direction]}</span>;
 }

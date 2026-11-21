@@ -14,6 +14,7 @@
     "consoleTitle": "Console",
     "consoleWarnings_one": "{{count}} warning",
     "consoleWarnings_other": "{{count}} warnings",
+    "copied": "Copied",
     "faultDetail": "The detail is in the app log",
     "faultReload": "Reload",
     "faultRetry": "Try again",

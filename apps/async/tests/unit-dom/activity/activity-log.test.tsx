@@ -39,6 +39,13 @@ describe('the activity log', () => {
         ]);
     });
 
+    /** Scrolled to the oldest, the last row ends a step above the card, as a sidebar section does. */
+    it('ends a step below its last row, so the text never touches the edge of the card', () => {
+        draw([messageEntryOf({ data: 'uno' }, '1')]);
+
+        expect(screen.getByRole('log', { name: 'Actividad' })).toHaveClass('pb-gap-control');
+    });
+
     it('draws an empty timeline without a row in it', () => {
         draw([]);
 

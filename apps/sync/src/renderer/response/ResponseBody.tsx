@@ -1,12 +1,12 @@
 import { useMessages } from '@mandor/i18n';
 import { FORMAT_BYTES } from '@mandor/ipc';
 import type { HttpResponse } from '@mandor/schema';
+import { useCopyText } from '@mandor/shell';
 import { EmptyState } from '@mandor/ui';
 import { useEffect, useMemo } from 'react';
 
 import { useBodyShow } from './hooks/useBodyShow.js';
 import { useBodyWindow } from './hooks/useBodyWindow.js';
-import { useCopyText } from './hooks/useCopyText.js';
 import { useSaveBody } from './hooks/useSaveBody.js';
 import { textSampleOf } from './lib/body-bytes.js';
 import { bodyContentOf } from './lib/body-content.js';

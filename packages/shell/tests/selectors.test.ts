@@ -2,7 +2,7 @@ import { createFakeBridge } from '@mandor/ipc/testing';
 import { ROOT_GROUP_ID } from '@mandor/ipc';
 import { describe, expect, it } from 'vitest';
 
-import { selectOpenResources, selectTabShown } from '../src/selectors.js';
+import { selectFrontResource, selectOpenResources, selectTabShown } from '../src/selectors.js';
 import { createShellStore, type ShellStoreApi } from '../src/shell-store.js';
 import type { Tab } from '../src/tab/tab.js';
 
@@ -43,6 +43,25 @@ describe('which tabs the window is showing', () => {
 
     it('does not show a tab that is not open', () => {
         expect(selectTabShown(store().getState(), 'nothing')).toBe(false);
+    });
+});
+
+describe('what the tab in front looks at', () => {
+    it('reads the resource of the tab the focused group is on', () => {
+        const api = store();
+
+        api.getState().openTab(ROOT_GROUP_ID, tab('one'));
+        api.getState().openTabAside(tab('two'));
+
+        expect(selectFrontResource(api.getState())).toBe('mandor://demo/events/connection/two');
+
+        api.getState().focusGroup(ROOT_GROUP_ID);
+
+        expect(selectFrontResource(api.getState())).toBe('mandor://demo/events/connection/one');
+    });
+
+    it('reads nothing while no tab is open', () => {
+        expect(selectFrontResource(store().getState())).toBeNull();
     });
 });
 

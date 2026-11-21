@@ -20,21 +20,15 @@ export function ConnectionsSidebar() {
     const messages = useMessages('connections');
     const scope = useWorkspaceScope();
     const connections = useStore(connectionsStore, selectConnections);
-    const activeConnectionId = useStore(connectionsStore, (state) => state.activeConnectionId);
 
     if (scope === null || connections.length === 0) {
         return null;
     }
 
     return (
-        <RowList className="flex flex-col" data-part="collections" label={messages('heading')}>
+        <RowList className="flex flex-col" data-part="connections" label={messages('heading')}>
             {connections.map((connection) => (
-                <ConnectionRow
-                    connection={connection}
-                    key={connection.id}
-                    scope={scope}
-                    selected={connection.id === activeConnectionId}
-                />
+                <ConnectionRow connection={connection} key={connection.id} scope={scope} />
             ))}
         </RowList>
     );

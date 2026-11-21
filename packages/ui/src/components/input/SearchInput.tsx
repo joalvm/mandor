@@ -1,4 +1,4 @@
-import { FilterIcon } from '@mandor/icons';
+import { SearchIcon } from '@mandor/icons';
 import type { RefObject } from 'react';
 
 import { EditableLine } from './EditableLine.js';
@@ -33,7 +33,7 @@ export function SearchInput({
 }: SearchInputProps) {
     return (
         <FieldBox className={className} disabled={false} invalid={false} variant="search">
-            <FilterIcon size="sm" />
+            <SearchIcon size="sm" />
             <EditableLine
                 disabled={false}
                 editableRef={editableRef}

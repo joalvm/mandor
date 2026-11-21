@@ -1,9 +1,8 @@
 import { useMessages } from '@mandor/i18n';
-import { fireAndForget } from '@mandor/shell';
+import { fireAndForget, useCopyText } from '@mandor/shell';
 import { Button, Dialog, DialogBody, DialogFooter } from '@mandor/ui';
 import { useState } from 'react';
 
-import { useCopyText } from '../../../../response/hooks/useCopyText.js';
 import { useCookieJar } from '../../hooks/useCookieJar.js';
 import { CookieJarTable } from '../table/CookieJarTable.js';
 import { CookieClearDialog } from './CookieClearDialog.js';

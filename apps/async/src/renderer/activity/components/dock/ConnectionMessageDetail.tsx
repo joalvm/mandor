@@ -1,41 +1,87 @@
 import { useEditorIssueMessage, useMessages } from '@mandor/i18n';
-import { useMemo, type ReactNode } from 'react';
+import { useCopyText } from '@mandor/shell';
+import { IconButton } from '@mandor/ui';
+import { useMemo, useState, type ReactNode } from 'react';
 
 import type { ConnectionMessageEntry } from '../../activity-entry.js';
 import { inboundVerdictOf } from '../../inbound-verdict.js';
-import { frameFormat } from '../../lib/frame-payload.js';
+import { frameFormat, type Frame } from '../../lib/frame-payload.js';
+import { frameText } from '../../lib/frame-text.js';
+import { defaultViewOf, type FrameView } from '../../lib/frame-views.js';
+import { DockBand } from './DockBand.js';
 import { FramePayloadView } from './FramePayloadView.js';
+import { FrameViewMenu } from './FrameViewMenu.js';
 
 type ConnectionMessageDetailProps = {
     entry: ConnectionMessageEntry;
 };
 
+/** The view the reader picked, and the frame they picked it on. */
+type ChosenView = { entryId: string; view: FrameView };
+
 /**
- * The chosen frame read whole: the payload in the shape it arrived in — laid out if it parses as
- * JSON, in hex if it never was text — because what the connection announced it would send is a
- * promise, and this is the evidence. What the row said about it — direction, moment, weight —
- * the band over the dock already says. An inbound frame that broke the schema of the item it
- * pairs with lists here the fields that broke it, with the route and the reason.
+ * The chosen frame read whole: the payload in the view the band names — the one its format calls
+ * for until the reader picks another — because what the connection announced it would send is a
+ * promise, and this is the evidence. A pick holds for the frame it was made on: the next one
+ * opens on its own. An inbound frame that broke the schema of the item it pairs with lists here
+ * the fields that broke it, with the route and the reason.
  */
 export function ConnectionMessageDetail({ entry }: ConnectionMessageDetailProps): ReactNode {
     const record = entry.detail;
+    const [chosen, setChosen] = useState<ChosenView | null>(null);
     // The dock draws again with every frame that crosses; reading a large one each time froze it.
     const format = useMemo(
         () => frameFormat({ binary: record.binary, data: record.data }),
         [record.binary, record.data],
     );
+    const view = chosen?.entryId === entry.id ? chosen.view : defaultViewOf(format);
     // The row judged the frame when it was painted; the dock reads the same verdict.
     const verdict = inboundVerdictOf(entry);
 
     return (
-        <div
-            className="flex h-full min-h-0 min-w-0 flex-col"
-            data-format={format}
-            data-part="activity-detail"
-        >
-            <SchemaVerdict verdict={verdict} />
-            <FramePayloadView entryId={entry.id} format={format} frame={record} />
-        </div>
+        <>
+            <DockBand entry={entry}>
+                <FrameViewMenu
+                    onChange={(next) => {
+                        setChosen({ entryId: entry.id, view: next });
+                    }}
+                    value={view}
+                />
+                <FrameCopy frame={record} view={view} />
+            </DockBand>
+            <div
+                className="flex min-h-0 min-w-0 flex-1 flex-col"
+                data-format={format}
+                data-part="activity-detail"
+            >
+                <SchemaVerdict verdict={verdict} />
+                <FramePayloadView entryId={entry.id} frame={record} view={view} />
+            </div>
+        </>
+    );
+}
+
+/**
+ * Copies the frame as the view shows it, read only when pressed: the text of a large frame is
+ * not made again on every draw for a copy nobody asked for. The dump brings its own copy.
+ */
+function FrameCopy({ frame, view }: { frame: Frame; view: FrameView }) {
+    const messages = useMessages('connections');
+    const copy = useCopyText();
+
+    if (view === 'hex') {
+        return null;
+    }
+
+    return (
+        <IconButton
+            icon="copy"
+            label={messages('editorCopy')}
+            onClick={() => {
+                copy(frameText(frame, view));
+            }}
+            size="sm"
+        />
     );
 }
 

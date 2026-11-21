@@ -14,7 +14,9 @@ type ActivityLogProps = {
 /**
  * The bounded buffer of a resource as a timeline: only the rows on screen enter the DOM. It
  * holds entries, not messages: what each line looks like is the row of its kind to say, so
- * nothing here knows what a frame, a fault, or anything else in the timeline is made of.
+ * nothing here knows what a frame, a fault, or anything else in the timeline is made of. Scrolled
+ * to the oldest, the last row ends a step above the edge of the card, as a section of the
+ * sidebar ends below its last row.
  */
 export function ActivityLog({ entries, label, onSelect, selectedId }: ActivityLogProps) {
     const viewport = useRef<HTMLDivElement>(null);
@@ -31,7 +33,7 @@ export function ActivityLog({ entries, label, onSelect, selectedId }: ActivityLo
     return (
         <div
             aria-label={label}
-            className="h-full min-h-0 min-w-0 overflow-x-hidden overflow-y-auto"
+            className="h-full min-h-0 min-w-0 overflow-x-hidden overflow-y-auto pb-gap-control"
             data-part="activity-log"
             ref={viewport}
             role="log"

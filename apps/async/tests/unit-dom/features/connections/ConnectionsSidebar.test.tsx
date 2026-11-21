@@ -54,6 +54,16 @@ describe('the connections section of the sidebar', () => {
         expect(asyncBridge.connection.list).toHaveBeenCalledWith({ workspaceId: 'events' });
     });
 
+    /** Its name is its own: the collections of the same lateral answer to theirs. */
+    it('names its list after the connections, not after the collections', async () => {
+        vi.spyOn(asyncBridge.connection, 'list').mockResolvedValue(
+            success([fakeConnection('echo', 'Echo')]),
+        );
+        renderSidebar();
+
+        expect(await screen.findByRole('listbox')).toHaveAttribute('data-part', 'connections');
+    });
+
     it('paints the live state of every connection it lists', async () => {
         vi.spyOn(asyncBridge.connection, 'list').mockResolvedValue(
             success([fakeConnection('echo', 'Echo')]),

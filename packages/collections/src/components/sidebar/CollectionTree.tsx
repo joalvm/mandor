@@ -8,7 +8,8 @@ import { collectionStore } from '../../collection-store.js';
 import { useCollectionDuplicateKey } from '../../hooks/useCollectionDuplicateKey.js';
 import { useCollectionRenameKey } from '../../hooks/useCollectionRenameKey.js';
 import { useCollectionSteps } from '../../hooks/useCollectionSteps.js';
-import { useRevealedItem } from '../../hooks/useRevealedItem.js';
+import { useFollowedLine } from '../../hooks/useFollowedLine.js';
+import { useRevealedLine } from '../../hooks/useRevealedLine.js';
 import { activateCollectionRow } from '../../lib/activate-collection-row.js';
 import { collectionRows, type CollectionRow as Row } from '../../lib/collection-rows.js';
 import { expandCollectionRow } from '../../lib/expand-collection-row.js';
@@ -28,7 +29,8 @@ type CollectionTreeProps = { workspaceId: string };
 /**
  * The collection of a workspace as a `Tree`: the nodes flattened to lines as far as they are open,
  * and only the ones on screen in the DOM, so a thousand items cost what ten do. What is open and
- * what is taken live in the store, which is how both survive the section being folded away.
+ * what is taken live in the store, which is how both survive the section being folded away. The
+ * line of the tab in front is taken and brought into sight each time another tab comes forward.
  *
  * The keys of the collection's own —F2 to rename, Alt and the arrows to move— are heard around the
  * tree, and the question before deleting stands beside it, never inside a line that scrolls away.
@@ -47,7 +49,8 @@ export function CollectionTree({ workspaceId }: CollectionTreeProps) {
     );
     const selected = useStore(collectionStore, (state) => state.selected);
     const rows = collectionRows(nodes, folded, closed);
-    const revealed = useRevealedItem(workspaceId);
+    const revealed = useRevealedLine(workspaceId);
+    const followed = useFollowedLine(workspaceId);
 
     useCollectionRenameKey(around);
     useCollectionDuplicateKey(workspaceId, around);
@@ -57,6 +60,7 @@ export function CollectionTree({ workspaceId }: CollectionTreeProps) {
         <div className="flex min-h-0 flex-1 flex-col" data-part="collection-tree" ref={around}>
             <Tree
                 chevrons
+                followed={followed}
                 label={messages('heading')}
                 lines={rows}
                 onActivate={(id, activation) => {

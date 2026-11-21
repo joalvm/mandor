@@ -2,7 +2,13 @@ import { DocIcon } from '@mandor/icons';
 import { useMessages } from '@mandor/i18n';
 import { InlineNameInput, ListRow, RowLabel } from '@mandor/ui';
 import { useStore } from 'zustand';
-import { fireAndForget, originName, shellStore, useShellStore } from '@mandor/shell';
+import {
+    fireAndForget,
+    originName,
+    selectFrontResource,
+    shellStore,
+    useShellStore,
+} from '@mandor/shell';
 
 import { docsStore } from '../../docs-store.js';
 import { docResource } from '../../lib/doc-resource.js';
@@ -17,13 +23,14 @@ type DocRowProps = { name: string; title: string; workspaceId: string };
  * and the menu of what can be done to it.
  *
  * The row is named by the title the doc carries; the file it lives in is its address and is never
- * drawn.
+ * drawn. It is marked while the tab in front shows the doc, as an explorer follows the editor in
+ * front; the focus stays where it was.
  */
 export function DocRow({ name, title, workspaceId }: DocRowProps) {
     const renaming = useStore(docsStore, (state) => state.renaming === name);
-    const revealed = useShellStore(
-        (state) => state.revealing === docResource(originName(), workspaceId, name),
-    );
+    const resource = docResource(originName(), workspaceId, name);
+    const revealed = useShellStore((state) => state.revealing === resource);
+    const selected = useShellStore((state) => selectFrontResource(state) === resource);
 
     function commit(value: string): boolean {
         const renamed = value.trim();
@@ -51,7 +58,7 @@ export function DocRow({ name, title, workspaceId }: DocRowProps) {
                 });
             }}
             revealed={revealed}
-            selected={false}
+            selected={selected}
         >
             <DocIcon size="sm" />
             <DocRowName onCommit={commit} renaming={renaming} title={title} />

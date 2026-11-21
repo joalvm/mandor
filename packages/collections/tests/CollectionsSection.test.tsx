@@ -40,7 +40,9 @@ describe('the section of the collection', () => {
             'true',
         );
         expect(screen.getByRole('treeitem', { name: 'Pedido creado' })).toBeVisible();
-        expect(document.querySelector('[data-part="collapsible-count"]')).toHaveTextContent('1');
+        expect(screen.getByRole('button', { name: 'Collections' })).toHaveTextContent(
+            /^Collections$/,
+        );
 
         view.rerender(<Sidebar />);
 

@@ -31,10 +31,11 @@ type ActivityHeadProps = PropsWithChildren<{
 }>;
 
 /**
- * The head of the timeline: its title with what the connection moved, then what it draws — a filter that hides whole sides,
- * keeps only what breaks its schema, and the line the search asks for, and the two actions on
- * what the timeline holds, after whatever its owner puts first. The state of the head is the panel's: this reads it and says what
- * changed, and the timeline draws the answer.
+ * The head of the timeline: its title with what the connection moved on the left, and nothing
+ * else there. On the right, the line the search asks for leads, whatever its owner puts follows
+ * it, then the filter that hides whole sides or keeps only what breaks its schema, and the two
+ * actions on what the timeline holds. The state of the head is the panel's: this reads it and
+ * says what changed, and the timeline draws the answer.
  */
 export function ActivityHead({
     children,
@@ -79,6 +80,15 @@ export function ActivityHead({
                 <ActivityTally entries={entries} />
             </span>
             <div className="flex items-center gap-gap-control" data-part="activity-head-actions">
+                <SearchInput
+                    className="w-33 shrink-0"
+                    label={messages('search')}
+                    onValueChange={(query) => {
+                        onNarrowingChange({ ...narrowing, query });
+                    }}
+                    placeholder={messages('search')}
+                    value={narrowing.query}
+                />
                 {children}
                 <Menu checkable>
                     <MenuTrigger>
@@ -133,15 +143,6 @@ export function ActivityHead({
                         </MenuItem>
                     </MenuContent>
                 </Menu>
-                <SearchInput
-                    className="w-33 shrink-0"
-                    label={messages('search')}
-                    onValueChange={(query) => {
-                        onNarrowingChange({ ...narrowing, query });
-                    }}
-                    placeholder={messages('search')}
-                    value={narrowing.query}
-                />
                 <IconButton
                     disabled={!exportable}
                     icon="external-link"

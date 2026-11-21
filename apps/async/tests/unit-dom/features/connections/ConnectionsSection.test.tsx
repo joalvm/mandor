@@ -36,7 +36,9 @@ describe('the section of the connections', () => {
             'true',
         );
         expect(screen.queryByRole('listbox', { name: 'Connections' })).toBeNull();
-        expect(document.querySelector('[data-part="collapsible-count"]')).toHaveTextContent('0');
+        expect(screen.getByRole('button', { name: 'Connections' })).toHaveTextContent(
+            /^Connections$/,
+        );
 
         view.rerender(<Sidebar />);
 

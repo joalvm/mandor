@@ -8,6 +8,7 @@ import { lineScopeOf, type TreeDrawing } from './tree-drawing.js';
 import { TreeLineProvider } from './tree-scope.js';
 import { useTreeCommands } from './useTreeCommands.js';
 import { useTreeFocus } from './useTreeFocus.js';
+import { useTreeFollow } from './useTreeFollow.js';
 import { useTreeReveal } from './useTreeReveal.js';
 
 type TreeProps = PropsWithChildren<
@@ -18,6 +19,11 @@ type TreeProps = PropsWithChildren<
          * opens — a list to choose from, the collections of the lateral — turns it on.
          */
         chevrons?: boolean | undefined;
+        /**
+         * The line that stands for what the window shows: each time it becomes this one, the tree
+         * scrolls to it as soon as it is among the lines, and leaves the focus where it was.
+         */
+        followed?: string | null | undefined;
         label: string;
         lines: readonly TreeLine[];
         /** Told once the line asked for in `revealed` is on screen and holds the focus. */
@@ -46,6 +52,7 @@ const NOTHING: readonly string[] = [];
 export function Tree({
     children,
     chevrons = false,
+    followed,
     label,
     lines,
     onRevealed,
@@ -64,6 +71,7 @@ export function Tree({
     const taken = selected ?? NOTHING;
 
     useTreeReveal({ focus, lines, onRevealed, revealed, scrollTo: view.scrollTo });
+    useTreeFollow({ followed, lines, scrollTo: view.scrollTo });
 
     const commands = useTreeCommands({
         ...handlers,

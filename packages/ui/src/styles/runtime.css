@@ -478,6 +478,23 @@ textarea,
     );
 }
 
+/* In the lateral a row is a box of its own, the way the sidebar of Postman draws it: what is
+   taken or under the pointer lights a rounded box that opens on the column of the row — the
+   column the search field and the chevron of the section stand on, one step in per level — and
+   stops a control's inset short of the end, so the selection never runs into the edge of the
+   window and the menu of the row ends where the buttons of the header end. The depth moves from
+   the padding to the margin, so what the row shows stands where it always stood, and the guide
+   of the level above runs beside the box instead of a hair inside its edge. */
+[data-part='sidebar-content'] :is([data-part='tree-row'], [data-part='list-row'])[data-level] {
+    border-radius: var(--mandor-radius-xl);
+    margin-inline: calc(
+            var(--mandor-pad-inline-panel) + (attr(data-level type(<number>), 1) - 1) *
+                var(--mandor-indent-tree)
+        )
+        calc(var(--mandor-pad-inline-panel) - var(--mandor-pad-inline-control));
+    padding-inline-start: 0;
+}
+
 [data-part='tree-line'][data-level]::before {
     background-image: repeating-linear-gradient(
         to right,
@@ -585,8 +602,24 @@ textarea,
     position: relative;
 }
 
+/* Both marks stand inside the box the row lights, not across the whole lateral. The tint goes
+   under the row, which is why the line around it starts a stacking context of its own. */
 [data-part='collection-row'][data-drop='inside'] {
+    isolation: isolate;
+}
+
+[data-part='collection-row'][data-drop='inside']::before {
     background: var(--surface-accent-tint);
+    border-radius: var(--mandor-radius-xl);
+    content: '';
+    inset-block: 0;
+    inset-inline: calc(
+            var(--mandor-pad-inline-panel) + (attr(data-level type(<number>), 1) - 1) *
+                var(--mandor-indent-tree)
+        )
+        calc(var(--mandor-pad-inline-panel) - var(--mandor-pad-inline-control));
+    position: absolute;
+    z-index: -1;
 }
 
 [data-part='collection-row'][data-drop='above']::after,
@@ -594,9 +627,12 @@ textarea,
     background: var(--solid-accent);
     content: '';
     height: 2px;
-    left: 0;
+    inset-inline: calc(
+            var(--mandor-pad-inline-panel) + (attr(data-level type(<number>), 1) - 1) *
+                var(--mandor-indent-tree)
+        )
+        calc(var(--mandor-pad-inline-panel) - var(--mandor-pad-inline-control));
     position: absolute;
-    right: 0;
 }
 
 [data-part='collection-row'][data-drop='above']::after {

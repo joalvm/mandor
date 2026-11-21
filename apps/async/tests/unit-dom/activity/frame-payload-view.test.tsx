@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest';
 
 import { FramePayloadView } from '../../../src/renderer/activity/components/dock/FramePayloadView.js';
 import { frameFormat, type Frame } from '../../../src/renderer/activity/lib/frame-payload.js';
+import { defaultViewOf, type FrameView } from '../../../src/renderer/activity/lib/frame-views.js';
 
 /** A frame that arrived as text and carries control bytes: two of them and a word after. */
 const CONTROL = `${String.fromCodePoint(0, 1)}hola`;
@@ -24,8 +25,9 @@ function Wrapper({ children }: { children: ReactNode }) {
     );
 }
 
-function draw(frame: Frame, entryId = 'frame-1'): void {
-    render(<FramePayloadView entryId={entryId} format={frameFormat(frame)} frame={frame} />, {
+/** Draws the frame in the view it opens on, unless the reader asked for another. */
+function draw(frame: Frame, view: FrameView = defaultViewOf(frameFormat(frame))): void {
+    render(<FramePayloadView entryId="frame-1" frame={frame} view={view} />, {
         wrapper: Wrapper,
     });
 }
@@ -47,7 +49,7 @@ describe('the payload of the chosen frame', () => {
         const view = byPart('frame-payload-view');
         const editor = await editorAt(0, view);
 
-        expect(view).toHaveAttribute('data-format', 'json');
+        expect(view).toHaveAttribute('data-view', 'json');
         expect(editor.text()).toBe('{\n    "id": 7,\n    "ok": true\n}');
         expect(editor.language()).toBe('jsonc');
     });
@@ -84,7 +86,7 @@ describe('the payload of the chosen frame', () => {
 
         const view = byPart('frame-payload-view');
 
-        expect(view).toHaveAttribute('data-format', 'text');
+        expect(view).toHaveAttribute('data-view', 'raw');
         expect((await editorAt(0, view)).text()).toBe('hola tal cual');
     });
 
@@ -94,7 +96,7 @@ describe('the payload of the chosen frame', () => {
         const view = byPart('frame-payload-view');
         const dump = (await editorAt(0, view)).text();
 
-        expect(view).toHaveAttribute('data-format', 'binary');
+        expect(view).toHaveAttribute('data-view', 'hex');
         expect(dump.startsWith('00000000: 00 01 68 6F 6C 61')).toBe(true);
         expect(dump.endsWith('..hola')).toBe(true);
     });
@@ -105,7 +107,7 @@ describe('the payload of the chosen frame', () => {
 
         const view = byPart('frame-payload-view');
 
-        expect(view).toHaveAttribute('data-format', 'binary');
+        expect(view).toHaveAttribute('data-view', 'hex');
         expect((await editorAt(0, view)).text().startsWith('00000000: 00 01 02 FF')).toBe(true);
     });
 
@@ -154,5 +156,19 @@ describe('the payload of the chosen frame', () => {
 
         expect(editor.readOnly()).toBe(true);
         expect(editor.text()).toBe('{\n    "id": 7\n}');
+    });
+
+    /** The reader may read bytes as text: what they spell in UTF-8, not the base64 that carried them. */
+    it('reads the bytes of a frame that never was text as text on asking', async () => {
+        draw({ binary: true, data: 'aG9sYQ==' }, 'raw');
+
+        expect((await editorAt(0, byPart('frame-payload-view'))).text()).toBe('hola');
+    });
+
+    it('reads only the head of a large binary frame as text, and says how much of it', async () => {
+        draw({ binary: true, data: 'QUFB'.repeat(FORMAT_BYTES) }, 'raw');
+
+        expect((await editorAt(0)).text()).toHaveLength(FORMAT_BYTES);
+        expect(screen.getByText('Se muestra el primer 5.0 MB de 15.0 MB.')).toBeVisible();
     });
 });

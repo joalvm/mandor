@@ -42,6 +42,18 @@ export function selectActiveTabId(state: ShellStore): string | null {
     return selectActiveGroup(state)?.activeTab ?? null;
 }
 
+/** The tab in front: the one the focused group is on, straight off the tree so it stays put. */
+export function selectFrontTab(state: ShellStore): Tab | null {
+    const group = selectActiveGroup(state);
+
+    return group?.tabs.find((tab) => tab.id === group.activeTab) ?? null;
+}
+
+/** What the tab in front looks at, or nothing while no tab is open. */
+export function selectFrontResource(state: ShellStore): string | null {
+    return selectFrontTab(state)?.resource ?? null;
+}
+
 /** Nothing is remembered for a resource until somebody moves off the section it opens on. */
 export function selectSection(state: ShellStore, resource: string): string | null {
     return state.sections[resource] ?? null;

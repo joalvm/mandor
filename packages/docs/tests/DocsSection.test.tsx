@@ -1,4 +1,4 @@
-import { success } from '@mandor/ipc';
+import { ROOT_GROUP_ID, success } from '@mandor/ipc';
 import { bridge, shellStore, Sidebar } from '@mandor/shell';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -42,7 +42,7 @@ describe('the section of the docs', () => {
             'true',
         );
         expect(await screen.findByRole('option', { name: 'readme' })).toBeVisible();
-        expect(document.querySelector('[data-part="collapsible-count"]')).toHaveTextContent('1');
+        expect(screen.getByRole('button', { name: 'Docs' })).toHaveTextContent(/^Docs$/);
 
         view.rerender(
             <>
@@ -74,5 +74,50 @@ describe('a doc a tab asks the lateral to show', () => {
 
         expect(row).toHaveFocus();
         expect(shellStore.getState().revealing).toBeNull();
+    });
+});
+
+describe('the doc of the tab in front', () => {
+    /** As an explorer follows the editor in front: the row is marked, the focus stays put. */
+    it('marks its row while its tab is in front, and only then', async () => {
+        render(
+            <>
+                <WorkspaceDocs />
+                <DocsSection order={10} />
+                <Sidebar />
+            </>,
+            { wrapper: AppProviders },
+        );
+
+        const row = await screen.findByRole('option', { name: 'readme' });
+
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        act(() => {
+            shellStore.getState().openTab(ROOT_GROUP_ID, {
+                id: 'readme',
+                kind: 'doc',
+                resource: 'mandor://local-apis/events/doc/readme.md',
+            });
+        });
+
+        expect(row).toHaveAttribute('aria-selected', 'true');
+        expect(row).not.toHaveFocus();
+
+        act(() => {
+            shellStore.getState().openTab(ROOT_GROUP_ID, {
+                id: 'other',
+                kind: 'doc',
+                resource: 'mandor://local-apis/events/doc/other.md',
+            });
+        });
+
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        act(() => {
+            shellStore.getState().setActiveTab(ROOT_GROUP_ID, 'readme');
+        });
+
+        expect(row).toHaveAttribute('aria-selected', 'true');
     });
 });

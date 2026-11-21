@@ -1,5 +1,6 @@
 import { EmptyGroup, TabBody, TabIndicator, TabKind, TabStatus, useTab } from '@mandor/shell';
 
+import { composedEvent, subscribeComposedEvents } from '../../events/composed-event.js';
 import { composerUnsaved } from '../../events/composer-unsaved.js';
 import { saveEventInComposer } from '../../events/save-event-in-composer.js';
 import { ConnectionPanel } from './components/panel/ConnectionPanel.js';
@@ -35,6 +36,9 @@ function TabStatusDot() {
  *
  * The tab is dirty while its composer holds an edit of a collection event that was not saved:
  * closing it by hand asks first, because the composer dies with the tab.
+ *
+ * What it has open inside is the message its composer holds: the lateral marks that one in the
+ * collection while the tab is in front, since the message has no tab of its own.
  */
 export function ConnectionTabKind() {
     useConnectionPushes();
@@ -51,9 +55,11 @@ export function ConnectionTabKind() {
                 holds={connectionHeld}
                 icon="connection"
                 id="connection"
+                inside={composedEvent}
                 release={releaseConnection}
                 save={saveEventInComposer}
                 section={CONNECTIONS_SECTION_ID}
+                subscribeInside={subscribeComposedEvents}
                 subscribeTitles={subscribeConnectionTitles}
                 title={connectionTitle}
             >
