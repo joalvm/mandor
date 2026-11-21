@@ -27,7 +27,7 @@ export function ConnectionsSidebar() {
     }
 
     return (
-        <RowList className="flex flex-col" data-part="collections" label={messages('heading')}>
+        <RowList className="flex flex-col" data-part="connections" label={messages('heading')}>
             {connections.map((connection) => (
                 <ConnectionRow
                     connection={connection}
