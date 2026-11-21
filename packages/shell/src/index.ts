@@ -32,6 +32,7 @@ export { useMenuEditSteps } from './hooks/useMenuEditSteps.js';
 export { useMenuLanguage } from './hooks/useMenuLanguage.js';
 export { useMenuSettings } from './hooks/useMenuSettings.js';
 export { useWindowReady } from './hooks/useWindowReady.js';
+export { useFollowedResource } from './hooks/useFollowedResource.js';
 export { useResourceSection } from './hooks/useResourceSection.js';
 export { useShellStore } from './hooks/useShellStore.js';
 export { useSplit } from './hooks/useSplit.js';
@@ -52,6 +53,8 @@ export { openConflict } from './conflict/open-conflict.js';
 export {
     selectActiveGroup,
     selectActiveTabId,
+    selectFrontResource,
+    selectFrontTab,
     selectGroupOfTab,
     selectOpenResources,
     selectResourceOfTab,

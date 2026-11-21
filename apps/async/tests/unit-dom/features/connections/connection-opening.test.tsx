@@ -1,6 +1,6 @@
 import { leavesOf, ROOT_GROUP_ID, success } from '@mandor/ipc';
 import { selectGroupOfTab, selectTabs, shellStore } from '@mandor/shell';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { asyncBridge } from '../../../../src/renderer/app/async-bridge.js';
@@ -64,9 +64,12 @@ describe('opening a connection from the list', () => {
 
         fireEvent.click(row);
 
-        const beside = shellStore.getState().splitGroup(ROOT_GROUP_ID, 'row');
+        // The row follows the tab in front, so moving the focus by hand is an update it draws.
+        act(() => {
+            const beside = shellStore.getState().splitGroup(ROOT_GROUP_ID, 'row');
 
-        shellStore.getState().focusGroup(beside);
+            shellStore.getState().focusGroup(beside);
+        });
         fireEvent.click(row);
 
         expect(selectTabs(shellStore.getState())).toHaveLength(1);

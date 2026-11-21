@@ -1,7 +1,7 @@
 import { ROOT_GROUP_ID, success } from '@mandor/ipc';
 import type { FakeBridge } from '@mandor/ipc/testing';
 import { selectTabs, shellStore } from '@mandor/shell';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { asyncBridge } from '../../../../src/renderer/app/async-bridge.js';
@@ -24,13 +24,13 @@ function openRowMenu(): void {
 }
 
 function draw(connection = ECHO): { rerender: (connection: typeof ECHO) => void } {
-    const view = render(<ConnectionRow connection={connection} scope={SCOPE} selected={false} />, {
+    const view = render(<ConnectionRow connection={connection} scope={SCOPE} />, {
         wrapper: AppProviders,
     });
 
     return {
         rerender: (next: typeof ECHO) => {
-            view.rerender(<ConnectionRow connection={next} scope={SCOPE} selected={false} />);
+            view.rerender(<ConnectionRow connection={next} scope={SCOPE} />);
         },
     };
 }
@@ -164,5 +164,54 @@ describe('one entry of the collection', () => {
         fireEvent.keyDown(field, { key: ' ' });
 
         expect(connectionsStore.getState().activeConnectionId).toBeNull();
+    });
+});
+
+describe('the connection of the tab in front', () => {
+    /** As an explorer follows the editor in front: the row is marked, the focus stays put. */
+    it('marks its row while its tab is in front, and only then', () => {
+        draw();
+
+        const row = screen.getByRole('option', { name: 'Echo' });
+
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        act(() => {
+            shellStore.getState().openTab(ROOT_GROUP_ID, {
+                id: 'echo',
+                kind: 'connection',
+                resource: 'mandor://local-apis/events/connection/echo',
+            });
+        });
+
+        expect(row).toHaveAttribute('aria-selected', 'true');
+        expect(row).not.toHaveFocus();
+
+        act(() => {
+            shellStore.getState().openTab(ROOT_GROUP_ID, {
+                id: 'gateway',
+                kind: 'connection',
+                resource: 'mandor://local-apis/events/connection/gateway',
+            });
+        });
+
+        expect(row).toHaveAttribute('aria-selected', 'false');
+
+        act(() => {
+            shellStore.getState().setActiveTab(ROOT_GROUP_ID, 'echo');
+        });
+
+        expect(row).toHaveAttribute('aria-selected', 'true');
+    });
+
+    /** Which connection the composer answers to is not what the lateral marks: the front tab is. */
+    it('leaves its row unmarked while no tab of it is in front', () => {
+        connectionsStore.getState().setActiveConnection('echo');
+        draw();
+
+        expect(screen.getByRole('option', { name: 'Echo' })).toHaveAttribute(
+            'aria-selected',
+            'false',
+        );
     });
 });

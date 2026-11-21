@@ -36,6 +36,13 @@ export type TabKindLogic = {
     icon: IconName;
     id: string;
     /**
+     * What the tab has open inside it that the lateral lists, when that is not what the tab
+     * itself looks at: the message the composer of a connection holds. The lateral follows that
+     * one while the tab is in front. A kind that holds nothing inside leaves it out, and the
+     * lateral follows the resource of the tab.
+     */
+    inside?: ((tabId: string) => string | null) | undefined;
+    /**
      * Lets go of whatever the tab was holding while it was open: a live socket, the buffer of
      * what arrived through it. Called as the tab leaves the window, and never about disk — what
      * the tab was a view of stays exactly where it was, ready to be opened again. The resource
@@ -52,6 +59,8 @@ export type TabKindLogic = {
      * takes it. A kind no section lists is never offered there.
      */
     section?: string | undefined;
+    /** Says when what `inside` answers may have changed, so the lateral asks it again. */
+    subscribeInside?: ((onChange: () => void) => () => void) | undefined;
     /**
      * Says when the titles of this kind stopped being what they were, so a drawn tab reads its
      * own again. A kind whose title is spelled out by the resource never needs it; one that

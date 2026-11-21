@@ -1,7 +1,13 @@
 import { useMessages } from '@mandor/i18n';
 import type { Connection } from '@mandor/schema';
 import { InlineNameInput, ListRow, RowLabel } from '@mandor/ui';
-import { fireAndForget, originName, shellStore, useShellStore } from '@mandor/shell';
+import {
+    fireAndForget,
+    originName,
+    selectFrontResource,
+    shellStore,
+    useShellStore,
+} from '@mandor/shell';
 import { useStore } from 'zustand';
 
 import { connectionsStore } from '../../connections-store.js';
@@ -15,7 +21,6 @@ import { ConnectionRowMenu } from './ConnectionRowMenu.js';
 type ConnectionRowProps = {
     connection: Connection;
     scope: WorkspaceScope;
-    selected: boolean;
 };
 
 /**
@@ -23,15 +28,17 @@ type ConnectionRowProps = {
  * it. Renaming happens in place: the field stands where the name stood and the rest of the row
  * stays, so the list never moves and the state of the connection stays in sight.
  *
+ * The row is marked while the tab in front is the connection, as an explorer follows the editor
+ * in front; the focus stays where it was.
+ *
  * The row is a `ListRow` and nothing around it. A wrapper would add a node between the
  * list and its options for no one to read, and the row already has the shape a row has.
  */
-export function ConnectionRow({ connection, scope, selected }: ConnectionRowProps) {
+export function ConnectionRow({ connection, scope }: ConnectionRowProps) {
     const renaming = useStore(connectionsStore, (state) => state.renaming === connection.id);
-    const revealed = useShellStore(
-        (state) =>
-            state.revealing === connectionResource(originName(), scope.workspaceId, connection.id),
-    );
+    const resource = connectionResource(originName(), scope.workspaceId, connection.id);
+    const revealed = useShellStore((state) => state.revealing === resource);
+    const selected = useShellStore((state) => selectFrontResource(state) === resource);
 
     function commitRename(value: string): boolean {
         const name = value.trim();

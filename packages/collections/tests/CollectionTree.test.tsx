@@ -1,5 +1,6 @@
 import { success } from '@mandor/ipc';
 import { bridge, selectTabs, shellStore } from '@mandor/shell';
+import { declareTabKindSpec } from '@mandor/shell/testing/tab-kind';
 import { byPart } from '@mandor/ui/testing';
 import { cleanup, act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -246,5 +247,53 @@ describe('the collection following the tab in front', () => {
         bringToFront('billing', 'mandor://local-apis/billing/item/pedidos/pedido-pagado');
 
         expect(takenNames()).toEqual([]);
+    });
+
+    /**
+     * A tab can hold inside it something the tree lists, with no tab of its own: a connection of
+     * Realtime composing a message. The tree follows that one, and again each time it changes.
+     */
+    it('takes the line of what the tab in front holds inside, when its kind says it holds one', async () => {
+        let inside: string | null = PAGADO;
+        let notify = (): void => undefined;
+        const stop = declareTabKindSpec({
+            closable: true,
+            icon: 'connection',
+            id: 'composer',
+            inside: () => inside,
+            subscribeInside: (onChange) => {
+                notify = onChange;
+
+                return () => undefined;
+            },
+            title: () => 'Echo',
+        });
+
+        try {
+            await renderTree();
+            act(() => {
+                const shell = shellStore.getState();
+
+                shell.openTab(shell.activeGroupId, {
+                    id: 'echo',
+                    kind: 'composer',
+                    resource: 'mandor://local-apis/events/connection/echo',
+                });
+            });
+
+            expect(takenNames()).toEqual(['Pedido pagado']);
+
+            inside = ENVIO;
+            act(() => {
+                notify();
+            });
+
+            expect(takenNames()).toEqual(['Envio creado']);
+        } finally {
+            // The tree is still mounted and reads the kind, so letting it go is an update.
+            act(() => {
+                stop();
+            });
+        }
     });
 });
