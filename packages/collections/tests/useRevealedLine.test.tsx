@@ -3,7 +3,7 @@ import { cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { collectionStore } from '../src/collection-store.js';
-import { useRevealedItem } from '../src/hooks/useRevealedItem.js';
+import { useRevealedLine } from '../src/hooks/useRevealedLine.js';
 
 afterEach(() => {
     // The hook lets go of the store before the store starts over, or it would hear the reset.
@@ -18,7 +18,7 @@ describe('the item a tab asks the collection to show', () => {
         collectionStore.getState().fold('events', 'pedidos/2026', true);
         shellStore.getState().setRevealing('mandor://local/events/item/pedidos/2026/pagado');
 
-        const { result } = renderHook(() => useRevealedItem('events'));
+        const { result } = renderHook(() => useRevealedLine('events'));
 
         expect(result.current).toBe('pedidos/2026/pagado');
         expect(collectionStore.getState().folded['events']).toEqual([]);
@@ -28,7 +28,7 @@ describe('the item a tab asks the collection to show', () => {
     it('leaves alone an item of another workspace', () => {
         shellStore.getState().setRevealing('mandor://local/billing/item/pedidos/pagado');
 
-        const { result } = renderHook(() => useRevealedItem('events'));
+        const { result } = renderHook(() => useRevealedLine('events'));
 
         expect(result.current).toBeNull();
         expect(collectionStore.getState().selected).toEqual([]);

@@ -183,3 +183,68 @@ describe('an item a tab asks the lateral to show', () => {
         expect(shellStore.getState().revealing).not.toBeNull();
     });
 });
+
+/** What the window shows is what the tree marks, as an explorer follows the editor in front. */
+describe('the collection following the tab in front', () => {
+    const PAGADO = 'mandor://local-apis/events/item/pedidos/pedido-pagado';
+    const ENVIO = 'mandor://local-apis/events/item/envios/envio-creado';
+
+    function bringToFront(id: string, resource: string): void {
+        act(() => {
+            const shell = shellStore.getState();
+
+            shell.openTab(shell.activeGroupId, { id, kind: 'item', resource });
+        });
+    }
+
+    it('takes the line of the tab in front and opens the folders above it, leaving the focus where it was', async () => {
+        await renderTree();
+        fireEvent.click(row('Pedidos'));
+
+        expect(screen.queryByRole('treeitem', { name: 'Pedido pagado' })).toBeNull();
+
+        bringToFront('pagado', PAGADO);
+
+        expect(row('Pedido pagado')).toBeVisible();
+        expect(takenNames()).toEqual(['Pedido pagado']);
+        expect(row('Pedido pagado')).not.toHaveFocus();
+    });
+
+    /** Going back to a tab marks its line again, over whatever was taken in the meantime. */
+    it('takes the line again when its tab comes back to the front', async () => {
+        await renderTree();
+        bringToFront('pagado', PAGADO);
+        bringToFront('envio', ENVIO);
+
+        expect(takenNames()).toEqual(['Envio creado']);
+
+        act(() => {
+            collectionStore.getState().setSelected(['pedidos']);
+        });
+        act(() => {
+            const shell = shellStore.getState();
+
+            shell.setActiveTab(shell.activeGroupId, 'pagado');
+        });
+
+        expect(takenNames()).toEqual(['Pedido pagado']);
+    });
+
+    it('leaves what the user took while the same tab stays in front', async () => {
+        await renderTree();
+        bringToFront('pagado', PAGADO);
+
+        act(() => {
+            collectionStore.getState().setSelected(['pedidos']);
+        });
+
+        expect(takenNames()).toEqual(['Pedidos']);
+    });
+
+    it('leaves the tree alone for a tab of another workspace', async () => {
+        await renderTree();
+        bringToFront('billing', 'mandor://local-apis/billing/item/pedidos/pedido-pagado');
+
+        expect(takenNames()).toEqual([]);
+    });
+});

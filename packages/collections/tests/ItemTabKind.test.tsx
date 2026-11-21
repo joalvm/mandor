@@ -1,7 +1,7 @@
 import { ROOT_GROUP_ID, success } from '@mandor/ipc';
 import { bridge, selectTabs, shellStore, tabKind } from '@mandor/shell';
 import { translatorIn } from '@mandor/shell/testing/tab-kind';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -76,10 +76,13 @@ describe('opening an item from the tree', () => {
     /** The item is open in the other half of the window, so clicking its row goes there. */
     it('goes to the tab of the item when it is open in the other group', async () => {
         await clickItem('Pedido creado');
-        shellStore.getState().openTabAside({
-            id: 'other',
-            kind: 'doc',
-            resource: 'mandor://local-apis/events/doc/one.md',
+        // The tree follows the tab in front, so a tab brought forward draws it again.
+        act(() => {
+            shellStore.getState().openTabAside({
+                id: 'other',
+                kind: 'doc',
+                resource: 'mandor://local-apis/events/doc/one.md',
+            });
         });
         fireEvent.click(screen.getByRole('treeitem', { name: 'Pedido creado' }));
 
