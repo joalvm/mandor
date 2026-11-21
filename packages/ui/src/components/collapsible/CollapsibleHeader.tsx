@@ -6,16 +6,14 @@ import { ChevronRightIcon } from '@mandor/icons';
 export const HeaderActionsContext = createContext(false);
 
 type CollapsibleHeaderProps = PropsWithChildren<{
-    /** How many things the region holds, said after the title in a lighter ink. */
-    count?: number | undefined;
     title: string;
 }>;
 
 /**
  * The line that names the region and folds it. It reads as a heading, not as a row: as tall as a
- * control, a weight heavier than the lines under it, in sentence case, with what it holds counted
- * after the title in the tertiary ink — the count is read in passing, so screen readers leave it
- * to the list itself. The chevron is the header's own — it says which way the region
+ * control, a weight heavier than the lines under it, in sentence case, and its title alone: how
+ * much the region holds is read in the region, not counted beside its name. The chevron is the
+ * header's own — it says which way the region
  * is, not something a caller decides to hang there — and which way it points is decided by the
  * state radix writes on the trigger, once in `runtime.css` for every header.
  *
@@ -26,7 +24,7 @@ type CollapsibleHeaderProps = PropsWithChildren<{
  * buttons are the header's chrome, not the caller's choice: they stand flush against the end
  * edge, and an `IconButton` written inside takes the small box, glyph and ink on its own.
  */
-export function CollapsibleHeader({ children, count, title }: CollapsibleHeaderProps) {
+export function CollapsibleHeader({ children, title }: CollapsibleHeaderProps) {
     return (
         <div
             className="flex h-control shrink-0 items-center gap-gap-control px-pad-panel"
@@ -45,7 +43,6 @@ export function CollapsibleHeader({ children, count, title }: CollapsibleHeaderP
                 <span className="min-w-0 truncate" data-part="collapsible-title">
                     {title}
                 </span>
-                <HeaderCount count={count} />
             </CollapsiblePrimitive.Trigger>
             <span
                 className="flex shrink-0 items-center empty:hidden"
@@ -54,21 +51,5 @@ export function CollapsibleHeader({ children, count, title }: CollapsibleHeaderP
                 <HeaderActionsContext value>{children}</HeaderActionsContext>
             </span>
         </div>
-    );
-}
-
-function HeaderCount({ count }: Pick<CollapsibleHeaderProps, 'count'>) {
-    if (count === undefined) {
-        return null;
-    }
-
-    return (
-        <span
-            aria-hidden="true"
-            className="shrink-0 font-normal text-text-tertiary tabular-nums"
-            data-part="collapsible-count"
-        >
-            {count}
-        </span>
     );
 }

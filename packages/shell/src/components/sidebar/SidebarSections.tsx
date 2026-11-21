@@ -56,10 +56,7 @@ export function SidebarSections({ collapsed, onCollapsedChange }: SidebarSection
                                 }}
                                 open={open}
                             >
-                                <CollapsibleHeader
-                                    count={section.count}
-                                    title={translate(section.title)}
-                                >
+                                <CollapsibleHeader title={translate(section.title)}>
                                     {section.actions}
                                 </CollapsibleHeader>
                                 <CollapsibleBody>

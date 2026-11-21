@@ -1,8 +1,6 @@
 import { SidebarSection, SidebarSectionActions, SidebarSectionBody } from '@mandor/shell';
 import type { PropsWithChildren } from 'react';
-import { useStore } from 'zustand';
 
-import { collectionStore } from '../../collection-store.js';
 import { foldWorkspaceCollections } from '../../lib/fold-workspace-collections.js';
 import { CollectionSidebar } from './CollectionSidebar.js';
 import { CollectionsSectionActions } from './CollectionsSectionActions.js';
@@ -27,11 +25,8 @@ type CollectionsSectionProps = PropsWithChildren<{
  * opens again on its collections alone.
  */
 export function CollectionsSection({ children, order }: CollectionsSectionProps) {
-    const count = useStore(collectionStore, (state) => state.nodes.length);
-
     return (
         <SidebarSection
-            count={count}
             fills
             id={COLLECTIONS_SECTION_ID}
             onFold={foldWorkspaceCollections}

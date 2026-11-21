@@ -1,8 +1,5 @@
 import { SidebarSection, SidebarSectionActions, SidebarSectionBody } from '@mandor/shell';
-import { useStore } from 'zustand';
 
-import { connectionsStore } from '../../connections-store.js';
-import { selectConnections } from '../../selectors.js';
 import { ConnectionsSidebar } from './ConnectionsSidebar.js';
 import { NewConnectionEntry } from './NewConnectionEntry.js';
 
@@ -19,15 +16,8 @@ type ConnectionsSectionProps = {
  * new one, as the add of the strip of tabs does: it opens in a tab, which is where it lives.
  */
 export function ConnectionsSection({ order }: ConnectionsSectionProps) {
-    const count = useStore(connectionsStore, (state) => selectConnections(state).length);
-
     return (
-        <SidebarSection
-            count={count}
-            id={CONNECTIONS_SECTION_ID}
-            order={order}
-            title="connections:heading"
-        >
+        <SidebarSection id={CONNECTIONS_SECTION_ID} order={order} title="connections:heading">
             <SidebarSectionActions>
                 <NewConnectionEntry />
             </SidebarSectionActions>

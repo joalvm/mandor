@@ -48,28 +48,18 @@ describe('a foldable section', () => {
         expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    /** The count is read in passing; the list under it is what a screen reader counts. */
-    it('counts what the region holds after its title, in the lighter ink, and only when told', () => {
-        const { rerender } = render(
-            <Collapsible onOpenChange={vi.fn()} open>
-                <CollapsibleHeader count={3} title="Conexiones" />
-            </Collapsible>,
-        );
-
-        const count = byPart('collapsible-count');
-
-        expect(count).toHaveTextContent('3');
-        expect(count).toHaveClass('text-text-tertiary');
-        expect(count).toHaveAttribute('aria-hidden', 'true');
-        expect(screen.getByRole('button', { name: 'Conexiones' })).toContainElement(count);
-
-        rerender(
+    /** What the region holds is read in the region itself; the header says only its name. */
+    it('reads its title and nothing after it', () => {
+        render(
             <Collapsible onOpenChange={vi.fn()} open>
                 <CollapsibleHeader title="Conexiones" />
             </Collapsible>,
         );
 
-        expect(document.querySelector('[data-part="collapsible-count"]')).toBeNull();
+        const trigger = screen.getByRole('button', { name: 'Conexiones' });
+
+        expect(trigger).toHaveTextContent(/^Conexiones$/);
+        expect(byPart('collapsible-title').nextElementSibling).toBeNull();
     });
 
     it('hides the body of a folded section and keeps announcing its header', () => {
