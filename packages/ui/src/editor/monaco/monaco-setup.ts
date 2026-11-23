@@ -106,8 +106,7 @@ watchWindowTheme((theme) => {
 });
 
 /*
- * Lines break with `
-` in every document of the app, whatever machine it runs on. Left to
+ * Lines break with LF in every document of the app, whatever machine it runs on. Left to
  * itself the editor breaks the lines of a text that has none yet the way the system does, so a
  * doc written on Windows would reach the repo with a carriage return on every line and read as
  * a whole file rewritten by whoever opened it.
