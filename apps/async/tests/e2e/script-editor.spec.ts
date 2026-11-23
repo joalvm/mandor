@@ -125,6 +125,21 @@ test('inside the name of a variable the editor offers the ones the scripts decla
     await expect(suggestions.getByText('orderId', { exact: true })).toHaveCount(1);
 });
 
+/**
+ * The settings open from the row of the connection, which hands the row what happens in them:
+ * Enter and space typed in the editor are still the editor's.
+ */
+test('a script is written line by line, spaces and all', async () => {
+    await typeScript('const a = 1;');
+    await page.keyboard.press('Enter');
+    await page.keyboard.type('const b = 2;');
+
+    await expect(editorOfScript().locator('.line-numbers').filter({ hasText: /\d/ })).toHaveCount(
+        2,
+    );
+    await expect(editorOfScript()).toContainText('const b = 2;');
+});
+
 test('where a line starts the editor offers the snippets of the moment, and writes one', async () => {
     await typeScript('Send');
 
@@ -135,4 +150,34 @@ test('where a line starts the editor offers the snippets of the moment, and writ
     await page.keyboard.press('Enter');
 
     await expect(editorOfScript()).toContainText('mandor.sendRequest');
+});
+
+/**
+ * A script brought from another app names an API that does not run here. The editor says whose
+ * it is, and the bulb writes it in mandor.: the lines of the caret, or the whole script. What has
+ * no counterpart stays as it was, underlined.
+ */
+test('what a script names of another app is underlined, and the bulb converts it', async () => {
+    const underlined = editorOfScript().locator('.squiggly-error');
+    const bulb = widget('.action-widget');
+
+    await typeScript('pm.environment.get("x");\nbru.runRequest("y");\npm.variables.get("z");');
+    await expect(underlined.first()).toBeVisible();
+    await hoverWord(editorLines(dialog, 'event-script').filter({ visible: true }), 'environment');
+    await expect(widget('.monaco-hover')).toContainText('This is from Postman: Convert to mandor.');
+
+    await page.keyboard.press('ControlOrMeta+Period');
+    await expect(bulb.getByText('Convert the whole script to mandor.')).toBeVisible();
+    await bulb.getByText('Convert to mandor.', { exact: true }).click();
+
+    await expect(editorOfScript()).toContainText('mandor.variables.get("z")');
+    await expect(editorOfScript()).toContainText('pm.environment.get("x")');
+
+    await page.keyboard.press('ControlOrMeta+Home');
+    await page.keyboard.press('ControlOrMeta+Period');
+    await bulb.getByText('Convert the whole script to mandor.').click();
+
+    await expect(editorOfScript()).toContainText('mandor.variables.get("x")');
+    await expect(editorOfScript()).toContainText('bru.runRequest("y")');
+    await expect(underlined).toHaveCount(1);
 });
