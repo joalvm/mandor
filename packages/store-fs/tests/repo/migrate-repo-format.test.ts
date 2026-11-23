@@ -145,3 +145,39 @@ describe('migrateRepoFormat over an origin of format 2', () => {
         expect(await migrateRepoFormat(origin)).toEqual([]);
     });
 });
+
+describe('migrateRepoFormat over a workspace that shares nothing to fold', () => {
+    let quiet: string;
+
+    beforeAll(async () => {
+        quiet = await mkdtemp(join(tmpdir(), 'mandor-fold-quiet-'));
+
+        await writeRepoTree(quiet, 'Quieto');
+        await createWorkspace(quiet, { id: WS, name: 'Quieto', kind: 'sync' });
+        await put(
+            join(quiet, 'mandor.yaml'),
+            'formatVersion: 2\nname: Quieto\nworkspaces:\n  - shop\n',
+        );
+
+        const workspace = join(quiet, 'workspaces', WS, 'workspace.yaml');
+
+        await put(workspace, `${await readFile(workspace, 'utf8')}importedScripts: []\n`);
+        await put(
+            join(quiet, 'workspaces', WS, 'collections', 'api', 'collection.yaml'),
+            'name: API\n',
+        );
+    });
+
+    afterAll(async () => {
+        await rm(quiet, { recursive: true, force: true });
+    });
+
+    it('leaves a collection the empty list changes nothing in as it was', async () => {
+        const collection = join(quiet, 'workspaces', WS, 'collections', 'api', 'collection.yaml');
+        const done = await migrateRepoFormat(quiet);
+
+        expect(done).not.toContain(collection);
+        expect(done).toContain(join(quiet, 'workspaces', WS, 'workspace.yaml'));
+        expect(await readFile(collection, 'utf8')).toBe('name: API\n');
+    });
+});

@@ -47,7 +47,12 @@ describe('scriptPartsOf', () => {
         const hooks = { type: 'hooks', code: 'x()' };
 
         expect(
-            scriptPartsOf([{ type: 'tests', code: 't()' }, hooks, { type: 'grpc', code: '' }]),
+            scriptPartsOf([
+                { type: 'tests', code: 't()' },
+                hooks,
+                { type: 'grpc', code: '' },
+                { type: 'grpc' },
+            ]),
         ).toEqual({ read: { onResponse: { source: 't()' } }, unread: [hooks] });
         expect(scriptPartsOf(undefined)).toEqual({ read: undefined, unread: [] });
     });
