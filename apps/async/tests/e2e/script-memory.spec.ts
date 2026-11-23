@@ -48,14 +48,14 @@ let page: Page;
 let echo: EchoServer;
 
 /** The log every frame costs, small on purpose: the burst is of the queue, not of the output. */
-const QUIET_LOG = "console.log('mem ' + String(message.text).slice(0, 8));";
+const QUIET_LOG = "console.log('mem ' + String(mandor.message.text).slice(0, 8));";
 /** The frame that kills its worker, and the one that proves the next frame ran. */
 const BOOM = [
-    'if (message.text === "boom") {',
+    'if (mandor.message.text === "boom") {',
     '  const a = [];',
     '  while (true) { a.push("x".repeat(1024 * 1024)); }',
     '}',
-    "console.log('vivo ' + String(message.text).slice(0, 8));",
+    "console.log('vivo ' + String(mandor.message.text).slice(0, 8));",
 ].join('\n');
 
 /** Where the file of one connection lives, by the name the screen shows. */

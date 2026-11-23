@@ -19,7 +19,7 @@ describe('runScript', () => {
     it('gives what the script wrote, in the order it wrote it', async () => {
         const output = await outputOf(
             wasm,
-            'console.log("a"); vars.set("x", "1"); console.warn("b");',
+            'console.log("a"); mandor.variables.set("x", "1"); console.warn("b");',
         );
 
         expect(output.logs).toEqual([
@@ -50,7 +50,10 @@ describe('runScript', () => {
     });
 
     it('keeps the effects that came before the throw', async () => {
-        const output = await outputOf(wasm, 'vars.set("a", "1"); throw new Error("x");');
+        const output = await outputOf(
+            wasm,
+            'mandor.variables.set("a", "1"); throw new Error("x");',
+        );
 
         expect(output.effects).toEqual([{ kind: 'var', name: 'a', value: '1' }]);
     });
@@ -122,7 +125,7 @@ describe('runScript', () => {
 
     it('does not trust the text the guest ends on', async () => {
         const forge = (text: string): string =>
-            `});\n})(() => 1);\n"x" ? ${JSON.stringify(text)} : (function (run) { return run(async function () {`;
+            `}\n});\n})(() => 1);\n"x" ? ${JSON.stringify(text)} : (function (run) { return run(async function () {\n{`;
 
         for (const text of ['not json', '{"effects":1}', '{}']) {
             const result = await runScript(wasm, inputOf(forge(text)));
@@ -135,7 +138,7 @@ describe('runScript', () => {
     });
 
     it('keeps the user from a snapshot that was not given: variables are only the snapshot', async () => {
-        const output = await outputOf(wasm, 'console.log(String(vars.get("a")));', {
+        const output = await outputOf(wasm, 'console.log(String(mandor.variables.get("a")));', {
             variables: [{ name: 'a', value: '1' }],
         });
 

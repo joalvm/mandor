@@ -20,26 +20,28 @@ describe('test of the guest', () => {
     });
 
     it('counts a case that holds, with no message', async () => {
-        expect(await casesOf('test("holds", () => {});')).toEqual([
+        expect(await casesOf('mandor.test("holds", () => {});')).toEqual([
             { name: 'holds', passed: true },
         ]);
     });
 
     it('counts a case that throws, with what it threw', async () => {
-        const [only] = await casesOf('test("breaks", () => { throw new TypeError("bad"); });');
+        const [only] = await casesOf(
+            'mandor.test("breaks", () => { throw new TypeError("bad"); });',
+        );
 
         expect(only).toEqual({ name: 'breaks', passed: false, message: 'TypeError: bad' });
     });
 
     it('counts a case that throws something that is no error', async () => {
-        const [only] = await casesOf('test("breaks", () => { throw 7; });');
+        const [only] = await casesOf('mandor.test("breaks", () => { throw 7; });');
 
         expect(only).toEqual({ name: 'breaks', passed: false, message: '7' });
     });
 
     it('counts every case, even when another one throws', async () => {
         const tests = await casesOf(
-            'test("a", () => { throw new Error("x"); }); test("b", () => {}); test("c", () => { throw 1; });',
+            'mandor.test("a", () => { throw new Error("x"); }); mandor.test("b", () => {}); mandor.test("c", () => { throw 1; });',
         );
 
         expect(tests.map(({ name, passed }) => [name, passed])).toEqual([
@@ -51,7 +53,7 @@ describe('test of the guest', () => {
 
     it('waits for an async case, whether the script awaits it or not', async () => {
         const tests = await casesOf(
-            'test("late", async () => { await null; await null; }); test("bad", async () => { await null; throw new Error("late"); });',
+            'mandor.test("late", async () => { await null; await null; }); mandor.test("bad", async () => { await null; throw new Error("late"); });',
         );
 
         expect(tests).toEqual([
@@ -63,7 +65,7 @@ describe('test of the guest', () => {
     it('lets the script await the case and go on after it', async () => {
         const output = await outputOf(
             wasm,
-            'await test("a", async () => { await null; }); console.log("after");',
+            'await mandor.test("a", async () => { await null; }); console.log("after");',
         );
 
         expect(output.tests).toEqual([{ name: 'a', passed: true }]);
@@ -72,7 +74,7 @@ describe('test of the guest', () => {
 
     it('keeps the order the cases were declared in, not the order they ended in', async () => {
         const tests = await casesOf(
-            'test("slow", async () => { for (let i = 0; i < 5; i += 1) { await null; } }); test("fast", () => {});',
+            'mandor.test("slow", async () => { for (let i = 0; i < 5; i += 1) { await null; } }); mandor.test("fast", () => {});',
         );
 
         expect(tests.map(({ name }) => name)).toEqual(['slow', 'fast']);
@@ -81,7 +83,7 @@ describe('test of the guest', () => {
     it('marks a case that never ends as not finished, and the run still gives its output', async () => {
         const output = await outputOf(
             wasm,
-            'test("hangs", () => new Promise(() => {})); test("ok", () => {}); console.log("end");',
+            'mandor.test("hangs", () => new Promise(() => {})); mandor.test("ok", () => {}); console.log("end");',
         );
 
         expect(output.tests).toEqual([
@@ -93,14 +95,20 @@ describe('test of the guest', () => {
     });
 
     it('keeps the cases of a script that then waits for something that never comes', async () => {
-        const output = await outputOf(wasm, 'test("a", () => {}); await new Promise(() => {});');
+        const output = await outputOf(
+            wasm,
+            'mandor.test("a", () => {}); await new Promise(() => {});',
+        );
 
         expect(output.tests).toEqual([{ name: 'a', passed: true }]);
         expect(output.error).toMatchObject({ errorName: 'ScriptPending' });
     });
 
     it('keeps the cases of a script that throws, and its error', async () => {
-        const output = await outputOf(wasm, 'test("a", () => {}); throw new RangeError("after");');
+        const output = await outputOf(
+            wasm,
+            'mandor.test("a", () => {}); throw new RangeError("after");',
+        );
 
         expect(output.tests).toEqual([{ name: 'a', passed: true }]);
         expect(output.error).toMatchObject({ message: 'after', errorName: 'RangeError' });
@@ -109,7 +117,7 @@ describe('test of the guest', () => {
     it('keeps the error of a script that throws while a case never ends', async () => {
         const output = await outputOf(
             wasm,
-            'test("hangs", () => new Promise(() => {})); throw new RangeError("after");',
+            'mandor.test("hangs", () => new Promise(() => {})); throw new RangeError("after");',
         );
 
         expect(output.tests).toEqual([
@@ -121,7 +129,7 @@ describe('test of the guest', () => {
     it('reads the name as the console would show it', async () => {
         expect(
             await casesOf(
-                'test(12, () => {}); test(undefined, () => {}); test({ a: 1 }, () => {});',
+                'mandor.test(12, () => {}); mandor.test(undefined, () => {}); mandor.test({ a: 1 }, () => {});',
             ),
         ).toEqual([
             { name: '12', passed: true },
@@ -131,14 +139,16 @@ describe('test of the guest', () => {
     });
 
     it('counts a case whose body is no function', async () => {
-        const [only] = await casesOf('test("no body", 5);');
+        const [only] = await casesOf('mandor.test("no body", 5);');
 
         expect(only?.passed).toBe(false);
         expect(only?.message).toMatch(/^TypeError/u);
     });
 
     it('lets a case run the cases that follow it from inside', async () => {
-        const tests = await casesOf('test("outer", () => { test("inner", () => {}); });');
+        const tests = await casesOf(
+            'mandor.test("outer", () => { mandor.test("inner", () => {}); });',
+        );
 
         expect(tests.map(({ name, passed }) => [name, passed])).toEqual([
             ['outer', true],
@@ -158,9 +168,9 @@ describe('test of the guest', () => {
                 'globalThis.Promise = function () { throw new Error("forged"); };',
             ],
         ])('keeps the count when it replaces %s', async (_name, pisa) => {
-            expect(await casesOf(`${pisa}\ntest("a", async () => { await null; });`)).toEqual([
-                { name: 'a', passed: true },
-            ]);
+            expect(
+                await casesOf(`${pisa}\nmandor.test("a", async () => { await null; });`),
+            ).toEqual([{ name: 'a', passed: true }]);
         });
     });
 });

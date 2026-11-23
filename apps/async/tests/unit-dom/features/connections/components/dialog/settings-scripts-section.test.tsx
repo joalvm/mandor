@@ -59,10 +59,13 @@ describe('the scripts of a connection, by moment of the connection', () => {
             'true',
         );
         // A tab opened once keeps its editor: the one before it is still the first.
-        (await editorAt(1)).typeOver('socket.send("hi")');
+        (await editorAt(1)).typeOver('mandor.socket.send("hi")');
 
         expect(onConnectionChange).toHaveBeenLastCalledWith({
-            scripts: { onMessage: { source: 'b()' }, onConnect: { source: 'socket.send("hi")' } },
+            scripts: {
+                onMessage: { source: 'b()' },
+                onConnect: { source: 'mandor.socket.send("hi")' },
+            },
         });
     });
 

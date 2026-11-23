@@ -120,7 +120,7 @@ test('a script written here runs at the send, with no question, and writes to th
 });
 
 test('a variable one request sets reaches the next one', async () => {
-    await writeScript(AFTER, 'vars.set("pedido", "42");');
+    await writeScript(AFTER, 'mandor.variables.set("pedido", "42");');
     await send();
 
     const folder = page.getByRole('treeitem', { name: 'pedidos' });
@@ -135,7 +135,10 @@ test('a variable one request sets reaches the next one', async () => {
 });
 
 test('an expect that does not hold shows as failed among the tests', async () => {
-    await writeScript(AFTER, 'test("es 201", () => { expect(response.status).to.equal(201); });');
+    await writeScript(
+        AFTER,
+        'mandor.test("es 201", () => { mandor.expect(mandor.response.status).to.equal(201); });',
+    );
     await send();
     await openSection(responseOf(page), /^Tests/u);
 

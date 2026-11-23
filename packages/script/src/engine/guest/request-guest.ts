@@ -1,5 +1,5 @@
 /**
- * `request`: the request as the snapshot has it, with `{{var}}` as the literal text it is. Reading
+ * `mandor.request`: the request as the snapshot has it, with `{{var}}` as the literal text it is. Reading
  * gives what the snapshot said or what the script wrote after; writing leaves an effect, only for
  * the fields the event lets it write (`WRITES`), and for a body of a kind a script can read and
  * write as text (`json`, `text`, `xml`, `none`). Anything else is said in a line and does nothing.
@@ -19,7 +19,7 @@ function canWrite(field) {
         return true;
     }
 
-    noticeLine('request-field-readonly', { field: 'request.' + field, event: SNAPSHOT.info.event });
+    noticeLine('request-field-readonly', { field: 'mandor.request.' + field, event: SNAPSHOT.info.event });
 
     return false;
 }

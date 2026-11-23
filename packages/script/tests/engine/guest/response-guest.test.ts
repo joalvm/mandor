@@ -30,7 +30,7 @@ describe('response of the guest', () => {
 
     it('gives the status, the time, the headers and the body', async () => {
         const output = await run(
-            'console.log(response.status, response.timeMs, response.headers.get("content-type"), response.headers.has("x"), response.text(), response.json().id);',
+            'console.log(mandor.response.status, mandor.response.time, mandor.response.headers.get("content-type"), mandor.response.headers.has("x"), mandor.response.text(), mandor.response.json().id);',
         );
 
         expect(lineOf(output.logs[0])).toBe('201 42 application/json false {"id":7} 7');
@@ -38,7 +38,7 @@ describe('response of the guest', () => {
 
     it('has nothing to write: a header or a status stays as it was', async () => {
         const output = await run(
-            'response.status = 500; console.log(response.status, typeof response.headers.set);',
+            'mandor.response.status = 500; console.log(mandor.response.status, typeof mandor.response.headers.set);',
         );
 
         expect(output.effects).toEqual([]);
@@ -46,7 +46,7 @@ describe('response of the guest', () => {
     });
 
     it('fails on a body that is no JSON, as JSON.parse does', async () => {
-        const output = await run('response.json();', { text: 'not json' });
+        const output = await run('mandor.response.json();', { text: 'not json' });
 
         expect(output.error).toMatchObject({ errorName: 'SyntaxError', line: 1 });
     });
@@ -61,7 +61,7 @@ describe('response of the guest', () => {
         const output = await outputAt(
             wasm,
             'onResponse',
-            'response.text(); response.json(); console.log(response.text());',
+            'mandor.response.text(); mandor.response.json(); console.log(mandor.response.text());',
             {
                 response: large,
             },
@@ -77,7 +77,7 @@ describe('response of the guest', () => {
         const output = await outputAt(
             wasm,
             'onResponse',
-            'console.log(response.status, response.text());',
+            'console.log(mandor.response.status, mandor.response.text());',
         );
 
         expect(output.logs.map(lineOf)).toEqual([

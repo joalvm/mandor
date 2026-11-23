@@ -1,4 +1,9 @@
-import { API_BY_EVENT, type ScriptApiObject } from '../api/script-api.js';
+import {
+    API_BY_EVENT,
+    STANDARD_NAMES,
+    type MandorMember,
+    type StandardName,
+} from '../api/script-api.js';
 import { CUT_MARK } from '../contract/clamp-text.js';
 import type { ScriptRunInput } from '../contract/script-run.js';
 import { SCRIPT_LIMITS } from '../limits/script-limits.js';
@@ -17,7 +22,7 @@ import { RESPONSE_GUEST } from './guest/response-guest.js';
 import { SEND_GUEST } from './guest/send-guest.js';
 import { SOCKET_GUEST } from './guest/socket-guest.js';
 import { TEST_GUEST } from './guest/test-guest.js';
-import { VARS_GUEST } from './guest/vars-guest.js';
+import { VARIABLES_GUEST } from './guest/variables-guest.js';
 import { HOST_SEND } from './send-bridge.js';
 import { PENDING_MESSAGE } from './session.js';
 
@@ -25,15 +30,19 @@ import { PENDING_MESSAGE } from './session.js';
 export const RESCUE = 'mandorRescue';
 
 /** The line of the source where the script starts. */
-export const SCRIPT_FIRST_LINE = 3;
+export const SCRIPT_FIRST_LINE = 4;
 
-// What each name of the API is in the guest. The script gets them as the parameters of its function.
-const GUEST_NAME: Record<ScriptApiObject, string> = {
+// What each name of JavaScript is in the guest. The script gets them as parameters of its function.
+const STANDARD_GUEST: Record<StandardName, string> = {
     console: 'consoleApi',
     atob: 'atob',
     btoa: 'btoa',
     URLSearchParams: 'URLSearchParams',
-    vars: 'varsApi',
+};
+
+// What each member of `mandor` is in the guest.
+const MEMBER_GUEST: Record<MandorMember, string> = {
+    variables: 'variablesApi',
     test: 'test',
     expect: 'expect',
     request: 'requestApi',
@@ -43,8 +52,18 @@ const GUEST_NAME: Record<ScriptApiObject, string> = {
     sendRequest: 'sendRequest',
 };
 
+/** The parameters of the function of the script: the names of JavaScript, then `mandor`. */
+const PARAMETERS = [...STANDARD_NAMES, 'mandor'].join(', ');
+
+/** The guest line that builds `mandor` with what the event shows, and no other member. */
+function mandorOf(members: readonly MandorMember[]): string {
+    const fields = members.map((member) => `${member}: ${MEMBER_GUEST[member]}`).join(', ');
+
+    return `const mandorApi = { ${fields} };`;
+}
+
 function guestOf(input: ScriptRunInput): string {
-    const { objects, requestWrites } = API_BY_EVENT[input.event];
+    const { members, requestWrites } = API_BY_EVENT[input.event];
 
     return [
         INTRINSICS_GUEST,
@@ -60,7 +79,7 @@ function guestOf(input: ScriptRunInput): string {
         CONSOLE_GUEST,
         LISTS_GUEST,
         EFFECTS_GUEST,
-        VARS_GUEST,
+        VARIABLES_GUEST,
         ENCODING_GUEST,
         LINES_GUEST,
         REQUEST_GUEST,
@@ -70,18 +89,18 @@ function guestOf(input: ScriptRunInput): string {
         TEST_GUEST,
         DEEP_EQUAL_GUEST,
         EXPECT_GUEST,
-        `const ARGS = [${objects.map((name) => GUEST_NAME[name]).join(', ')}];`,
+        mandorOf(members),
+        `const ARGS = [${STANDARD_NAMES.map((name) => STANDARD_GUEST[name]).join(', ')}, mandorApi];`,
         FRAME_GUEST,
     ].join('\n');
 }
 
 /**
- * The source the engine runs. The script goes first, as the body of an async function whose
- * parameters are the objects its event shows, and the guest after it as the argument: the guest is
- * built before the function runs, and nothing of it is in the scope of the script.
+ * The source the engine runs. The script goes first, in a block of its own inside an async
+ * function whose parameters are the names of JavaScript and `mandor`, and the guest after it as
+ * the argument: the guest is built before the function runs, and nothing of it is in the scope of
+ * the script. The block lets the script declare any name, `mandor` too: it shadows.
  */
 export function scriptSourceOf(input: ScriptRunInput): string {
-    const params = API_BY_EVENT[input.event].objects.join(', ');
-
-    return `(function (run) {\nreturn run(async function (${params}) {\n${input.source}\n});\n})((function () {\n${guestOf(input)}\n})())`;
+    return `(function (run) {\nreturn run(async function (${PARAMETERS}) {\n{\n${input.source}\n}\n});\n})((function () {\n${guestOf(input)}\n})())`;
 }

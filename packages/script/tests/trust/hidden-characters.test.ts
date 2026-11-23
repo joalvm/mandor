@@ -34,7 +34,9 @@ describe('hiddenCharactersIn', () => {
     });
 
     it('gives nothing for a plain or empty text', () => {
-        expect(hiddenCharactersIn('vars.set("token", response.json().token);')).toBe(0);
+        expect(
+            hiddenCharactersIn('mandor.variables.set("token", mandor.response.json().token);'),
+        ).toBe(0);
         expect(hiddenCharactersIn('')).toBe(0);
     });
 });

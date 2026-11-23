@@ -39,7 +39,7 @@
             "atob": "Decodes a base64 text.",
             "btoa": "Encodes a text as base64.",
             "URLSearchParams": "Reads or builds a query string.",
-            "vars": {
+            "variables": {
                 "get": "The value of a variable. A secret gives undefined.",
                 "set": "Sets a script variable for the sends that follow.",
                 "has": "Whether the variable exists.",
@@ -66,7 +66,7 @@
             },
             "response": {
                 "status": "The status code of the response.",
-                "timeMs": "How many milliseconds the response took.",
+                "time": "How many milliseconds the response took.",
                 "text": "The body of the response as text.",
                 "json": "The body of the response read as JSON.",
                 "headers": {
@@ -84,6 +84,155 @@
                 "send": "Sends a message through the connection."
             },
             "sendRequest": "Sends another request and waits for its response. Its variables are not resolved and it follows no redirects."
+        },
+        "param": {
+            "console": {
+                "log": {
+                    "values": "Values to write, separated by a space."
+                },
+                "info": {
+                    "values": "Values to write, separated by a space."
+                },
+                "warn": {
+                    "values": "Values to write, separated by a space."
+                },
+                "error": {
+                    "values": "Values to write, separated by a space."
+                }
+            },
+            "atob": {
+                "data": "Base64 text."
+            },
+            "btoa": {
+                "data": "Text to encode."
+            },
+            "URLSearchParams": {
+                "init": "Query string, object or list of pairs to start from."
+            },
+            "variables": {
+                "get": {
+                    "name": "Name of the variable."
+                },
+                "set": {
+                    "name": "Name of the variable.",
+                    "value": "Value the variable takes."
+                },
+                "has": {
+                    "name": "Name of the variable."
+                },
+                "replaceIn": {
+                    "text": "Text with variables in double braces."
+                }
+            },
+            "test": {
+                "name": "Name of the test in the results.",
+                "body": "Function of the test; it can be async."
+            },
+            "expect": {
+                "actual": "Value the assertion is about."
+            },
+            "request": {
+                "headers": {
+                    "get": {
+                        "name": "Name of the header."
+                    },
+                    "has": {
+                        "name": "Name of the header."
+                    },
+                    "set": {
+                        "name": "Name of the header.",
+                        "value": "Value of the header."
+                    },
+                    "delete": {
+                        "name": "Name of the header."
+                    }
+                },
+                "query": {
+                    "get": {
+                        "name": "Name of the parameter."
+                    },
+                    "has": {
+                        "name": "Name of the parameter."
+                    },
+                    "set": {
+                        "name": "Name of the parameter.",
+                        "value": "Value of the parameter."
+                    },
+                    "delete": {
+                        "name": "Name of the parameter."
+                    }
+                }
+            },
+            "response": {
+                "headers": {
+                    "get": {
+                        "name": "Name of the header."
+                    },
+                    "has": {
+                        "name": "Name of the header."
+                    }
+                }
+            },
+            "socket": {
+                "send": {
+                    "text": "Text of the message."
+                }
+            },
+            "sendRequest": {
+                "options": "URL, method, headers and body of the request."
+            }
+        },
+        "assertion": {
+            "not": "Negates what follows.",
+            "chain": "Only reads well: it does not change the assertion.",
+            "equal": "Equal with ===.",
+            "eql": "Deeply equal: objects and lists by their content.",
+            "include": "Contains the text, the list item or the pairs of the object.",
+            "match": "The text matches the regular expression.",
+            "a": "Is of that type: string, number, object, array, null…",
+            "an": "Is of that type: string, number, object, array, null…",
+            "property": "Has the property and, if given, with that value.",
+            "lengthOf": "Has that length.",
+            "above": "Is a greater number.",
+            "below": "Is a smaller number.",
+            "true": "Is true.",
+            "false": "Is false.",
+            "null": "Is null.",
+            "undefined": "Is undefined.",
+            "exist": "Is neither null nor undefined."
+        },
+        "assertionParam": {
+            "equal": {
+                "expected": "Expected value."
+            },
+            "eql": {
+                "expected": "Expected value."
+            },
+            "include": {
+                "item": "Text, item or pairs it must contain."
+            },
+            "match": {
+                "pattern": "Regular expression."
+            },
+            "a": {
+                "type": "Name of the type."
+            },
+            "an": {
+                "type": "Name of the type."
+            },
+            "property": {
+                "name": "Name of the property.",
+                "value": "Value it must have; optional."
+            },
+            "lengthOf": {
+                "length": "Expected length."
+            },
+            "above": {
+                "limit": "Number it must exceed."
+            },
+            "below": {
+                "limit": "Number it must stay under."
+            }
         }
     },
     "scriptApprove": "Approve",

@@ -1,10 +1,10 @@
 /**
- * `vars` of the script. It reads the variables of the snapshot and writes none: `set` leaves an
+ * `mandor.variables` of the script. It reads the variables of the snapshot and writes none: `set` leaves an
  * effect for main to judge, and shows the value to the reads that follow. A secret is in the
  * snapshot as a name alone, so there is no value here to give. Needs `I`, `SNAPSHOT`, `OUT` and
  * `show`.
  */
-export const VARS_GUEST = String.raw`
+export const VARIABLES_GUEST = String.raw`
 const known = I.create(null);
 const written = I.create(null);
 const warned = I.create(null);
@@ -69,7 +69,7 @@ function replaceIn(text) {
     return out + I.slice(source, cursor);
 }
 
-const varsApi = {
+const variablesApi = {
     get(name) { return valueOfName(I.toText(name)); },
     set(name, value) { setVar(name, value); },
     has(name) { return known[I.toText(name)] !== undefined; },

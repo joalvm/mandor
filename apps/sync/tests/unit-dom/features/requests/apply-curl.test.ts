@@ -19,7 +19,7 @@ const CURRENT: RequestItem = {
     bodySchema: '{"type":"object"}',
     examples: [{ name: 'ok', status: '200', contentType: 'application/json', body: '{}' }],
     importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'pm.test()' }],
-    scripts: { onBeforeRequest: { source: 'vars.set("a", 1)', enabled: false } },
+    scripts: { onBeforeRequest: { source: 'mandor.variables.set("a", 1)', enabled: false } },
     settings: { ...BLANK.settings, timeoutMs: 1000 },
     auth: { type: 'bearer', token: '{{token}}' },
 };

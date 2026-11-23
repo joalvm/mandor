@@ -21,9 +21,17 @@ export { hiddenCharactersIn, visibleName } from './trust/hidden-characters.js';
 export {
     API_BY_EVENT,
     SCRIPT_API,
+    STANDARD_NAMES,
+    isStandardName,
+    scriptPathOf,
     type ApiEntry,
+    type ApiParameter,
     type EventApi,
+    type MandorMember,
     type RequestField,
     type ScriptApiObject,
     type ScriptEvent,
+    type StandardName,
 } from './api/script-api.js';
+export { ASSERTION_API, type AssertionWord } from './api/assertion-api.js';
+export { scriptTypesOf, type DescribeApi } from './api/script-types-of.js';

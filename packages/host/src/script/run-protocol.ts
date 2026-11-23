@@ -19,7 +19,7 @@ export function rulesOf(input: string): RunRules {
 function asks(input: string): boolean {
     const event = scriptEventSchema.safeParse(eventIn(input));
 
-    return event.success && API_BY_EVENT[event.data].objects.includes('sendRequest');
+    return event.success && API_BY_EVENT[event.data].members.includes('sendRequest');
 }
 
 function eventIn(input: string): unknown {

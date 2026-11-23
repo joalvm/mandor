@@ -1,4 +1,4 @@
-import { SCRIPT_API } from '@mandor/script';
+import { SCRIPT_API, scriptPathOf } from '@mandor/script';
 import { describe, expect, it } from 'vitest';
 
 import { scriptSuggestions } from '../../src/lib/script-suggestions.js';
@@ -13,23 +13,26 @@ function offered(event: Parameters<typeof scriptSuggestions>[0], text: string): 
 describe('what the editor of a script suggests', () => {
     it('offers the names in scope of the event, and not those of another', () => {
         expect(offered('onBeforeRequest', '')).toEqual(
-            expect.arrayContaining(['console', 'vars', 'request', 'sendRequest']),
+            expect.arrayContaining(['console', 'atob', 'URLSearchParams', 'mandor']),
         );
-        expect(offered('onBeforeRequest', '')).not.toContain('response');
-        expect(offered('onResponse', '')).toContain('response');
-        expect(offered('onMessage', '')).not.toContain('sendRequest');
+        expect(offered('onBeforeRequest', 'mandor.')).toEqual(
+            expect.arrayContaining(['variables', 'request', 'sendRequest']),
+        );
+        expect(offered('onBeforeRequest', 'mandor.')).not.toContain('response');
+        expect(offered('onResponse', 'mandor.')).toContain('response');
+        expect(offered('onMessage', 'mandor.')).not.toContain('sendRequest');
     });
 
     /** The editor replaces only the word being written: the whole path again would repeat it. */
     it('offers the step after the last dot, once each', () => {
-        expect(offered('onBeforeRequest', 'request.')).toEqual([
+        expect(offered('onBeforeRequest', 'mandor.request.')).toEqual([
             'url',
             'method',
             'body',
             'headers',
             'query',
         ]);
-        expect(offered('onBeforeRequest', 'const a = request.headers.se')).toEqual([
+        expect(offered('onBeforeRequest', 'const a = mandor.request.headers.se')).toEqual([
             'get',
             'has',
             'set',
@@ -39,18 +42,18 @@ describe('what the editor of a script suggests', () => {
 
     it('says what a name does and how it is called, only once the step is the name itself', () => {
         const [headers] = scriptSuggestions('onBeforeRequest', (docKey) => `doc of ${docKey}`)(
-            'request.he',
-            'request.he'.length,
+            'mandor.request.he',
+            'mandor.request.he'.length,
         ).filter(({ label }) => label === 'headers');
         const [set] = scriptSuggestions('onBeforeRequest', (docKey) => `doc of ${docKey}`)(
-            'vars.',
-            'vars.'.length,
+            'mandor.variables.',
+            'mandor.variables.'.length,
         ).filter(({ label }) => label === 'set');
 
         expect(headers).toEqual({ insertText: 'headers', kind: 'field', label: 'headers' });
         expect(set).toEqual({
             detail: '(name: string, value: unknown): void',
-            documentation: 'doc of script.api.vars.set',
+            documentation: 'doc of script.api.variables.set',
             insertText: 'set',
             kind: 'directive',
             label: 'set',
@@ -67,14 +70,14 @@ describe('what the editor of a script suggests', () => {
         ] as const;
         const reached = new Set(
             events.flatMap((event) =>
-                SCRIPT_API.filter(({ name }) => {
-                    const dot = name.lastIndexOf('.');
+                SCRIPT_API.map(scriptPathOf).filter((path) => {
+                    const dot = path.lastIndexOf('.');
 
-                    return offered(event, name.slice(0, dot + 1)).includes(name.slice(dot + 1));
-                }).map(({ name }) => name),
+                    return offered(event, path.slice(0, dot + 1)).includes(path.slice(dot + 1));
+                }),
             ),
         );
 
-        expect([...reached].sort()).toEqual(SCRIPT_API.map(({ name }) => name).sort());
+        expect([...reached].sort()).toEqual(SCRIPT_API.map(scriptPathOf).sort());
     });
 });

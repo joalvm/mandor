@@ -29,8 +29,11 @@ const RULES: Linter.RulesRecord = {
     ],
 };
 
-/** The wrapper ends where the guest starts: the script line, its close and the guest opener. */
-const GUEST_FIRST_LINE = SCRIPT_FIRST_LINE + 3;
+/**
+ * The wrapper ends where the guest starts: the script line, the close of its block and of its
+ * function, and the guest opener.
+ */
+const GUEST_FIRST_LINE = SCRIPT_FIRST_LINE + 4;
 
 const linter = new Linter({ configType: 'flat' });
 

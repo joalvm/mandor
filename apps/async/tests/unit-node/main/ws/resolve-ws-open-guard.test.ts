@@ -89,21 +89,25 @@ afterEach(async () => {
 
 describe('a websocket whose script shaped the handshake', () => {
     it('keeps its secrets on the same origin', async () => {
-        const socket = await resolved(open('request.headers.set("X-Run", "1");'));
+        const socket = await resolved(open('mandor.request.headers.set("X-Run", "1");'));
 
         expect(socket.secretsOff).toBeNull();
         expect(socket.request.headers).toMatchObject({ Auth: 'tok_abcdefgh', 'x-run': '1' });
     });
 
     it('lives with them off once a script moved where it goes', async () => {
-        const socket = await resolved(open('request.url = "wss://elsewhere.example/socket";'));
+        const socket = await resolved(
+            open('mandor.request.url = "wss://elsewhere.example/socket";'),
+        );
 
         expect(socket.secretsOff).toBe('destination');
         expect(socket.request.headers?.['Auth']).toBe('{{token}}');
     });
 
     it('lives with them off once a script wrote the Host line', async () => {
-        const socket = await resolved(open('request.headers.set("host", "elsewhere.example");'));
+        const socket = await resolved(
+            open('mandor.request.headers.set("host", "elsewhere.example");'),
+        );
 
         expect(socket.secretsOff).toBe('destination');
     });
@@ -112,11 +116,11 @@ describe('a websocket whose script shaped the handshake', () => {
 describe('a Socket.IO whose script shaped the handshake', () => {
     it('lives with its secrets off when it may poll', async () => {
         const said = await resolved(
-            socketio('request.headers.set("X-Run", "1");', {
+            socketio('mandor.request.headers.set("X-Run", "1");', {
                 engineTransport: 'polling-then-upgrade',
             }),
         );
-        const bare = await resolved(socketio('request.headers.set("X-Run", "1");'));
+        const bare = await resolved(socketio('mandor.request.headers.set("X-Run", "1");'));
 
         expect(said.secretsOff).toBe('polling');
         expect(bare.secretsOff).toBe('polling');
@@ -125,7 +129,9 @@ describe('a Socket.IO whose script shaped the handshake', () => {
 
     it('keeps them over websocket alone', async () => {
         const socket = await resolved(
-            socketio('request.headers.set("X-Run", "1");', { engineTransport: 'websocket-only' }),
+            socketio('mandor.request.headers.set("X-Run", "1");', {
+                engineTransport: 'websocket-only',
+            }),
         );
 
         expect(socket.secretsOff).toBeNull();
@@ -134,7 +140,7 @@ describe('a Socket.IO whose script shaped the handshake', () => {
 
     it('names the destination first when a script moved it', async () => {
         const socket = await resolved(
-            socketio('request.url = "https://elsewhere.example";', {
+            socketio('mandor.request.url = "https://elsewhere.example";', {
                 engineTransport: 'websocket-only',
             }),
         );

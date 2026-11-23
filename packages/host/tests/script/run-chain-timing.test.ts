@@ -5,7 +5,7 @@ import { PLACE, depsOf, heldSend, runOf, script } from './fixtures/chain-runs.js
 
 /** Sets `a` once the send main holds is answered, whatever the answer was. */
 function setAfterSend(value: string): string {
-    return `try { await sendRequest({ url: "https://api.test" }); } catch {} vars.set("a", "${value}")`;
+    return `try { await mandor.sendRequest({ url: "https://api.test" }); } catch {} mandor.variables.set("a", "${value}")`;
 }
 
 describe('runChain over time', () => {
@@ -62,7 +62,7 @@ describe('runChain over time', () => {
         const slow = runChain(runOf([script(setAfterSend('slow'))], { send: first.send }), deps);
 
         await first.asked;
-        await runChain(runOf([script('vars.set("a", "quick")')]), deps);
+        await runChain(runOf([script('mandor.variables.set("a", "quick")')]), deps);
 
         expect(deps.variables.values(PLACE)).toEqual({ a: 'quick' });
 

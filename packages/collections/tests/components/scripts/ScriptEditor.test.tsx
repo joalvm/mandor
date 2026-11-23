@@ -1,5 +1,5 @@
 import { createPlainI18n } from '@mandor/i18n';
-import { SCRIPT_API } from '@mandor/script';
+import { ASSERTION_API, SCRIPT_API } from '@mandor/script';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -37,9 +37,9 @@ describe('the editor of a script', () => {
         const onChange = vi.fn();
         const { unmount } = shown({ onChange });
 
-        (await editorAt(0)).typeOver('vars.set("a", 1);');
+        (await editorAt(0)).typeOver('mandor.variables.set("a", 1);');
 
-        expect(onChange).toHaveBeenLastCalledWith('vars.set("a", 1);');
+        expect(onChange).toHaveBeenLastCalledWith('mandor.variables.set("a", 1);');
 
         unmount();
         shown({ onChange, readOnly: true });
@@ -54,14 +54,20 @@ describe('the editor of a script', () => {
     });
 
     /** The help of a name is said in the language of the window, whichever it is. */
-    it('has the help of every name of the API in Spanish and in English', () => {
+    it('has the help of every name of the API, its parameters and its words in Spanish and in English', () => {
+        const keys = [...SCRIPT_API, ...ASSERTION_API].flatMap(({ docKey, parameters }) => [
+            docKey,
+            ...parameters.map((parameter) => parameter.docKey),
+        ]);
         const missing = (['es', 'en'] as const).flatMap((language) => {
             const texts = createPlainI18n(language);
 
-            return SCRIPT_API.filter(
-                ({ docKey }) =>
-                    typeof texts.getResource(language, 'collections', docKey) !== 'string',
-            ).map(({ docKey }) => `${language} ${docKey}`);
+            return [...new Set(keys)]
+                .filter(
+                    (docKey) =>
+                        typeof texts.getResource(language, 'collections', docKey) !== 'string',
+                )
+                .map((docKey) => `${language} ${docKey}`);
         });
 
         expect(missing).toEqual([]);

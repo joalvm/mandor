@@ -24,8 +24,8 @@ describe('sendRequest', () => {
         const link = answeringLink(() => okReply('{"a":1}', 201));
         const lines = await logs(
             link,
-            `const r = await sendRequest({ url: 'https://a.test/x', method: 'POST', headers: { 'X-A': 1 }, body: 'hi' });
-console.log(r.status, r.timeMs, r.text(), r.json().a, r.headers.get('Content-Type'));`,
+            `const r = await mandor.sendRequest({ url: 'https://a.test/x', method: 'POST', headers: { 'X-A': 1 }, body: 'hi' });
+console.log(r.status, r.time, r.text(), r.json().a, r.headers.get('Content-Type'));`,
         );
 
         expect(lines).toEqual(['201 12 {"a":1} 1 text/plain']);
@@ -42,10 +42,10 @@ console.log(r.status, r.timeMs, r.text(), r.json().a, r.headers.get('Content-Typ
     it('defaults to GET with no headers and no body, and accepts headers as a list', async () => {
         const link = answeringLink(() => okReply(undefined));
 
-        await logs(link, "await sendRequest({ url: 'https://a.test' });");
+        await logs(link, "await mandor.sendRequest({ url: 'https://a.test' });");
         await logs(
             link,
-            "await sendRequest({ url: 'https://a.test', headers: [{ name: 'A', value: 'b' }] });",
+            "await mandor.sendRequest({ url: 'https://a.test', headers: [{ name: 'A', value: 'b' }] });",
         );
 
         expect(payloads(link)).toEqual([
@@ -60,7 +60,7 @@ console.log(r.status, r.timeMs, r.text(), r.json().a, r.headers.get('Content-Typ
         expect(
             await logs(
                 link,
-                `const r = await sendRequest({ url: 'https://a.test' });
+                `const r = await mandor.sendRequest({ url: 'https://a.test' });
 console.log(String(r.text()), String(r.json()));`,
             ),
         ).toEqual([{ level: 'warn', notice: 'response-body-unreadable' }, 'undefined undefined']);
@@ -74,7 +74,7 @@ console.log(String(r.text()), String(r.json()));`,
         expect(
             await logs(
                 link,
-                `try { await sendRequest({ url: 'https://a.test' }); } catch (e) { console.log(e.name + ': ' + e.message); }`,
+                `try { await mandor.sendRequest({ url: 'https://a.test' }); } catch (e) { console.log(e.name + ': ' + e.message); }`,
             ),
         ).toEqual(['Error: connection refused']);
     });
@@ -85,7 +85,7 @@ console.log(String(r.text()), String(r.json()));`,
             const link = answeringLink(() => okReply('x'));
             const lines = await logs(
                 link,
-                `try { await sendRequest(${options}); } catch (e) { console.log(e.name); }`,
+                `try { await mandor.sendRequest(${options}); } catch (e) { console.log(e.name); }`,
             );
 
             expect(lines).toEqual(['TypeError']);
@@ -97,7 +97,7 @@ console.log(String(r.text()), String(r.json()));`,
         const link = answeringLink(() => okReply('x'));
         const lines = await logs(
             link,
-            `try { await sendRequest({ url: 'https://a.test', headers: [null] }); } catch (e) { console.log('rejected'); }`,
+            `try { await mandor.sendRequest({ url: 'https://a.test', headers: [null] }); } catch (e) { console.log('rejected'); }`,
         );
 
         expect(lines).toEqual(['rejected']);
@@ -116,7 +116,7 @@ console.log(String(r.text()), String(r.json()));`,
         const output = await outputAt(
             wasm,
             'onBeforeRequest',
-            `sendRequest({ url: 'https://a.test' }).catch((e) => console.log(e.message));`,
+            `mandor.sendRequest({ url: 'https://a.test' }).catch((e) => console.log(e.message));`,
         );
 
         expect(output.logs.map(lineOf)).toEqual(['sendRequest is not available here']);
@@ -129,8 +129,8 @@ console.log(String(r.text()), String(r.json()));`,
         const lines = await logs(
             link,
             `const [a, b] = await Promise.all([
-    sendRequest({ url: 'one' }),
-    sendRequest({ url: 'two' }),
+    mandor.sendRequest({ url: 'one' }),
+    mandor.sendRequest({ url: 'two' }),
 ]);
 console.log(a.text(), b.text());`,
         );

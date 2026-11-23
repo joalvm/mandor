@@ -24,7 +24,7 @@ import {
 const INSTALLER = process.env['MANDOR_ASYNC_INSTALLER'] ?? '';
 const PAIR = process.env['MANDOR_UPDATE_PAIR'] ?? '';
 const CONNECTION = 'Instalada';
-const SCRIPT = 'request.headers.set("X-Script", "ran"); console.log("desde el asar");';
+const SCRIPT = 'mandor.request.headers.set("X-Script", "ran"); console.log("desde el asar");';
 
 // One installed app runs through both tests: the second starts where the first one left.
 test.describe.configure({ mode: 'serial' });

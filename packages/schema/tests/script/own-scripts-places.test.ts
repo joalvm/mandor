@@ -6,7 +6,7 @@ import { requestItemSchema } from '../../src/request/request-item-schema.js';
 import { createRequestItem } from '../../src/request/create-request-item.js';
 import { requestItemBody } from '../../src/request/request-item-body.js';
 
-const SCRIPTS = { onBeforeRequest: { source: "vars.set('a', 1);\n" } };
+const SCRIPTS = { onBeforeRequest: { source: "mandor.variables.set('a', 1);\n" } };
 
 describe('where the own scripts live', () => {
     it('are in a request, apart from the scripts an import brought', () => {
@@ -38,7 +38,7 @@ describe('where the own scripts live', () => {
     });
 
     it('are in a connection, with the events of a connection', () => {
-        const scripts = { onConnect: { source: 'socket.send("hi")' } };
+        const scripts = { onConnect: { source: 'mandor.socket.send("hi")' } };
         const parsed = connectionSchema.parse({
             id: 'gateway',
             name: 'Gateway',

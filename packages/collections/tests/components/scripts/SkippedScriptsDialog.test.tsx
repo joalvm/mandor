@@ -13,7 +13,7 @@ const SEEN: SkippedScript = {
     level: 'folder',
     event: 'onBeforeRequest',
     bytes: 12,
-    source: 'vars.set(1);',
+    source: 'mandor.variables.set(1);',
 };
 
 const UNSEEN: SkippedScript = {
@@ -51,7 +51,7 @@ describe('the scripts a send left out, to review and approve', () => {
 
         const editor = await editorAt(0);
 
-        expect(editor.text()).toBe('vars.set(1);');
+        expect(editor.text()).toBe('mandor.variables.set(1);');
         expect(editor.readOnly()).toBe(true);
         expect(editor.wraps()).toBe(true);
         expect(editor.marksHidden()).toBe(true);
@@ -70,7 +70,7 @@ describe('the scripts a send left out, to review and approve', () => {
             workspaceId: 'pagos',
             level: 'folder',
             event: 'onBeforeRequest',
-            source: 'vars.set(1);',
+            source: 'mandor.variables.set(1);',
         });
         expect(await screen.findByText('Approved: it runs from the next send')).toBeVisible();
         expect(screen.queryByRole('button', { name: 'Approve' })).toBeNull();
@@ -104,7 +104,7 @@ describe('the scripts a send left out, to review and approve', () => {
         shown([UNSEEN, SEEN]);
         fireEvent.click(screen.getByRole('option', { name: 'altas\\u{202E}' }));
 
-        expect((await editorAt(0)).text()).toBe('vars.set(1);');
+        expect((await editorAt(0)).text()).toBe('mandor.variables.set(1);');
         expect(screen.getByText('Folder · onBeforeRequest')).toBeVisible();
     });
 });

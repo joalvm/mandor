@@ -29,10 +29,10 @@ afterEach(() => {
 
 describe('the script of one moment (EventScript)', () => {
     it('lays the band of a text that would not run over the text, which stays editable', async () => {
-        shown({ source: 'socket.send("hi")' });
+        shown({ source: 'mandor.socket.send("hi")' });
 
         expect(await screen.findByText('It does not run until you approve it')).toBeVisible();
-        expect((await editorAt(0)).text()).toBe('socket.send("hi")');
+        expect((await editorAt(0)).text()).toBe('mandor.socket.send("hi")');
     });
 
     it('hands back the text typed, with the switch as the person set it', async () => {

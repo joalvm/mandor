@@ -53,10 +53,13 @@ describe('guests of the request', () => {
 
 describe('request of the guest: reading', () => {
     it('gives the url, the method and the body the snapshot has, with {{var}} as the text it is', async () => {
-        const output = await run('console.log(request.url, request.method, request.body);', {
-            ...REQUEST,
-            url: '{{host}}/items',
-        });
+        const output = await run(
+            'console.log(mandor.request.url, mandor.request.method, mandor.request.body);',
+            {
+                ...REQUEST,
+                url: '{{host}}/items',
+            },
+        );
 
         expect(output.logs).toEqual([{ level: 'log', text: '{{host}}/items GET {"a":1}' }]);
     });
@@ -64,13 +67,13 @@ describe('request of the guest: reading', () => {
     it('finds a header whatever the case of its name, and a query line by its exact name', async () => {
         expect(
             await logs(
-                'console.log(request.headers.get("accept"), request.headers.has("ACCEPT"), request.headers.get("none"));console.log(request.query.get("id"), request.query.get("ID"), request.query.has("id"));',
+                'console.log(mandor.request.headers.get("accept"), mandor.request.headers.has("ACCEPT"), mandor.request.headers.get("none"));console.log(mandor.request.query.get("id"), mandor.request.query.get("ID"), mandor.request.query.has("id"));',
             ),
         ).toEqual(['text/plain true undefined', '1 undefined true']);
     });
 
     it('gives the first of the lines that share a name', async () => {
-        const output = await run('console.log(request.headers.get("x"));', {
+        const output = await run('console.log(mandor.request.headers.get("x"));', {
             ...REQUEST,
             headers: [
                 { name: 'X', value: 'one' },
@@ -83,7 +86,7 @@ describe('request of the guest: reading', () => {
 
     it('is empty when the snapshot has no request', async () => {
         const output = await run(
-            'console.log(JSON.stringify([request.url, request.method, request.body, request.headers.has("a")]));',
+            'console.log(JSON.stringify([mandor.request.url, mandor.request.method, mandor.request.body, mandor.request.headers.has("a")]));',
             null,
         );
 
@@ -91,7 +94,7 @@ describe('request of the guest: reading', () => {
     });
 
     it('reads a body of a kind a script cannot read as undefined', async () => {
-        const output = await run('console.log(request.body);', {
+        const output = await run('console.log(mandor.request.body);', {
             ...REQUEST,
             body: { type: 'form', text: 'a=1' },
         });
@@ -103,7 +106,7 @@ describe('request of the guest: reading', () => {
 describe('request of the guest: writing', () => {
     it('leaves one effect for a field, the last one, and the reads that follow see it', async () => {
         const output = await run(
-            'request.url = "https://one"; request.url = "https://two"; request.method = "POST"; console.log(request.url, request.method);',
+            'mandor.request.url = "https://one"; mandor.request.url = "https://two"; mandor.request.method = "POST"; console.log(mandor.request.url, mandor.request.method);',
         );
 
         expect(output.effects).toEqual([
@@ -114,14 +117,14 @@ describe('request of the guest: writing', () => {
     });
 
     it('turns a value into the text the console would show', async () => {
-        const output = await run('request.url = 12;');
+        const output = await run('mandor.request.url = 12;');
 
         expect(output.effects).toEqual([{ kind: 'url', value: '12' }]);
     });
 
     it('sets a header with its name in lowercase, and the read finds it', async () => {
         const output = await run(
-            'request.headers.set("X-Token", 7); request.headers.set("x-token", "b"); console.log(request.headers.get("X-TOKEN"));',
+            'mandor.request.headers.set("X-Token", 7); mandor.request.headers.set("x-token", "b"); console.log(mandor.request.headers.get("X-TOKEN"));',
         );
 
         expect(output.effects).toEqual([
@@ -132,7 +135,7 @@ describe('request of the guest: writing', () => {
 
     it('deletes a header, and a delete after a set takes the place of it', async () => {
         const output = await run(
-            'request.headers.set("X-A", "1"); request.headers.delete("x-a"); request.headers.delete("Accept"); console.log(request.headers.has("accept"), request.headers.has("x-a"));',
+            'mandor.request.headers.set("X-A", "1"); mandor.request.headers.delete("x-a"); mandor.request.headers.delete("Accept"); console.log(mandor.request.headers.has("accept"), mandor.request.headers.has("x-a"));',
         );
 
         expect(output.effects).toEqual([
@@ -144,7 +147,7 @@ describe('request of the guest: writing', () => {
 
     it('sets and deletes a query line by its exact name', async () => {
         const output = await run(
-            'request.query.set("Page", 2); request.query.delete("id"); console.log(request.query.get("Page"), request.query.get("page"), request.query.has("id"));',
+            'mandor.request.query.set("Page", 2); mandor.request.query.delete("id"); console.log(mandor.request.query.get("Page"), mandor.request.query.get("page"), mandor.request.query.has("id"));',
         );
 
         expect(output.effects).toEqual([
@@ -156,7 +159,7 @@ describe('request of the guest: writing', () => {
 
     it('writes a body with the type it has', async () => {
         const output = await run(
-            'request.body = JSON.stringify({ x: 1 }); console.log(request.body);',
+            'mandor.request.body = JSON.stringify({ x: 1 }); console.log(mandor.request.body);',
         );
 
         expect(output.effects).toEqual([{ kind: 'body', type: 'json', value: '{"x":1}' }]);
@@ -164,7 +167,7 @@ describe('request of the guest: writing', () => {
     });
 
     it('writes a body as text when the request had none', async () => {
-        const output = await run('request.body = "hello";', {
+        const output = await run('mandor.request.body = "hello";', {
             url: REQUEST.url,
             method: REQUEST.method,
             headers: REQUEST.headers,
@@ -175,7 +178,7 @@ describe('request of the guest: writing', () => {
     });
 
     it('says a body of another kind cannot be written, and leaves no effect', async () => {
-        const output = await run('request.body = "x";', {
+        const output = await run('mandor.request.body = "x";', {
             ...REQUEST,
             body: { type: 'form', text: '' },
         });
@@ -191,7 +194,7 @@ describe('request of the guest: what each event lets it write', () => {
     it('does not write what the event does not allow, and says so', async () => {
         const output = await at(
             'onResponse',
-            'request.url = "x"; request.headers.set("a", "b"); request.query.delete("id"); request.body = "z"; request.method = "PUT"; console.log(request.url);',
+            'mandor.request.url = "x"; mandor.request.headers.set("a", "b"); mandor.request.query.delete("id"); mandor.request.body = "z"; mandor.request.method = "PUT"; console.log(mandor.request.url);',
         );
 
         expect(output.effects).toEqual([]);
@@ -199,27 +202,27 @@ describe('request of the guest: what each event lets it write', () => {
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.url', event: 'onResponse' },
+                params: { field: 'mandor.request.url', event: 'onResponse' },
             },
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.headers', event: 'onResponse' },
+                params: { field: 'mandor.request.headers', event: 'onResponse' },
             },
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.query', event: 'onResponse' },
+                params: { field: 'mandor.request.query', event: 'onResponse' },
             },
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.body', event: 'onResponse' },
+                params: { field: 'mandor.request.body', event: 'onResponse' },
             },
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.method', event: 'onResponse' },
+                params: { field: 'mandor.request.method', event: 'onResponse' },
             },
             REQUEST.url,
         ]);
@@ -228,7 +231,7 @@ describe('request of the guest: what each event lets it write', () => {
     it('lets a connection that opens write the url, the query and the headers, not the method', async () => {
         const output = await at(
             'onBeforeConnect',
-            'request.url = "wss://x"; request.headers.set("a", "b"); request.query.set("q", "1"); request.method = "POST"; request.body = "z";',
+            'mandor.request.url = "wss://x"; mandor.request.headers.set("a", "b"); mandor.request.query.set("q", "1"); mandor.request.method = "POST"; mandor.request.body = "z";',
         );
 
         expect(output.effects.map(({ kind }) => kind)).toEqual(['url', 'header', 'query']);
@@ -236,12 +239,12 @@ describe('request of the guest: what each event lets it write', () => {
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.method', event: 'onBeforeConnect' },
+                params: { field: 'mandor.request.method', event: 'onBeforeConnect' },
             },
             {
                 level: 'warn',
                 notice: 'request-field-readonly',
-                params: { field: 'request.body', event: 'onBeforeConnect' },
+                params: { field: 'mandor.request.body', event: 'onBeforeConnect' },
             },
         ]);
     });

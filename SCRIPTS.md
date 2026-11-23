@@ -23,10 +23,11 @@ with everything else.
 
 ## The API
 
-Every moment has `console`, `atob`, `btoa`, `URLSearchParams`, `vars`, `test` and `expect`. The rest
-depends on the moment:
+Every moment has the four names of JavaScript a script expects, `console`, `atob`, `btoa` and
+`URLSearchParams`, and one object, `mandor`, with what Mandor gives. Every moment has
+`mandor.variables`, `mandor.test` and `mandor.expect`; the rest of `mandor` depends on the moment:
 
-| Moment            | Also available                                                            |
+| Moment            | Also in `mandor`                                                          |
 | ----------------- | ------------------------------------------------------------------------- |
 | `onBeforeRequest` | `request` (writable), `sendRequest`                                       |
 | `onResponse`      | `request` (read only), `response`, `sendRequest`                          |
@@ -34,48 +35,53 @@ depends on the moment:
 | `onConnect`       | `socket`, `sendRequest`                                                   |
 | `onMessage`       | `message`, `socket` (no `sendRequest`: a frame never starts an HTTP call) |
 
+A name of `mandor` that the moment does not have is `undefined`. Your own
+names never clash with the API: `const response = await mandor.sendRequest(…)` and even
+`const mandor = 1` are fine.
+
 There is no `require`, `import`, `fetch`, `setTimeout`, `setInterval`, `pm`, `insomnia` or `bru`.
 
-### `vars`
+### `mandor.variables`
 
-- `vars.get(name)` gives the value of a variable, or `undefined`. A variable marked secret is never
-  readable: `get` gives `undefined` and the console says why.
-- `vars.has(name)` says whether the variable exists, secret or not.
-- `vars.set(name, value)` sets a script variable. The value is turned into text.
-- `vars.replaceIn(text)` fills `{{name}}` placeholders with the values a script may read. A secret
-  placeholder stays as written.
+- `mandor.variables.get(name)` gives the value of a variable, or `undefined`. A variable marked
+  secret is never readable: `get` gives `undefined` and the console says why.
+- `mandor.variables.has(name)` says whether the variable exists, secret or not.
+- `mandor.variables.set(name, value)` sets a script variable. The value is turned into text.
+- `mandor.variables.replaceIn(text)` fills `{{name}}` placeholders with the values a script may
+  read. A secret placeholder stays as written.
 
 Script variables live in memory, per origin, workspace and environment. They are never written to
 disk, never synced, and they are gone when Mandor closes. They rank above the environment, so a
 request after the script sees them. The command **Forget what scripts set** clears them.
 
-### `request`
+### `mandor.request`
 
-- `request.url`, `request.method`: text. `{{var}}` placeholders are shown as written.
-- `request.headers` and `request.query`: `get(name)` gives the first value, `has(name)` asks. Where
+- `mandor.request.url`, `mandor.request.method`: text. `{{var}}` placeholders are shown as written.
+- `mandor.request.headers` and `mandor.request.query`: `get(name)` gives the first value, `has(name)` asks. Where
   the request is writable, `set(name, value)` replaces or adds and `delete(name)` removes. Header
   names match in any case. Headers include the ones inherited from the collection and folders, and
   `delete` removes those too.
-- `request.body`: the body as text when its type is JSON, text or XML (an empty body becomes text
+- `mandor.request.body`: the body as text when its type is JSON, text or XML (an empty body becomes text
   when written). Any other type (form, multipart, file, GraphQL) reads as `undefined` and cannot be
   written; the console says so.
 
-Auth, TLS, proxy and settings are not part of `request`. In Mandor Realtime, a script cannot write
+Auth, TLS, proxy and settings are not part of `mandor.request`. In Mandor Realtime, a script cannot write
 the auth or the subprotocols of a connection.
 
-### `response`
+### `mandor.response`
 
-`response.status`, `response.timeMs`, `response.headers.get(name)` and `.has(name)`,
-`response.text()` and `response.json()`. A body over 2 MiB gives `undefined` from `text()` and
+`mandor.response.status`, `mandor.response.time` (milliseconds),
+`mandor.response.headers.get(name)` and `.has(name)`, `mandor.response.text()` and
+`mandor.response.json()`. A body over 2 MiB gives `undefined` from `text()` and
 `json()`, with a line in the console. It is never cut silently.
 
-### `test` and `expect`
+### `mandor.test` and `mandor.expect`
 
-`test(name, body)` declares a case. A case that throws, or whose promise is rejected, fails; the
+`mandor.test(name, body)` declares a case. A case that throws, or whose promise is rejected, fails; the
 cases after it still run. Results show in the Tests tab of the response (Mandor Request) or in the
 activity line of the scripts (Mandor Realtime).
 
-`expect(value)` is a small subset of chai's `expect`, with the same meaning:
+`mandor.expect(value)` is a small subset of chai's `expect`, with the same meaning:
 
 - Chain words that say nothing: `to`, `be`, `been`, `is`, `that`, `and`, `have`, `has`, `with`,
   `of`. `not` flips what follows.
@@ -104,22 +110,23 @@ bar. Each line is cut at 4 KiB, and all the output of a run at 1 MiB, with a mar
 `URLSearchParams` takes a query string, a list of pairs or an object, and has `append`, `delete`,
 `get`, `getAll`, `has`, `set`, `toString`, `entries`, `keys`, `values` and iteration.
 
-### `sendRequest`
+### `mandor.sendRequest`
 
-`await sendRequest({ url, method, headers, body })` makes an HTTP or HTTPS call and gives back an
-object shaped like `response`. A failure rejects with the reason.
+`await mandor.sendRequest({ url, method, headers, body })` makes an HTTP or HTTPS call and gives
+back an object shaped like `mandor.response`. A failure rejects with the reason.
 
 - Main makes the call, with the proxy and the client certificates of this machine. The script does
   not choose them and cannot read them. It reaches what you reach, `localhost` included.
 - No secret is resolved in it, no cookie jar is used, and redirects are not followed.
 - Up to 10 calls per run, failed ones included; 10 seconds and 1 MiB each.
 
-### `socket` and `message` (Mandor Realtime)
+### `mandor.socket` and `mandor.message` (Mandor Realtime)
 
-- `socket.send(text)` sends a text frame on the open connection. Placeholders are not resolved.
+- `mandor.socket.send(text)` sends a text frame on the open connection. Placeholders are not resolved.
   Up to 10 per run and 100 per second per connection. Over Socket.IO it emits the `message` event.
-- `message.text`, `message.direction` (`'incoming'` or `'outgoing'`), `message.binary` and
-  `message.event` (the Socket.IO event name) describe the frame. Binary frames carry no bytes.
+- `mandor.message.text`, `mandor.message.direction` (`'incoming'` or `'outgoing'`),
+  `mandor.message.binary` and `mandor.message.event` (the Socket.IO event name) describe the
+  frame. Binary frames carry no bytes.
 
 ## Limits
 
@@ -205,8 +212,8 @@ no script chose.
 saves the token:
 
 ```js
-const body = response.json();
-vars.set('token', body.access_token);
+const body = mandor.response.json();
+mandor.variables.set('token', body.access_token);
 ```
 
 The requests after it use `{{token}}` in their auth or headers.
@@ -214,24 +221,24 @@ The requests after it use `{{token}}` in their auth or headers.
 **A login that also gives the host** (for example an `instance_url`): put the host in the
 environment by hand, not from the script. A host chosen by a script receives no secrets.
 
-**Cookies.** `sendRequest` uses no cookie jar. Read the `set-cookie` header of the answer and send
+**Cookies.** `mandor.sendRequest` uses no cookie jar. Read the `set-cookie` header of the answer and send
 it on yourself:
 
 ```js
-const login = await sendRequest({ url: 'https://api.example.com/login', method: 'POST' });
+const login = await mandor.sendRequest({ url: 'https://api.example.com/login', method: 'POST' });
 const cookie = login.headers.get('set-cookie');
 if (cookie !== undefined) {
-    request.headers.set('Cookie', cookie.split(';')[0]);
+    mandor.request.headers.set('Cookie', cookie.split(';')[0]);
 }
 ```
 
 **Body by type.** Check what the body is before writing it:
 
 ```js
-if (request.body !== undefined) {
-    const data = JSON.parse(request.body);
+if (mandor.request.body !== undefined) {
+    const data = JSON.parse(mandor.request.body);
     data.sentAt = new Date().toISOString();
-    request.body = JSON.stringify(data);
+    mandor.request.body = JSON.stringify(data);
 }
 ```
 
@@ -252,18 +259,18 @@ soon as it was imported, and would read secrets that Mandor keeps away from scri
 
 Common Postman calls and what to write instead:
 
-- `pm.environment.get('x')`, `pm.variables.get('x')`, `pm.collectionVariables.get('x')` → `vars.get('x')`.
-- `pm.environment.set('x', v)`, `pm.variables.set('x', v)` → `vars.set('x', v)`. It is a script
+- `pm.environment.get('x')`, `pm.variables.get('x')`, `pm.collectionVariables.get('x')` → `mandor.variables.get('x')`.
+- `pm.environment.set('x', v)`, `pm.variables.set('x', v)` → `mandor.variables.set('x', v)`. It is a script
   variable: it lasts until Mandor closes and is never written to the environment.
-- `pm.variables.replaceIn(text)` → `vars.replaceIn(text)`.
-- `pm.test('name', fn)` → `test('name', fn)`.
-- `pm.expect(x)` → `expect(x)`, within the subset above.
-- `pm.response.code` → `response.status`; `pm.response.json()` → `response.json()`;
-  `pm.response.text()` → `response.text()`; `pm.response.responseTime` → `response.timeMs`;
-  `pm.response.headers.get('x')` → `response.headers.get('x')`.
-- `pm.request.url` → `request.url`; `pm.request.headers.add`, `.upsert` → `request.headers.set`;
-  `pm.request.headers.remove` → `request.headers.delete`; `pm.request.body.raw` → `request.body`.
-- `pm.sendRequest(options, callback)` → `await sendRequest(options)`, with a promise instead of a
+- `pm.variables.replaceIn(text)` → `mandor.variables.replaceIn(text)`.
+- `pm.test('name', fn)` → `mandor.test('name', fn)`.
+- `pm.expect(x)` → `mandor.expect(x)`, within the subset above.
+- `pm.response.code` → `mandor.response.status`; `pm.response.json()` → `mandor.response.json()`;
+  `pm.response.text()` → `mandor.response.text()`; `pm.response.responseTime` → `mandor.response.time`;
+  `pm.response.headers.get('x')` → `mandor.response.headers.get('x')`.
+- `pm.request.url` → `mandor.request.url`; `pm.request.headers.add`, `.upsert` → `mandor.request.headers.set`;
+  `pm.request.headers.remove` → `mandor.request.headers.delete`; `pm.request.body.raw` → `mandor.request.body`.
+- `pm.sendRequest(options, callback)` → `await mandor.sendRequest(options)`, with a promise instead of a
   callback.
 - `console.log` → `console.log`.
 

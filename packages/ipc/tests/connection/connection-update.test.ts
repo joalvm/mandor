@@ -53,7 +53,7 @@ describe('connection:update payload', () => {
     });
 
     it('accepts the scripts of the connection, and a null that clears them', () => {
-        const scripts = { onMessage: { source: 'socket.send("pong");', enabled: false } };
+        const scripts = { onMessage: { source: 'mandor.socket.send("pong");', enabled: false } };
 
         expect(
             connectionUpdateRequestSchema.parse({

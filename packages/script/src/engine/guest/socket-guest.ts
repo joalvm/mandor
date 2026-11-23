@@ -15,7 +15,7 @@ for (let index = 0; index < MESSAGE_FIELDS.length; index += 1) {
     I.define(messageApi, field, {
         enumerable: true,
         get: () => MESSAGE[field],
-        set: () => noticeLine('message-field-readonly', { field: 'message.' + field }),
+        set: () => noticeLine('message-field-readonly', { field: 'mandor.message.' + field }),
     });
 }
 let socketSends = 0;

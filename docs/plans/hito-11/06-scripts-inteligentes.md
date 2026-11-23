@@ -215,7 +215,7 @@ Dependencias nuevas:
 El plan B del worker (servicio en el hilo de la ventana) entra solo si la prueba de la fase 4 lo
 pide. Se escribe en la fase, con lo que se midió.
 
-### [ ] Fase 1: La API es `mandor.` con nombres completos y cada momento tiene su `.d.ts`
+### [x] Fase 1: La API es `mandor.` con nombres completos y cada momento tiene su `.d.ts`
 
 **Objetivo.** Un script escribe `const response = await mandor.sendRequest(…)` sin SyntaxError, y
 la ventana tiene el `.d.ts` de cada momento, listo para el editor.

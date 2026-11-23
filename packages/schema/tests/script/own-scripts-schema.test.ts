@@ -13,8 +13,8 @@ describe('the own scripts of a request, a folder or a collection', () => {
 
     it('reads one script per event, with the text as it came', () => {
         const scripts = {
-            onBeforeRequest: { source: "vars.set('t', Date.now());\n" },
-            onResponse: { source: 'test("ok", () => {});', enabled: false },
+            onBeforeRequest: { source: "mandor.variables.set('t', Date.now());\n" },
+            onResponse: { source: 'mandor.test("ok", () => {});', enabled: false },
         };
 
         expect(requestScriptsSchema.parse(scripts)).toEqual(scripts);
