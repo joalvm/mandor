@@ -3,7 +3,7 @@ import type { ScopeLevelName, VariableScope } from '@mandor/vars';
 import { maskOf } from './secret-mask.js';
 
 /** Where a listed variable comes from, as somebody reading a script tells them apart. */
-export type ListedVariableOrigin = 'collection' | 'environment' | 'script';
+type ListedVariableOrigin = 'collection' | 'environment' | 'script';
 
 /** One variable a place resolves, with its value as it may be shown: a secret only masked. */
 export type ListedVariable = {
