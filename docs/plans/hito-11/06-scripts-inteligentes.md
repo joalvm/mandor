@@ -426,7 +426,7 @@ contains packages/ui/src/components/tabs/Tabs.tsx "orientation"
 y teclado (flechas, Tab), y el diálogo de Realtime sin desbordar. `npm run dev:lab` enseña
 `Tabs` vertical.
 
-### [ ] Fase 4: El editor de scripts tiene tipos, firma, hover y diagnóstico
+### [x] Fase 4: El editor de scripts tiene tipos, firma, hover y diagnóstico
 
 **Objetivo.** Al escribir `mandor.` salen los miembros del momento, con su doc en el idioma de la
 interfaz. Al abrir paréntesis sale la firma. El hover explica. Un error de tipos se subraya. El
@@ -491,6 +491,25 @@ contains apps/async/tests/e2e/script-memory.spec.ts "the script service stops"
 
 **No hacer.** Nada de variables, headers, campos de JSON ni snippets: es la fase 5. Nada de
 bombilla: es la fase 6.
+
+**Notas.**
+
+- El worker arranca bajo `mandor://app` en las dos apps sin tocar el esquema: lo prueba «the
+  service of scripts runs in a thread of its own». No hizo falta el plan B.
+- Camino tomado: cliente propio (`script-service.ts`, `script-providers.ts`,
+  `script-diagnostics.ts`) sobre `editor.createWebWorker`, en vez de `WorkerManager` y los
+  adaptadores de `tsMode.js`. Esos traen `internal/common/workers.js`, que registra todas las
+  contribuciones y levanta un worker por cada modelo `javascript`.
+- El worker contesta vacío por un script que la ventana ya soltó (una pregunta viaja mientras la
+  pestaña se cierra) y resuelve el nombre que TypeScript normaliza: la clave de un documento
+  lleva `//` y TypeScript lo colapsa al leerlo como ruta.
+- La columna de momentos de la fase 3 no es una tira: `openSection` (soporte e2e de `ui`) busca
+  ahora en cualquier lista de pestañas. Los e2e de scripts de Request estaban rotos desde esa fase.
+- RAM (proceso de la ventana de Request, working set, Docker): 217 MB en reposo, 299 MB con el
+  servicio encendido tras `mandor.` (+82 MB, el hilo de TypeScript cuenta en el proceso), 211 MB
+  tras cerrar la pestaña y parar el servicio.
+- Empaquetado: en vez del `npm run dist` a mano, `installed-smoke.spec.ts` de Realtime comprueba
+  el completado de `mandor.` sobre el instalador real, en Linux y Windows (`update-e2e`).
 
 **Cierre.** `npm run ci:test -- packages/ui packages/collections`; `npm run ci:verify`;
 `npm run ci:local`. Con las dos apps abiertas:

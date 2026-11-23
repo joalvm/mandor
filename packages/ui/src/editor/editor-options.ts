@@ -22,6 +22,11 @@ export type EditorTranslate = (message: string, rule?: EditorRule) => string;
 export type EditorOptions = {
     /** Marks the caller adds to those of the language, over a text it knows better than the editor. */
     check?: DiagnosticsOf | undefined;
+    /**
+     * What a script is checked against: the declarations of the names its moment shows, read only
+     * by the language of scripts.
+     */
+    declarations?: string | undefined;
     /** Takes the caret as soon as it is built, for an editor its reader opened to write in. */
     focusOnMount?: boolean | undefined;
     lineNumbers?: 'off' | 'on' | undefined;

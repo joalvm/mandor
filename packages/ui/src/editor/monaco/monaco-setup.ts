@@ -14,6 +14,8 @@ import 'monaco-editor/features/folding/register.js';
 import 'monaco-editor/features/hover/register.js';
 import 'monaco-editor/features/linesOperations/register.js';
 import 'monaco-editor/features/multicursor/register.js';
+// The signature of a call while its arguments are written, which the service of scripts gives.
+import 'monaco-editor/features/parameterHints/register.js';
 // The widget of suggestions: the controller of the editor carries it, and the feature folder
 // named suggest only brings the inline completions of another name.
 import 'monaco-editor/editor/contrib/suggest/browser/suggestController.js';
@@ -63,6 +65,7 @@ import { JSONC_CONFIGURATION, JSONC_MONARCH } from './jsonc-monarch.js';
 import './markdown-language.js';
 import { markdownTheme } from './markdown-theme.js';
 import './schema-language.js';
+import './script-language.js';
 
 // The grammar of the payload: comments allowed, and a `{{template}}` standing where a value
 // goes. It keeps its own id — the `json` of the standard language service belongs to the schema

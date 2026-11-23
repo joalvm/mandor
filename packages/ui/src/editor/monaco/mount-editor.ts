@@ -13,6 +13,7 @@ import { followTextZoom } from './follow-text-zoom.js';
 import { overwriteText, replaceText } from './model-text.js';
 import { routeNativeEdits } from './native-edits.js';
 import { runCommand, type EditorCommandId } from './run-command.js';
+import { declareScript } from './script-language.js';
 import { releaseModel, retainModel, type EditorDocument } from './shared-models.js';
 import { paintVariables } from './variable-decorations.js';
 
@@ -56,16 +57,17 @@ function documentOf(target: EditorTarget): EditorDocument {
     return { key: target.modelKey, language: target.language, value: target.value };
 }
 
-/** What the options add over the text: marks, suggestions and the tones of its variables. */
+/** What the options add over the text: declarations, marks, suggestions and variable tones. */
 function extrasOf(
     shown: editor.ICodeEditor,
     model: editor.ITextModel,
     target: EditorTarget,
 ): IDisposable[] {
     const checks = diagnosticsOf(target.language, target.options);
-    const { suggest, variables } = target.options;
+    const { declarations, suggest, variables } = target.options;
 
     return [
+        ...(declarations === undefined ? [] : [declareScript(model, declarations)]),
         ...(checks === null ? [] : [lintModel(model, checks)]),
         ...(suggest === undefined ? [] : [suggestModel(model, suggest)]),
         ...(variables === undefined ? [] : [paintVariables(shown, variables)]),

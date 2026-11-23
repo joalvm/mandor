@@ -1,9 +1,7 @@
 import { useMessages, useTranslator } from '@mandor/i18n';
-import type { ScriptEvent } from '@mandor/script';
+import { scriptTypesOf, type ScriptEvent } from '@mandor/script';
 import { CodeEditor } from '@mandor/ui';
 import { useMemo } from 'react';
-
-import { scriptSuggestions } from '../../lib/script-suggestions.js';
 
 type ScriptEditorProps = {
     /** What runs it: the names the script finds in scope depend on it. */
@@ -15,9 +13,10 @@ type ScriptEditorProps = {
 };
 
 /**
- * The editor of a script: JavaScript, with the names of the API its event shows suggested as it
- * is written. Long lines fold and what hides or passes for another letter is marked, comments
- * and strings included: a script reads one way and runs another only where nobody can see it.
+ * The editor of a script: JavaScript, read against the names of the API its event shows, with
+ * their text in the language of the window: completed, explained and marked as it is written.
+ * Long lines fold and what hides or passes for another letter is marked, comments and strings
+ * included: a script reads one way and runs another only where nobody can see it.
  */
 export function ScriptEditor({ event, modelKey, onChange, readOnly, value }: ScriptEditorProps) {
     const labels = useMessages('collections');
@@ -26,7 +25,7 @@ export function ScriptEditor({ event, modelKey, onChange, readOnly, value }: Scr
     const options = useMemo(
         () => ({
             readOnly,
-            suggest: scriptSuggestions(event, (docKey) => translate(`collections:${docKey}`)),
+            declarations: scriptTypesOf(event, (docKey) => translate(`collections:${docKey}`)),
             unicodeHighlight: true,
             wordWrap: 'on' as const,
         }),
@@ -37,7 +36,7 @@ export function ScriptEditor({ event, modelKey, onChange, readOnly, value }: Scr
         <div className="flex min-h-0 min-w-0 flex-1 flex-col" data-part="script-editor">
             <CodeEditor
                 labels={{ editor: labels('script.editor') }}
-                language="javascript"
+                language="script"
                 modelKey={modelKey}
                 onValueChange={onChange}
                 options={options}

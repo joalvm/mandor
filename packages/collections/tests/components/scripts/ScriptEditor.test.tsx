@@ -21,13 +21,14 @@ function shown(props: Partial<Parameters<typeof ScriptEditor>[0]> = {}) {
 }
 
 describe('the editor of a script', () => {
-    it('writes JavaScript under its name, long lines folded, hidden characters marked', async () => {
+    /** The language of scripts is JavaScript read by a service of its own, against its moment. */
+    it('writes a script under its name, long lines folded, hidden characters marked', async () => {
         shown();
 
         const editor = await editorAt(0);
 
         expect(screen.getByRole('group', { name: 'Script' })).toBeInTheDocument();
-        expect(editor.language()).toBe('javascript');
+        expect(editor.language()).toBe('script');
         expect(editor.wraps()).toBe(true);
         expect(editor.marksHidden()).toBe(true);
         expect(editor.readOnly()).toBe(false);

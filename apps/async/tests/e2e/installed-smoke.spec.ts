@@ -60,6 +60,25 @@ async function connectionText(): Promise<string> {
 }
 
 /**
+ * The service of scripts came out of the asar too: its thread runs, and the editor offers the
+ * names of the moment. What it typed goes away again, and the text is empty as it was.
+ */
+async function expectTheServiceOfScripts(): Promise<void> {
+    await expect
+        .poll(() => page.workers().some((worker) => worker.url().includes('script-worker-main')))
+        .toBe(true);
+    await page.keyboard.type('mandor.');
+    await expect(
+        page
+            .locator('.suggest-widget')
+            .filter({ visible: true })
+            .getByText('request', { exact: true }),
+    ).toHaveCount(1);
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('Backspace');
+}
+
+/**
  * Types the script before connecting into the settings of the connection. A key typed in an
  * empty text is the person writing it, so main approves it through the scripts of the bridge.
  */
@@ -75,6 +94,7 @@ async function writeBeforeScript(source: string): Promise<void> {
     await dialog.getByRole('option', { name: 'Scripts' }).click();
     await dialog.getByRole('tab', { exact: true, name: BEFORE }).click();
     await editorLines(dialog, 'event-script').filter({ visible: true }).first().click();
+    await expectTheServiceOfScripts();
     await page.keyboard.insertText(source);
     await expect.poll(connectionText).toContain(source);
     await dialog.getByRole('button', { exact: true, name: 'Close' }).click();

@@ -92,6 +92,33 @@ function rssMb(app: ElectronApplication): Promise<number> {
     );
 }
 
+/** The threads the service of scripts runs in: one while an editor of scripts is open. */
+function scriptThreads(): number {
+    return page.workers().filter((worker) => worker.url().includes('script-worker-main')).length;
+}
+
+/** Opens the settings of a connection on the script of a moment, and closes them again. */
+async function openAndCloseTheScript(): Promise<void> {
+    await page
+        .getByRole('option', { name: /Memoria/u })
+        .getByRole('button', { name: 'Connection actions' })
+        .click();
+    await page.getByRole('menuitem', { exact: true, name: 'Settings' }).click();
+
+    // The dialog takes the name of the section it shows: it is the only one open.
+    const dialog = page.getByRole('dialog');
+
+    await dialog.getByRole('option', { name: 'Scripts' }).click();
+    await dialog.getByRole('tab', { exact: true, name: ON_MESSAGE }).click();
+    await expect(
+        dialog.locator('[data-part="event-script"] .monaco-editor').filter({ visible: true }),
+    ).toHaveCount(1);
+    // One thread, however many times the editor opened: a closed one never leaves its own behind.
+    await expect.poll(scriptThreads).toBe(1);
+    await dialog.getByRole('button', { exact: true, name: 'Close' }).click();
+    await expect(dialog).toHaveCount(0);
+}
+
 test.beforeAll(async () => {
     sandbox = await makeSandbox();
     echo = await startEchoServer();
@@ -211,4 +238,10 @@ test('a connection gone quiet closes its worker and gives the memory back', asyn
     expect(await rssMb(app)).toBeLessThan(quiet + 64);
     await expect(page.getByRole('button', { exact: true, name: 'Disconnect' })).toBeVisible();
     await disconnect(page);
+});
+
+/** The service weighs megabytes: a window that closed its last script carries none of them. */
+test('the script service stops when no script editor is open', async () => {
+    await expectBackAfterRounds({ app, page, until, noDrift }, openAndCloseTheScript, 5);
+    await expect.poll(scriptThreads, { timeout: 60_000 }).toBe(0);
 });
