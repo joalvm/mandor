@@ -88,7 +88,16 @@ export function useRowListFocus({ count, scrollTo }: RowListReach): RowListFocus
         setStop(optionsIn(event.currentTarget), event.target);
     }
 
+    /**
+     * Keys pressed on a row of the list as drawn. What a row opens in a portal —the dialog of its
+     * settings— hands its keys to the list through React too, and Home and End there are the
+     * field's.
+     */
     function onKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
+        if (!optionsIn(event.currentTarget).some((option) => option === event.target)) {
+            return;
+        }
+
         walkOptions(event);
 
         const wanted = ENDS.get(event.key);

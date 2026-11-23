@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ListRow } from '../../../src/components/row/ListRow.js';
@@ -146,6 +147,27 @@ describe('a list of rows', () => {
 
         expect(fireEvent.keyDown(name, { key: 'End' })).toBe(true);
         expect(document.activeElement).toBe(name);
+    });
+
+    /** The dialog a row opens in a portal hands its keys to the list through React: not its own. */
+    it('leaves the ends of a long list alone for what a row opens elsewhere', () => {
+        const scrollTo = vi.fn();
+
+        render(
+            <RowList count={10} label="Lista" scrollTo={scrollTo}>
+                <ListRow onSelect={vi.fn()} selected={false}>
+                    <RowLabel>a</RowLabel>
+                    {createPortal(<textarea aria-label="Script" />, document.body)}
+                </ListRow>
+            </RowList>,
+        );
+        const script = screen.getByRole('textbox', { name: 'Script' });
+
+        script.focus();
+        fireEvent.keyDown(script, { key: 'End' });
+
+        expect(scrollTo).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(script);
     });
 });
 

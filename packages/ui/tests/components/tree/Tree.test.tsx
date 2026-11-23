@@ -1,4 +1,5 @@
 import { fireEvent, render, renderHook, screen } from '@testing-library/react';
+import { createPortal } from 'react-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useTreeLine } from '../../../src/components/tree/tree-scope.js';
@@ -124,6 +125,34 @@ describe('a tree', () => {
         fireEvent.keyDown(screen.getByRole('button', { name: 'Opciones' }), { key: 'Delete' });
 
         expect(onDelete).not.toHaveBeenCalled();
+    });
+
+    /**
+     * What a line opens in a portal —its menu, the dialog of its settings— hands its clicks to the
+     * line through React, not through the page: they are not the line's.
+     */
+    it('leaves the clicks of what a line opens elsewhere to it', () => {
+        const onActivate = vi.fn();
+
+        render(
+            <Tree
+                label="Archivos"
+                lines={[{ id: 'readme', level: 1 }]}
+                onActivate={onActivate}
+                onExpandedChange={vi.fn()}
+            >
+                <TreeRow>
+                    <RowLabel>readme</RowLabel>
+                    {createPortal(<button type="button">Guardar</button>, document.body)}
+                </TreeRow>
+            </Tree>,
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+        expect(onActivate).not.toHaveBeenCalled();
+
+        fireEvent.click(screen.getByRole('treeitem', { name: 'readme' }));
+        expect(onActivate).toHaveBeenCalledWith('readme', expect.anything());
     });
 
     /** The gutter is reserved either way; only a tree that asks for chevrons fills the folders'. */

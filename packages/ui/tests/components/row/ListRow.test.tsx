@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { createPortal } from 'react-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { ListRow, RowLabel } from '../../../src/index.js';
 
@@ -31,6 +32,48 @@ describe('a row of a list', () => {
 
         expect(onSelect).toHaveBeenNthCalledWith(1, expect.objectContaining({ keep: false }));
         expect(onSelect).toHaveBeenNthCalledWith(2, expect.objectContaining({ keep: true }));
+    });
+
+    it('keeps with Enter and only looks with space, pressed on the row itself', () => {
+        const onSelect = vi.fn();
+
+        render(
+            <ListRow onSelect={onSelect} selected={false}>
+                <RowLabel>gateway</RowLabel>
+                <button type="button">Opciones</button>
+            </ListRow>,
+        );
+        fireEvent.keyDown(screen.getByRole('button', { name: 'Opciones' }), { key: 'Enter' });
+        expect(onSelect).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(screen.getByRole('option', { name: 'gateway' }), { key: 'Enter' });
+        fireEvent.keyDown(screen.getByRole('option', { name: 'gateway' }), { key: ' ' });
+
+        expect(onSelect).toHaveBeenNthCalledWith(1, expect.objectContaining({ keep: true }));
+        expect(onSelect).toHaveBeenNthCalledWith(2, expect.objectContaining({ space: true }));
+    });
+
+    /**
+     * What a row opens in a portal —its menu, the dialog of its settings— hands its events to the
+     * row through React, not through the page: they are not the row's. Enter writes a line there,
+     * and space a space.
+     */
+    it('leaves the keys and the clicks of what it opens elsewhere to it', () => {
+        const onSelect = vi.fn();
+
+        render(
+            <ListRow onSelect={onSelect} selected={false}>
+                <RowLabel>gateway</RowLabel>
+                {createPortal(<textarea aria-label="Script" />, document.body)}
+            </ListRow>,
+        );
+
+        const script = screen.getByRole('textbox', { name: 'Script' });
+
+        expect(fireEvent.keyDown(script, { key: 'Enter' })).toBe(true);
+        expect(fireEvent.keyDown(script, { key: ' ' })).toBe(true);
+        fireEvent.click(script);
+        expect(onSelect).not.toHaveBeenCalled();
     });
 
     it('is a stop of the tabulator on its own, like every row of a plain list', () => {
