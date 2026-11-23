@@ -15,7 +15,7 @@
         "@asyncapi/parser": "3.6.6",
         "@mandor/interop-core": "0.0.0",
         "@mandor/schema": "0.0.0",
-        "@readme/openapi-parser": "10.0.0",
+        "@readme/openapi-parser": "11.0.0",
         "@scalar/openapi-upgrader": "0.4.9",
         "@usebruno/lang": "0.41.0",
         "openapi-sampler": "1.7.10",
