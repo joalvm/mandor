@@ -10,7 +10,7 @@
         "typecheck": "tsc --noEmit -p tsconfig.json"
     },
     "dependencies": {
-        "simple-git": "4.0.2"
+        "simple-git": "4.1.0"
     },
     "devDependencies": {
         "@types/node": "26.6.6"
