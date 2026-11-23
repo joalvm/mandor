@@ -2,7 +2,6 @@ import type { RequestItem } from '@mandor/schema';
 
 import { requestPartsOf } from '../../lib/request-parts.js';
 import { EventScripts } from './EventScripts.js';
-import { RequestImportedScripts } from './RequestImportedScripts.js';
 
 type RequestScriptsProps = {
     request: RequestItem;
@@ -13,8 +12,8 @@ type RequestScriptsProps = {
 };
 
 /**
- * The scripts of a request, one tab per moment of the send. What a document brought stays under
- * them, as the text it is.
+ * The scripts of a request, one tab per moment of the send. What a document brought is there, in
+ * its moment, not yet approved.
  */
 export function RequestScripts({ request, resource, onChange }: RequestScriptsProps) {
     return (
@@ -28,15 +27,6 @@ export function RequestScripts({ request, resource, onChange }: RequestScriptsPr
                 scripts={request.scripts}
                 workspaceId={requestPartsOf(resource)?.workspaceId ?? ''}
             />
-            <ImportedScripts onChange={onChange} request={request} resource={resource} />
         </div>
     );
-}
-
-function ImportedScripts({ request, resource, onChange }: RequestScriptsProps) {
-    if ((request.importedScripts ?? []).length === 0) {
-        return null;
-    }
-
-    return <RequestImportedScripts modelKey={resource} onChange={onChange} parts={request} />;
 }

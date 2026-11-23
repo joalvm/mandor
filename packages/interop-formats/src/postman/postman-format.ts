@@ -27,7 +27,7 @@ export const postmanFormat: InteropFormat = {
             variables: 'folderVariablesUnresolved',
             headers: 'headersCopied',
         },
-        scriptsIn: 'postman',
+        writesScripts: true,
         request: {
             tags: 'tagsDropped',
             schemas: 'schemasDropped',

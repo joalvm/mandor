@@ -59,16 +59,15 @@ describe('folderSettingsOf', () => {
         expect(settings.auth).toEqual({ type: 'bearer', token: '{{t}}' });
     });
 
-    it('keeps the scripts that are on as text', () => {
-        const script = { event: 'onResponse', dialect: 'postman', source: 'x()' } as const;
+    it('puts the scripts of a level in their moments, with nothing to say', () => {
         const { settings, degradations } = folderSettingsOf(
-            { security: null, scripts: [{ ...script, enabled: true }] },
+            { security: null, scripts: [{ event: 'onResponse', source: 'x()', enabled: true }] },
             {},
             'collection',
         );
 
-        expect(settings.importedScripts).toEqual([script]);
-        expect(degradations).toEqual([degradation('scriptAsText', { kind: 'test' })]);
+        expect(settings.scripts).toEqual({ onResponse: { source: 'x()' } });
+        expect(degradations).toEqual([]);
     });
 
     it('rewrites a dynamic variable in a value, and leaves the words of a description alone', () => {

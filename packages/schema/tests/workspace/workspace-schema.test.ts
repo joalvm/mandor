@@ -20,19 +20,13 @@ describe('workspaceSchema', () => {
         expect(workspaceSchema.parse(full)).toEqual(full);
     });
 
-    it('reads the scripts an import brought and Mandor only keeps', () => {
+    it('reads a file that still keeps the scripts of an older import, and leaves them out', () => {
         const withScripts = {
             ...WORKSPACE,
-            importedScripts: [
-                {
-                    event: 'onBeforeRequest',
-                    dialect: 'postman',
-                    source: 'pm.environment.set("a", 1)',
-                },
-            ],
+            importedScripts: [{ event: 'onBeforeRequest', source: 'pm.environment.set("a", 1)' }],
         };
 
-        expect(workspaceSchema.safeParse(withScripts).success).toBe(true);
+        expect(workspaceSchema.parse(withScripts)).toEqual(WORKSPACE);
     });
 
     it('refuses an id that is not one id segment', () => {

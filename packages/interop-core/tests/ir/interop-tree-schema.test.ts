@@ -9,7 +9,7 @@ import {
 } from '../../src/ir/interop-tree-schema.js';
 
 const variable = { name: 'host', value: 'a', enabled: true, secret: false };
-const script = { event: 'onBeforeRequest', dialect: 'postman', source: 'a()', enabled: true };
+const script = { event: 'onBeforeRequest', source: 'a()', enabled: true };
 
 describe('the tree parts of an intermediate document', () => {
     it('reads a group with the variables it declares', () => {
@@ -39,10 +39,14 @@ describe('the tree parts of an intermediate document', () => {
         );
     });
 
-    it('reads a script and refuses an event or a dialect Mandor does not hold', () => {
-        expect(interopScriptSchema.parse(script).dialect).toBe('postman');
-        expect(interopScriptSchema.safeParse({ ...script, event: 'onBoot' }).success).toBe(false);
-        expect(interopScriptSchema.safeParse({ ...script, dialect: 'lua' }).success).toBe(false);
+    it('reads a script and refuses a moment no request has, or a key it does not know', () => {
+        expect(interopScriptSchema.parse(script).event).toBe('onBeforeRequest');
+        expect(interopScriptSchema.safeParse({ ...script, event: 'onMessage' }).success).toBe(
+            false,
+        );
+        expect(interopScriptSchema.safeParse({ ...script, dialect: 'postman' }).success).toBe(
+            false,
+        );
     });
 
     it('reads a group, with a path of one name or more, and refuses an empty path', () => {

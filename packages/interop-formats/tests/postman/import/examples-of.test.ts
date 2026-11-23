@@ -16,7 +16,6 @@ const PARENT: RequestItem = {
     settings: {},
     description: 'nota',
     auth: { type: 'bearer', token: '{{t}}' },
-    importedScripts: [],
 };
 
 const ANSWER: InteropResponseExample = { name: 'ok', status: '200', contentType: '', body: '' };

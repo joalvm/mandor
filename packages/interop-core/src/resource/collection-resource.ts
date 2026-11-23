@@ -1,7 +1,6 @@
 import {
     slugify,
     type AuthConfig,
-    type ImportedScript,
     type ItemOrigin,
     type RequestLine,
     type RequestScripts,
@@ -21,9 +20,7 @@ export type CollectionOfDocument = {
     variables?: readonly Variable[] | undefined;
     /** The lines every request below sends. */
     headers?: readonly RequestLine[] | undefined;
-    /** The scripts of the collection as the document wrote them: kept, not run. */
-    importedScripts?: readonly ImportedScript[] | undefined;
-    /** The scripts the user wrote for the collection, one per event. */
+    /** The scripts of the collection, one per event, as they came and not yet approved. */
     scripts?: RequestScripts | undefined;
     origin: ItemOrigin;
 };
@@ -44,7 +41,6 @@ export function collectionResourceOf(collection: CollectionOfDocument): ImportRe
         ...broughtOnly('auth', collection.auth),
         ...broughtOnly('variables', collection.variables),
         ...broughtOnly('headers', collection.headers),
-        ...broughtOnly('importedScripts', collection.importedScripts),
         ...broughtOnly('scripts', collection.scripts),
     };
 

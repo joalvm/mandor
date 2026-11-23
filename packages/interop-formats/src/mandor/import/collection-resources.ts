@@ -1,11 +1,12 @@
 import {
     collectionResourceOf,
+    definedOnly,
     inSequence,
     fingerprintOf,
     underCollection,
     type ImportResource,
 } from '@mandor/interop-core';
-import { ownScriptsOrNothing, type WorkspaceBundle } from '@mandor/schema';
+import { foldImportedScripts, requestScriptsSchema, type WorkspaceBundle } from '@mandor/schema';
 
 import { mandorOrigin } from './mandor-origin.js';
 import { claimSlug } from './claim-slug.js';
@@ -17,8 +18,24 @@ type BundleFolder = BundleCollection['folders'][number];
 /** Where a group of items files: the route they hang from and the names its directory has taken. */
 type Directory = { route: string; taken: Set<string> };
 
+/**
+ * The body of an item, with what an older bundle left beside its scripts joined to them, after
+ * the own text of each moment.
+ */
+function bodyOf(body: BundleItem['body']): Record<string, unknown> {
+    if (!('importedScripts' in body)) {
+        return body;
+    }
+
+    const { importedScripts, ...rest } = body;
+    const own = requestScriptsSchema.safeParse(rest['scripts']);
+
+    return definedOnly({ ...rest, scripts: foldImportedScripts(own.data, importedScripts) });
+}
+
 function itemOf(item: BundleItem, route: string, sourceId: string): ImportResource {
-    const fields = item.tags.length === 0 ? item.body : { ...item.body, tags: item.tags };
+    const body = bodyOf(item.body);
+    const fields = item.tags.length === 0 ? body : { ...body, tags: item.tags };
 
     return {
         place: 'item',
@@ -43,7 +60,10 @@ function itemsOf(
     });
 }
 
-/** What a folder declares of itself: an absent value and an empty list are no decision. */
+/**
+ * What a folder declares of itself: an absent value and an empty list are no decision. What an
+ * older bundle left beside its scripts joins them.
+ */
 function settingsOf({
     description,
     variables,
@@ -58,8 +78,7 @@ function settingsOf({
             variables,
             auth,
             headers,
-            importedScripts,
-            scripts: ownScriptsOrNothing(scripts),
+            scripts: foldImportedScripts(scripts, importedScripts),
         }).filter(
             ([, value]) => value !== undefined && !(Array.isArray(value) && value.length === 0),
         ),
@@ -107,19 +126,25 @@ function levelResources(
     return inSequence(level.sequence, { folders, items }).flat();
 }
 
+/** Where a collection files, and what an older bundle left for every request of the workspace. */
+type Filing = { route: string; sourceId: string; shared: unknown };
+
+/**
+ * One collection and what hangs from it. What an older bundle left for every request of the
+ * workspace goes first in the root of each collection, where it keeps running for all of them.
+ */
 function oneCollection(
     collection: BundleCollection,
-    route: string,
-    sourceId: string,
+    { route, sourceId, shared }: Filing,
 ): ImportResource[] {
+    const own = foldImportedScripts(collection.scripts, collection.importedScripts);
     const head = collectionResourceOf({
         name: collection.name,
         description: collection.description,
         auth: collection.auth,
         variables: collection.variables,
         headers: collection.headers,
-        importedScripts: collection.importedScripts,
-        scripts: collection.scripts,
+        scripts: foldImportedScripts(own, shared, 'before'),
         origin: { kind: 'mandor', sourceId },
     });
     const top: Directory = { route, taken: new Set() };
@@ -131,7 +156,13 @@ function oneCollection(
 export function collectionResourcesOf(bundle: WorkspaceBundle, sourceId: string): ImportResource[] {
     const taken = new Set<string>();
 
+    const shared = bundle.workspace.importedScripts;
+
     return bundle.collections.flatMap((collection) =>
-        oneCollection(collection, claimSlug(taken, collection.name, 'collection'), sourceId),
+        oneCollection(collection, {
+            route: claimSlug(taken, collection.name, 'collection'),
+            sourceId,
+            shared,
+        }),
     );
 }

@@ -21,13 +21,13 @@ export function withDynamicFields<Fields extends Record<string, unknown>>(
     fields: Fields;
     notes: Degradation[];
 } {
-    const { importedScripts, ...rest } = fields;
+    const { scripts, ...rest } = fields;
     const unsupported: string[] = [];
     const value = rewrittenRecord(rest, unsupported);
 
     return {
         // A rewrite changes what a text says and never the shape around it.
-        fields: (importedScripts === undefined ? value : { ...value, importedScripts }) as Fields,
+        fields: (scripts === undefined ? value : { ...value, scripts }) as Fields,
         notes: unsupported.map((name) => degradation('dynamicVariableUnsupported', { name })),
     };
 }

@@ -8,6 +8,7 @@ import { authOfOpenCollection } from './read-oc-auth.js';
 import { graphqlBodyOf, httpBodyOf } from './read-oc-body.js';
 import { examplesOfOpenCollection } from './read-oc-example.js';
 import { descriptionTextOf, paramsOf, rowsOf } from './read-oc-parts.js';
+import { scriptPartsOf } from './read-bru-scripts.js';
 import { settingsOf } from './read-settings.js';
 
 export type OcItem = z.output<typeof itemSchema>;
@@ -30,6 +31,8 @@ export function noteOf(item: OcItem): string {
 function requestFrom({ item, name, details, body, method }: Parts): BrunoRequest {
     const auth: BrunoAuth | undefined = authOfOpenCollection(details.auth);
     const { examples, unread } = examplesOfOpenCollection(item.examples);
+    const runtime = item.runtime;
+    const scripts = scriptPartsOf(runtime?.scripts);
 
     return {
         kind: 'request',
@@ -46,11 +49,12 @@ function requestFrom({ item, name, details, body, method }: Parts): BrunoRequest
         auth,
         settings: settingsOf(item.settings),
         examples,
+        scripts: scripts.read,
         leftOut: leftOutOf({
-            scripts: item.runtime?.scripts,
-            assertions: item.runtime?.assertions,
-            actions: item.runtime?.actions,
-            'request variables': item.runtime?.variables,
+            scripts: scripts.unread,
+            assertions: runtime?.assertions,
+            actions: runtime?.actions,
+            'request variables': runtime?.variables,
             examples: unread,
         }),
     };

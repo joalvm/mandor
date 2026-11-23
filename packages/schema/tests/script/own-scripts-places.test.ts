@@ -9,16 +9,8 @@ import { requestItemBody } from '../../src/request/request-item-body.js';
 const SCRIPTS = { onBeforeRequest: { source: "mandor.variables.set('a', 1);\n" } };
 
 describe('where the own scripts live', () => {
-    it('are in a request, apart from the scripts an import brought', () => {
-        const imported = [{ event: 'onResponse', dialect: 'postman', source: 'pm.x()' }];
-        const parsed = requestItemSchema.parse({
-            name: 'a',
-            scripts: SCRIPTS,
-            importedScripts: imported,
-        });
-
-        expect(parsed.scripts).toEqual(SCRIPTS);
-        expect(parsed.importedScripts).toEqual(imported);
+    it('are in a request, and absent until somebody writes one', () => {
+        expect(requestItemSchema.parse({ name: 'a', scripts: SCRIPTS }).scripts).toEqual(SCRIPTS);
         expect(requestItemSchema.parse({ name: 'a' }).scripts).toBeUndefined();
     });
 

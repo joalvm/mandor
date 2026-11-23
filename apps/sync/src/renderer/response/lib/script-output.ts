@@ -6,8 +6,6 @@ export type ScriptOutput = {
     logs: ChainLog[];
     tests: ScriptTest[];
     skipped: SkippedScript[];
-    /** The scripts of another tool on the way: counted, never run. */
-    imported: number;
     /** The scripts that would have run, had the switch of this machine been on. */
     switchedOff: number;
     errors: ScriptError[];
@@ -22,7 +20,6 @@ const NO_OUTPUT: ScriptOutput = {
     logs: [],
     tests: [],
     skipped: [],
-    imported: 0,
     switchedOff: 0,
     errors: [],
     withheld: [],
@@ -45,7 +42,6 @@ export function joinedScriptOutput(
         logs: [...output.logs, ...push.logs],
         tests: [...output.tests, ...push.tests],
         skipped: [...output.skipped, ...push.skipped],
-        imported: output.imported + push.imported,
         switchedOff: output.switchedOff + push.switchedOff,
         errors: push.error === undefined ? output.errors : [...output.errors, push.error],
         withheld: [...new Set([...output.withheld, ...push.withheld])],

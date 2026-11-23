@@ -12,7 +12,6 @@ function pushOf(change: Partial<RequestScriptOutput> = {}): RequestScriptOutput 
         logs: [],
         tests: [],
         skipped: [],
-        imported: 0,
         switchedOff: 0,
         variables: [],
         withheld: [],
@@ -27,7 +26,6 @@ describe('what the scripts of a send said, both moments of it joined', () => {
             logs: [],
             tests: [],
             skipped: [],
-            imported: 0,
             switchedOff: 2,
             errors: [],
             withheld: [],
@@ -40,7 +38,7 @@ describe('what the scripts of a send said, both moments of it joined', () => {
             undefined,
             pushOf({
                 logs: [{ level: 'info', text: 'uno' }],
-                imported: 1,
+                switchedOff: 1,
                 skipped: [{ name: 'Altas', level: 'folder', event: 'onBeforeRequest', bytes: 3 }],
             }),
         );
@@ -49,7 +47,7 @@ describe('what the scripts of a send said, both moments of it joined', () => {
             pushOf({
                 phase: 'response',
                 logs: [{ level: 'error', text: 'dos' }],
-                imported: 2,
+                switchedOff: 2,
                 error: { message: 'boom', errorName: 'TypeError' },
             }),
         );
@@ -58,7 +56,7 @@ describe('what the scripts of a send said, both moments of it joined', () => {
             { level: 'info', text: 'uno' },
             { level: 'error', text: 'dos' },
         ]);
-        expect(both.imported).toBe(3);
+        expect(both.switchedOff).toBe(3);
         expect(both.skipped).toHaveLength(1);
         expect(both.errors).toEqual([{ message: 'boom', errorName: 'TypeError' }]);
     });

@@ -7,7 +7,7 @@ import type { UnkeptLevels } from '../../src/workspace/unkept-parts.js';
 const RULES: UnkeptLevels = {
     collection: {},
     folder: {},
-    scriptsIn: 'postman',
+    writesScripts: false,
     request: {
         tags: 'tagsDropped',
         examples: 'examplesDropped',
@@ -36,7 +36,7 @@ describe('what a format loses of an item', () => {
             {
                 examples: [{ name: 'ok' }],
                 settings: { timeoutMs: 1 },
-                importedScripts: [{ event: 'onResponse', dialect: 'insomnia', source: 'a();' }],
+                scripts: { onResponse: { source: 'a();' } },
             },
             ['api'],
         );
@@ -49,12 +49,10 @@ describe('what a format loses of an item', () => {
         ]);
     });
 
-    it('keeps quiet about the scripts in the dialect the format writes', () => {
-        const item = request({
-            importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'a();' }],
-        });
+    it('keeps quiet about the scripts of a format that writes them', () => {
+        const item = request({ scripts: { onResponse: { source: 'a();' } } });
 
-        expect(itemNoteOf(item, RULES)).toEqual({});
+        expect(itemNoteOf(item, { ...RULES, writesScripts: true })).toEqual({});
     });
 
     it('does not count a setting left undefined as held', () => {
@@ -62,7 +60,7 @@ describe('what a format loses of an item', () => {
     });
 
     it('takes what does not read as not held, and the row still comes', () => {
-        const item = request({ examples: 'x', settings: 3, importedScripts: [{}] });
+        const item = request({ examples: 'x', settings: 3, scripts: 3 });
 
         expect(itemNoteOf(item, RULES)).toEqual({});
     });

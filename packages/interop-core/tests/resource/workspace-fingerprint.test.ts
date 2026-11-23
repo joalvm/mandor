@@ -4,21 +4,14 @@ import { fingerprintOf } from '../../src/plan/fingerprint-of.js';
 import { workspaceFingerprint } from '../../src/resource/workspace-fingerprint.js';
 
 const AUTH = { type: 'bearer', token: '{{token}}' };
-const SCRIPT = { event: 'onBeforeRequest', dialect: 'postman', source: 'a()' };
 
 describe('workspaceFingerprint', () => {
-    it('is what the hash of the auth alone gave before scripts existed', () => {
+    it('is the hash of the auth alone', () => {
         expect(workspaceFingerprint({ auth: AUTH })).toBe(fingerprintOf({ auth: AUTH }));
     });
 
-    it('treats an empty list of scripts as no scripts at all', () => {
-        expect(workspaceFingerprint({ auth: AUTH, importedScripts: [] })).toBe(
-            workspaceFingerprint({ auth: AUTH }),
-        );
-    });
-
-    it('changes when a script comes in', () => {
-        expect(workspaceFingerprint({ auth: AUTH, importedScripts: [SCRIPT] })).not.toBe(
+    it('changes when the auth does', () => {
+        expect(workspaceFingerprint({ auth: { type: 'none' } })).not.toBe(
             workspaceFingerprint({ auth: AUTH }),
         );
     });

@@ -10,7 +10,6 @@ import { WORKSPACE_KINDS } from '../workspace/workspace-kinds.js';
 import { plainVariableSchema } from '../environment/plain-variable-schema.js';
 import { variableSchema } from '../environment/variable-schema.js';
 import { requestLineSchema } from '../request/request-item-schema.js';
-import { importedScriptSchema } from '../script/imported-script-schema.js';
 import { requestScriptsSchema } from '../script/own-scripts-schema.js';
 
 /** An item as the bundle carries it: the envelope, and the body of its kind kept whole. */
@@ -27,8 +26,9 @@ const bundleFolderFields = z.object({
     variables: z.array(plainVariableSchema).default([]),
     auth: authConfigSchema.optional(),
     headers: z.array(requestLineSchema).default([]),
-    importedScripts: z.array(importedScriptSchema).optional(),
     scripts: requestScriptsSchema.optional(),
+    /** What an import left beside the scripts in a bundle written before they joined them. */
+    importedScripts: z.unknown().optional(),
     items: z.array(bundleItemSchema).default([]),
     /** How folders and items mix, when a folder comes after an item. */
     sequence: z.array(z.enum(['folder', 'item'])).optional(),
@@ -56,6 +56,8 @@ const bundleWorkspaceSchema = z.object({
     name: entityNameSchema,
     auth: authConfigSchema.optional(),
     variables: z.array(plainVariableSchema).default([]),
+    /** What an import left for every request in a bundle written before scripts joined it. */
+    importedScripts: z.unknown().optional(),
 });
 
 /**

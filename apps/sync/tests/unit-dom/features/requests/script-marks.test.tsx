@@ -20,7 +20,6 @@ const LEFT_OUT: ScriptOutput = {
             source: 'mandor.variables.set(1);',
         },
     ],
-    imported: 0,
     switchedOff: 0,
     errors: [],
     withheld: [],

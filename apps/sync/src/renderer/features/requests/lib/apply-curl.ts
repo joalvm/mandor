@@ -30,7 +30,6 @@ export function applyCurl(current: RequestItem, parsed: CurlRequest): RequestIte
         settings: settingsOf(current.settings, parsed.settings),
         description: current.description,
         auth: parsed.auth ?? current.auth,
-        importedScripts: current.importedScripts,
         scripts: current.scripts,
     };
 }

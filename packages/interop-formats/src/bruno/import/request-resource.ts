@@ -20,8 +20,8 @@ import { requestSettingsOf } from './request-settings-of.js';
 /**
  * One request of the collection as a request of the workspace: the url without its query, which
  * goes to the rows, with its path parameters in braces, the headers, the body, and its own auth
- * when it asks for one, its settings and its examples. What Bruno kept that no field claims is
- * said.
+ * when it asks for one, its settings, its examples and its scripts, as they came and not yet
+ * approved. What Bruno kept that no field claims is said.
  */
 export function requestResourceOf(
     request: BrunoRequest,
@@ -45,6 +45,7 @@ export function requestResourceOf(
         settings: settings.settings,
         description: request.description === '' ? undefined : request.description,
         auth: auth.auth,
+        scripts: request.scripts,
     };
     const examples = examplesOf(request.examples, parent);
     const item: RequestItem = { ...parent, examples: examples.examples };

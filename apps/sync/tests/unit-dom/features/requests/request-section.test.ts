@@ -19,7 +19,7 @@ const WITH_EXAMPLES = {
 };
 const WITH_SCRIPTS = {
     ...createRequestItem({ name: 'with scripts' }),
-    importedScripts: [{ event: 'onResponse' as const, dialect: 'postman' as const, source: 'a()' }],
+    scripts: { onResponse: { source: 'a()' } },
 };
 
 describe('the sections of a request', () => {

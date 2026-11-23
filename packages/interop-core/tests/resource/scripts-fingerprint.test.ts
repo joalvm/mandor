@@ -27,12 +27,6 @@ describe('the own scripts in what a re-import compares', () => {
         );
     });
 
-    it('are told apart from the scripts an import brought', () => {
-        expect(folderFingerprint({ scripts: ONE })).not.toBe(
-            folderFingerprint({ importedScripts: ONE }),
-        );
-    });
-
     it('travel in the fields of the collection an import lands as', () => {
         const resource = collectionResourceOf({ name: 'Tienda', scripts: ONE, origin: ORIGIN });
 

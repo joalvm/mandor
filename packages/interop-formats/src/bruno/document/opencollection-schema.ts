@@ -107,12 +107,17 @@ export const websocketSchema = z.object({
     auth: authSchema,
 });
 
+/** The scripts of a level or a request: one per kind, before the request, after the response, tests… */
+const scriptsSchema = z.array(z.object({ type: text, code: text })).nullish();
+
+export type OcScripts = z.output<typeof scriptsSchema>;
+
 /** What a collection and a folder say for the requests under them. */
 const requestDefaultsSchema = z.object({
     headers: z.array(headerSchema).nullish(),
     auth: authSchema,
     variables: z.array(variableSchema).nullish(),
-    scripts: z.unknown().optional(),
+    scripts: scriptsSchema,
     actions: z.unknown().optional(),
 });
 
@@ -136,7 +141,7 @@ export const itemSchema = z.object({
     runtime: z
         .object({
             variables: z.array(variableSchema).nullish(),
-            scripts: z.unknown().optional(),
+            scripts: scriptsSchema,
             assertions: z.unknown().optional(),
             actions: z.unknown().optional(),
         })

@@ -7,8 +7,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createWorkspace, writeRepoTree, readWorkspace } from '../../src/index.js';
 import { writeImportedWorkspace } from '../../src/workspace/write-imported-workspace.js';
 
-const NOTHING = { auth: null, importedScripts: null } as const;
-const SCRIPT = { event: 'onBeforeRequest', dialect: 'postman', source: 'a()' } as const;
+const NOTHING = { auth: null } as const;
 const ORIGIN = { kind: 'openapi', sourceId: 'abc', fingerprint: 'f1' } as const;
 
 let root: string;
@@ -72,24 +71,5 @@ describe('writeImportedWorkspace', () => {
         await expect(writeImportedWorkspace(root, 'api-de-pagos', NOTHING, null)).rejects.toThrow(
             /workspace/,
         );
-    });
-
-    it('writes the scripts with the origin and takes them out when none come', async () => {
-        const withScript = { ...NOTHING, importedScripts: [SCRIPT] };
-
-        await writeImportedWorkspace(root, 'api-de-pagos', withScript, ORIGIN);
-
-        const read = await readWorkspace(root, 'api-de-pagos');
-
-        expect(read.ok && read.value.importedScripts).toEqual([SCRIPT]);
-
-        await writeImportedWorkspace(
-            root,
-            'api-de-pagos',
-            { ...NOTHING, importedScripts: [] },
-            null,
-        );
-
-        expect(await readFile(workspaceFile(), 'utf8')).not.toContain('importedScripts');
     });
 });

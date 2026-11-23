@@ -20,7 +20,8 @@ describe('readBru: the folder of fixtures', () => {
             headers: [{ name: 'Accept', value: 'application/json', disabled: false }],
             auth: { type: 'bearer', token: '{{token}}' },
             variables: [{ name: 'region', value: 'eu', disabled: false, secret: false }],
-            leftOut: ['scripts'],
+            scripts: { onBeforeRequest: { source: "console.log('hola')" } },
+            leftOut: [],
         });
         expect(document.sourceId).toMatch(/^collection:/u);
     });
@@ -38,7 +39,12 @@ describe('readBru: the folder of fixtures', () => {
             headers: [{ name: 'X-Team', value: 'perros', disabled: false }],
             children: [
                 { name: 'Lista de mascotas' },
-                { name: 'Crear mascota', tags: ['smoke'], leftOut: ['scripts'] },
+                {
+                    name: 'Crear mascota',
+                    tags: ['smoke'],
+                    scripts: { onBeforeRequest: { source: "console.log('antes')" } },
+                    leftOut: [],
+                },
                 { name: 'Subir foto' },
             ],
         });

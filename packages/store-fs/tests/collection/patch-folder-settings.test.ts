@@ -6,7 +6,7 @@ import {
 } from '../../src/collection/patch-folder-settings.js';
 
 const TEXT =
-    '# a mano\nname: Pagos\nimportedScripts:\n  - event: onResponse\n    dialect: postman\n    source: pm.test()\nfuture: kept\n';
+    '# a mano\nname: Pagos\nscripts:\n  onResponse:\n    source: pm.test()\nfuture: kept\n';
 const HOST = { name: 'host', value: 'api.local', enabled: true, secret: false };
 
 describe('patchFolderSettings', () => {
@@ -14,7 +14,7 @@ describe('patchFolderSettings', () => {
         const text = patchFolderSettings(TEXT, { description: 'Todo', variables: [HOST] });
 
         expect(text).toContain('# a mano');
-        expect(text).toContain('importedScripts:');
+        expect(text).toContain('source: pm.test()');
         expect(text).toContain('future: kept');
         expect(text).toContain('description: Todo');
         expect(text).toContain('name: host');

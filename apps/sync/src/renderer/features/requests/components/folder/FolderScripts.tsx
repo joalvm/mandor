@@ -1,15 +1,14 @@
 import { folderOfResource, scheduleFolderSettingsWrite, useFolderChain } from '@mandor/env';
 import { useFailureToast, useTab } from '@mandor/shell';
-import type { ComponentProps } from 'react';
 
 import { EventScripts } from '../scripts/EventScripts.js';
-import { RequestImportedScripts } from '../scripts/RequestImportedScripts.js';
 
 /**
  * The scripts of a collection or a folder, in its tab: the same piece a request writes its own
  * with, over the first level of the chain. They run for every request under the group, and the
  * level they are approved at is the one of the group, so a text approved in a folder is not
- * approved in a collection. What an import brought to the group shows under them, as text.
+ * approved in a collection. What an import brought to the group is there, in its moment, not
+ * yet approved.
  */
 export function FolderScripts() {
     const notifyFailure = useFailureToast();
@@ -43,27 +42,6 @@ export function FolderScripts() {
                 scripts={own.settings.scripts}
                 workspaceId={workspaceId}
             />
-            <FolderImportedScripts
-                modelKey={resource}
-                onChange={({ importedScripts, scripts }) => {
-                    // Both lists leave in one patch: the text is never in the two, nor in none.
-                    scheduleFolderSettingsWrite(
-                        workspaceId,
-                        path,
-                        { importedScripts: importedScripts ?? null, scripts: scripts ?? null },
-                        notifyFailure,
-                    );
-                }}
-                parts={own.settings}
-            />
         </div>
     );
-}
-
-function FolderImportedScripts(props: ComponentProps<typeof RequestImportedScripts>) {
-    if ((props.parts.importedScripts ?? []).length === 0) {
-        return null;
-    }
-
-    return <RequestImportedScripts {...props} />;
 }

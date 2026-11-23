@@ -231,14 +231,7 @@ export {
 } from './response/http-response.js';
 export { type ResponseBody } from './response/response-body.js';
 
-export { importedScriptSchema } from './script/imported-script-schema.js';
-export {
-    IMPORTED_SCRIPT_EVENTS,
-    type ImportedScript,
-    type ImportedScriptEvent,
-    SCRIPT_DIALECTS,
-    type ScriptDialect,
-} from './script/imported-script.js';
+export { type FoldPlace, foldImportedScripts } from './script/fold-imported-scripts.js';
 export { connectionScriptsSchema, requestScriptsSchema } from './script/own-scripts-schema.js';
 export {
     CONNECTION_SCRIPT_EVENTS,

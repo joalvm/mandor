@@ -25,13 +25,13 @@ describe('the settings of a collection or a folder', () => {
         expect(() => folderSettingsSchema.parse({ name: '' })).toThrow();
     });
 
-    it('reads the scripts an import wrote, which a collection keeps as well as a folder', () => {
+    it('reads a file that still keeps the scripts of an older import apart, and leaves them out', () => {
         const file = folderSettingsSchema.parse({
             name: 'Pagos',
             importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'pm.test()' }],
         });
 
-        expect(file.importedScripts).toHaveLength(1);
+        expect(file).toEqual({ name: 'Pagos' });
     });
 });
 

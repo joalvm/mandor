@@ -121,9 +121,7 @@ describe('folderDocumentsOf', () => {
                     settings: {
                         variables: [],
                         headers: [],
-                        importedScripts: [
-                            { event: 'onBeforeRequest', dialect: 'insomnia', source: 'a({{b}});' },
-                        ],
+                        scripts: { onBeforeRequest: { source: 'a({{b}});' } },
                     },
                     folders: [],
                     items: [],

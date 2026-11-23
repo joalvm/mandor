@@ -240,13 +240,40 @@ describe('collectionResourcesOf', () => {
         expect(resources[1]?.route).not.toBe(resources[2]?.route);
     });
 
-    it('keeps the scripts of a collection, as it does those of a folder', () => {
-        const script = { event: 'onResponse', dialect: 'postman', source: 'a();' };
-        const [head] = collectionResourcesOf(
-            bundleWith([{ name: 'Una', importedScripts: [script] }]),
+    it('folds the scripts an older bundle kept apart into the script of their moment', () => {
+        const old = (source: string) => [{ event: 'onResponse', dialect: 'postman', source }];
+        const resources = collectionResourcesOf(
+            workspaceBundleSchema.parse({
+                mandor: 'workspace',
+                formatVersion: 1,
+                app: 'sync',
+                workspace: { name: 'Tienda', importedScripts: old('workspace();') },
+                collections: [
+                    {
+                        name: 'Una',
+                        scripts: { onResponse: { source: 'own();' } },
+                        importedScripts: old('collection();'),
+                        folders: [{ name: 'Uno', importedScripts: old('folder();'), items: [] }],
+                        items: [
+                            {
+                                kind: 'request',
+                                name: 'Dentro',
+                                body: { importedScripts: old('request();') },
+                            },
+                        ],
+                    },
+                ],
+            }),
             'Tienda',
         );
+        const scriptsAt = (place: string) =>
+            resources.find((resource) => resource.place === place)?.fields['scripts'];
 
-        expect(head?.fields['importedScripts']).toEqual([script]);
+        expect(scriptsAt('collection')).toEqual({
+            onResponse: { source: 'workspace();\n\nown();\n\ncollection();' },
+        });
+        expect(scriptsAt('folder')).toEqual({ onResponse: { source: 'folder();' } });
+        expect(scriptsAt('item')).toEqual({ onResponse: { source: 'request();' } });
+        expect(JSON.stringify(resources)).not.toContain('importedScripts');
     });
 });

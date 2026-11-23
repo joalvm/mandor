@@ -84,7 +84,7 @@ describe('removeEntry of an environment and of the workspace file', () => {
         await writeImportedWorkspace(
             root,
             'pasarela',
-            { auth: { type: 'bearer', token: 't' }, importedScripts: null },
+            { auth: { type: 'bearer', token: 't' } },
             origin,
         );
 

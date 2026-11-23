@@ -24,14 +24,12 @@ export type ChainScripts = Pick<AppHandlerContext, 'scripts' | 'scriptVariables'
 /** The scripts of one event of a send, in the order they run, and what does not run of them. */
 export type RequestScriptList = {
     entries: ChainEntry[];
-    /** The scripts of another tool in the chain and the request: counted, never run. */
-    imported: number;
     /** A level whose file could not be read: none of its scripts ran, and the console says so. */
     logs: ChainLog[];
 };
 
 /** What the scripts of one phase of a send said, for the window, whatever came of them. */
-export type ScriptsOutput = ChainResult & { imported: number };
+export type ScriptsOutput = ChainResult;
 
 /** One chain of a send: its scripts, the photo the first one starts on, and how the photo moves. */
 type SendChain = Pick<ChainRun, 'snapshot' | 'advance' | 'signal' | 'place'> & {
@@ -77,5 +75,5 @@ export async function runSendChain(deps: ChainScripts, chain: SendChain): Promis
         { ...deps.scripts, variables: deps.scriptVariables, logger: deps.logger },
     );
 
-    return { ...output, logs: [...list.logs, ...output.logs], imported: list.imported };
+    return { ...output, logs: [...list.logs, ...output.logs] };
 }

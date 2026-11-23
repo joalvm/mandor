@@ -9,15 +9,16 @@ import {
 
 import { authEntryOf } from './auth-document.js';
 import { requestFilesOf, type Directory } from './request-files.js';
+import { scriptBlocksOf } from './script-blocks.js';
 import { variableDocumentsOf } from './variable-documents.js';
 
 /** `folder.yml` is the file of the folder itself: no request can take its name. */
 export const FOLDER_FILE = 'folder';
 
 /**
- * A folder as a directory of Bruno: `folder.yml` says what it is called, where it stands and what
- * it declares, and its folders and one file per request sit beside it. `parent` is the directory
- * it hangs from.
+ * A folder as a directory of Bruno: `folder.yml` says what it is called, where it stands, what it
+ * declares and the scripts it runs for every request under it, and its folders and one file per
+ * request sit beside it. `parent` is the directory it hangs from.
  */
 export function folderFilesOf(
     folder: WorkspaceFolderNode,
@@ -27,7 +28,7 @@ export function folderFilesOf(
     const stem = claimStem(folder.name, parent.taken, 'folder');
     const path = parent.path === '' ? stem : `${parent.path}/${stem}`;
     const directory: Directory = { path, taken: [FOLDER_FILE] };
-    const { description, variables, auth, headers } = folder.settings;
+    const { description, variables, auth, headers, scripts } = folder.settings;
 
     return [
         {
@@ -39,6 +40,7 @@ export function folderFilesOf(
                     ...listedRows('headers', namedRowsOf(headers)),
                     ...listedRows('variables', variableDocumentsOf(variables)),
                     ...authEntryOf(auth),
+                    ...listedRows('scripts', scriptBlocksOf(scripts)),
                 },
             },
         },

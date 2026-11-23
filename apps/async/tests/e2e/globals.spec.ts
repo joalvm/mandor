@@ -66,7 +66,7 @@ test('a connection with no environment of a migrated origin opens and sends what
         await connectAndSend(page);
         await expect(page.locator('[data-part="activity-detail"]')).toContainText('del workspace');
         expect(await readFile(join(sandbox.repoRoot, 'mandor.yaml'), 'utf8')).toContain(
-            'formatVersion: 2',
+            'formatVersion: 3',
         );
     } finally {
         await app?.close();

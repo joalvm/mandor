@@ -1,18 +1,10 @@
 import type { ImportPlanEntry } from '@mandor/interop-core';
-import {
-    authConfigSchema,
-    type ConcreteAuth,
-    importedScriptSchema,
-    type ItemOrigin,
-} from '@mandor/schema';
+import { authConfigSchema, type ConcreteAuth, type ItemOrigin } from '@mandor/schema';
 import { writeImportedWorkspace } from '@mandor/store-fs';
-import { z } from 'zod';
-
-const scriptsSchema = z.array(importedScriptSchema);
 
 /**
- * Writes what the import carries for the workspace file itself: its auth, its variables and its
- * scripts, with the origin that says the import wrote them. `fields` is the patch as the mapper
+ * Writes what the import carries for the workspace file itself: its auth, with the origin that
+ * says the import wrote it. `fields` is the patch as the mapper
  * built it, each key read with its own schema. `inherit` is the workspace's default: no auth.
  */
 export async function writeWorkspaceEntry(
@@ -26,10 +18,7 @@ export async function writeWorkspaceEntry(
     await writeImportedWorkspace(
         root,
         workspaceId,
-        {
-            auth: authOf(fields['auth']),
-            importedScripts: scriptsSchema.parse(fields['importedScripts'] ?? []),
-        },
+        { auth: authOf(fields['auth']) },
         entry.resource?.origin ?? identity,
     );
 }

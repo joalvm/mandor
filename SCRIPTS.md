@@ -244,14 +244,11 @@ if (mandor.request.body !== undefined) {
 
 ## Scripts from other apps
 
-Importing never runs anything. Postman and Insomnia scripts arrive as text, marked with the app
-they came from, and are exported back to the same format untouched. They show under the scripts of
-the request, folder or collection, and the import tells you how many there are to adjust. Bruno
-scripts are not read on import: the import notes where they were left out.
-
-The pencil button moves an imported script into the script of the same moment, as it is: nothing
-is translated. If a script was already there, the imported text goes after it, past a blank line.
-The moved text does not run until you approve it, so you can adjust it first.
+Importing never runs anything. Scripts from Postman, Insomnia and Bruno go into the script of the
+same moment of the request, folder or collection, as they came: nothing is translated. Bruno's tests
+join the script after the response, past a blank line. The import tells you how many scripts came,
+and none of them runs until you approve it, so you can adjust it first. Exporting writes the scripts
+back as they are.
 
 There is no compatibility layer: `pm`, `insomnia` and `bru` do not exist in Mandor, and a script that
 uses them fails with a `ReferenceError`. A translation would run foreign code as

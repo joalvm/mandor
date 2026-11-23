@@ -17,7 +17,6 @@ const SILENT: ScriptOutput = {
     logs: [],
     tests: [],
     skipped: [],
-    imported: 0,
     switchedOff: 0,
     errors: [],
     withheld: [],

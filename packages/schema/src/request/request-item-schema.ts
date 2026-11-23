@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import { authConfigSchema } from '../auth/auth-config-schema.js';
-import { importedScriptSchema } from '../script/imported-script-schema.js';
 import { requestScriptsSchema } from '../script/own-scripts-schema.js';
 import { bodyFilePathSchema } from './body-file-path-schema.js';
 import { entityNameSchema } from '../fields/entity-name-schema.js';
@@ -137,7 +136,6 @@ const requestItemFields = z.object({
     settings: requestSettingsSchema.default({}),
     description: z.string().optional(),
     auth: authConfigSchema.optional(),
-    importedScripts: z.array(importedScriptSchema).optional(),
     scripts: requestScriptsSchema.optional(),
 });
 

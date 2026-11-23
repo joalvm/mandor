@@ -27,7 +27,7 @@ describe('what the format could not carry whole', () => {
     const NOTED = planOf([
         entryOf('folder', 'pedidos', [degradation('folderKeepsNoDescription')]),
         entryOf('item', 'pedidos/registrar', [
-            degradation('scriptDisabled'),
+            degradation('proxyNotImported'),
             degradation('pkceAlways'),
         ]),
         entryOf('item', 'pedidos/avisar'),
@@ -40,7 +40,7 @@ describe('what the format could not carry whole', () => {
         expect(folder?.note).toBe('said folderKeepsNoDescription');
         expect(folder?.children.map((child) => child.reason)).toEqual([undefined, undefined]);
         expect(folder?.children.map((child) => child.note)).toEqual([
-            'said scriptDisabled · said pkceAlways',
+            'said proxyNotImported · said pkceAlways',
             undefined,
         ]);
     });
@@ -58,7 +58,7 @@ describe('what an import plan has chosen', () => {
             leftOutEntry('colas'),
             entryOf('folder', 'pedidos'),
             { ...entryOf('item', 'pedidos/registrar'), selected: false },
-            entryOf('item', 'pedidos/avisar', [degradation('scriptDisabled')]),
+            entryOf('item', 'pedidos/avisar', [degradation('proxyNotImported')]),
         ]);
 
         expect(chosenOf(plan, importChoiceNodes(plan, WORDS))).toEqual(new Set(['3']));

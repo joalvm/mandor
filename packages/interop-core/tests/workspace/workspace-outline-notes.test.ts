@@ -156,14 +156,14 @@ describe('the notes of the outline', () => {
         expect(collection?.children.map(({ label }) => label)).toEqual(['Uno', 'Carpeta', 'Dos']);
     });
 
-    it('notes the row of an item, and what its level loses of the scripts only once', () => {
-        const script = { event: 'onResponse', dialect: 'postman', source: 'a();' } as const;
+    it('notes the row of an item, and the scripts its level loses', () => {
+        const scripts = { onResponse: { source: 'a();' } };
         const held: WorkspaceData = {
             ...DATA,
             collections: [
                 {
                     name: 'API',
-                    settings: { variables: [], headers: [], importedScripts: [script] },
+                    settings: { variables: [], headers: [], scripts },
                     folders: [],
                     items: [{ kind: 'request', name: 'Pide', tags: ['a'], body: {} }],
                 },
@@ -173,9 +173,9 @@ describe('the notes of the outline', () => {
             held,
             {},
             {
-                collection: { importedScripts: 'scriptsNotCarried' },
+                collection: {},
                 folder: {},
-                scriptsIn: 'none',
+                writesScripts: false,
                 request: { tags: 'tagsDropped' },
             },
         );

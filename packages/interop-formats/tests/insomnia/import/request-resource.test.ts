@@ -117,17 +117,8 @@ describe('requestResourceOf', () => {
 
         expect(resource.fields).toMatchObject({
             settings: { followRedirects: false },
-            importedScripts: [
-                {
-                    event: 'onBeforeRequest',
-                    dialect: 'insomnia',
-                    source: 'const a = "{{ _.b }}";',
-                },
-            ],
+            scripts: { onBeforeRequest: { source: 'const a = "{{ _.b }}";' } },
         });
-        expect(resource.degradations).toEqual([
-            degradation('urlNotEncodedInsomnia'),
-            degradation('scriptAsText', { kind: 'pre-request' }),
-        ]);
+        expect(resource.degradations).toEqual([degradation('urlNotEncodedInsomnia')]);
     });
 });

@@ -120,17 +120,11 @@ function readersOf(
 
 /**
  * The workspace file counts as a resource only while it holds something an import could have
- * written: its auth or its scripts, or the claim over them. Variables alone do not make it one:
+ * written: its auth, or the claim over it. Variables alone do not make it one:
  * the import merges them, and from then on they are the person's.
  */
 function workspaceOf(workspace: Workspace): ExistingResource[] {
-    const scripts = workspace.importedScripts ?? [];
-
-    if (
-        workspace.importOrigin === undefined &&
-        workspace.auth === undefined &&
-        scripts.length === 0
-    ) {
+    if (workspace.importOrigin === undefined && workspace.auth === undefined) {
         return [];
     }
 

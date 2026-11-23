@@ -46,7 +46,7 @@ export function folderDocumentsOf(
             ...(auth === undefined ? {} : { authentication: withReferences(authDocumentOf(auth)) }),
             ...listedRows('headers', withReferences(namedRowsOf(headers))),
             ...(variables.length === 0 ? {} : { environment: dataOf(variables) }),
-            ...scriptsDocumentOf(folder.settings.importedScripts),
+            ...scriptsDocumentOf(folder.settings.scripts),
             children: childrenInOrder<FormatDocument>(folder, {
                 folder: (child) => folderDocumentsOf([child], here, undefined),
                 item: (item) => requestsOf([item], here),

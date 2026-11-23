@@ -1,4 +1,4 @@
-import { createRequestItem, type ImportedScript } from '@mandor/schema';
+import { createRequestItem } from '@mandor/schema';
 import { describe, expect, it } from 'vitest';
 
 import { marksOf } from '../../../../src/renderer/features/requests/lib/section-marks.js';
@@ -47,23 +47,6 @@ describe('what the strip says about each section', () => {
         };
 
         expect(marksOf(request, 'scripts')).toEqual({ filled: false });
-        expect(
-            marksOf(
-                {
-                    ...request,
-                    importedScripts: [
-                        {
-                            dialect: 'postman',
-                            event: 'onResponse',
-                            source: '',
-                        } satisfies ImportedScript,
-                    ],
-                },
-                'scripts',
-            ),
-        ).toEqual({
-            filled: true,
-        });
         expect(marksOf(request, 'settings')).toEqual({});
         expect(marksOf(request, 'path')).toEqual({});
     });

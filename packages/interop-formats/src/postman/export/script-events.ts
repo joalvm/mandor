@@ -1,20 +1,33 @@
 import type { FormatDocument } from '@mandor/interop-core';
-import type { ImportedScript, ImportedScriptEvent } from '@mandor/schema';
+import {
+    REQUEST_SCRIPT_EVENTS,
+    type RequestScriptEvent,
+    type RequestScripts,
+} from '@mandor/schema';
 
-const EVENTS: Record<ImportedScriptEvent, string> = {
+const EVENTS: Record<RequestScriptEvent, string> = {
     onBeforeRequest: 'prerequest',
     onResponse: 'test',
 };
 
 /**
- * The scripts Postman can run, as the events of a request or a level. One written for another
- * tool calls an API Postman does not have, so it does not leave here.
+ * The own scripts of a request or a level as the events Postman runs, as they are: nothing is
+ * translated. A script switched off goes out switched off, and one with nothing in it does not go.
  */
-export function scriptEventsOf(scripts: readonly ImportedScript[] | undefined): FormatDocument[] {
-    return (scripts ?? [])
-        .filter((script) => script.dialect === 'postman')
-        .map(({ event, source }) => ({
-            listen: EVENTS[event],
-            script: { type: 'text/javascript', exec: source.split('\n') },
-        }));
+export function scriptEventsOf(scripts: RequestScripts | undefined): FormatDocument[] {
+    return REQUEST_SCRIPT_EVENTS.flatMap((event) => {
+        const entry = scripts?.[event];
+
+        if (entry === undefined || entry.source.trim() === '') {
+            return [];
+        }
+
+        return [
+            {
+                listen: EVENTS[event],
+                script: { type: 'text/javascript', exec: entry.source.split('\n') },
+                ...(entry.enabled === false ? { disabled: true } : {}),
+            },
+        ];
+    });
 }

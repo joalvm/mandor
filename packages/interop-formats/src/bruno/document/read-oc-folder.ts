@@ -2,6 +2,7 @@ import type { BrunoFolder, BrunoNode } from './bruno-tree.js';
 import { leftOutOf } from './left-out-of.js';
 import { ordered, sequenceOf } from './order-nodes.js';
 import { authOfOpenCollection } from './read-oc-auth.js';
+import { scriptPartsOf } from './read-bru-scripts.js';
 import { rowsOf } from './read-oc-parts.js';
 import { noteOf, type OcItem } from './read-oc-request.js';
 import { variablesFrom } from './read-oc-variables.js';
@@ -16,6 +17,7 @@ export function folderOf(
     children: readonly BrunoNode[],
 ): BrunoFolder {
     const defaults = item?.request;
+    const scripts = scriptPartsOf(defaults?.scripts);
 
     return {
         kind: 'folder',
@@ -26,6 +28,10 @@ export function folderOf(
         auth: authOfOpenCollection(defaults?.auth),
         variables: variablesFrom(defaults?.variables),
         children: ordered(children),
-        leftOut: leftOutOf({ scripts: defaults?.scripts, actions: defaults?.actions }),
+        scripts: scripts.read,
+        leftOut: leftOutOf({
+            scripts: scripts.unread,
+            actions: defaults?.actions,
+        }),
     };
 }

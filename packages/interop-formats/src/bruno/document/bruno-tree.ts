@@ -1,3 +1,5 @@
+import type { RequestScripts } from '@mandor/schema';
+
 /** A header, a parameter or a field of a form, as Bruno lists it. */
 export type BrunoRow = { name: string; value: string; disabled: boolean };
 
@@ -40,7 +42,9 @@ export type BrunoRequest = {
     auth: BrunoAuth | undefined;
     settings: BrunoSettings;
     examples: BrunoExample[];
-    /** What the request keeps that Mandor has no place for (scripts, tests…), by name. */
+    /** The scripts of the request, by the moment Mandor runs them at; the tests go after the response. */
+    scripts: RequestScripts | undefined;
+    /** What the request keeps that Mandor has no place for (assertions, request variables…), by name. */
     leftOut: string[];
 };
 
@@ -98,6 +102,7 @@ export type BrunoFolder = {
     auth: BrunoAuth | undefined;
     variables: BrunoVariable[];
     children: BrunoNode[];
+    scripts: RequestScripts | undefined;
     leftOut: string[];
 };
 
@@ -121,5 +126,6 @@ export type BrunoDocument = {
     children: BrunoNode[];
     environments: BrunoEnvironment[];
     skipped: BrunoSkipped[];
+    scripts: RequestScripts | undefined;
     leftOut: string[];
 };

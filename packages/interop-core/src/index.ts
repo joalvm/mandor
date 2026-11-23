@@ -27,6 +27,7 @@ export { chooseByKey, type KeyHandlers } from './choose/choose-by-key.js';
 export { binaryBodyOf, fileRowOf } from './import/file-body-of.js';
 export { formBodyOf, type BodyMapping, type FormRow } from './import/form-body-of.js';
 export { type VariablePlace, variablesOf } from './import/variables-of.js';
+export { ownScriptsOf } from './import/own-scripts-of.js';
 export {
     checkedAuth,
     loopbackPortOf,

@@ -106,31 +106,15 @@ describe('the scripts of a collection or a folder, in its tab', () => {
         });
     });
 
-    it('shows what an import brought to the group, and moves it into the editor', async () => {
-        const write = vi.spyOn(bridge.collections, 'writeSettings').mockResolvedValue(success({}));
+    it('shows a script an import brought in its moment, not approved, with no panel of its own', async () => {
         const approve = vi.spyOn(bridge.scripts, 'approve');
 
-        await show(
-            chainOf(undefined, 'collection', {
-                importedScripts: [
-                    { event: 'onBeforeRequest', dialect: 'postman', source: 'pm.x()' },
-                ],
-            }),
-        );
+        await show(chainOf({ onBeforeRequest: { source: 'pm.x()' } }, 'collection'));
 
-        expect(screen.getByText(/do not run here: adjust them to Mandor scripts/)).toBeVisible();
-
-        fireEvent.click(screen.getByRole('button', { name: 'Move to the script editor' }));
-        await screen.findByText('It does not run until you approve it');
-        await act(() => settlePendingWrites());
-
-        expect(write).toHaveBeenLastCalledWith({
-            workspaceId: 'local',
-            path: 'pedidos/altas',
-            patch: { scripts: { onBeforeRequest: { source: 'pm.x()' } }, importedScripts: null },
-        });
+        expect((await editorAt(0)).text()).toBe('pm.x()');
+        expect(await screen.findByText('It does not run until you approve it')).toBeVisible();
+        expect(screen.queryByRole('button', { name: 'Move to the script editor' })).toBeNull();
         expect(approve).not.toHaveBeenCalled();
-        expect(screen.queryByText(/do not run here/)).toBeNull();
     });
 
     it('draws nothing for a tab that looks at no folder', () => {

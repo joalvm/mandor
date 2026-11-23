@@ -31,7 +31,7 @@ beforeEach(async () => {
     await mkdir(join(repo.root(), FILE, '..'), { recursive: true });
     await writeFile(
         join(repo.root(), FILE),
-        '# a mano\nname: Altas\nimportedScripts:\n  - event: onResponse\n    dialect: postman\n    source: pm.test()\nfuture: kept\n',
+        '# a mano\nname: Altas\nscripts:\n  onResponse:\n    source: pm.test()\nfuture: kept\n',
         'utf8',
     );
     setActiveOrigin({ id: 'local', name: 'Local', kind: 'local', root: repo.root() });
@@ -63,7 +63,7 @@ describe('the write of the settings of a folder from the window', () => {
 
         expect(text).toContain('description: Altas');
         expect(text).toContain('name: host');
-        expect(text).toContain('importedScripts:');
+        expect(text).toContain('source: pm.test()');
         expect(text).toContain('future: kept');
         await flushAllCommits();
         expect((await repo.subjects())[0]).toBe('update folder Altas');
@@ -105,16 +105,13 @@ describe('the write of the settings of a folder from the window', () => {
         expect(text).toContain('future: kept');
     });
 
-    it('takes the imported script out once the person moved it into a script of their own', async () => {
-        await write({
-            scripts: { onResponse: { source: 'pm.test()' } },
-            importedScripts: null,
-        });
+    it('writes the scripts of the folder, keeping the comment and the unknown key', async () => {
+        await write({ scripts: { onResponse: { source: 'mandor.test()' } } });
 
         const text = await onDisk();
 
-        expect(text).not.toContain('importedScripts:');
-        expect(text).toContain('source: pm.test()');
+        expect(text).toContain('source: mandor.test()');
+        expect(text).not.toContain('pm.test()');
         expect(text).toContain('# a mano');
         expect(text).toContain('future: kept');
     });

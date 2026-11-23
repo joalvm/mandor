@@ -3,7 +3,6 @@ import type {
     AuthConfig,
     FolderChainLevel,
     FolderChainSettings,
-    ImportedScript,
     RequestLine,
     RequestScripts,
 } from '@mandor/schema';
@@ -14,13 +13,12 @@ import { chainKey, reloadFolderChains } from './folder-chains.js';
 
 /**
  * What a tab of a folder edits on its way to disk: `null` hands the auth back to the level above,
- * and takes the scripts, own or imported, out of the file once none is left.
+ * and takes the scripts out of the file once none is left.
  */
 export type FolderSettingsEdit = {
     auth?: AuthConfig | null;
     headers?: RequestLine[];
     scripts?: RequestScripts | null;
-    importedScripts?: ImportedScript[] | null;
 };
 
 type SettingsWrite = {
@@ -122,12 +120,11 @@ function editedSettings(
     settings: FolderChainSettings,
     edit: FolderSettingsEdit,
 ): FolderChainSettings {
-    const { auth, importedScripts, scripts, ...rest } = { ...settings, ...edit };
+    const { auth, scripts, ...rest } = { ...settings, ...edit };
 
     return {
         ...rest,
         ...(auth ? { auth } : {}),
         ...(scripts ? { scripts } : {}),
-        ...(importedScripts ? { importedScripts } : {}),
     };
 }

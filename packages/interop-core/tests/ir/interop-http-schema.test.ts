@@ -40,7 +40,7 @@ describe('the http part of an operation', () => {
             path: '',
             url: '{{base}}/pets',
             group: ['Pets', 'Admin'],
-            scripts: [{ event: 'onResponse', dialect: 'postman', source: 'a()', enabled: true }],
+            scripts: [{ event: 'onResponse', source: 'a()', enabled: true }],
             parameters: [{ name: 'q', in: 'query', required: false, value: '', enabled: false }],
             requestBody: {
                 contentType: 'multipart/form-data',

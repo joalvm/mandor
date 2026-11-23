@@ -49,12 +49,7 @@ export function requestResourceOf(
         auth: auth.auth,
     };
     const mapped = withTemplates(definedOnly({ ...requestItemBody(item), auth: auth.auth }));
-    const fields = {
-        ...mapped.value,
-        ...(scripts.importedScripts.length === 0
-            ? {}
-            : { importedScripts: scripts.importedScripts }),
-    };
+    const fields = { ...mapped.value, ...(scripts === undefined ? {} : { scripts }) };
 
     return {
         place: 'item',
@@ -67,7 +62,6 @@ export function requestResourceOf(
             ...auth.degradations,
             ...body.degradations,
             ...switches.degradations,
-            ...scripts.degradations,
             ...mapped.notes,
         ]),
     };

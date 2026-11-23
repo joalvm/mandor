@@ -17,7 +17,6 @@ const NOTE = { connectionId: 'alpha', event: 'onConnect', at: 1, dropped: 0, ...
 const OUTPUT = {
     sendId: '0b6f1d2e-3c4a-4b5c-8d9e-0f1a2b3c4d5e',
     phase: 'before',
-    imported: 0,
     destinationMoved: false,
     ...SAID,
 };

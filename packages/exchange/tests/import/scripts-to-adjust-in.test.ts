@@ -1,27 +1,25 @@
-import type { ImportPlan } from '@mandor/interop-core';
 import { describe, expect, it } from 'vitest';
 
 import { scriptsToAdjustIn } from '../../src/import/lib/scripts-to-adjust-in.js';
 import { entryOf, planOf } from '../support/plan-entries.js';
 
-const SCRIPT = { event: 'onBeforeRequest', dialect: 'postman', source: 'pm.test("ok");' };
+const BOTH = { onBeforeRequest: { source: 'pm.a();' }, onResponse: { source: 'pm.b();' } };
 
-/** An entry whose resource brings `count` scripts of another app, marked or not. */
-function bringing(route: string, count: number, selected = true): ImportPlan['entries'][number] {
+/** An entry whose resource brings `scripts`, marked or not. */
+function bringing(route: string, scripts: unknown, selected = true) {
     const entry = entryOf('item', route);
 
-    return {
-        ...entry,
-        selected,
-        resource: { ...entry.resource, fields: { importedScripts: Array(count).fill(SCRIPT) } },
-    };
+    return { ...entry, selected, resource: { ...entry.resource, fields: { scripts } } };
 }
 
-describe('the scripts an import leaves to adjust', () => {
-    it('adds up what every marked entry brings, folders and items alike', () => {
+describe('the scripts an import brings from another app', () => {
+    it('adds up the moments every marked entry brings, folders and items alike', () => {
         const plan = planOf([
-            bringing('pedidos/crear', 2),
-            { ...bringing('pedidos', 1), place: 'folder' },
+            bringing('pedidos/crear', BOTH),
+            {
+                ...bringing('pedidos', { onResponse: { source: 'x', enabled: false } }),
+                place: 'folder',
+            },
             entryOf('item', 'pedidos/ver'),
         ]);
 
@@ -30,19 +28,26 @@ describe('the scripts an import leaves to adjust', () => {
 
     it('leaves out the entries not marked and the ones that write nothing', () => {
         const plan = planOf([
-            bringing('pedidos/crear', 2, false),
-            { ...bringing('pedidos/borrar', 1), resource: null },
+            bringing('pedidos/crear', BOTH, false),
+            { ...bringing('pedidos/borrar', BOTH), resource: null },
         ]);
 
         expect(scriptsToAdjustIn(plan)).toBe(0);
     });
 
-    it('counts nothing for a field that is not a list of scripts', () => {
-        const entry = entryOf('item', 'pedidos/crear');
-        const plan = planOf([
-            { ...entry, resource: { ...entry.resource, fields: { importedScripts: 'texto' } } },
-        ]);
+    it('leaves out what a bundle of Mandor brings: those scripts are no other app’s', () => {
+        const entry = bringing('pedidos/crear', BOTH);
+        const origin = { kind: 'mandor' as const, sourceId: 'm' };
 
-        expect(scriptsToAdjustIn(plan)).toBe(0);
+        expect(
+            scriptsToAdjustIn(planOf([{ ...entry, resource: { ...entry.resource, origin } }])),
+        ).toBe(0);
     });
+
+    it.each([['texto'], [null], [{ onResponse: 'texto' }]])(
+        'counts nothing for scripts that are %j',
+        (scripts) => {
+            expect(scriptsToAdjustIn(planOf([bringing('pedidos/crear', scripts)]))).toBe(0);
+        },
+    );
 });

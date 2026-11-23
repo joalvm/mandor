@@ -20,7 +20,6 @@ import {
     itemParentOf,
     scriptNotice,
     type FolderChainLevel,
-    type ImportedScript,
     type RequestItem,
     type RequestScriptEvent,
     type ScriptEntry,
@@ -40,7 +39,7 @@ import {
     type ScriptsOutput,
 } from './send-chain.js';
 
-type ScriptRequest = Pick<RequestItem, 'name' | 'scripts' | 'importedScripts'>;
+type ScriptRequest = Pick<RequestItem, 'name' | 'scripts'>;
 
 type GroupLevel = FolderChainLevel & { level: 'collection' | 'folder' };
 
@@ -68,15 +67,10 @@ function entriesOf(
     return [{ level, name, event, source: entry.source, enabled: entry.enabled }];
 }
 
-function importedOf(scripts: readonly ImportedScript[] | undefined, event: RequestScriptEvent) {
-    return (scripts ?? []).filter((script) => script.event === event).length;
-}
-
 /**
  * The scripts of the user for one event of a send: the collection first, then each folder down
  * to the request, which comes last. The levels above come from disk, read once with the rest of
- * the send; the request comes as the window shows it. A script that came with an import is only
- * counted: the only scripts that run are the ones somebody wrote here.
+ * the send; the request comes as the window shows it.
  */
 export function requestScripts(
     chain: readonly FolderChainLevel[],
@@ -95,13 +89,8 @@ export function requestScripts(
         ),
         ...entriesOf('request', request.name, event, request.scripts?.[event]),
     ];
-    const imported =
-        chain.reduce(
-            (count, level) => count + importedOf(level.settings.importedScripts, event),
-            0,
-        ) + importedOf(request.importedScripts, event);
 
-    return { entries, imported, logs };
+    return { entries, logs };
 }
 
 /** What the scripts of a send ask of the app. */

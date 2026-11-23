@@ -1,210 +1,147 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
-import { createEnvironment, effectiveEnvironment, parseRepo, parseWorkspace } from '@mandor/schema';
+import { REPO_FORMAT } from '@mandor/schema';
 import { parse } from 'yaml';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { needsFormatMigration, migrateRepoFormat } from '../../src/repo/migrate-repo-format.js';
-import {
-    createWorkspace,
-    listEnvironments,
-    readWorkspace,
-    writeEnvironment,
-    writeRepoTree,
-} from '../../src/index.js';
+import { createWorkspace, writeRepoTree } from '../../src/index.js';
+import { migrateRepoFormat, needsFormatMigration } from '../../src/repo/migrate-repo-format.js';
 
-const WS = 'pagos';
+const WS = 'shop';
 
-let root: string;
+/** An origin of format 2, as an import of Postman left it, on a real disk. */
+let origin: string;
 
-beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), 'mandor-migrate-'));
+let touched: string[];
 
-    await writeRepoTree(root, 'Mi repo');
-    await createWorkspace(root, { id: WS, name: 'Pagos', kind: 'sync' });
-    await writeFile(
-        join(root, 'mandor.yaml'),
-        'formatVersion: 1\nname: Mi repo\nworkspaces:\n  - pagos\n',
-        'utf8',
+function at(...segments: string[]): string {
+    return join(origin, 'workspaces', WS, ...segments);
+}
+
+function inCollections(...segments: string[]): string {
+    return at('collections', ...segments);
+}
+
+async function put(file: string, text: string): Promise<void> {
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, text, 'utf8');
+}
+
+function imported(event: string, source: string): string {
+    return `importedScripts:\n  - event: ${event}\n    dialect: postman\n    source: ${source}\n`;
+}
+
+/** The own script of a moment as the file keeps it after the migration. */
+async function scriptOf(file: string, event: string): Promise<unknown> {
+    const value = parse(await readFile(file, 'utf8')) as Record<string, unknown>;
+
+    expect(value).not.toHaveProperty('importedScripts');
+
+    return (value['scripts'] as Record<string, unknown> | undefined)?.[event];
+}
+
+beforeAll(async () => {
+    origin = await mkdtemp(join(tmpdir(), 'mandor-fold-'));
+
+    await writeRepoTree(origin, 'Tienda');
+    await createWorkspace(origin, { id: WS, name: 'Tienda', kind: 'sync' });
+    await put(
+        join(origin, 'mandor.yaml'),
+        'formatVersion: 2\nname: Tienda\nworkspaces:\n  - shop\n',
     );
+
+    const workspace = await readFile(at('workspace.yaml'), 'utf8');
+
+    await put(
+        at('workspace.yaml'),
+        `# del equipo\n${workspace}${imported('onBeforeRequest', 'shared()')}`,
+    );
+    await put(
+        inCollections('api', 'collection.yaml'),
+        `name: API\nscripts:\n  onBeforeRequest:\n    source: own()\n${imported('onBeforeRequest', 'imp()')}`,
+    );
+    await put(inCollections('admin', 'collection.yaml'), 'name: Admin\n');
+    await put(
+        inCollections('api', 'users', 'folder.yaml'),
+        `name: Users\n${imported('onResponse', 'folder()')}`,
+    );
+    await put(
+        inCollections('api', 'users', 'list.yaml'),
+        '# a mano\nname: List\nmethod: GET\nurl: https://shop.test/users\n' +
+            'scripts:\n  onResponse:\n    source: mine()\n    enabled: false\n' +
+            imported('onResponse', 'theirs()'),
+    );
+    await put(inCollections('api', 'users', 'plain.yaml'), 'name: Plain\nmethod: GET\nurl: x\n');
+
+    expect(await needsFormatMigration(origin)).toBe(true);
+
+    touched = await migrateRepoFormat(origin);
 });
 
-afterEach(async () => {
-    await rm(root, { recursive: true, force: true });
+afterAll(async () => {
+    await rm(origin, { recursive: true, force: true });
 });
 
-function plain(name: string, value: string, enabled = true) {
-    return { name, value, enabled, secret: false };
-}
+describe('migrateRepoFormat over an origin of format 2', () => {
+    it('puts what an import left after the own script of its moment, keeping it off', async () => {
+        expect(await scriptOf(inCollections('api', 'users', 'list.yaml'), 'onResponse')).toEqual({
+            source: 'mine()\n\ntheirs()',
+            enabled: false,
+        });
+    });
 
-async function withWorkspaceVariables(text: string): Promise<void> {
-    const file = join(root, 'workspaces', WS, 'workspace.yaml');
-    const before = await readFile(file, 'utf8');
+    it('gives a folder the script it only had as imported', async () => {
+        expect(await scriptOf(inCollections('api', 'users', 'folder.yaml'), 'onResponse')).toEqual({
+            source: 'folder()',
+        });
+    });
 
-    await writeFile(file, `${before}variables:\n${text}`, 'utf8');
-}
+    it('puts the script of the workspace first in the root of every collection', async () => {
+        expect(await scriptOf(inCollections('api', 'collection.yaml'), 'onBeforeRequest')).toEqual({
+            source: 'shared()\n\nown()\n\nimp()',
+        });
+        expect(
+            await scriptOf(inCollections('admin', 'collection.yaml'), 'onBeforeRequest'),
+        ).toEqual({ source: 'shared()' });
+    });
 
-/** What a name resolves to in the environment a machine ends up with, chosen or by default. */
-async function resolvedIn(chosen: string | null, name: string): Promise<string | undefined> {
-    const read = await readWorkspace(root, WS);
-    const workspace = read.ok ? read.value : null;
-    const id = effectiveEnvironment(chosen, workspace);
-    const { environments } = await listEnvironments(root, WS);
-    const environment = environments.find((each) => each.id === id);
+    it('takes the key out of the workspace and keeps the comments of every file', async () => {
+        const workspace = await readFile(at('workspace.yaml'), 'utf8');
 
-    return environment?.variables.find((each) => each.name === name && each.enabled)?.value;
-}
+        expect(workspace).not.toContain('importedScripts');
+        expect(workspace.startsWith('# del equipo')).toBe(true);
+        expect(
+            (await readFile(inCollections('api', 'users', 'list.yaml'), 'utf8')).startsWith(
+                '# a mano',
+            ),
+        ).toBe(true);
+    });
 
-describe('migrating an origin with variables of the workspace', () => {
-    beforeEach(async () => {
-        await withWorkspaceVariables(
-            '  - name: host\n    value: ws.local\n    enabled: true\n    secret: false\n' +
-                '  - name: page\n    value: "1"\n    enabled: true\n    secret: false\n',
+    it('seals format 3 and leaves a file with no scripts as it was', async () => {
+        const repo = parse(await readFile(join(origin, 'mandor.yaml'), 'utf8')) as unknown;
+
+        expect(REPO_FORMAT).toBe(3);
+        expect(repo).toMatchObject({ formatVersion: REPO_FORMAT });
+        expect(await readFile(inCollections('api', 'users', 'plain.yaml'), 'utf8')).toBe(
+            'name: Plain\nmethod: GET\nurl: x\n',
         );
-        await writeEnvironment(
-            root,
-            WS,
-            createEnvironment({
-                id: 'prod',
-                name: 'Prod',
-                variables: [plain('host', 'prod.example')],
-            }),
-        );
-        await writeEnvironment(
-            root,
-            WS,
-            createEnvironment({
-                id: 'dev',
-                name: 'Dev',
-                variables: [{ name: 'page', value: '', enabled: false, secret: true }],
-            }),
+        expect(touched).not.toContain(inCollections('api', 'users', 'plain.yaml'));
+        expect([...touched].sort()).toEqual(
+            [
+                at('workspace.yaml'),
+                inCollections('api', 'collection.yaml'),
+                inCollections('admin', 'collection.yaml'),
+                inCollections('api', 'users', 'folder.yaml'),
+                inCollections('api', 'users', 'list.yaml'),
+                join(origin, 'mandor.yaml'),
+            ].sort(),
         );
     });
 
-    it('leaves every value a machine resolved as it was, chosen or not', async () => {
-        const before = {
-            prod: { host: 'prod.example', page: '1' },
-            dev: { host: 'ws.local', page: '1' },
-        };
-
-        expect(await needsFormatMigration(root)).toBe(true);
-
-        await migrateRepoFormat(root);
-
-        for (const [id, values] of Object.entries(before)) {
-            expect(await resolvedIn(id, 'host')).toBe(values.host);
-            expect(await resolvedIn(id, 'page')).toBe(values.page);
-        }
-
-        // A machine with no selection resolved the workspace alone: Base is its default now.
-        expect(await resolvedIn(null, 'host')).toBe('ws.local');
-        expect(await resolvedIn(null, 'page')).toBe('1');
-    });
-
-    it('takes the key out of workspace.yaml and seals the format', async () => {
-        const touched = await migrateRepoFormat(root);
-        const workspace: unknown = parse(
-            await readFile(join(root, 'workspaces', WS, 'workspace.yaml'), 'utf8'),
-        );
-        const repo = parseRepo(parse(await readFile(join(root, 'mandor.yaml'), 'utf8')));
-
-        expect(workspace).not.toHaveProperty('variables');
-        expect(parseWorkspace(workspace).defaultEnvironment).toBeDefined();
-        expect(repo.formatVersion).toBe(2);
-        expect(touched).toContain(join(root, 'mandor.yaml'));
-        expect(touched).toContain(join(root, 'workspaces', WS, 'workspace.yaml'));
-    });
-
-    it('touches nothing the second time', async () => {
-        await migrateRepoFormat(root);
-
-        expect(await needsFormatMigration(root)).toBe(false);
-        expect(await migrateRepoFormat(root)).toEqual([]);
-    });
-
-    it('migrates again when a merge with an old machine brings the key back', async () => {
-        await migrateRepoFormat(root);
-        await withWorkspaceVariables(
-            '  - name: region\n    value: eu\n    enabled: true\n    secret: false\n',
-        );
-
-        expect(await needsFormatMigration(root)).toBe(true);
-
-        await migrateRepoFormat(root);
-
-        expect(await resolvedIn('prod', 'region')).toBe('eu');
-        expect(await resolvedIn(null, 'host')).toBe('ws.local');
-    });
-
-    it('names Base apart when an environment is already called that', async () => {
-        await writeEnvironment(
-            root,
-            WS,
-            createEnvironment({ id: 'base', name: 'Base', variables: [] }),
-        );
-        await migrateRepoFormat(root);
-
-        const { environments } = await listEnvironments(root, WS);
-
-        expect(environments.map((each) => each.name).sort()).toEqual([
-            'Base',
-            'Base 2',
-            'Dev',
-            'Prod',
-        ]);
-    });
-});
-
-describe('an origin already in shape', () => {
-    it('only seals the format of a repo written before it', async () => {
-        expect(await needsFormatMigration(root)).toBe(true);
-        expect(await migrateRepoFormat(root)).toEqual([join(root, 'mandor.yaml')]);
-        expect(await needsFormatMigration(root)).toBe(false);
-    });
-});
-
-describe('the edges of a migration', () => {
-    it('takes an empty list out and makes no Base', async () => {
-        await writeFile(
-            join(root, 'workspaces', WS, 'workspace.yaml'),
-            'id: pagos\nname: Pagos\nkind: sync\nvariables: []\n',
-            'utf8',
-        );
-
-        await migrateRepoFormat(root);
-
-        const text = await readFile(join(root, 'workspaces', WS, 'workspace.yaml'), 'utf8');
-
-        expect(text).not.toContain('variables');
-        expect(text).not.toContain('defaultEnvironment');
-        expect((await listEnvironments(root, WS)).environments).toEqual([]);
-    });
-
-    it('keeps the default a workspace already had', async () => {
-        await writeFile(
-            join(root, 'workspaces', WS, 'workspace.yaml'),
-            'id: pagos\nname: Pagos\nkind: sync\ndefaultEnvironment: prod\nvariables:\n' +
-                '  - name: host\n    value: ws.local\n    enabled: true\n    secret: false\n',
-            'utf8',
-        );
-
-        await migrateRepoFormat(root);
-
-        const read = await readWorkspace(root, WS);
-
-        expect(read.ok && read.value.defaultEnvironment).toBe('prod');
-    });
-
-    it('leaves alone a workspace file it cannot read', async () => {
-        await writeFile(join(root, 'workspaces', WS, 'workspace.yaml'), 'name: [\n', 'utf8');
-
-        expect(await needsFormatMigration(root)).toBe(true);
-        expect(await migrateRepoFormat(root)).toEqual([join(root, 'mandor.yaml')]);
-        expect(await readFile(join(root, 'workspaces', WS, 'workspace.yaml'), 'utf8')).toBe(
-            'name: [\n',
-        );
-        expect(await needsFormatMigration(root)).toBe(false);
+    it('asks for nothing and touches nothing the second time', async () => {
+        expect(await needsFormatMigration(origin)).toBe(false);
+        expect(await migrateRepoFormat(origin)).toEqual([]);
     });
 });

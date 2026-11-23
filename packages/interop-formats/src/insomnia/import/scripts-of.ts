@@ -1,29 +1,19 @@
-import { degradation, type Degradation } from '@mandor/interop-core';
-import type { ImportedScript } from '@mandor/schema';
+import { ownScriptsOf } from '@mandor/interop-core';
+import type { RequestScripts } from '@mandor/schema';
 
 import type { InsomniaScripts } from '../document/insomnia-tree.js';
 
 const SLOTS = [
-    { part: 'preRequest', event: 'onBeforeRequest', kind: 'pre-request' },
-    { part: 'afterResponse', event: 'onResponse', kind: 'after-response' },
+    { part: 'preRequest', event: 'onBeforeRequest' },
+    { part: 'afterResponse', event: 'onResponse' },
 ] as const;
 
 /**
- * The scripts of a request or a folder as text to keep, one per slot that says something. None
- * runs: it is the text of another app, and the person converts it into a script of their own.
+ * The own scripts of a request or a folder, one per slot that says something, as they came:
+ * nothing is translated, and nothing runs them until a person approves them.
  */
-export function scriptsOf(scripts: InsomniaScripts): {
-    importedScripts: ImportedScript[];
-    degradations: Degradation[];
-} {
-    const written = SLOTS.filter(({ part }) => scripts[part].trim() !== '');
-
-    return {
-        importedScripts: written.map(({ part, event }) => ({
-            event,
-            dialect: 'insomnia',
-            source: scripts[part],
-        })),
-        degradations: written.map(({ kind }) => degradation('scriptAsText', { kind })),
-    };
+export function scriptsOf(scripts: InsomniaScripts): RequestScripts | undefined {
+    return ownScriptsOf(
+        SLOTS.map(({ part, event }) => ({ event, source: scripts[part], enabled: true })),
+    );
 }

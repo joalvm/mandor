@@ -8,7 +8,7 @@ import {
     writeEnvironment,
     writeImportedWorkspace,
 } from '@mandor/store-fs';
-import { fingerprintOf, workspaceFingerprint } from '@mandor/interop-core';
+import { fingerprintOf } from '@mandor/interop-core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { existingResourcesOf } from '../../src/import/import-existing.js';
@@ -51,7 +51,7 @@ describe('the envelopes existingResourcesOf already sees', () => {
         const origin = { kind: 'openapi' as const, sourceId: 'shop' };
         const auth = { type: 'bearer' as const, token: '{{token}}' };
 
-        await writeImportedWorkspace(root, 'pasarela', { auth, importedScripts: null }, origin);
+        await writeImportedWorkspace(root, 'pasarela', { auth }, origin);
 
         expect(await existingResourcesOf(root, 'pasarela')).toEqual([
             {
@@ -72,28 +72,11 @@ describe('the envelopes existingResourcesOf already sees', () => {
         expect(await existingResourcesOf(root, 'pasarela')).toEqual([]);
     });
 
-    it('lists scripts set by hand with no origin, so the plan can call it a conflict', async () => {
-        const script = { event: 'onResponse' as const, dialect: 'postman' as const, source: 'a()' };
-        const patch = { auth: null, variables: [], importedScripts: [script] };
-
-        await writeImportedWorkspace(root, 'pasarela', patch, null);
-
-        expect(await existingResourcesOf(root, 'pasarela')).toEqual([
-            {
-                place: 'workspace',
-                route: '.',
-                name: 'Pasarela',
-                origin: undefined,
-                fingerprint: workspaceFingerprint({ importedScripts: [script] }),
-            },
-        ]);
-    });
-
     it('keeps the fingerprint of an import when a variable is added by hand afterwards', async () => {
         const origin = { kind: 'postman' as const, sourceId: 'c1' };
         const auth = { type: 'bearer' as const, token: '{{token}}' };
 
-        await writeImportedWorkspace(root, 'pasarela', { auth, importedScripts: null }, origin);
+        await writeImportedWorkspace(root, 'pasarela', { auth }, origin);
 
         const [before] = await existingResourcesOf(root, 'pasarela');
 

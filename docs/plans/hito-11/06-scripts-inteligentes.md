@@ -281,7 +281,7 @@ Nada de importación.
 app abierta, en las dos apps: un script con `const response = await mandor.sendRequest(…)` corre y
 su resultado sale en Tests/Consola (Request) o en la actividad (Realtime).
 
-### [ ] Fase 2: Lo importado entra en el editor de su momento y el panel de importados no existe
+### [x] Fase 2: Lo importado entra en el editor de su momento y el panel de importados no existe
 
 **Objetivo.** Lo que llega de Postman, Insomnia y ahora Bruno queda en el script propio de su
 momento, sin aprobar. Exportar saca los scripts propios tal cual. Un origen viejo se funde al

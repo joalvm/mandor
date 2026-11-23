@@ -5,8 +5,8 @@ import { reshapeRepo } from './reshape-repo.js';
 
 /**
  * Brings an origin to the current format with a commit of its own, when it has something to
- * migrate. Asked when the origin opens and after a sync that brought changes, since a merge
- * with a machine that never migrated can bring the old key back. A clash waiting for a person
+ * migrate. Asked when the origin opens and after a sync that brought changes, since a sync can
+ * bring a repo file sealed with an older format. A clash waiting for a person
  * stops it: what the files say is not settled yet. An origin whose repo file cannot be read is
  * left for the load to report. Answers the files it changed, from the root of the repo.
  */

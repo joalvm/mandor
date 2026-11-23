@@ -63,11 +63,8 @@ describe('what a format does not keep of a level', () => {
         ]);
     });
 
-    it('tells a level that holds a variable switched off, and one with a script', () => {
-        const parts = {
-            disabledVariables: 'disabledVariablesDropped',
-            importedScripts: 'scriptsNotCarried',
-        } as const;
+    it('tells a level that holds a variable switched off', () => {
+        const parts = { disabledVariables: 'disabledVariablesDropped' } as const;
         const off = { name: 'a', value: '1', enabled: false, secret: false };
         const on = { ...off, enabled: true };
 
@@ -75,13 +72,5 @@ describe('what a format does not keep of a level', () => {
         expect(unkeptOf(level({ variables: [on, off] }), parts)).toEqual([
             'disabledVariablesDropped',
         ]);
-        expect(
-            unkeptOf(
-                level({
-                    importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'a();' }],
-                }),
-                parts,
-            ),
-        ).toEqual(['scriptsNotCarried']);
     });
 });

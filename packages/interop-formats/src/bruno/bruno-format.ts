@@ -25,7 +25,7 @@ export const brunoFormat: InteropFormat = {
         connections: 'connectionsInFirstCollection',
         connectionQueryOff: 'connectionQueryOffDropped',
         messagesNeedConnection: 'messagesNeedConnection',
-        scriptsIn: 'none',
+        writesScripts: true,
         request: {
             graphqlExamples: 'examplesDropped',
             schemas: 'schemasDropped',

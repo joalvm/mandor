@@ -20,7 +20,6 @@ describe('requestItemBody', () => {
             examples: undefined,
             settings: {},
             description: '# Para qué',
-            importedScripts: undefined,
             scripts: undefined,
         });
     });
@@ -39,7 +38,6 @@ describe('requestItemBody', () => {
             'examples',
             'settings',
             'description',
-            'importedScripts',
             'scripts',
         ]);
         expect(body['url']).toBeUndefined();

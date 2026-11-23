@@ -54,18 +54,17 @@ function placeOf(error: ScriptError, labels: Labels): string | undefined {
 
 /** The scripts that were there and did not run, said once for each moment that skipped them. */
 function notesOf(push: RequestScriptOutput, labels: Labels): LogLine[] {
-    const notes = [
-        { count: push.imported, word: 'scriptsImported' as const },
-        { count: push.switchedOff, word: 'scriptsSwitchedOff' as const },
-    ];
+    if (push.switchedOff === 0) {
+        return [];
+    }
 
-    return notes
-        .filter((note) => note.count > 0)
-        .map((note) => ({
-            key: `${push.phase}-${note.word}`,
+    return [
+        {
+            key: `${push.phase}-scriptsSwitchedOff`,
             tone: 'note',
-            text: labels(note.word, { count: note.count }),
-        }));
+            text: labels('scriptsSwitchedOff', { count: push.switchedOff }),
+        },
+    ];
 }
 
 /**

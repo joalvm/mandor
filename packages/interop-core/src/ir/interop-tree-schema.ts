@@ -1,4 +1,4 @@
-import { IMPORTED_SCRIPT_EVENTS, SCRIPT_DIALECTS } from '@mandor/schema';
+import { REQUEST_SCRIPT_EVENTS } from '@mandor/schema';
 import { z } from 'zod';
 
 import type {
@@ -31,8 +31,7 @@ export const interopEnvironmentSchema = z
 
 export const interopScriptSchema = z
     .object({
-        event: z.enum(IMPORTED_SCRIPT_EVENTS),
-        dialect: z.enum(SCRIPT_DIALECTS),
+        event: z.enum(REQUEST_SCRIPT_EVENTS),
         source: z.string(),
         enabled: z.boolean(),
     })

@@ -139,7 +139,7 @@ export function useImportFlow(
         tellScriptsToAdjust(scriptsToAdjustIn(plan));
     };
 
-    // Once, after the import: the scripts it brought are text the person has to adjust.
+    // Once, after the import: the scripts it brought from another app wait for the person's approval.
     const tellScriptsToAdjust = (count: number): void => {
         if (count > 0) {
             toast.notify({ title: messages('scriptsToAdjust', { count }), tone: 'info' });

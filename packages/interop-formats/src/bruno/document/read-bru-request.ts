@@ -9,14 +9,13 @@ import { authOfBru } from './read-bru-auth.js';
 import { bodyOfBru } from './read-bru-body.js';
 import { examplesOfBru } from './read-bru-example.js';
 import { paramsOfBru, rowsOfBru } from './read-bru-rows.js';
+import { scriptsOfBru } from './read-bru-scripts.js';
 import { websocketOfBru } from './read-bru-websocket.js';
 import { requestBruOf } from './read-bru.js';
 import { settingsOf } from './read-settings.js';
 
 function leftOutOfRequest(request: BruRequest, unreadExamples: boolean): string[] {
     return leftOutOf({
-        scripts: request.script,
-        tests: request.tests,
         assertions: request.assertions,
         'request variables': request.vars,
         examples: unreadExamples,
@@ -44,6 +43,7 @@ function nodeOfRequest(request: BruRequest, name: string): BrunoNode {
         auth: authOfBru(request.http?.auth, request.auth),
         settings: settingsOf(request.settings),
         examples,
+        scripts: scriptsOfBru(request.script, request.tests),
         leftOut: leftOutOfRequest(request, unread),
     };
 }

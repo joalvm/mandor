@@ -1,4 +1,4 @@
-import { degradation, importResourceSchema } from '@mandor/interop-core';
+import { importResourceSchema } from '@mandor/interop-core';
 import { describe, expect, it } from 'vitest';
 
 import { resourceAt, resourcesOfFolder } from '../support/resources.js';
@@ -114,11 +114,12 @@ describe.each(LAYOUTS)('readFiles: a collection in the layout "%s"', (layout) =>
         expect(prod.degradations).toEqual([]);
     });
 
-    it('says on the collection what it left out', async () => {
+    it('puts the script of the collection in its moment and leaves nothing out', async () => {
         const collection = resourceAt(await resourcesOfFolder(layout), 'collection', STORE);
 
-        expect(collection.degradations).toEqual([
-            degradation('noPlaceCollection', { names: 'scripts' }),
-        ]);
+        expect(collection.fields['scripts']).toEqual({
+            onBeforeRequest: { source: "console.log('hola')" },
+        });
+        expect(collection.degradations).toEqual([]);
     });
 });

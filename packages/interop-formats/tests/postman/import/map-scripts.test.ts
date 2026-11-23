@@ -10,8 +10,8 @@ describe('scriptsOf', () => {
         ]);
 
         expect(scripts).toEqual([
-            { event: 'onBeforeRequest', dialect: 'postman', source: 'a();\nb();', enabled: true },
-            { event: 'onResponse', dialect: 'postman', source: 'c();', enabled: false },
+            { event: 'onBeforeRequest', source: 'a();\nb();', enabled: true },
+            { event: 'onResponse', source: 'c();', enabled: false },
         ]);
     });
 
