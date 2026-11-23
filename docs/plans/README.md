@@ -5,19 +5,19 @@ de tiempo. Un plan cumplido es andamio: al cerrar el hito su carpeta se borra y 
 a [`specs/mandor.md`](../specs/mandor.md). Lo que falta, sin plan todavía:
 [`specs/pendiente.md`](../specs/pendiente.md).
 
-| Hito                           | Estado    |
-| ------------------------------ | --------- |
-| H1 — Rebanada vertical Async   | hecho     |
-| H2 — Workbench                 | hecho     |
-| H3 — Catálogo, entornos y vars | hecho     |
-| H4 — Async completo            | hecho     |
-| H5 — Sync (H5 + H6)            | hecho     |
-| H7 — Orígenes y conflictos     | hecho     |
-| H8 — Robustez                  | hecho     |
-| H9 — Colecciones completas     | hecho     |
-| H10 — Scripts                  | hecho     |
-| H11 — Publicación              | abierto   |
-| H12 — Docs publicadas y CLI    | pendiente |
+| Hito                           | Estado  |
+| ------------------------------ | ------- |
+| H1 — Rebanada vertical Async   | hecho   |
+| H2 — Workbench                 | hecho   |
+| H3 — Catálogo, entornos y vars | hecho   |
+| H4 — Async completo            | hecho   |
+| H5 — Sync (H5 + H6)            | hecho   |
+| H7 — Orígenes y conflictos     | hecho   |
+| H8 — Robustez                  | hecho   |
+| H9 — Colecciones completas     | hecho   |
+| H10 — Scripts                  | hecho   |
+| H11 — Nombre, marco y scripts  | hecho   |
+| H12 — Docs publicadas y CLI    | abierto |
 
 - Un solo hito `abierto`. Sus planes se escriben al abrirlo, mirando el código que dejó el
   anterior. `docs/plans/hito-N/README.md` lleva una fila por plan con prerequisitos y estado.

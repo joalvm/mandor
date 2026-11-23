@@ -4,7 +4,7 @@ Fecha: 2026-11-13. Lo hecho: [mandor.md](mandor.md). Cada fila se comprobó cont
 antes de planear una, se vuelve a comprobar. Al cerrarse, la fila se borra de aquí y lo construido
 pasa a `mandor.md`.
 
-## 1. Publicación (H11)
+## 1. Publicación
 
 Objetivo: que instalarlo no dé miedo. Hoy no hay release: versiones `0.1.0`, README dice «Coming
 soon», `electron-builder.yml` sin `publish` ni firma.
