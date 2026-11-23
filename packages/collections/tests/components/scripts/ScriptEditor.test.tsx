@@ -55,6 +55,22 @@ describe('the editor of a script', () => {
         expect(onChange).toHaveBeenCalledTimes(1);
     });
 
+    /** A script brought from another app names an API that does not run here: it says so. */
+    it('marks what a script names of Postman in the words of the window', async () => {
+        shown({ value: 'pm.environment.get("a");\nbru.runRequest("b");\n' });
+
+        const editor = await editorAt(0);
+
+        await expect
+            .poll(() => editor.marks())
+            .toEqual(
+                expect.arrayContaining([
+                    'This is from Postman: Convert to mandor.',
+                    'This is from Bruno and has no counterpart in mandor.',
+                ]),
+            );
+    });
+
     /** The help of a name is said in the language of the window, whichever it is. */
     it('has the help of every name of the API, its parameters and its words in Spanish and in English', () => {
         const keys = [...SCRIPT_API, ...ASSERTION_API].flatMap(({ docKey, parameters }) => [

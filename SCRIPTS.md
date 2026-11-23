@@ -244,33 +244,52 @@ if (mandor.request.body !== undefined) {
 
 ## Scripts from other apps
 
-Importing never runs anything. Scripts from Postman, Insomnia and Bruno go into the script of the
-same moment of the request, folder or collection, as they came: nothing is translated. Bruno's tests
-join the script after the response, past a blank line. The import tells you how many scripts came,
-and none of them runs until you approve it, so you can adjust it first. Exporting writes the scripts
-back as they are.
+Importing never runs anything and never translates anything. Scripts from Postman, Insomnia and
+Bruno go into the script of the same moment of the request, folder or collection, as they came.
+Bruno's tests join the script after the response, past a blank line. None of them runs until you
+approve it, so you can adjust it first. Exporting writes the scripts back as they are.
 
-There is no compatibility layer: `pm`, `insomnia` and `bru` do not exist in Mandor, and a script that
-uses them fails with a `ReferenceError`. A translation would run foreign code as
-soon as it was imported, and would read secrets that Mandor keeps away from scripts.
+`pm`, `postman`, `insomnia` and `bru` do not exist in Mandor: a script that uses them fails with a
+`ReferenceError`. The editor says so where it happens. Each use is underlined with the app it comes
+from, and the bulb (`Ctrl+.`, `Cmd+.` on macOS) offers **Convert the whole script to mandor.** and,
+when the lines of the caret hold only part of it, **Convert to mandor.** for those lines. The
+conversion only rewrites the names below; comments, blank lines and everything else stay where
+they were. What has no counterpart stays as it was, and stays underlined. Nothing converts on its
+own: not on import, not on save, not on export.
 
-Common Postman calls and what to write instead:
+What the bulb converts:
 
-- `pm.environment.get('x')`, `pm.variables.get('x')`, `pm.collectionVariables.get('x')` → `mandor.variables.get('x')`.
-- `pm.environment.set('x', v)`, `pm.variables.set('x', v)` → `mandor.variables.set('x', v)`. It is a script
-  variable: it lasts until Mandor closes and is never written to the environment.
-- `pm.variables.replaceIn(text)` → `mandor.variables.replaceIn(text)`.
-- `pm.test('name', fn)` → `mandor.test('name', fn)`.
-- `pm.expect(x)` → `mandor.expect(x)`, within the subset above.
-- `pm.response.code` → `mandor.response.status`; `pm.response.json()` → `mandor.response.json()`;
-  `pm.response.text()` → `mandor.response.text()`; `pm.response.responseTime` → `mandor.response.time`;
-  `pm.response.headers.get('x')` → `mandor.response.headers.get('x')`.
-- `pm.request.url` → `mandor.request.url`; `pm.request.headers.add`, `.upsert` → `mandor.request.headers.set`;
-  `pm.request.headers.remove` → `mandor.request.headers.delete`; `pm.request.body.raw` → `mandor.request.body`.
-- `pm.sendRequest(options, callback)` → `await mandor.sendRequest(options)`, with a promise instead of a
-  callback.
-- `console.log` → `console.log`.
+| Postman (`pm.`), Insomnia (`insomnia.`)                                                                               | Bruno                                                                         | Mandor                                          |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------- |
+| `environment`, `variables`, `collectionVariables`, `globals` `.get`, `.set`, `.has` (Insomnia also `baseEnvironment`) | `bru.getEnvVar`, `bru.setEnvVar`, `bru.getVar`, `bru.setVar`, and their `has` | `mandor.variables.get`, `.set`, `.has`          |
+| `variables.replaceIn(text)`                                                                                           | `bru.interpolate(text)`                                                       | `mandor.variables.replaceIn(text)`              |
+| `request.headers.add({ key, value })`, `.upsert`                                                                      | `req.setHeader(name, value)`                                                  | `mandor.request.headers.set(name, value)`       |
+| `request.headers.get`, `.has`, `.remove`                                                                              | `req.getHeader`, `req.deleteHeader`                                           | `mandor.request.headers.get`, `.has`, `.delete` |
+| `request.method`                                                                                                      | `req.getMethod()`                                                             | `mandor.request.method`                         |
+|                                                                                                                       | `req.getUrl()`                                                                | `mandor.request.url`                            |
+| `response.code`                                                                                                       | `res.getStatus()`, `res.status`                                               | `mandor.response.status`                        |
+| `response.json()`, `response.text()`                                                                                  | `res.getBody()`, `res.body`                                                   | `mandor.response.json()`, `.text()`             |
+| `response.headers.get`, `.has`                                                                                        | `res.getHeader`                                                               | `mandor.response.headers.get`, `.has`           |
+| `response.responseTime`                                                                                               | `res.getResponseTime()`, `res.responseTime`                                   | `mandor.response.time`                          |
+| `test`, `expect`                                                                                                      | `test`, `expect`                                                              | `mandor.test`, `mandor.expect`                  |
+| `sendRequest(options)`, with no callback                                                                              |                                                                               | `await mandor.sendRequest(options)`             |
+| `postman.setEnvironmentVariable`, `getEnvironmentVariable`, `setGlobalVariable`, `getGlobalVariable`                  |                                                                               | `mandor.variables.set`, `.get`                  |
 
-With no equivalent: `pm.globals`, `pm.iterationData`, `pm.info`, `pm.cookies`, `pm.vault`,
-`pm.execution.setNextRequest`, `pm.visualizer`, `pm.require` and the bundled libraries (lodash,
-moment, cheerio, crypto-js, ajv, xml2js, uuid…), `setTimeout`, and anything that reads a secret.
+Values set this way are script variables: they last until Mandor closes and are never written to
+the environment. `pm.expect` keeps to the subset of assertions above. A header added as anything
+but an object with `key` and `value` stays as it was.
+
+What the bulb leaves, and how to write it by hand:
+
+- `pm.sendRequest(options, callback)` → `const response = await mandor.sendRequest(options)`, then
+  the body of the callback. A promise changes the flow of the script, so the bulb does not guess it.
+  A request sent inside a function that is not `async` stays too.
+- `pm.environment.unset('x')` and the other `unset`: there is none, a script variable lasts until
+  Mandor closes.
+- `pm.request.url` → `mandor.request.url`, a text and not an object; `pm.request.body.raw` →
+  `mandor.request.body`.
+
+With no equivalent: `pm.iterationData`, `pm.info`, `pm.cookies`, `pm.vault`,
+`pm.execution.setNextRequest`, `pm.visualizer`, `pm.require`, `bru.runRequest`, `bru.setNextRequest`
+and the bundled libraries (lodash, moment, cheerio, crypto-js, ajv, xml2js, uuid…), `setTimeout`,
+and anything that reads a secret.

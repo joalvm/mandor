@@ -2,7 +2,11 @@ import { editor, MarkerSeverity, Uri } from 'monaco-editor/editor/editor.api.js'
 import { afterEach, describe, expect, it } from 'vitest';
 
 import '../../../src/editor/monaco/script-language.js';
-import { checkScripts, type ScriptChecks } from '../../../src/editor/monaco/script-diagnostics.js';
+import {
+    checkScripts,
+    explainModel,
+    type ScriptChecks,
+} from '../../../src/editor/monaco/script-diagnostics.js';
 import { DECLARATIONS, scriptWorkerInProcess } from '../../support/script-worker.js';
 
 let models = 0;
@@ -93,5 +97,36 @@ describe('the marks of a script', () => {
         editor.setModelLanguage(model, 'plaintext');
 
         expect(marksOf(model)).toEqual([]);
+    });
+
+    /** The caller knows what the name is: the mark of the service would say less, a second time. */
+    it('leaves to the caller a name it does not know that the caller marks', async () => {
+        const model = await checked('pm.environment.get("a");\nnobody;\nmandor.respons;\n');
+        const explained = explainModel(model, () => [
+            { from: 0, message: 'Postman', severity: 'warning', to: 18 },
+        ]);
+
+        running?.recheck(model);
+
+        await expect.poll(() => marksOf(model).map(({ code }) => code)).toEqual(['2304', '2551']);
+        expect(marksOf(model)[0]?.startLineNumber).toBe(2);
+
+        explained.dispose();
+        running?.recheck(model);
+
+        await expect.poll(() => marksOf(model).length).toBe(3);
+    });
+
+    it('keeps its mark once the caller that explained it gave way to another', async () => {
+        const model = await checked('pm;\n');
+        const first = explainModel(model, () => [
+            { from: 0, message: 'a', severity: 'warning', to: 2 },
+        ]);
+
+        explainModel(model, () => []);
+        first.dispose();
+        running?.recheck(model);
+
+        await expect.poll(() => marksOf(model).map(({ code }) => code)).toEqual(['2304']);
     });
 });

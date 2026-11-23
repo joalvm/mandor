@@ -616,7 +616,7 @@ secreto en claro. Nada de IA.
 - en Realtime, tras recibir un marco JSON, `mandor.message.json().` hace lo mismo;
 - el texto fantasma aparece y Tab lo acepta.
 
-### [ ] Fase 6: La bombilla convierte lo de Postman, Insomnia y Bruno a `mandor.`
+### [x] Fase 6: La bombilla convierte lo de Postman, Insomnia y Bruno a `mandor.`
 
 **Objetivo.** Un script de otra app se subraya donde usa su API, con un mensaje en el idioma de la
 interfaz. La bombilla «Convertir a mandor.» traduce esa línea o el script entero, sin tocar lo que
@@ -696,6 +696,21 @@ absent docs/specs/mandor.md "scripts de Bruno"
     - La fila de H11 pasa a `hecho`.
 
 **No hacer.** La traducción nunca corre al importar ni al guardar. No se traduce al exportar.
+
+**Notas.**
+
+- Las tablas son `Map` de ruta (`pm.response.code`) a regla; la regla recibe el nodo nombrado, la
+  llamada si la hay y si se puede esperar. Se toma la ruta más larga que la tabla conoce, así
+  `pm.response.code.toString()` conserva lo que sigue.
+- Un nombre que el script declara (`const pm = …`) es suyo, nunca de otra app, y `{ test }` no se
+  toca: no se puede reescribir en su lugar.
+- `pm.sendRequest(options)` solo se convierte si se puede esperar donde está (arriba del script o
+  dentro de una función `async`); si no, o con callback, queda marcado. `unset` no tiene regla.
+- `ui` no sabe de dialectos: `check` registra sus marcas por modelo (`explainModel`) y el
+  servicio de TypeScript calla sus 2304, 2552 y 2582 dentro de ellas. La bombilla es un proveedor
+  de code actions por lenguaje (`fixModel`), como el texto gris.
+- El marcador es error: el nombre no existe al correr. La bombilla ofrece primero el script
+  entero y, si las líneas del cursor tienen menos, solo esas líneas.
 
 **Cierre.** `npm run ci:test -- packages/script packages/ui packages/collections`;
 `npm run ci:verify`; `npm run ci:local`. Con Request abierta:

@@ -133,8 +133,17 @@ Diseño público en `SCRIPTS.md` y `SECURITY.md`. Lo esencial:
 - Regla de destino: un script no manda a un host que el item no nombra.
 - Topes en `SCRIPT_LIMITS`: 5 s por script, 30 s y 32 scripts por cadena, 64 MiB, 8 workers,
   10 `sendRequest` por corrida.
+- API `mandor.`: `variables`, `request`, `response`, `test`, `expect`, `sendRequest`; en Realtime,
+  `socket` y `message`. Lo que un momento no muestra no existe en sus tipos.
+- Editor: los tipos de su momento con la ayuda en el idioma de la ventana, más su contexto
+  (variables, headers y una muestra de la respuesta) en la completación y el texto gris.
+- Importar de Postman, Insomnia o Bruno deja cada script en su momento, tal como vino, sin
+  aprobar; los tests de Bruno se suman al script de después de la respuesta. Exportar los escribe
+  tal cual.
+- Lo de otra app se subraya con su nombre; la bombilla lo escribe en `mandor.` (la línea o el
+  script entero) con las tablas de `script/src/dialects/`. Nunca al importar, guardar ni exportar.
 - Fuera de v1: runner, `setNextRequest`, datasets, visualizador, módulos, variables de script
-  persistidas, scripts de workspace, scripts por mensaje en Realtime, scripts de Bruno.
+  persistidas, scripts de workspace, scripts por mensaje en Realtime.
 
 ## Límites vigentes
 

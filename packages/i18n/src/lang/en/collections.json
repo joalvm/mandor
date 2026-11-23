@@ -250,6 +250,14 @@
             "statusTest": "Test the status",
             "variableFromMessage": "Save a field of the message",
             "variableFromResponse": "Save a field of the response"
+        },
+        "foreign": {
+            "translatable": "This is from {{app}}: Convert to mandor.",
+            "untranslatable": "This is from {{app}} and has no counterpart in mandor."
+        },
+        "convert": {
+            "line": "Convert to mandor.",
+            "script": "Convert the whole script to mandor."
         }
     },
     "scriptApprove": "Approve",

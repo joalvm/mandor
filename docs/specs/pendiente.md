@@ -126,4 +126,4 @@ nunca devuelve un secreto, nunca ejecuta scripts. Paquete `mcp` más binario `ap
 importa `host`, `ui`, `shell` ni features.
 
 **Scripts, fuera de v1**: `setNextRequest`, datasets, visualizador, módulos, variables de script
-persistidas, scripts de workspace, scripts por mensaje en Realtime, scripts de Bruno.
+persistidas, scripts de workspace, scripts por mensaje en Realtime.

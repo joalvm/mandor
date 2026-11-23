@@ -6,6 +6,7 @@ import {
 } from 'monaco-editor/editor/editor.api.js';
 import type { Diagnostic } from 'monaco-editor/languages/features/typescript/register.js';
 
+import type { DiagnosticsOf, EditorDiagnostic } from '../editor-diagnostic.js';
 import type { WorkerOf } from './script-providers.js';
 
 const OWNER = 'script';
@@ -15,6 +16,38 @@ const OWNER = 'script';
  * `return` at its top is how it ends, and an `await` there is how it waits.
  */
 const ENGINE_ALLOWS = new Set([1108, 1375, 1378]);
+
+/** A name the service does not know: `Cannot find name`, with a guess or a hint, or without. */
+const UNKNOWN_NAME = new Set([2304, 2552, 2582]);
+
+/** What the caller of each script marks in it, read before the marks of the service are set. */
+const explained = new WeakMap<editor.ITextModel, DiagnosticsOf>();
+
+/**
+ * Where the caller marks a name the service does not know, the caller's mark stands alone: two
+ * marks on one name say the same twice, and the caller knows what the name is.
+ */
+function isExplained(diagnostic: Diagnostic, marks: readonly EditorDiagnostic[]): boolean {
+    const start = diagnostic.start ?? 0;
+
+    return (
+        UNKNOWN_NAME.has(diagnostic.code) &&
+        marks.some(({ from, to }) => from <= start && start < to)
+    );
+}
+
+/** Lets the caller of a script explain the names it marks, in place of the service. */
+export function explainModel(model: editor.ITextModel, check: DiagnosticsOf): IDisposable {
+    explained.set(model, check);
+
+    return {
+        dispose: () => {
+            if (explained.get(model) === check) {
+                explained.delete(model);
+            }
+        },
+    };
+}
 
 /** The weight of a mark, by the category TypeScript gives it. */
 const SEVERITY_OF: Readonly<Record<number, MarkerSeverity>> = {
@@ -63,7 +96,10 @@ async function check(workerOf: WorkerOf, model: editor.ITextModel): Promise<void
         return;
     }
 
-    const marks = found.flat().filter(({ code }) => !ENGINE_ALLOWS.has(code));
+    const callerMarks = explained.get(model)?.(model.getValue()) ?? [];
+    const marks = found
+        .flat()
+        .filter((each) => !ENGINE_ALLOWS.has(each.code) && !isExplained(each, callerMarks));
 
     editor.setModelMarkers(
         model,

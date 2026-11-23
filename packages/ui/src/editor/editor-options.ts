@@ -1,4 +1,5 @@
 import type { DiagnosticsOf, EditorRule } from './editor-diagnostic.js';
+import type { FixesOf } from './editor-fix.js';
 import type { EditorLanguage } from './editor-language.js';
 import type { GhostTextOf, SuggestionsOf } from './editor-suggestion.js';
 import type { EditorVariables } from './editor-variable.js';
@@ -15,9 +16,9 @@ export type EditorTranslate = (message: string, rule?: EditorRule) => string;
  * What a caller decides about one editor. Everything else is the same in every editor of the
  * app, and a caller that wants it different is asking for a second editor.
  *
- * `check`, `ghostText` and `suggest` are functions the editor compares by identity, like every option: a
- * caller that builds them inline gets an editor that is rebuilt on every render, so they come
- * out of `useMemo`.
+ * `check`, `fixes`, `ghostText` and `suggest` are functions the editor compares by identity, like
+ * every option: a caller that builds them inline gets an editor that is rebuilt on every render,
+ * so they come out of `useMemo`.
  */
 export type EditorOptions = {
     /** Marks the caller adds to those of the language, over a text it knows better than the editor. */
@@ -27,6 +28,8 @@ export type EditorOptions = {
      * by the language of scripts.
      */
     declarations?: string | undefined;
+    /** What the bulb offers to fix where the caret is, in the caller's words; with none, no bulb. */
+    fixes?: FixesOf | undefined;
     /** Takes the caret as soon as it is built, for an editor its reader opened to write in. */
     focusOnMount?: boolean | undefined;
     /** What the caller proposes after the caret, greyed until Tab takes it; with none, nothing. */

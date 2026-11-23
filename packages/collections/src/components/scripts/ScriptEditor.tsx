@@ -4,6 +4,7 @@ import { CodeEditor } from '@mandor/ui';
 import { useMemo } from 'react';
 
 import { scriptGhostTextOf, scriptSuggestionsOf } from '../../lib/script-completions.js';
+import { conversionsOf, foreignMarksOf } from '../../lib/script-translation.js';
 
 type ScriptEditorProps = {
     /** What the place knows: its variables, the headers of its request, a sample of what it reads. */
@@ -22,7 +23,9 @@ type ScriptEditorProps = {
  * What the place knows completes too: the names of its variables and headers, the fields of its
  * sample, the snippets of the moment, and greyed, the field a variable of the environment saves.
  * Long lines fold and what hides or passes for another letter is marked, comments and strings
- * included: a script reads one way and runs another only where nobody can see it.
+ * included: a script reads one way and runs another only where nobody can see it. What it names
+ * of Postman, Insomnia or Bruno is marked in the words of the window, and the bulb writes it in
+ * `mandor.`: the lines of the caret, or the whole script. Nothing converts on its own.
  */
 export function ScriptEditor(props: ScriptEditorProps) {
     const { context, event, modelKey, onChange, readOnly, value } = props;
@@ -36,7 +39,9 @@ export function ScriptEditor(props: ScriptEditorProps) {
 
         return {
             readOnly,
+            check: foreignMarksOf(translate),
             declarations: scriptTypesOf(event, describe, context),
+            fixes: conversionsOf(translate),
             ghostText: scriptGhostTextOf(event, context),
             suggest: scriptSuggestionsOf(event, context, describe),
             unicodeHighlight: true,

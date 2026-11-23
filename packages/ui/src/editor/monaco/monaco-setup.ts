@@ -5,6 +5,8 @@
 // list of its own language.
 import 'monaco-editor/features/bracketMatching/register.js';
 import 'monaco-editor/features/clipboard/register.js';
+// The bulb: what the caller of an editor offers to fix where the caret is.
+import 'monaco-editor/features/codeAction/register.js';
 import 'monaco-editor/features/codicon/register.js';
 import 'monaco-editor/features/comment/register.js';
 import 'monaco-editor/features/contextmenu/register.js';

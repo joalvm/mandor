@@ -45,3 +45,9 @@ export {
     type ScriptVariableOrigin,
 } from './api/script-context.js';
 export { declaredVariablesOf } from './api/declared-variables-of.js';
+export {
+    foreignUsesOf,
+    translateScript,
+    type ScriptTranslation,
+} from './dialects/translate-script.js';
+export type { Dialect, ForeignUse, ScriptEdit, ScriptRange } from './dialects/dialect.js';
