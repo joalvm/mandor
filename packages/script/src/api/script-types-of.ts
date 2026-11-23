@@ -56,15 +56,16 @@ function interfaceName(path: readonly string[]): string {
     return path.map((step) => step.charAt(0).toUpperCase() + step.slice(1)).join('');
 }
 
-type Printing = { describe: DescribeApi; writable: (path: readonly string[]) => boolean };
+/** How the interfaces print: the text of each name, and the values the event lets a script write, by path. */
+type Printing = { describe: DescribeApi; writable: ReadonlySet<string> };
 
 /** One member of an interface: a method, a value (read only unless the event lets it be written), or an object. */
-function memberOf(path: readonly string[], node: ApiNode, printing: Printing): string {
-    const key = path.at(-1) ?? '';
+function memberOf(path: readonly string[], key: string, node: ApiNode, printing: Printing): string {
+    const own = [...path, key];
     const { entry } = node;
 
     if (entry === undefined) {
-        return `${INDENT}readonly ${key}: ${interfaceName(path)};`;
+        return `${INDENT}readonly ${key}: ${interfaceName(own)};`;
     }
 
     const doc = docOf(printing.describe, entry.docKey, entry.parameters, INDENT);
@@ -73,19 +74,28 @@ function memberOf(path: readonly string[], node: ApiNode, printing: Printing): s
         return `${doc}${INDENT}${key}${entry.signature};`;
     }
 
-    return `${doc}${INDENT}${printing.writable(path) ? '' : 'readonly '}${key}: ${entry.signature};`;
+    const readonly = printing.writable.has(own.join('.')) ? '' : 'readonly ';
+
+    return `${doc}${INDENT}${readonly}${key}: ${entry.signature};`;
 }
 
-/** The interface of every object under `node`, itself first: one per object of the tree. */
-function interfacesOf(path: readonly string[], node: ApiNode, printing: Printing): string[] {
+/** The interface of the object at `path`, with one member per name under it. */
+function interfaceOf(path: readonly string[], node: ApiNode, printing: Printing): string {
     const members = [...node.children].map(([step, child]) =>
-        memberOf([...path, step], child, printing),
+        memberOf(path, step, child, printing),
     );
-    const nested = [...node.children]
-        .filter(([, child]) => child.entry === undefined)
-        .flatMap(([step, child]) => interfacesOf([...path, step], child, printing));
 
-    return [`interface ${interfaceName(path)} {\n${members.join('\n')}\n}`, ...nested];
+    return `interface ${interfaceName(path)} {\n${members.join('\n')}\n}`;
+}
+
+/** The interfaces of every object under `node`, at any depth, its own left out. */
+function nestedInterfacesOf(path: readonly string[], node: ApiNode, printing: Printing): string[] {
+    return [...node.children]
+        .filter(([, child]) => child.entry === undefined)
+        .flatMap(([step, child]) => [
+            interfaceOf([...path, step], child, printing),
+            ...nestedInterfacesOf([...path, step], child, printing),
+        ]);
 }
 
 function assertionMember(word: AssertionWord, describe: DescribeApi): string {
@@ -113,8 +123,11 @@ function standardOf(step: string, node: ApiNode, describe: DescribeApi): string[
     const { entry } = node;
 
     if (entry === undefined) {
+        const printing: Printing = { describe, writable: new Set() };
+
         return [
-            ...interfacesOf([step], node, { describe, writable: () => false }),
+            interfaceOf([step], node, printing),
+            ...nestedInterfacesOf([step], node, printing),
             `declare const ${step}: ${interfaceName([step])};`,
         ];
     }
@@ -146,14 +159,12 @@ export function scriptTypesOf(event: ScriptEvent, describe: DescribeApi): string
     const shown = new Map(
         [...everyMember.children].filter(([step]) => members.some((member) => member === step)),
     );
-    const writes: readonly string[] = requestWrites;
     const printing: Printing = {
         describe,
-        writable: (path) =>
-            path.length === 3 && path[1] === 'request' && writes.includes(path[2] ?? ''),
+        writable: new Set(requestWrites.map((name) => `mandor.request.${name}`)),
     };
-    const [mandor = ''] = interfacesOf(['mandor'], { children: shown }, printing);
-    const nested = interfacesOf(['mandor'], everyMember, printing).slice(1);
+    const mandor = interfaceOf(['mandor'], { children: shown }, printing);
+    const nested = nestedInterfacesOf(['mandor'], everyMember, printing);
     const assertion = ASSERTION_API.map((word) => assertionMember(word, describe));
 
     return [
