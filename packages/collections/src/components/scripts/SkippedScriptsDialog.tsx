@@ -1,6 +1,6 @@
 import { useMessages } from '@mandor/i18n';
 import type { SkippedScript } from '@mandor/schema';
-import { visibleName } from '@mandor/script';
+import { EMPTY_SCRIPT_CONTEXT, visibleName } from '@mandor/script';
 import { bridge, fireAndForget, useFailureToast } from '@mandor/shell';
 import { Button, Dialog, DialogBody, DialogNav, DialogNavItem, DialogNavList } from '@mandor/ui';
 import { useState } from 'react';
@@ -140,7 +140,13 @@ function SkippedSource({
                 script={{ ...script, source }}
                 workspaceId={workspaceId}
             />
-            <ScriptEditor event={script.event} modelKey={modelKey} readOnly value={source} />
+            <ScriptEditor
+                context={EMPTY_SCRIPT_CONTEXT}
+                event={script.event}
+                modelKey={modelKey}
+                readOnly
+                value={source}
+            />
         </>
     );
 }

@@ -1,6 +1,7 @@
 import { ScriptsByEvent } from '@mandor/collections';
 import { REQUEST_SCRIPT_EVENTS, type RequestItem } from '@mandor/schema';
 
+import { useRequestScriptContext } from '../../hooks/useRequestScriptContext.js';
 import { requestPartsOf } from '../../lib/request-parts.js';
 
 type RequestScriptsProps = {
@@ -13,12 +14,16 @@ type RequestScriptsProps = {
 
 /**
  * The scripts of a request, by moment of the send: the moments in a column, the script of the one
- * open beside them. What a document brought is there, in its moment, not yet approved.
+ * open beside them, completing with what the request knows. What a document brought is there, in
+ * its moment, not yet approved.
  */
 export function RequestScripts({ request, resource, onChange }: RequestScriptsProps) {
+    const context = useRequestScriptContext(resource, request);
+
     return (
         <div className="flex h-full min-h-0 flex-col gap-gap-control" data-part="request-scripts">
             <ScriptsByEvent
+                context={context}
                 events={REQUEST_SCRIPT_EVENTS}
                 onChange={(scripts) => {
                     onChange({ scripts });

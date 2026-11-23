@@ -10,6 +10,7 @@ import { constructionOptions, type EditorSetup } from './construction-options.js
 import { lintModel } from './editor-markers.js';
 import { suggestModel } from './editor-suggestions.js';
 import { followTextZoom } from './follow-text-zoom.js';
+import { ghostModel } from './ghost-text.js';
 import { overwriteText, replaceText } from './model-text.js';
 import { routeNativeEdits } from './native-edits.js';
 import { runCommand, type EditorCommandId } from './run-command.js';
@@ -57,19 +58,20 @@ function documentOf(target: EditorTarget): EditorDocument {
     return { key: target.modelKey, language: target.language, value: target.value };
 }
 
-/** What the options add over the text: declarations, marks, suggestions and variable tones. */
+/** What the options add over the text: declarations, marks, suggestions, ghost text and variable tones. */
 function extrasOf(
     shown: editor.ICodeEditor,
     model: editor.ITextModel,
     target: EditorTarget,
 ): IDisposable[] {
     const checks = diagnosticsOf(target.language, target.options);
-    const { declarations, suggest, variables } = target.options;
+    const { declarations, ghostText, suggest, variables } = target.options;
 
     return [
         ...(declarations === undefined ? [] : [declareScript(model, declarations)]),
         ...(checks === null ? [] : [lintModel(model, checks)]),
         ...(suggest === undefined ? [] : [suggestModel(model, suggest)]),
+        ...(ghostText === undefined ? [] : [ghostModel(model, ghostText)]),
         ...(variables === undefined ? [] : [paintVariables(shown, variables)]),
     ];
 }

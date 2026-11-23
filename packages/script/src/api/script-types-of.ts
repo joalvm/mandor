@@ -1,4 +1,5 @@
 import { ASSERTION_API, type AssertionWord } from './assertion-api.js';
+import { sampleTypeOf, type ScriptContext } from './script-context.js';
 import {
     API_BY_EVENT,
     SCRIPT_API,
@@ -56,8 +57,39 @@ function interfaceName(path: readonly string[]): string {
     return path.map((step) => step.charAt(0).toUpperCase() + step.slice(1)).join('');
 }
 
-/** How the interfaces print: the text of each name, and the values the event lets a script write, by path. */
-type Printing = { describe: DescribeApi; writable: ReadonlySet<string> };
+/**
+ * How the interfaces print: the text of each name, the values the event lets a script write, by
+ * path, and the objects whose type is another than the one their path names.
+ */
+type Printing = {
+    describe: DescribeApi;
+    objects?: ReadonlyMap<string, string>;
+    writable: ReadonlySet<string>;
+};
+
+/**
+ * The response of the moment reads its JSON with the shape of the sample; the one `sendRequest`
+ * gives back is another, and stays `any`.
+ */
+const SAMPLED_OBJECTS: ReadonlyMap<string, string> = new Map([
+    ['mandor.response', 'MandorSampledResponse'],
+]);
+
+function sampledResponseOf(describe: DescribeApi): string {
+    const doc = docOf(describe, 'script.api.response.json', [], INDENT);
+
+    return `interface MandorSampledResponse extends MandorResponse {\n${doc}${INDENT}json(): MandorSample;\n}`;
+}
+
+/**
+ * The names of the variables the editor knows, open to any other: a script may set one nobody
+ * declared yet. With none known, a name is a text.
+ */
+function variableNameOf({ variables }: ScriptContext): string {
+    const known = [...new Set(variables.map(({ name }) => JSON.stringify(name)))];
+
+    return `type MandorVariableName = ${known.length === 0 ? 'string' : [...known, '(string & {})'].join(' | ')};`;
+}
 
 /** One member of an interface: a method, a value (read only unless the event lets it be written), or an object. */
 function memberOf(path: readonly string[], key: string, node: ApiNode, printing: Printing): string {
@@ -65,7 +97,7 @@ function memberOf(path: readonly string[], key: string, node: ApiNode, printing:
     const { entry } = node;
 
     if (entry === undefined) {
-        return `${INDENT}readonly ${key}: ${interfaceName(own)};`;
+        return `${INDENT}readonly ${key}: ${printing.objects?.get(own.join('.')) ?? interfaceName(own)};`;
     }
 
     const doc = docOf(printing.describe, entry.docKey, entry.parameters, INDENT);
@@ -150,9 +182,15 @@ function standardOf(step: string, node: ApiNode, describe: DescribeApi): string[
  * nothing more, the names of JavaScript the guest gives, and `Assertion`. A member the event does
  * not show is a type error, not a silence. Every name carries its text, in the language
  * `describe` speaks. Each interface of `mandor` is there, whatever the event: `sendRequest` gives
- * back a `MandorResponse` before any response.
+ * back a `MandorResponse` before any response. What the editor knows of the place types the rest:
+ * the JSON the moment reads takes the shape of the sample, and the names of variables are those it
+ * knows, and any other.
  */
-export function scriptTypesOf(event: ScriptEvent, describe: DescribeApi): string {
+export function scriptTypesOf(
+    event: ScriptEvent,
+    describe: DescribeApi,
+    context: ScriptContext,
+): string {
     const { members, requestWrites } = API_BY_EVENT[event];
     const standard = treeOf(SCRIPT_API.filter(({ owner }) => isStandardName(owner)));
     const everyMember = treeOf(SCRIPT_API.filter(({ owner }) => !isStandardName(owner)));
@@ -163,15 +201,22 @@ export function scriptTypesOf(event: ScriptEvent, describe: DescribeApi): string
         describe,
         writable: new Set(requestWrites.map((name) => `mandor.request.${name}`)),
     };
-    const mandor = interfaceOf(['mandor'], { children: shown }, printing);
+    const mandor = interfaceOf(
+        ['mandor'],
+        { children: shown },
+        { ...printing, objects: SAMPLED_OBJECTS },
+    );
     const nested = nestedInterfacesOf(['mandor'], everyMember, printing);
     const assertion = ASSERTION_API.map((word) => assertionMember(word, describe));
 
     return [
         ...[...standard.children].flatMap(([step, node]) => standardOf(step, node, describe)),
         `interface Assertion {\n${assertion.join('\n')}\n}`,
+        `type MandorSample = ${sampleTypeOf(context.sample)};`,
+        variableNameOf(context),
         mandor,
         ...nested,
+        sampledResponseOf(describe),
         'declare const mandor: Mandor;',
         '',
     ].join('\n\n');

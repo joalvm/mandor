@@ -101,3 +101,25 @@ test('a name the moment does not show is underlined, and the line clears once it
     await typeScript('mandor.request.url;');
     await expect(underlined).toHaveCount(0);
 });
+
+/** A name one line writes is offered where another line reads it, before any of them runs. */
+test('inside the name of a variable the editor offers the ones the scripts declare', async () => {
+    await typeScript('mandor.variables.set("orderId", 1);\nmandor.variables.get("');
+
+    const suggestions = widget('.suggest-widget');
+
+    await expect(suggestions).toBeVisible();
+    await expect(suggestions.getByText('orderId', { exact: true })).toHaveCount(1);
+});
+
+test('where a line starts the editor offers the snippets of the moment, and writes one', async () => {
+    await typeScript('Send');
+
+    const suggestions = widget('.suggest-widget');
+
+    await expect(suggestions.getByText('Send a request', { exact: true })).toBeVisible();
+
+    await page.keyboard.press('Enter');
+
+    await expect(editorOfScript()).toContainText('mandor.sendRequest');
+});

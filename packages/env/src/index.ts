@@ -25,6 +25,8 @@ export { withNewLine, type EntryLine } from './lib/entry-line.js';
 export { workspaceEnvironmentEntries } from './lib/workspace-environment-entries.js';
 export { openManagedEnvironments } from './managed-environments.js';
 export { useEditorVariables } from './hooks/useEditorVariables.js';
+export { useVariableScope } from './hooks/useVariableScope.js';
+export { listedVariables, type ListedVariable } from './lib/listed-variables.js';
 export { useFolderChain } from './hooks/useFolderChain.js';
 export { reloadFolderChains } from './lib/folder-chains.js';
 export { folderOfResource } from './lib/folder-of-resource.js';

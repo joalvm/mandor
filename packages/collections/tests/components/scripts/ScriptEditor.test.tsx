@@ -1,5 +1,5 @@
 import { createPlainI18n } from '@mandor/i18n';
-import { ASSERTION_API, SCRIPT_API } from '@mandor/script';
+import { ASSERTION_API, EMPTY_SCRIPT_CONTEXT, SCRIPT_API } from '@mandor/script';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -11,6 +11,7 @@ function shown(props: Partial<Parameters<typeof ScriptEditor>[0]> = {}) {
     return render(
         <AppProviders>
             <ScriptEditor
+                context={EMPTY_SCRIPT_CONTEXT}
                 event="onBeforeRequest"
                 modelKey="script"
                 value="console.log(1);"

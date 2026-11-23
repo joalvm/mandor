@@ -19,6 +19,10 @@ import 'monaco-editor/features/parameterHints/register.js';
 // The widget of suggestions: the controller of the editor carries it, and the feature folder
 // named suggest only brings the inline completions of another name.
 import 'monaco-editor/editor/contrib/suggest/browser/suggestController.js';
+// What a script proposes after the caret, greyed until Tab takes it, and the snippets of the list
+// of suggestions, with their places to fill.
+import 'monaco-editor/features/inlineCompletions/register.js';
+import 'monaco-editor/features/snippet/register.js';
 import 'monaco-editor/features/toggleTabFocusMode/register.js';
 // The characters somebody might not see, a bidi or a space of no width: off in every editor, and
 // on in the editors of scripts, where code that reads one way and runs another is the trick.

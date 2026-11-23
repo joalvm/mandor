@@ -2,6 +2,7 @@ import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 import type { ScriptEvent } from '../../src/api/script-api.js';
+import { EMPTY_SCRIPT_CONTEXT, type ScriptContext } from '../../src/api/script-context.js';
 import { scriptTypesOf } from '../../src/api/script-types-of.js';
 
 /**
@@ -25,10 +26,14 @@ function describeKey(docKey: string): string {
 }
 
 /** What TypeScript says of `script` against the declarations of `event`, one `code message` each. */
-function diagnosticsOf(event: ScriptEvent, script: string): string[] {
+function diagnosticsOf(
+    event: ScriptEvent,
+    script: string,
+    context: ScriptContext = EMPTY_SCRIPT_CONTEXT,
+): string[] {
     const files = new Map([
         ['/script.js', script],
-        ['/mandor.d.ts', scriptTypesOf(event, describeKey)],
+        ['/mandor.d.ts', scriptTypesOf(event, describeKey, context)],
     ]);
     const host = ts.createCompilerHost(OPTIONS);
     const fromDisk = host.getSourceFile.bind(host);
@@ -117,7 +122,7 @@ describe('scriptTypesOf', () => {
     });
 
     it('explains each name and each parameter in the text describe gives', () => {
-        const types = scriptTypesOf('onBeforeRequest', describeKey);
+        const types = scriptTypesOf('onBeforeRequest', describeKey, EMPTY_SCRIPT_CONTEXT);
 
         expect(types).toContain('text of script.api.variables.get');
         expect(types).toContain('@param name text of script.param.variables.get.name');
@@ -126,6 +131,70 @@ describe('scriptTypesOf', () => {
     });
 
     it('keeps a text from closing its comment', () => {
-        expect(scriptTypesOf('onMessage', () => 'a */ b')).not.toMatch(/a \*\/ b/);
+        expect(scriptTypesOf('onMessage', () => 'a */ b', EMPTY_SCRIPT_CONTEXT)).not.toMatch(
+            /a \*\/ b/,
+        );
+    });
+});
+
+const SAMPLED: ScriptContext = { ...EMPTY_SCRIPT_CONTEXT, sample: { id: 1, user: { name: 'a' } } };
+
+describe('scriptTypesOf with what the editor knows of the place', () => {
+    it('types the JSON of the response with the shape of the sample', () => {
+        expect(
+            diagnosticsOf(
+                'onResponse',
+                'mandor.response.json().id.toFixed();\nmandor.response.json().id.toUpperCase();',
+                SAMPLED,
+            ),
+        ).toEqual(["2339 Property 'toUpperCase' does not exist on type 'number'."]);
+    });
+
+    /** The next response may bring a field the sample lacks. */
+    it('lets a script read a field the sample lacks', () => {
+        expect(
+            diagnosticsOf('onResponse', 'mandor.response.json().other.deeper;', SAMPLED),
+        ).toEqual([]);
+    });
+
+    it('leaves the response sendRequest gives back as any', () => {
+        expect(
+            diagnosticsOf(
+                'onResponse',
+                "const other = await mandor.sendRequest({ url: 'x' });\nother.json().id.toUpperCase();",
+                SAMPLED,
+            ),
+        ).toEqual([]);
+    });
+
+    it('types the JSON of the frame with the shape of the sample', () => {
+        expect(
+            diagnosticsOf('onMessage', 'mandor.message.json().user.name.getTime();', SAMPLED),
+        ).toEqual(["2339 Property 'getTime' does not exist on type 'string'."]);
+    });
+
+    it('reads the JSON as anything with no sample', () => {
+        expect(diagnosticsOf('onMessage', 'mandor.message.json().a.b.c();')).toEqual([]);
+    });
+
+    it('names the variables it knows, and lets a script name any other', () => {
+        const context: ScriptContext = {
+            ...EMPTY_SCRIPT_CONTEXT,
+            variables: [
+                { name: 'token', origin: 'environment', secret: true, value: '••••' },
+                { name: 'id', origin: 'script', secret: false, value: '' },
+            ],
+        };
+
+        expect(scriptTypesOf('onResponse', describeKey, context)).toContain(
+            'type MandorVariableName = "token" | "id" | (string & {});',
+        );
+        expect(diagnosticsOf('onResponse', "mandor.variables.get('other');", context)).toEqual([]);
+    });
+
+    it('names any variable as a text when it knows none', () => {
+        expect(scriptTypesOf('onResponse', describeKey, EMPTY_SCRIPT_CONTEXT)).toContain(
+            'type MandorVariableName = string;',
+        );
     });
 });

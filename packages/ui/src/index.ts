@@ -126,7 +126,7 @@ export { applyEditStep } from './editor/edit-step.js';
 export type { EditorDiagnostic } from './editor/editor-diagnostic.js';
 export { languageOfFormat, type EditorLanguage } from './editor/editor-language.js';
 export type { EditorOptions } from './editor/editor-options.js';
-export type { EditorSuggestion, SuggestionsOf } from './editor/editor-suggestion.js';
+export type { EditorSuggestion, GhostTextOf, SuggestionsOf } from './editor/editor-suggestion.js';
 export { withUncheckedPatternMarks } from './editor/unchecked-pattern-marks.js';
 export type { EditorVariableHover, EditorVariables } from './editor/editor-variable.js';
 export { formattedJsonc } from './editor/jsonc-format.js';

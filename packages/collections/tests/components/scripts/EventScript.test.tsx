@@ -1,4 +1,5 @@
 import type { ScriptEntry } from '@mandor/schema';
+import { EMPTY_SCRIPT_CONTEXT } from '@mandor/script';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -12,6 +13,7 @@ function shown(entry: ScriptEntry | undefined) {
     render(
         <AppProviders>
             <EventScript
+                context={EMPTY_SCRIPT_CONTEXT}
                 entry={entry}
                 modelKey="mandor://local/events/connection/alpha:script:onConnect"
                 onChange={onChange}

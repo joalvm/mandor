@@ -518,7 +518,7 @@ bombilla: es la fase 6.
 - abrir y cerrar pestañas con script y ver en DevTools (`F12`, Memory) que el heap vuelve;
 - anotar en esta fase la RAM que suma el servicio encendido.
 
-### [ ] Fase 5: El completado conoce las variables, los headers y la respuesta
+### [x] Fase 5: El completado conoce las variables, los headers y la respuesta
 
 **Objetivo.** Dentro de `mandor.variables.get("` salen las variables con su valor (los secretos,
 enmascarados). Salen los headers del request. `mandor.response.json().` completa los campos de la
@@ -589,6 +589,24 @@ tested apps/async/src/renderer/features/connections/lib/connection-script-contex
 
 **No hacer.** Ninguna sugerencia deja de lado la API ni se inventa variables. Ningún valor de
 secreto en claro. Nada de IA.
+
+**Notas.**
+
+- Los snippets salen donde empieza una sentencia, no a mitad de una expresión: ahí escribirían
+  una sentencia donde va un valor. Es la lectura de «en cualquier lugar».
+- Lo compartido sube de las apps: `listedVariables(scope, declared)` en `env` (orden del scope,
+  máscara de secretos, nombres declarados al final); `useDeclaredInScripts` en `collections`
+  (misma lista mientras los nombres no cambian, así teclear no rehace el `.d.ts`);
+  `sentHeaderNames` en `script`.
+- Realtime también da los headers del handshake: `onBeforeConnect` los escribe. El store de
+  actividad se lee hasta el texto del último marco recibido (`lastReceivedText`): un marco enviado
+  o una línea de la consola no rehacen el contexto. Un último marco binario no da muestra.
+- Los hooks son `useRequestScriptContext`, `useFolderScriptContext` y
+  `useConnectionScriptContext`; las sugerencias de TypeScript que repiten un nombre ya ofrecido
+  se quitan (`suggestedAt`), así una variable no sale dos veces.
+- Comprobado en las dos apps reales por e2e (`script-editor.spec.ts`): el nombre declarado sale
+  dentro de `variables.get("` y el snippet se escribe al aceptarlo. La máscara, los campos de la
+  muestra y el texto fantasma con Tab, en jsdom.
 
 **Cierre.** `npm run ci:test -- packages/script packages/collections packages/ui apps/sync apps/async`;
 `npm run ci:verify`; `npm run ci:local`. Con las dos apps abiertas:

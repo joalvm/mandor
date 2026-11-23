@@ -17,6 +17,7 @@ function shown(scripts: ConnectionScripts | undefined) {
     render(
         <SettingsScriptsSection
             connection={connection}
+            environment={undefined}
             onConnectionChange={onConnectionChange}
             workspaceId="events"
         />,

@@ -49,6 +49,24 @@ describe('message and socket of the guest', () => {
         ]);
     });
 
+    it('reads the text of the frame as JSON', async () => {
+        const output = await onMessage('console.log(mandor.message.json().id);', {
+            ...MESSAGE,
+            text: '{"id": 7}',
+        });
+
+        expect(lineOf(output.logs[0])).toBe('7');
+    });
+
+    it('reads a frame with no text as no JSON', async () => {
+        const output = await onMessage('console.log(mandor.message.json());', {
+            direction: 'incoming',
+            binary: true,
+        });
+
+        expect(lineOf(output.logs[0])).toBe('undefined');
+    });
+
     it('gives a frame with no text as undefined', async () => {
         const output = await onMessage('console.log(mandor.message.text);', {
             direction: 'incoming',

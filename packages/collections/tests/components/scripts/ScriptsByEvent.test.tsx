@@ -4,6 +4,7 @@ import {
     type ConnectionScripts,
     type RequestScripts,
 } from '@mandor/schema';
+import { EMPTY_SCRIPT_CONTEXT } from '@mandor/script';
 import { shellStore } from '@mandor/shell';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -19,6 +20,7 @@ function shown(scripts: RequestScripts | undefined) {
 
     render(
         <ScriptsByEvent
+            context={EMPTY_SCRIPT_CONTEXT}
             events={REQUEST_SCRIPT_EVENTS}
             onChange={onChange}
             place={{ level: 'folder', workspaceId: 'events' }}
@@ -119,6 +121,7 @@ describe('the scripts of one place, by moment (ScriptsByEvent)', () => {
 
         render(
             <ScriptsByEvent
+                context={EMPTY_SCRIPT_CONTEXT}
                 events={CONNECTION_SCRIPT_EVENTS}
                 onChange={vi.fn()}
                 place={{ level: 'connection', workspaceId: 'events' }}

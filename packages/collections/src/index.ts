@@ -51,4 +51,5 @@ export {
     type ScriptApproval,
     type ScriptPlace,
 } from './hooks/useScriptApproval.js';
+export { useDeclaredInScripts } from './hooks/useDeclaredInScripts.js';
 export { switchedScript, withScript } from './lib/script-entries.js';

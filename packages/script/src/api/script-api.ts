@@ -135,9 +135,12 @@ export const SCRIPT_API: readonly ApiEntry[] = [
         'new (init?: string | Record<string, unknown> | [string, unknown][]): URLSearchParams',
         ['init'],
     ),
-    entry('variables', 'variables.get', `(name: string): ${TEXT_OR_NOTHING}`, ['name']),
-    entry('variables', 'variables.set', '(name: string, value: unknown): void', ['name', 'value']),
-    entry('variables', 'variables.has', '(name: string): boolean', ['name']),
+    entry('variables', 'variables.get', `(name: MandorVariableName): ${TEXT_OR_NOTHING}`, ['name']),
+    entry('variables', 'variables.set', '(name: MandorVariableName, value: unknown): void', [
+        'name',
+        'value',
+    ]),
+    entry('variables', 'variables.has', '(name: MandorVariableName): boolean', ['name']),
     entry('variables', 'variables.replaceIn', '(text: string): string', ['text']),
     entry('test', 'test', '(name: string, body: () => unknown): Promise<void>', ['name', 'body']),
     entry('expect', 'expect', '(actual: unknown): Assertion', ['actual']),
@@ -155,6 +158,7 @@ export const SCRIPT_API: readonly ApiEntry[] = [
     entry('message', 'message.direction', "'incoming' | 'outgoing'"),
     entry('message', 'message.binary', 'boolean'),
     entry('message', 'message.event', TEXT_OR_NOTHING),
+    entry('message', 'message.json', '(): MandorSample'),
     entry('socket', 'socket.send', '(text: string): void', ['text']),
     entry('sendRequest', 'sendRequest', `(options: ${SEND_OPTIONS}): Promise<MandorResponse>`, [
         'options',

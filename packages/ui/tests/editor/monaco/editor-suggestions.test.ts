@@ -92,6 +92,48 @@ describe('the suggestions a caller gives an editor', () => {
         expect(rowsOf(other.host)).toEqual([]);
     }, 15_000);
 
+    /** A snippet stops at each of its places, in order, for the reader to fill. */
+    it('write a snippet with its places to fill', async () => {
+        const { host, model, shown } = editorOf('', 'script');
+        const snippet: EditorSuggestion = {
+            insertText: 'mandor.test("${1:name}", () => {\n\t$0\n});',
+            kind: 'snippet',
+            label: 'test',
+        };
+
+        suggestModel(model, () => [snippet]);
+        await askSuggestions(shown);
+        await vi.waitFor(() => {
+            expect(rowsOf(host)).not.toHaveLength(0);
+        });
+        shown.trigger('test', 'acceptSelectedSuggestion', {});
+
+        expect(model.getValue()).toBe('mandor.test("name", () => {\n    \n});');
+        expect(model.getValueInRange(shown.getSelection() ?? model.getFullModelRange())).toBe(
+            'name',
+        );
+    }, 15_000);
+
+    /** A name with a dash is no word: the whole of it, from where the caller says, is replaced. */
+    it('replace from the offset the caller gives', async () => {
+        const { host, model, shown } = editorOf('get("base-u', 'script');
+        const name: EditorSuggestion = {
+            from: 'get("'.length,
+            insertText: 'base-url',
+            kind: 'variable',
+            label: 'base-url',
+        };
+
+        suggestModel(model, () => [name]);
+        await askSuggestions(shown);
+        await vi.waitFor(() => {
+            expect(rowsOf(host)).not.toHaveLength(0);
+        });
+        shown.trigger('test', 'acceptSelectedSuggestion', {});
+
+        expect(model.getValue()).toBe('get("base-url');
+    }, 15_000);
+
     it('stop being given once the editor lets them go', async () => {
         const { host, model, shown } = editorOf('{ us');
         const given = suggestModel(model, () => [USER]);

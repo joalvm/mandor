@@ -7,6 +7,7 @@ import {
 } from 'monaco-editor/editor/editor.api.js';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { suggestModel } from '../../../src/editor/monaco/editor-suggestions.js';
 import '../../../src/editor/monaco/script-language.js';
 import {
     completionsOf,
@@ -102,6 +103,24 @@ describe('what the service of scripts suggests', () => {
         expect(resolved?.documentation).toEqual({
             value: 'Sends a value.\n\n*@param* `name` The name it goes under.',
         });
+    });
+
+    /** The window knows the value of a variable, which the service does not: its entry is the one. */
+    it('leaves out a name the window suggests at the same place', async () => {
+        const { model, workerOf } = await declared('mandor.');
+
+        suggestModel(model, () => [{ insertText: 'send', kind: 'variable', label: 'send' }]);
+
+        const found = await completionsOf(workerOf).provideCompletionItems(
+            model,
+            endOf(model),
+            { triggerKind: languages.CompletionTriggerKind.Invoke },
+            token,
+        );
+        const labels = found?.suggestions.map(({ label }) => label);
+
+        expect(labels).toContain('response');
+        expect(labels).not.toContain('send');
     });
 
     it('offers to suggest after a dot, the moment it is typed', () => {

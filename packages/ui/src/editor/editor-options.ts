@@ -1,6 +1,6 @@
 import type { DiagnosticsOf, EditorRule } from './editor-diagnostic.js';
 import type { EditorLanguage } from './editor-language.js';
-import type { SuggestionsOf } from './editor-suggestion.js';
+import type { GhostTextOf, SuggestionsOf } from './editor-suggestion.js';
 import type { EditorVariables } from './editor-variable.js';
 
 /** The schema a payload is checked against while it is written, read again on every check. */
@@ -15,7 +15,7 @@ export type EditorTranslate = (message: string, rule?: EditorRule) => string;
  * What a caller decides about one editor. Everything else is the same in every editor of the
  * app, and a caller that wants it different is asking for a second editor.
  *
- * `check` and `suggest` are functions the editor compares by identity, like every option: a
+ * `check`, `ghostText` and `suggest` are functions the editor compares by identity, like every option: a
  * caller that builds them inline gets an editor that is rebuilt on every render, so they come
  * out of `useMemo`.
  */
@@ -29,6 +29,8 @@ export type EditorOptions = {
     declarations?: string | undefined;
     /** Takes the caret as soon as it is built, for an editor its reader opened to write in. */
     focusOnMount?: boolean | undefined;
+    /** What the caller proposes after the caret, greyed until Tab takes it; with none, nothing. */
+    ghostText?: GhostTextOf | undefined;
     lineNumbers?: 'off' | 'on' | undefined;
     readOnly?: boolean | undefined;
     schemaLint?: SchemaLint | undefined;

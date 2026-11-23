@@ -78,7 +78,8 @@
                 "text": "The text of the message.",
                 "direction": "Whether the message arrived or left.",
                 "binary": "Whether the message is binary.",
-                "event": "The Socket.IO event name of the message."
+                "event": "The Socket.IO event name of the message.",
+                "json": "The text of the message read as JSON."
             },
             "socket": {
                 "send": "Sends a message through the connection."
@@ -233,6 +234,22 @@
             "below": {
                 "limit": "Number it must stay under."
             }
+        },
+        "completion": {
+            "origin": {
+                "collection": "Collection",
+                "environment": "Environment",
+                "script": "Declared by a script"
+            },
+            "secret": "secret"
+        },
+        "snippet": {
+            "fieldTest": "Test a field",
+            "headerFromVariable": "Header from a variable",
+            "sendRequest": "Send a request",
+            "statusTest": "Test the status",
+            "variableFromMessage": "Save a field of the message",
+            "variableFromResponse": "Save a field of the response"
         }
     },
     "scriptApprove": "Approve",

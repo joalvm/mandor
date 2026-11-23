@@ -3,6 +3,7 @@ import {
     type IDisposable,
     type IRange,
     languages,
+    type Position,
 } from 'monaco-editor/editor/editor.api.js';
 
 import type { EditorSuggestion, SuggestionsOf } from '../editor-suggestion.js';
@@ -21,24 +22,61 @@ const KIND_OF: Record<EditorSuggestion['kind'], languages.CompletionItemKind> = 
     fragment: languages.CompletionItemKind.Struct,
     keyword: languages.CompletionItemKind.Keyword,
     other: languages.CompletionItemKind.Text,
+    snippet: languages.CompletionItemKind.Snippet,
     type: languages.CompletionItemKind.Class,
     variable: languages.CompletionItemKind.Variable,
 };
 
+/** How the text of a kind is written: a snippet's has places to fill, any other's is the text. */
+const RULES_OF: Partial<Record<EditorSuggestion['kind'], languages.CompletionItemInsertTextRule>> =
+    {
+        snippet: languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    };
+
 /** What opens a suggestion by itself: the characters after which GraphQL expects a name. */
 const TRIGGERS = ['{', '(', ':', '@', '$', '.'];
 
+/** A script names a variable or a header in a string: the quote that opens it opens the list. */
+const TRIGGERS_OF: Partial<Record<string, string[]>> = {
+    script: [...TRIGGERS, '"', "'", '`'],
+};
+
 function itemOf(suggestion: EditorSuggestion, range: IRange): languages.CompletionItem {
+    const rules = RULES_OF[suggestion.kind];
+
     return {
         ...(suggestion.detail === undefined ? {} : { detail: suggestion.detail }),
         ...(suggestion.documentation === undefined
             ? {}
             : { documentation: suggestion.documentation }),
+        ...(rules === undefined ? {} : { insertTextRules: rules }),
         insertText: suggestion.insertText,
         kind: KIND_OF[suggestion.kind],
         label: suggestion.label,
         range,
     };
+}
+
+/** What a suggestion replaces: from the offset it gives, or the word at the caret, to the caret. */
+function rangeOf(model: editor.ITextModel, position: Position, from: number | undefined): IRange {
+    const start =
+        from === undefined
+            ? model.getWordUntilPosition(position).startColumn
+            : model.getPositionAt(from).column;
+
+    return {
+        endColumn: position.column,
+        endLineNumber: position.lineNumber,
+        startColumn: start,
+        startLineNumber: position.lineNumber,
+    };
+}
+
+/** The names a caller suggests at a place of a document: another source of names leaves them out. */
+export function suggestedAt(model: editor.ITextModel, offset: number): ReadonlySet<string> {
+    const suggestionsOf = suggesters.get(model);
+
+    return new Set(suggestionsOf?.(model.getValue(), offset).map(({ label }) => label));
 }
 
 const PROVIDER: languages.CompletionItemProvider = {
@@ -49,21 +87,12 @@ const PROVIDER: languages.CompletionItemProvider = {
             return { suggestions: [] };
         }
 
-        const word = model.getWordUntilPosition(position);
-        const range = {
-            endColumn: word.endColumn,
-            endLineNumber: position.lineNumber,
-            startColumn: word.startColumn,
-            startLineNumber: position.lineNumber,
-        };
-
         return {
             suggestions: suggestionsOf(model.getValue(), model.getOffsetAt(position)).map(
-                (suggestion) => itemOf(suggestion, range),
+                (suggestion) => itemOf(suggestion, rangeOf(model, position, suggestion.from)),
             ),
         };
     },
-    triggerCharacters: TRIGGERS,
 };
 
 /**
@@ -79,7 +108,10 @@ export function suggestModel(model: editor.ITextModel, suggestionsOf: Suggestion
 
     if (!served.has(language)) {
         served.add(language);
-        languages.registerCompletionItemProvider(language, PROVIDER);
+        languages.registerCompletionItemProvider(language, {
+            ...PROVIDER,
+            triggerCharacters: TRIGGERS_OF[language] ?? TRIGGERS,
+        });
     }
 
     return {

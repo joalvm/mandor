@@ -1,5 +1,6 @@
 import { useMessages } from '@mandor/i18n';
 import type { SCRIPT_EVENTS, ScriptEntry, ScriptLevel } from '@mandor/schema';
+import type { ScriptContext } from '@mandor/script';
 import { useResourceSection } from '@mandor/shell';
 import { Switch, Tabs, TabsList, TabsPanel, TabsTab } from '@mandor/ui';
 
@@ -12,6 +13,11 @@ type ScriptEvent = (typeof SCRIPT_EVENTS)[number];
 type ScriptsOf<Event extends ScriptEvent> = Partial<Record<Event, ScriptEntry | undefined>>;
 
 type ScriptsByEventProps<Event extends ScriptEvent> = {
+    /**
+     * What the editors complete with: the variables of the place, the headers of its request and
+     * a sample of what it reads. Kept by identity: a new one rebuilds what the editors know.
+     */
+    context: ScriptContext;
     /** The moments the level runs scripts at, in the order they come. */
     events: readonly [Event, ...Event[]];
     /** Where the scripts sit, which is what an approval is kept by. */
@@ -91,7 +97,7 @@ export function ScriptsByEvent<Event extends ScriptEvent>(props: ScriptsByEventP
 /** The script of one moment: its name and its switch over it; switched off, its text stays. */
 function Moment<Event extends ScriptEvent>(props: MomentProps<Event>) {
     const labels = useMessages('collections');
-    const { event, onChange, place, resource, scripts } = props;
+    const { context, event, onChange, place, resource, scripts } = props;
     const entry = scripts?.[event];
     const name: MomentLabel = LABEL_OF[event];
 
@@ -111,6 +117,7 @@ function Moment<Event extends ScriptEvent>(props: MomentProps<Event>) {
                 />
             </header>
             <EventScript
+                context={context}
                 entry={entry}
                 modelKey={`${resource}:script:${event}`}
                 onChange={(next) => {

@@ -17,6 +17,7 @@ import type {
     TextSpan,
 } from 'monaco-editor/languages/features/typescript/tsWorker.js';
 
+import { suggestedAt } from './editor-suggestions.js';
 import type { ScriptTsWorker } from './script-ts-worker.js';
 
 /** What the window asks of the service, over the documents of scripts. */
@@ -113,7 +114,11 @@ function suggestionOf(
     };
 }
 
-/** The names the script can write at the caret; the text of one, once it is chosen. */
+/**
+ * The names the script can write at the caret; the text of one, once it is chosen. A name the
+ * window suggests at the same place is the window's: it knows the value of a variable, and the
+ * service only its name.
+ */
 export function completionsOf(workerOf: WorkerOf): languages.CompletionItemProvider {
     return {
         provideCompletionItems: async (model, position) => {
@@ -132,8 +137,12 @@ export function completionsOf(workerOf: WorkerOf): languages.CompletionItemProvi
                 return undefined;
             }
 
+            const shadowed = suggestedAt(model, offset);
+
             return {
-                suggestions: info.entries.map((entry) => suggestionOf(entry, model, word, offset)),
+                suggestions: info.entries
+                    .filter(({ name }) => !shadowed.has(name))
+                    .map((entry) => suggestionOf(entry, model, word, offset)),
             };
         },
         resolveCompletionItem: async (item) => {

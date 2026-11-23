@@ -1,10 +1,13 @@
 import type { ScriptEntry } from '@mandor/schema';
+import type { ScriptContext } from '@mandor/script';
 
 import { useScriptApproval, type ScriptPlace } from '../../hooks/useScriptApproval.js';
 import { ScriptEditor } from './ScriptEditor.js';
 import { ScriptTrustBand } from './ScriptTrustBand.js';
 
 type EventScriptProps = {
+    /** What the editor completes with: what the place knows. */
+    context: ScriptContext;
     entry: ScriptEntry | undefined;
     /** Who owns the text: two views of one place share its document. */
     modelKey: string;
@@ -19,7 +22,7 @@ type EventScriptProps = {
  * run as it is, which stays readable and editable. Typing the text tells main what is on screen,
  * so the band follows the keys and not the disk.
  */
-export function EventScript({ entry, modelKey, place, onChange }: EventScriptProps) {
+export function EventScript({ context, entry, modelKey, place, onChange }: EventScriptProps) {
     const source = entry?.source ?? '';
     const trust = useScriptApproval(place, modelKey, source);
 
@@ -27,6 +30,7 @@ export function EventScript({ entry, modelKey, place, onChange }: EventScriptPro
         <div className="flex h-full min-h-0 flex-col gap-gap-control" data-part="event-script">
             <ScriptTrustBand onApprove={trust.approve} source={source} status={trust.status} />
             <ScriptEditor
+                context={context}
                 event={place.event}
                 modelKey={modelKey}
                 onChange={(next) => {
