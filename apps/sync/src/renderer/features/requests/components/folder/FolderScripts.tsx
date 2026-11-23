@@ -1,7 +1,7 @@
+import { ScriptsByEvent } from '@mandor/collections';
 import { folderOfResource, scheduleFolderSettingsWrite, useFolderChain } from '@mandor/env';
+import { REQUEST_SCRIPT_EVENTS } from '@mandor/schema';
 import { useFailureToast, useTab } from '@mandor/shell';
-
-import { EventScripts } from '../scripts/EventScripts.js';
 
 /**
  * The scripts of a collection or a folder, in its tab: the same piece a request writes its own
@@ -27,8 +27,8 @@ export function FolderScripts() {
             className="flex h-full min-h-0 flex-col gap-gap-control p-pad-panel"
             data-part="folder-scripts"
         >
-            <EventScripts
-                level={own.level}
+            <ScriptsByEvent
+                events={REQUEST_SCRIPT_EVENTS}
                 onChange={(scripts) => {
                     // An empty map is not a thing the file keeps: `null` takes the key out.
                     scheduleFolderSettingsWrite(
@@ -38,9 +38,9 @@ export function FolderScripts() {
                         notifyFailure,
                     );
                 }}
+                place={{ level: own.level, workspaceId }}
                 resource={resource}
                 scripts={own.settings.scripts}
-                workspaceId={workspaceId}
             />
         </div>
     );

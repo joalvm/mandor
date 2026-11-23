@@ -264,5 +264,13 @@
     "scriptLevel-folder": "Carpeta",
     "scriptLevel-collection": "Colección",
     "scriptLevel-connection": "Conexión",
+    "scriptEvent-onBeforeRequest": "Antes del request",
+    "scriptEvent-onResponse": "Tras la response",
+    "scriptEvent-onBeforeConnect": "Antes de conectar",
+    "scriptEvent-onConnect": "Al conectar",
+    "scriptEvent-onMessage": "Con los mensajes",
+    "scriptEvents-send": "Momento del envío",
+    "scriptEvents-connection": "Momento de la conexión",
+    "scriptEnabled": "Activo",
     "reviewSkipped": "Revisar"
 }

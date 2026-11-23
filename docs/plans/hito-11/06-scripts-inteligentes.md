@@ -380,7 +380,7 @@ eso es la fase 3.
 - exportar a Postman y volver a importar da el mismo texto;
 - en Realtime, el import de AsyncAPI no cambia.
 
-### [ ] Fase 3: Un componente de momentos en las dos apps
+### [x] Fase 3: Un componente de momentos en las dos apps
 
 **Objetivo.** Request (request, carpeta, colección) y Realtime (diálogo de la conexión) muestran
 los scripts con el mismo componente: momentos en lista vertical, editor al lado, interruptor en su

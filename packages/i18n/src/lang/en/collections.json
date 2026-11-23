@@ -264,5 +264,13 @@
     "scriptLevel-folder": "Folder",
     "scriptLevel-collection": "Collection",
     "scriptLevel-connection": "Connection",
+    "scriptEvent-onBeforeRequest": "Before the request",
+    "scriptEvent-onResponse": "After the response",
+    "scriptEvent-onBeforeConnect": "Before connecting",
+    "scriptEvent-onConnect": "On connect",
+    "scriptEvent-onMessage": "On messages",
+    "scriptEvents-send": "Moment of the send",
+    "scriptEvents-connection": "Moment of the connection",
+    "scriptEnabled": "Enabled",
     "reviewSkipped": "Review"
 }

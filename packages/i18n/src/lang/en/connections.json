@@ -159,8 +159,6 @@
     "scriptEventOnConnect": "On connect",
     "scriptEventOnMessage": "On messages",
     "scriptsHelp": "Scripts do not write the auth or the subprotocols of the connection.",
-    "scriptEvents": "Moment of the connection",
-    "scriptEnabled": "Enabled",
     "connectWithoutScripts": "Connect without scripts",
     "scriptFailed": "failed",
     "scriptLines_one": "{{count}} line",

@@ -12,6 +12,8 @@ type TabsTabProps = PropsWithChildren<{
     /** The section has something in it that has no count to show, like a body or an auth. */
     filled?: boolean | undefined;
     label: string;
+    /** What the section holds is set aside, like a script switched off: its name reads dimmed. */
+    muted?: boolean | undefined;
     value: string;
 }>;
 
@@ -35,7 +37,16 @@ const TAB =
  * more than what is there. The dot only points: what is wrong is told inside the section. A
  * section with nothing to say keeps no room for it, so the strip spends its width on names.
  */
-export function TabsTab({ broken, children, count, dirty, filled, label, value }: TabsTabProps) {
+export function TabsTab({
+    broken,
+    children,
+    count,
+    dirty,
+    filled,
+    label,
+    muted,
+    value,
+}: TabsTabProps) {
     return (
         <TabsPrimitive.Trigger
             className={TAB}
@@ -43,6 +54,7 @@ export function TabsTab({ broken, children, count, dirty, filled, label, value }
             data-count={count === undefined || count === 0 ? undefined : String(count)}
             data-dirty={dirty === true ? '' : undefined}
             data-label={label}
+            data-muted={muted === true ? '' : undefined}
             data-part="tabs-trigger"
             data-value={value}
             value={value}

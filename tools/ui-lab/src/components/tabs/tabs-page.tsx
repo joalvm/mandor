@@ -2,6 +2,8 @@ import { ApiTable } from '../../pieces/api-table.js';
 import { DocPage } from '../../pieces/doc-page.js';
 import { DocSection } from '../../pieces/doc-section.js';
 import { Demo } from '../../pieces/demo.js';
+import columnaCode from './columna.tsx?raw';
+import { ColumnaDemo } from './columna.js';
 import estrechaCode from './estrecha.tsx?raw';
 import { EstrechaDemo } from './estrecha.js';
 import montajeCode from './montaje.tsx?raw';
@@ -19,6 +21,11 @@ const TABS_API = [
         name: 'onValueChange',
         type: '(value: string) => void',
         note: 'Avisa el cambio; el dueño lo guarda (en la pestaña, en la sesión).',
+    },
+    {
+        name: 'orientation',
+        type: "'horizontal' | 'vertical'",
+        note: 'La tira sobre los paneles (por defecto) o la columna a su lado, que caminan las flechas arriba y abajo.',
     },
 ] as const;
 
@@ -55,6 +62,11 @@ const TAB_API = [
         name: 'filled',
         type: 'boolean',
         note: 'Hay contenido sin número que mostrar: el punto callado de la ranura.',
+    },
+    {
+        name: 'muted',
+        type: 'boolean',
+        note: 'Lo que guarda está apartado (un script desactivado): el nombre se lee apagado.',
     },
 ] as const;
 
@@ -97,6 +109,14 @@ export function TabsPage() {
                 intent="Las secciones que no caben siguen en la lista, cortadas en el borde; el menú al final (TabsOverflow) las ofrece con su recuento y su punto. Elegir una la abre y la tira se desplaza hasta ella."
             >
                 <EstrechaDemo />
+            </Demo>
+
+            <Demo
+                code={columnaCode}
+                heading="Las secciones en columna"
+                intent="Con orientation vertical la lista va al lado de los paneles, tan ancha como el nombre más largo y sin menú: caben todas. Punto si hay código, nombre apagado si está desactivado."
+            >
+                <ColumnaDemo />
             </Demo>
 
             <DocSection

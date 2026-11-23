@@ -1,7 +1,7 @@
-import type { RequestItem } from '@mandor/schema';
+import { ScriptsByEvent } from '@mandor/collections';
+import { REQUEST_SCRIPT_EVENTS, type RequestItem } from '@mandor/schema';
 
 import { requestPartsOf } from '../../lib/request-parts.js';
-import { EventScripts } from './EventScripts.js';
 
 type RequestScriptsProps = {
     request: RequestItem;
@@ -12,20 +12,23 @@ type RequestScriptsProps = {
 };
 
 /**
- * The scripts of a request, one tab per moment of the send. What a document brought is there, in
- * its moment, not yet approved.
+ * The scripts of a request, by moment of the send: the moments in a column, the script of the one
+ * open beside them. What a document brought is there, in its moment, not yet approved.
  */
 export function RequestScripts({ request, resource, onChange }: RequestScriptsProps) {
     return (
         <div className="flex h-full min-h-0 flex-col gap-gap-control" data-part="request-scripts">
-            <EventScripts
-                level="request"
+            <ScriptsByEvent
+                events={REQUEST_SCRIPT_EVENTS}
                 onChange={(scripts) => {
                     onChange({ scripts });
                 }}
+                place={{
+                    level: 'request',
+                    workspaceId: requestPartsOf(resource)?.workspaceId ?? '',
+                }}
                 resource={resource}
                 scripts={request.scripts}
-                workspaceId={requestPartsOf(resource)?.workspaceId ?? ''}
             />
         </div>
     );

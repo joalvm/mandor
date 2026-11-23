@@ -29,3 +29,11 @@ export function switchedScript(entry: ScriptEntry | undefined, enabled: boolean)
 
     return enabled ? { source } : { source, enabled: false };
 }
+
+/**
+ * What the name of a moment tells from the list without opening it: a dot when it holds code,
+ * dimmed when it is switched off. A text of blanks is no code.
+ */
+export function momentMarksOf(entry: ScriptEntry | undefined): { filled: boolean; muted: boolean } {
+    return { filled: (entry?.source ?? '').trim() !== '', muted: entry?.enabled === false };
+}

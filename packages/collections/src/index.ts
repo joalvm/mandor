@@ -39,6 +39,7 @@ export { FolderSectionBody } from './components/folder/FolderSectionBody.js';
 export { folderPartsOf, folderResource } from './lib/folder-resource.js';
 export { openFolderTab } from './lib/open-folder-tab.js';
 export { EventScript } from './components/scripts/EventScript.js';
+export { ScriptsByEvent } from './components/scripts/ScriptsByEvent.js';
 export { ScriptEditor } from './components/scripts/ScriptEditor.js';
 export { ScriptMark } from './components/scripts/ScriptMark.js';
 export { ScriptMarkText } from './components/scripts/ScriptMarkText.js';

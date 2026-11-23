@@ -1,4 +1,5 @@
 import { createConnection, type ConnectionScripts } from '@mandor/schema';
+import { shellStore } from '@mandor/shell';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -27,6 +28,8 @@ function shown(scripts: ConnectionScripts | undefined) {
 
 afterEach(() => {
     cleanup();
+    // The moment open is remembered by the connection: each test starts on the first.
+    shellStore.getState().reset();
 });
 
 describe('the scripts of a connection, by moment of the connection', () => {
