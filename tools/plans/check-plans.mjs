@@ -12,7 +12,8 @@ import { leftoverMilestones, openMilestone, planFiles, statedStates } from './pl
 const folder = openMilestone('.');
 const stated = folder === undefined ? {} : statedStates(folder);
 const leftovers = leftoverMilestones('.').map(
-    (name) => `docs/plans/${name} belongs to a closed milestone: its folder should be gone`,
+    (name) =>
+        `docs/plans/${name} belongs to a milestone that is neither open nor pending: its folder should be gone`,
 );
 const problems = [
     ...leftovers,

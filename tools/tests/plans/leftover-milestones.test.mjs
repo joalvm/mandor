@@ -76,4 +76,12 @@ describe('leftoverMilestones', () => {
 
         expect(leftoverMilestones(repoWith(['hito-5'], closed))).toEqual(['hito-5']);
     });
+
+    it('keeps the folder of a milestone whose plans were written ahead', () => {
+        const ahead = `${TABLE}\n| H6   | CLI | pendiente |`;
+
+        expect(leftoverMilestones(repoWith(['hito-5', 'hito-6', 'hito-7'], ahead))).toEqual([
+            'hito-7',
+        ]);
+    });
 });
