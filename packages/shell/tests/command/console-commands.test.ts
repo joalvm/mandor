@@ -23,7 +23,7 @@ describe('the command of the console', () => {
     /** The keys of the debug console of the code editors. */
     it('has a shortcut that works from inside a field', () => {
         expect(DEFAULT_SHORTCUTS).toContainEqual({
-            combination: '$mod+Shift+KeyY',
+            combination: '$mod+Alt+KeyC',
             command: 'shell.toggleConsole',
             scope: 'editing',
         });

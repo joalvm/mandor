@@ -39,6 +39,16 @@ describe('the switch of the console on the status line', () => {
         expect(consoleStore.getState().open).toBe(false);
     });
 
+    it('says in its tooltip the keys that bring the console out', async () => {
+        draw();
+
+        fireEvent.focus(screen.getByRole('button', { name: 'Mostrar la consola' }));
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent(
+            'Mostrar la consola (Ctrl+Alt+C)',
+        );
+    });
+
     it('counts the faults and the warnings the console holds, and nothing when there are none', () => {
         draw();
 

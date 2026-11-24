@@ -48,6 +48,8 @@ type IconButtonProps = Omit<ComponentProps<'button'>, 'aria-label' | 'disabled' 
         /** Defaults to the small glyph inside the xs square, so the box keeps air around it. */
         iconSize?: 'md' | 'sm' | undefined;
         label: string;
+        /** The keys that run the same action, said in the tooltip after the label and never in the name. */
+        shortcut?: string | undefined;
         /** Under the header of a section the box is the header's own, whatever is asked here. */
         size?: 'md' | 'sm' | 'xs' | undefined;
     };
@@ -66,6 +68,7 @@ export function IconButton({
     icon,
     iconSize,
     label,
+    shortcut,
     size,
     ...props
 }: IconButtonProps) {
@@ -96,5 +99,8 @@ export function IconButton({
         return <DisabledControlTooltip reason={disabledReason}>{control}</DisabledControlTooltip>;
     }
 
-    return <Tooltip content={label}>{control}</Tooltip>;
+    // The keys go after the label in brackets, as an editor names a button that has them.
+    const tip = shortcut === undefined ? label : `${label} (${shortcut})`;
+
+    return <Tooltip content={tip}>{control}</Tooltip>;
 }
