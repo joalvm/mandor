@@ -18,6 +18,7 @@ import { runCommand, type EditorCommandId } from './run-command.js';
 import { explainModel } from './script-diagnostics.js';
 import { declareScript } from './script-language.js';
 import { releaseModel, retainModel, type EditorDocument } from './shared-models.js';
+import { typingElsewhere } from './typing-elsewhere.js';
 import { paintVariables } from './variable-decorations.js';
 
 /** Where an editor stands: how it is set up, and the document it shows, by key and first text. */
@@ -180,17 +181,6 @@ function selectRange(
     shown.setSelection(selection);
     shown.revealRangeInCenterIfOutsideViewport(selection);
     shown.focus();
-}
-
-/** A field outside the editor someone is writing in: the name of a row being renamed. */
-function typingElsewhere(element: HTMLElement): boolean {
-    const held = document.activeElement;
-
-    return (
-        held instanceof HTMLElement &&
-        !element.contains(held) &&
-        held.closest('input, textarea, [contenteditable]:not([contenteditable="false"])') !== null
-    );
 }
 
 /**
