@@ -1,4 +1,3 @@
-import type { RepoChange } from '@mandor/git';
 import {
     CHANNELS,
     environmentCreateRequestSchema,
@@ -15,11 +14,8 @@ import { createEnvironment as makeEnvironment, newId, type Environment } from '@
 import {
     deleteEnvironment as dropEnvironment,
     listEnvironments as readEnvironments,
-    updateEnvironment as editEnvironment,
     type EnvironmentPatch,
     environmentFile,
-    environmentTextWith,
-    keepSecrets,
     readEnvironment,
     readTextOrNull,
     writeEnvironment,
@@ -30,13 +26,11 @@ import type { HandlerIpc } from '../ipc/handler-ipc.js';
 import { rootedHandler } from '../ipc/rooted-handler.js';
 import { reportUnreadable, type UnreadableDeps } from '../notice/unreadable-files.js';
 import { activeRepo } from '../origin/active-repo.js';
-import { guardedWrite } from '../repo/guarded-write.js';
 import { rememberText } from '../repo/known-texts.js';
 import { nameOnDisk } from '../repo/name-on-disk.js';
-import { repoRelative } from '../repo/repo-relative.js';
 import { reshapeRepo } from '../repo/reshape-repo.js';
-import { keepEnvironmentSecrets } from '../secret/keep-environment-secrets.js';
 import { registerActiveEnvironmentHandlers } from './active-environment.handlers.js';
+import { environmentPath, saveEnvironment } from './save-environment.js';
 
 /** Where the values of the secret variables go, which is never the repo. */
 export type EnvironmentHandlerDeps = UnreadableDeps & {
@@ -71,7 +65,7 @@ const createChannel = rootedHandler(
         await reshapeRepo(
             {
                 root,
-                paths: [placeOf(root, workspaceId, environment.id)],
+                paths: [environmentPath(root, workspaceId, environment.id)],
                 change: { kind: 'create-environment', name: environment.name },
             },
             () => writeEnvironment(root, workspaceId, environment),
@@ -90,7 +84,7 @@ function listChannel({ notices, logger }: UnreadableDeps) {
         for (const { id } of environments) {
             const text = await readTextOrNull(environmentFile(root, workspaceId, id));
 
-            rememberText(root, placeOf(root, workspaceId, id), text);
+            rememberText(root, environmentPath(root, workspaceId, id), text);
         }
 
         return environments;
@@ -115,27 +109,13 @@ async function updateEnvironment(
     try {
         const { workspaceId, environmentId, changes } = request.data;
         const { root } = repo.value;
-        const patch = edited(changes);
-        const path = placeOf(root, workspaceId, environmentId);
-        const keep = keepEnvironmentSecrets({
-            userDataDir: deps.userDataDir,
-            root,
-            place: { repo: repo.value.id, workspaceId, environmentId },
-        });
 
-        await guardedWrite({
-            root,
-            path,
-            // Started here, awaited after the turn: a save with a new name, which reads nothing,
-            // does not overtake one sent before it.
-            change: Promise.resolve(patch.name ?? nameOnDisk(root, path)).then(
-                (name): RepoChange => ({ kind: 'update-environment', name }),
-            ),
-            beforeWrite: () => keepSecrets(keep, { variables: patch.variables ?? [] }),
-            oursFrom: (base) => environmentTextWith(base ?? '', patch),
-            write: async () => {
-                await editEnvironment({ root, workspaceId, environmentId, changes: patch });
-            },
+        await saveEnvironment({
+            userDataDir: deps.userDataDir,
+            repo: repo.value,
+            workspaceId,
+            environmentId,
+            changes: edited(changes),
         });
 
         return success(await readEnvironment(root, workspaceId, environmentId));
@@ -147,7 +127,7 @@ async function updateEnvironment(
 const deleteChannel = rootedHandler(
     environmentDeleteRequestSchema,
     async (root, { workspaceId, environmentId }): Promise<Empty> => {
-        const path = placeOf(root, workspaceId, environmentId);
+        const path = environmentPath(root, workspaceId, environmentId);
 
         await reshapeRepo(
             {
@@ -162,11 +142,6 @@ const deleteChannel = rootedHandler(
         return {};
     },
 );
-
-/** Where one environment sits inside the repo, spelled for git. */
-function placeOf(root: string, workspaceId: string, environmentId: string): string {
-    return repoRelative(root, environmentFile(root, workspaceId, environmentId));
-}
 
 function edited({ name, variables }: EnvironmentChanges): EnvironmentPatch {
     return {

@@ -20,6 +20,7 @@ import type { HandlerIpc } from '../ipc/handler-ipc.js';
 import { activeRepo } from '../origin/active-repo.js';
 import { approvalKey } from './approval-key.js';
 import { approvedScripts, type ApprovedScripts } from './approved-scripts.js';
+import { createScriptEnvironment, type ScriptEnvironment } from './script-environment.js';
 import type { ScriptVariables } from './script-variables.js';
 import {
     newScriptSlots,
@@ -41,6 +42,8 @@ type HandlerScripts = ScriptsHandlerDeps & { variables: ScriptVariables };
 export type RunScripts = ScriptsHandlerDeps & {
     /** A chain of scripts over the workers of the app, which a script cannot stop. */
     startChain: (options: ScriptChainOptions) => ScriptChain;
+    /** Where a value a script set goes when the environment of the run declares its name. */
+    environment?: ScriptEnvironment;
 };
 
 /**
@@ -57,6 +60,7 @@ export async function openScripts(
         approvals: approvedScripts(userDataDir),
         scriptsSwitch: await createScriptsSwitch(userDataDir),
         startChain: (options) => startScriptWorker(slots, options),
+        environment: createScriptEnvironment(userDataDir),
         close: () => {
             slots.close();
         },

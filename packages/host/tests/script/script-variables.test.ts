@@ -97,4 +97,21 @@ describe('createScriptVariables', () => {
         expect(variables.values(HERE)).toEqual({ a: '1' });
         expect(variables.apply(HERE, at(), [{ name: 'a', value: '1234' }])).toBe('applied');
     });
+
+    /** A name the environment took is the environment's: an old value here would hide it. */
+    it('lets go of the names it is told, in that place only', () => {
+        const variables = createScriptVariables();
+        const there = { ...HERE, environmentId: 'prod' };
+
+        variables.apply(HERE, variables.generation(HERE), [
+            { name: 'a', value: '1' },
+            { name: 'b', value: '2' },
+        ]);
+        variables.apply(there, variables.generation(there), [{ name: 'a', value: '3' }]);
+        variables.release(HERE, ['a', 'missing']);
+        variables.release({ ...HERE, workspaceId: 'none' }, ['a']);
+
+        expect(variables.values(HERE)).toEqual({ b: '2' });
+        expect(variables.values(there)).toEqual({ a: '3' });
+    });
 });
