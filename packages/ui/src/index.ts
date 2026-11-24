@@ -39,6 +39,12 @@ export { SearchInput } from './components/input/SearchInput.js';
 export { Textarea } from './components/input/Textarea.js';
 export { ListRow } from './components/row/ListRow.js';
 export { LogLines, type LogLine, type LogTone } from './components/log/LogLines.js';
+export { ConsoleEntries } from './components/console/ConsoleEntries.js';
+export type {
+    ConsoleEntry,
+    ConsoleLevel,
+    ConsoleSection,
+} from './components/console/console-entry.js';
 export { RowList } from './components/row/RowList.js';
 export type { RowActivation } from './components/row/row-activation.js';
 export { MethodMark } from './components/indicator/MethodMark.js';

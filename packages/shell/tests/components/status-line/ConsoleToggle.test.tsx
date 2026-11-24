@@ -56,11 +56,11 @@ describe('the switch of the console on the status line', () => {
         expect(screen.queryByLabelText(/aviso/u)).toBeNull();
 
         act(() => {
-            writeConsole({ id: 'a', title: 'GET altas' }, [
-                { key: '1', tone: 'error', text: 'Error: no' },
-                { key: '2', tone: 'error', text: 'Error: otra' },
-                { key: '3', tone: 'warn', text: 'cuidado' },
-                { key: '4', tone: 'log', text: 'hola' },
+            writeConsole([
+                { level: 'error', text: 'Error: no' },
+                { level: 'error', text: 'Error: otra' },
+                { level: 'warn', text: 'cuidado' },
+                { level: 'log', text: 'hola' },
             ]);
         });
 

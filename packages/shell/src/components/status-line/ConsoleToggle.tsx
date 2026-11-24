@@ -4,7 +4,7 @@ import { Badge, IconButton } from '@mandor/ui';
 import { useMemo } from 'react';
 import { useStore } from 'zustand';
 
-import { consoleCounts } from '../../console/console-runs.js';
+import { consoleCounts } from '../../console/console-entries.js';
 import { consoleStore } from '../../console/console-store.js';
 import { isApplePlatform } from '../../shortcut/apple-platform.js';
 import { DEFAULT_SHORTCUTS } from '../../shortcut/default-shortcuts.js';
@@ -22,8 +22,8 @@ export function ConsoleToggle() {
     const messages = useMessages('shell');
     const open = useStore(consoleStore, (state) => state.open);
     const toggle = useStore(consoleStore, (state) => state.toggle);
-    const errors = useStore(consoleStore, (state) => consoleCounts(state.runs).errors);
-    const warnings = useStore(consoleStore, (state) => consoleCounts(state.runs).warnings);
+    const errors = useStore(consoleStore, (state) => consoleCounts(state.entries).errors);
+    const warnings = useStore(consoleStore, (state) => consoleCounts(state.entries).warnings);
     const combination = useMemo(
         () => shortcutTable(DEFAULT_SHORTCUTS).get(TOGGLE_COMMAND)?.combination,
         [],

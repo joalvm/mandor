@@ -61,12 +61,14 @@ textarea,
 }
 
 [data-part='activity-viewport'],
+[data-part='console-entries-viewport'],
 [data-part='example-diff-viewport'],
 [data-part='log-lines-viewport'] {
     height: attr(data-total-size type(<length>), 0px);
 }
 
 [data-part='activity-window'],
+[data-part='console-entries-window'],
 [data-part='example-diff-lines'],
 [data-part='log-lines-window'] {
     transform: translateY(attr(data-offset type(<length>), 0px));

@@ -26,8 +26,11 @@ function move(change: () => void): void {
     });
 }
 
-function runs() {
-    return consoleStore.getState().runs;
+/** The entries without what the console stamps on them: the key, the time and the weight. */
+function written() {
+    return consoleStore
+        .getState()
+        .entries.map(({ level, text, detail, source }) => ({ level, text, detail, source }));
 }
 
 beforeEach(() => {
@@ -41,7 +44,7 @@ afterEach(() => {
     connectionsStore.getState().reset();
 });
 
-// The lines are those of connection-console, read here as the console gets them from the hook.
+// The lines are those of connection-console-writes, read here as the console gets them from the hook.
 describe('what every connection writes to the console of the window', () => {
     it('writes the dial, the socket coming up and going down, under the name of the connection', () => {
         hear();
@@ -56,12 +59,15 @@ describe('what every connection writes to the console of the window', () => {
             connectionsStore.getState().setConnectionState('alpha', 'closed');
         });
 
-        expect(runs()).toHaveLength(1);
-        expect(runs()[0]?.title).toBe('Gateway');
-        expect(runs()[0]?.lines.map(({ tone, text }) => ({ tone, text }))).toEqual([
-            { tone: 'note', text: `Connecting · ${URL_OF}` },
-            { tone: 'info', text: `Connected · ${URL_OF}` },
-            { tone: 'note', text: `Disconnected · ${URL_OF}` },
+        expect(written()).toEqual([
+            { level: 'log', text: `Connecting · ${URL_OF}`, detail: undefined, source: 'Gateway' },
+            { level: 'info', text: `Connected · ${URL_OF}`, detail: undefined, source: 'Gateway' },
+            {
+                level: 'log',
+                text: `Disconnected · ${URL_OF}`,
+                detail: undefined,
+                source: 'Gateway',
+            },
         ]);
     });
 
@@ -77,13 +83,13 @@ describe('what every connection writes to the console of the window', () => {
                 .setConnectionError('alpha', 'ws-open-failed', 'getaddrinfo ENOTFOUND badurl');
         });
 
-        const failure = runs()[0]?.lines[1];
+        const failure = written()[1];
 
-        expect(failure).toMatchObject({ tone: 'error', detail: 'getaddrinfo ENOTFOUND badurl' });
+        expect(failure).toMatchObject({ level: 'error', detail: 'getaddrinfo ENOTFOUND badurl' });
         expect(failure?.text).toMatch(/^ws:\/\/127\.0\.0\.1:8080\/alpha · \S/u);
     });
 
-    it('writes each retry, and a new dial from rest as a run of its own', () => {
+    it('writes each retry as a warning, and each new dial from rest', () => {
         hear();
 
         move(() => {
@@ -99,13 +105,8 @@ describe('what every connection writes to the console of the window', () => {
             connectionsStore.getState().setConnectionState('alpha', 'connecting');
         });
 
-        expect(runs()).toHaveLength(2);
-        const tones = runs().map((run) => run.lines.map(({ tone }) => tone).join(' '));
-
-        expect(tones.sort()).toEqual(['note', 'note warn']);
-        expect(
-            runs().some((run) => run.lines.some((line) => line.text.includes('attempt 2'))),
-        ).toBe(true);
+        expect(written().map(({ level }) => level)).toEqual(['log', 'warn', 'log']);
+        expect(written()[1]?.text).toContain('attempt 2');
     });
 
     it('writes nothing once the window stops hearing', () => {
@@ -116,6 +117,6 @@ describe('what every connection writes to the console of the window', () => {
             connectionsStore.getState().setConnectionState('alpha', 'connecting');
         });
 
-        expect(runs()).toEqual([]);
+        expect(written()).toEqual([]);
     });
 });

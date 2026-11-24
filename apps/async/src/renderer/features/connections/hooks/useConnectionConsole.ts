@@ -4,13 +4,12 @@ import { useEffect, useEffectEvent } from 'react';
 
 import type { ConnectionsSlice } from '../connections.slice.js';
 import { connectionsStore } from '../connections-store.js';
-import { connectionConsoleWrites } from '../lib/connection-console.js';
+import { connectionConsoleWrites } from '../lib/connection-console-writes.js';
 
 /**
  * Writes every connection of the window to its console as it moves: the dial, the socket coming
- * up or going down, each retry and each failure in the words of the transport. Each dial from rest
- * is a run of its own under the name of the connection, as a browser keeps one line per socket.
- * Mounted once by the window.
+ * up or going down, each retry and each failure in the words of the transport, each entry saying
+ * the name of its connection, as a browser keeps the sockets of its page.
  */
 export function useConnectionConsole(): void {
     const connections = useMessages('connections');
@@ -20,22 +19,11 @@ export function useConnectionConsole(): void {
     );
 
     // The store lives as long as the window, so the subscription has a whole life cycle.
-    useEffect(() => {
-        const runs = new Map<string, string>();
-        let written = 0;
-
-        return connectionsStore.subscribe((next, previous) => {
-            for (const { connection, starts, line } of writesOf(next, previous)) {
-                written += 1;
-
-                if (starts || !runs.has(connection.id)) {
-                    runs.set(connection.id, `${connection.id}/${String(written)}`);
-                }
-
-                const id = runs.get(connection.id) ?? connection.id;
-
-                writeConsole({ id, title: connection.name }, [{ key: String(written), ...line }]);
-            }
-        });
-    }, []);
+    useEffect(
+        () =>
+            connectionsStore.subscribe((next, previous) => {
+                writeConsole(writesOf(next, previous));
+            }),
+        [],
+    );
 }

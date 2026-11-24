@@ -5,7 +5,7 @@ import { act, cleanup, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { consoleStore, writeConsole } from '../../src/console/console-store.js';
+import { consoleStore } from '../../src/console/console-store.js';
 import { reportFault } from '../../src/fault/report-fault.js';
 import { useWindowConsole } from '../../src/hooks/useWindowConsole.js';
 import { recordNotice } from '../../src/record-notice.js';
@@ -25,8 +25,11 @@ function hear(): () => void {
     return unmount;
 }
 
-function runs() {
-    return consoleStore.getState().runs;
+/** The entries without what the console stamps on them: the key, the time and the weight. */
+function written() {
+    return consoleStore
+        .getState()
+        .entries.map(({ level, text, detail, source }) => ({ level, text, detail, source }));
 }
 
 beforeEach(() => {
@@ -48,11 +51,9 @@ describe('what the window itself writes to its console', () => {
             recordNotice({ tone: 'error', title: 'No se pudo guardar', detail: 'EACCES' });
         });
 
-        expect(runs()).toHaveLength(1);
-        expect(runs()[0]?.title).toBe('Ventana');
-        expect(runs()[0]?.lines).toEqual([
-            { key: '1', tone: 'info', text: 'Guardado', detail: undefined },
-            { key: '2', tone: 'error', text: 'No se pudo guardar', detail: 'EACCES' },
+        expect(written()).toEqual([
+            { level: 'info', text: 'Guardado', detail: undefined, source: 'Ventana' },
+            { level: 'error', text: 'No se pudo guardar', detail: 'EACCES', source: 'Ventana' },
         ]);
     });
 
@@ -64,25 +65,16 @@ describe('what the window itself writes to its console', () => {
             reportFault('react-recoverable', new Error('repintado'));
         });
 
-        const lines = runs()[0]?.lines ?? [];
+        const entries = written();
 
-        expect(lines[0]).toEqual({ key: '1', tone: 'error', text: 'se perdió', detail: undefined });
-        expect(lines[1]).toMatchObject({ tone: 'warn', text: 'repintado' });
-        expect(lines[1]?.detail).toContain('repintado');
-    });
-
-    it('opens a new run when anything else wrote between two of its lines', () => {
-        hear();
-
-        act(() => {
-            recordNotice({ tone: 'info', title: 'uno' });
-            writeConsole({ id: 'send', title: 'POST Sesión' }, [
-                { key: 'a', tone: 'log', text: 'x' },
-            ]);
-            recordNotice({ tone: 'info', title: 'dos' });
+        expect(entries[0]).toEqual({
+            level: 'error',
+            text: 'se perdió',
+            detail: undefined,
+            source: 'Ventana',
         });
-
-        expect(runs().map((run) => run.title)).toEqual(['Ventana', 'POST Sesión', 'Ventana']);
+        expect(entries[1]).toMatchObject({ level: 'warn', text: 'repintado' });
+        expect(entries[1]?.detail).toContain('repintado');
     });
 
     it('writes nothing once the window stops hearing', () => {
@@ -93,6 +85,6 @@ describe('what the window itself writes to its console', () => {
             recordNotice({ tone: 'warning', title: 'tarde' });
         });
 
-        expect(runs()).toEqual([]);
+        expect(written()).toEqual([]);
     });
 });

@@ -46,8 +46,8 @@ function heard() {
     };
 }
 
-function lines() {
-    return consoleStore.getState().runs[0]?.lines ?? [];
+function entries() {
+    return consoleStore.getState().entries;
 }
 
 beforeEach(() => {
@@ -63,14 +63,14 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-// The lines are those of send-log-lines, read here as the console gets them from the hook.
+// The entry is that of send-console-entry, read here as the console gets it from the hook.
 describe('what every send writes to the console of the window', () => {
-    it('writes what left and what came back, with the headers of both under it', () => {
+    it('writes what left and what came back as one entry, with the headers and bodies under it', () => {
         const { tell } = heard();
 
         tell({
             sendId: SEND,
-            sent: SENT,
+            sent: { ...SENT, body: '{"user":"ana"}' },
             answer: {
                 status: 201,
                 statusText: 'Created',
@@ -78,34 +78,34 @@ describe('what every send writes to the console of the window', () => {
                 bodyBytes: 1200,
                 headers: [
                     ['content-type', 'application/json'],
-                    ['x-id', '7'],
+                    ['set-cookie', 'a=1'],
+                    ['set-cookie', 'b=2'],
                 ],
+                body: 'plain text',
             },
         });
 
-        expect(consoleStore.getState().runs[0]?.title).toBe('POST Sesión');
-        expect(lines()).toEqual([
-            {
-                key: 'send',
-                tone: 'log',
-                text: 'POST http://localhost:81/session · 201 Created · 120 ms · 1.2 kB',
-            },
-            {
-                key: 'send-sent',
-                tone: 'note',
-                text: 'Request headers',
-                detail: 'User-Agent: Mozilla/5.0',
-            },
-            {
-                key: 'send-answer',
-                tone: 'note',
-                text: 'Response headers',
-                detail: 'content-type: application/json\nx-id: 7',
-            },
-        ]);
+        expect(entries()).toHaveLength(1);
+        expect(entries()[0]).toMatchObject({
+            level: 'log',
+            text: 'POST http://localhost:81/session',
+            source: 'POST Sesión',
+            network: true,
+            status: { text: '201 Created', outcome: 'ok' },
+            time: '120 ms',
+            sections: [
+                { title: 'Request headers', value: { 'User-Agent': 'Mozilla/5.0' } },
+                { title: 'Request body', value: { user: 'ana' } },
+                {
+                    title: 'Response headers',
+                    value: { 'content-type': 'application/json', 'set-cookie': ['a=1', 'b=2'] },
+                },
+                { title: 'Response body', value: 'plain text' },
+            ],
+        });
     });
 
-    it('writes a refusal of the server in red, as a browser does', () => {
+    it('writes a refusal of the server in red, as Postman does', () => {
         const { tell } = heard();
 
         tell({
@@ -114,13 +114,11 @@ describe('what every send writes to the console of the window', () => {
             answer: { status: 404, statusText: '', totalMs: 3, bodyBytes: 0, headers: [] },
         });
 
-        expect(lines()).toEqual([
-            {
-                key: 'send',
-                tone: 'error',
-                text: 'POST http://localhost:81/session · 404 · 3 ms · 0 B',
-            },
-        ]);
+        expect(entries()[0]).toMatchObject({
+            level: 'error',
+            status: { text: '404', outcome: 'refused' },
+            sections: [],
+        });
     });
 
     it('writes why nothing came back, in the words of the error and of the transport', () => {
@@ -132,19 +130,22 @@ describe('what every send writes to the console of the window', () => {
             error: { code: 'request-unreachable', message: 'getaddrinfo ENOTFOUND badurl' },
         });
 
-        expect(lines()[0]).toMatchObject({ tone: 'error', detail: 'getaddrinfo ENOTFOUND badurl' });
-        expect(lines()[0]?.text).toMatch(/^POST http:\/\/localhost:81\/session · \S/u);
+        expect(entries()[0]).toMatchObject({
+            level: 'error',
+            text: 'POST http://localhost:81/session',
+        });
+        expect(entries()[0]?.detail).toMatch(/\S\ngetaddrinfo ENOTFOUND badurl$/u);
+        expect(entries()[0]?.status).toBeUndefined();
     });
 
-    it('writes a send that ended before leaving and a cancel without the red', () => {
+    it('writes a send that ended before leaving under its name, and a cancel without the red', () => {
         const { tell } = heard();
 
         tell({ sendId: SEND, error: { code: 'request-aborted', message: '' } });
 
-        expect(lines()).toHaveLength(1);
-        expect(lines()[0]?.tone).toBe('note');
-        expect(lines()[0]?.detail).toBeUndefined();
-        expect(lines()[0]?.text).not.toContain('POST');
+        expect(entries()).toHaveLength(1);
+        expect(entries()[0]).toMatchObject({ level: 'log', text: 'POST Sesión' });
+        expect(entries()[0]?.detail).not.toContain('\n');
     });
 
     it('writes nothing for a send it was not told of, and stops hearing once unmounted', () => {
@@ -153,7 +154,7 @@ describe('what every send writes to the console of the window', () => {
         tell({ sendId: UNKNOWN, error: { code: 'request-failed', message: 'no' } });
         unmount();
 
-        expect(consoleStore.getState().runs).toEqual([]);
+        expect(entries()).toEqual([]);
         expect(stopPush).toHaveBeenCalledOnce();
     });
 });
