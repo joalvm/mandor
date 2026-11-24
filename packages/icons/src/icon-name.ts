@@ -10,6 +10,7 @@ export const ICON_NAMES = [
     'chevron-left',
     'chevron-right',
     'chevron-up',
+    'clear-all',
     'close',
     'code',
     'collapse-all',

@@ -11,6 +11,7 @@ import { ChevronDownIcon } from './chevron-down.js';
 import { ChevronLeftIcon } from './chevron-left.js';
 import { ChevronRightIcon } from './chevron-right.js';
 import { ChevronUpIcon } from './chevron-up.js';
+import { ClearAllIcon } from './clear-all.js';
 import { CloseIcon } from './close.js';
 import { CodeIcon } from './code.js';
 import { CollapseAllIcon } from './collapse-all.js';
@@ -103,6 +104,7 @@ export const ICONS = {
     'chevron-left': ChevronLeftIcon,
     'chevron-right': ChevronRightIcon,
     'chevron-up': ChevronUpIcon,
+    'clear-all': ClearAllIcon,
     close: CloseIcon,
     code: CodeIcon,
     'collapse-all': CollapseAllIcon,

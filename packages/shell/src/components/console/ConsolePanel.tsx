@@ -27,8 +27,9 @@ const LEVEL_LABELS: readonly { label: LevelLabel; value: ConsoleLevelFilter }[] 
 ];
 
 /**
- * The console itself, as Postman draws its own: a bar to filter it by text and by level, its
- * settings, and every entry under it, oldest first, the newest at the bottom where the eye looks
+ * The console itself, as Postman draws its own: a bar with the filter by text, the one by level
+ * and the way to empty it on the left, its settings and the way to put it away on the right, and
+ * every entry under it, oldest first, the newest at the bottom where the eye looks
  * for it. It is emptied by hand and put away by hand; nothing in it opens or closes on its own.
  * It is a card of its own under the work, apart from it by the gutter of the frame.
  */
@@ -48,7 +49,7 @@ export function ConsolePanel() {
         <Card aria-label={messages('consoleTitle')}>
             <div className={BAND} data-part="console-header">
                 <SearchInput
-                    className="min-w-0 flex-1"
+                    className="w-64 min-w-0 shrink"
                     label={messages('consoleFilter')}
                     onValueChange={setQuery}
                     placeholder={messages('consoleFilterPlaceholder')}
@@ -66,15 +67,15 @@ export function ConsolePanel() {
                     }))}
                     value={settings.level}
                 />
-                <div className="flex shrink-0 items-center gap-gap-tight">
+                <IconButton
+                    icon="clear-all"
+                    iconSize="sm"
+                    label={messages('consoleClear')}
+                    onClick={clear}
+                    size="xs"
+                />
+                <div className="ml-auto flex shrink-0 items-center gap-gap-control">
                     <ConsoleSettingsMenu />
-                    <IconButton
-                        icon="delete"
-                        iconSize="sm"
-                        label={messages('consoleClear')}
-                        onClick={clear}
-                        size="xs"
-                    />
                     <IconButton
                         icon="close"
                         iconSize="sm"
