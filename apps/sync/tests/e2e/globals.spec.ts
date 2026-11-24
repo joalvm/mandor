@@ -72,7 +72,7 @@ async function writeGlobalThenOverride(page: Page, root: string): Promise<void> 
 
     const again = await openDialog(page);
 
-    await again.getByRole('option', { name: 'Local' }).click();
+    await again.getByRole('option', { name: 'New environment' }).click();
     await writeRowAt(
         again.getByRole('textbox', { exact: true, name: 'Key' }).nth(1),
         again.getByRole('textbox', { exact: true, name: 'Value' }).nth(1),

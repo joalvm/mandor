@@ -1,7 +1,7 @@
 {
     "close": "Close",
     "create": "Create environment",
-    "defaultName": "Local",
+    "defaultName": "New environment",
     "defaultNamed": "{{name}} (default)",
     "definedIn": "Defined in {{level}}",
     "delete": "Delete environment",

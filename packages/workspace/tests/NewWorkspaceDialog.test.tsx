@@ -36,6 +36,8 @@ describe('the new workspace dialog', () => {
 
         const field = screen.getByRole('textbox', { name: 'Workspace name' });
 
+        field.textContent = '';
+        fireEvent.input(field);
         expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled();
         field.textContent = 'Events';
         fireEvent.input(field);
@@ -74,5 +76,23 @@ describe('the new workspace dialog', () => {
             );
         });
         expect(onClose).not.toHaveBeenCalled();
+    });
+
+    /** Every new thing comes named: the name is proposed, selected, and the first key replaces it. */
+    it('proposes a name, selected for the first key to replace', async () => {
+        render(<NewWorkspaceDialog onClose={vi.fn()} onCreated={vi.fn()} />, {
+            wrapper: Wrapper,
+        });
+
+        const field = screen.getByRole('textbox', { name: 'Workspace name' });
+
+        expect(field).toHaveTextContent('New workspace');
+        expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled();
+
+        field.focus();
+
+        await vi.waitFor(() => {
+            expect(window.getSelection()?.toString()).toBe('New workspace');
+        });
     });
 });

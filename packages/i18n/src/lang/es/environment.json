@@ -1,7 +1,7 @@
 {
     "close": "Cerrar",
     "create": "Crear entorno",
-    "defaultName": "Local",
+    "defaultName": "Nuevo entorno",
     "defaultNamed": "{{name}} (por defecto)",
     "definedIn": "Definida en {{level}}",
     "delete": "Borrar entorno",

@@ -91,7 +91,7 @@ describe('the environment picker', () => {
         openMenu(/No environment/u);
         fireEvent.click(screen.getByRole('menuitem', { name: 'Create environment' }));
 
-        expect(create).toHaveBeenCalledWith('payments', 'Local');
+        expect(create).toHaveBeenCalledWith('payments', 'New environment');
     });
 
     it('manages the environments in a dialog instead of opening a tab for them', () => {

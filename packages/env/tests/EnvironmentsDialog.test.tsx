@@ -90,7 +90,7 @@ describe('the environments dialog', () => {
 
         expect(bridge.environment.create).toHaveBeenCalledWith({
             workspaceId: 'payments',
-            name: 'Local',
+            name: 'New environment',
         });
     });
 

@@ -2,9 +2,11 @@ import { AddIcon } from '@mandor/icons';
 import { useMessages } from '@mandor/i18n';
 import type { Workspace } from '@mandor/schema';
 import { Button, Dialog, DialogBody, DialogFooter, Field, Input } from '@mandor/ui';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { bridge, fireAndForget, useFailureToast } from '@mandor/shell';
+
+import { useNameSelected } from './useNameSelected.js';
 
 type NewWorkspaceDialogProps = {
     /** Called with what main answered, so the panel can offer it and make it the open one. */
@@ -13,15 +15,19 @@ type NewWorkspaceDialogProps = {
 };
 
 /**
- * The whole of creating a workspace: one name, asked where nothing else asks to be read. The
+ * The whole of creating a workspace: one name, asked where nothing else asks to be read. It comes
+ * proposed and selected, like any new thing in the app, so typing replaces it. The
  * id never crosses the dialog — main derives it from the name, and the caller keeps working
  * with what came back.
  */
 export function NewWorkspaceDialog({ onCreated, onClose }: NewWorkspaceDialogProps) {
     const messages = useMessages('workspace');
     const notifyFailure = useFailureToast();
-    const [name, setName] = useState('');
+    const [name, setName] = useState(() => messages('newWorkspace'));
     const [busy, setBusy] = useState(false);
+    const fieldRef = useRef<HTMLSpanElement>(null);
+
+    useNameSelected(fieldRef);
 
     const create = (): void => {
         if (busy || name.trim() === '') {
@@ -59,6 +65,7 @@ export function NewWorkspaceDialog({ onCreated, onClose }: NewWorkspaceDialogPro
             <DialogBody>
                 <Field id="new-workspace-name" label={messages('nameLabel')}>
                     <Input
+                        editableRef={fieldRef}
                         label={messages('nameLabel')}
                         onValueChange={setName}
                         value={name}
