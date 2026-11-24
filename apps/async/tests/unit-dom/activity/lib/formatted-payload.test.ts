@@ -15,6 +15,10 @@ describe('the payload of a frame as it reads', () => {
         expect(formattedPayload('{"id":12345678901234567890}')).toContain('12345678901234567890');
     });
 
+    it('reads the unicode escapes of json as their letters', () => {
+        expect(formattedPayload('{"m":"electr\\u00f3nico"}')).toBe('{\n    "m": "electrónico"\n}');
+    });
+
     it('leaves text exactly as it came', () => {
         expect(formattedPayload('  hola   mundo ')).toBe('  hola   mundo ');
     });

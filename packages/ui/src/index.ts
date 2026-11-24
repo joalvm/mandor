@@ -137,6 +137,7 @@ export type { EditorFix, FixesOf } from './editor/editor-fix.js';
 export { withUncheckedPatternMarks } from './editor/unchecked-pattern-marks.js';
 export type { EditorVariableHover, EditorVariables } from './editor/editor-variable.js';
 export { formattedJsonc } from './editor/jsonc-format.js';
+export { withEscapesShown } from './editor/json-escapes.js';
 export { schemaLintOf } from './editor/schema-lint-of.js';
 export { warmEditorWhenIdle } from './editor/warm-editor.js';
 export { MARKDOWN_PREVIEW_EVENT } from './editor/markdown-preview.js';

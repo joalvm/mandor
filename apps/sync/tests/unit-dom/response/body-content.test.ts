@@ -32,6 +32,19 @@ describe('what a view of a body draws', () => {
         expect(broken.text).toBe('{"a":');
     });
 
+    /** A server that escapes every accent is still read in letters, as Postman shows it. */
+    it('reads the unicode escapes of laid out json as their letters, and only those', () => {
+        const laid = bodyContentOf({
+            ...json,
+            bytes: encode('{"m":"electr\\u00f3nico","u":"a\\/b"}'),
+            format: 'json',
+        });
+        const raw = bodyContentOf({ ...json, bytes: encode('"\\u00f3"'), format: 'raw' });
+
+        expect(laid.text).toBe('{\n    "m": "electrónico",\n    "u": "a\\/b"\n}');
+        expect(raw.text).toBe('"\\u00f3"');
+    });
+
     it('lays out nothing and colours nothing past the size the viewer lays out', () => {
         const big = bodyContentOf({
             ...json,
