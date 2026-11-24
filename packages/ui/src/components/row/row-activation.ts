@@ -22,12 +22,19 @@ export type RowActivation = RowModifiers & {
     space?: boolean | undefined;
 };
 
+/** What a row reads of a click: the keys held, and which click of a double one it is. */
+type RowClick = RowModifiers & Pick<MouseEvent<HTMLElement>, 'detail'>;
+
+/** What a row reads of a key: the keys held, which one, where it was pressed, and its default. */
+type RowKey = RowModifiers &
+    Pick<KeyboardEvent<HTMLElement>, 'currentTarget' | 'key' | 'preventDefault' | 'target'>;
+
 function modifiersOf({ altKey, ctrlKey, metaKey, shiftKey }: RowModifiers): RowModifiers {
     return { altKey, ctrlKey, metaKey, shiftKey };
 }
 
 /** A click on a row: the second click of a double click is the one that keeps. */
-export function clickActivation(event: MouseEvent<HTMLElement>): RowActivation {
+export function clickActivation(event: RowClick): RowActivation {
     return { ...modifiersOf(event), keep: event.detail > 1 };
 }
 
@@ -44,10 +51,7 @@ export function clickedOnRow(event: MouseEvent<HTMLElement>): boolean {
  * on the row itself. A control inside it, or a field of what it opened in a portal, keeps them:
  * there Enter writes a line and space a space.
  */
-export function activateRow(
-    event: KeyboardEvent<HTMLElement>,
-    take: (activation: RowActivation) => void,
-): void {
+export function activateRow(event: RowKey, take: (activation: RowActivation) => void): void {
     if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) {
         return;
     }

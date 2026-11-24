@@ -5,6 +5,7 @@ import { noForeignIconSource } from './no-foreign-icon-source.js';
 import { dialogNeedsPolicy } from './dialog-needs-policy.js';
 import { noComponentProp } from './no-component-prop.js';
 import { noComponentTernary } from './no-component-ternary.js';
+import { noDoubleAssertion } from './no-double-assertion.js';
 import { noInlineNotice } from './no-inline-notice.js';
 import { noInnerBarrel } from './no-inner-barrel.js';
 import { noKindBranch } from './no-kind-branch.js';
@@ -30,6 +31,7 @@ export const mandorPlugin = {
         'no-app-kind-branch': noAppKindBranch,
         'no-component-prop': noComponentProp,
         'no-component-ternary': noComponentTernary,
+        'no-double-assertion': noDoubleAssertion,
         'no-foreign-icon-source': noForeignIconSource,
         'no-inline-notice': noInlineNotice,
         'no-inner-barrel': noInnerBarrel,

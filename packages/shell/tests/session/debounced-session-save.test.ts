@@ -7,13 +7,19 @@ import { initialShellData } from '../../src/shell-data.js';
 
 type Written = { session: UiSession };
 
+type Ledger = { runLeftovers: () => void };
+
+function isLedger(value: unknown): value is Ledger {
+    return typeof value === 'object' && value !== null && 'runLeftovers' in value;
+}
+
 /** What the setup of every file runs on its way out: see `tools/vitest/timers.ts`. */
 function endOfFile(): void {
-    const ledger = (globalThis as unknown as Record<symbol, { runLeftovers: () => void }>)[
-        Symbol.for('mandor.timers.ledger')
-    ];
+    const ledger: unknown = Reflect.get(globalThis, Symbol.for('mandor.timers.ledger'));
 
-    ledger?.runLeftovers();
+    if (isLedger(ledger)) {
+        ledger.runLeftovers();
+    }
 }
 
 function saverWritingTo(written: Written[]) {

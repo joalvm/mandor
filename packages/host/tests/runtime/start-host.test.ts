@@ -121,16 +121,22 @@ vi.mock('../../src/update/electron-update-deps.js', () => ({
 }));
 vi.mock('../../src/update/install-update.js', () => ({ isInstallRun: vi.fn(() => false) }));
 
-// The app answers only for what it decides; the rest of the config is never read by the start.
-const CONFIG = {
+// The app answers only for what it decides; what it brings of its own is empty, and the start
+// hands it on without reading it.
+const CONFIG: StartHostConfig = {
     appId: 'com.mandor.sync',
+    folderSettings: [],
+    forgetWorkspace: () => Promise.resolve(),
+    formats: [],
+    handlers: [],
     homepage: 'https://example.test',
     icon: 'icon.png',
     kind: 'sync',
     mainDir: '/app/out/main',
     productName: 'Mandor Request',
+    stores: [],
     title: 'Mandor Request',
-} as unknown as StartHostConfig;
+};
 
 const PLATFORM = process.platform;
 

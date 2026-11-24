@@ -1,13 +1,12 @@
 import { ROOT_GROUP_ID } from '@mandor/ipc';
 import { cleanup, render, screen } from '@testing-library/react';
-import type { DockviewGroupPanel } from 'dockview';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { TabStripActions } from '../../../src/components/tab-strip/TabStripActions.js';
 import { shellStore, TabStripAction } from '../../../src/index.js';
 
-function groupDouble(): DockviewGroupPanel {
-    return { id: ROOT_GROUP_ID, panels: [] } as unknown as DockviewGroupPanel;
+function groupDouble() {
+    return { id: ROOT_GROUP_ID };
 }
 
 /** Declares an action the way an app does, in a tree of its own that cleanup takes down. */

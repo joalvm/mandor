@@ -1,5 +1,4 @@
 import { EventEmitter } from 'node:events';
-import type { Worker } from 'node:worker_threads';
 
 import { SCRIPT_LIMITS, type WorkerMessage } from '@mandor/script';
 import { newEngine } from '@mandor/script/engine';
@@ -10,7 +9,7 @@ import {
     type ScriptChain,
     type ScriptChainOptions,
 } from '../script/start-script-worker.js';
-import { newWorkerSlots, type WorkerSlots } from '../script/worker-slots.js';
+import { newWorkerSlots } from '../script/worker-slots.js';
 
 type InProcessWorker = EventEmitter & {
     alive: boolean;
@@ -75,8 +74,7 @@ export function startInProcessScriptWorker(options: ScriptChainOptions = {}): Sc
         idleMs: SCRIPT_LIMITS.workerIdleMs,
         isAlive: (worker) => worker.alive,
     });
-    // The double has what a run of `startScriptWorker` touches of a `Worker`, and nothing more.
-    const chain = startScriptWorker(slots as unknown as WorkerSlots<Worker>, options);
+    const chain = startScriptWorker(slots, options);
 
     return {
         run: (input, signal) => chain.run(input, signal),

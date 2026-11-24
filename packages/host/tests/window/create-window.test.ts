@@ -2,12 +2,13 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { createWindow, type CreateWindowOptions } from '../../src/window/create-window.js';
 
-type Listener = (...args: never[]) => void;
+/** What the window asks before it leaves its document: the event to cancel it, and where to. */
+type Navigation = (event: { preventDefault: () => void }, url: string) => void;
 
 type WindowDouble = {
     options: Record<string, unknown>;
-    once: Record<string, Listener>;
-    contents: Record<string, Listener>;
+    once: Record<string, () => void>;
+    contents: Record<string, Navigation>;
     openHandler: ((details: { url: string }) => { action: string }) | null;
     show: Mock<() => void>;
     loadURL: Mock<(url: string) => Promise<void>>;
@@ -35,14 +36,14 @@ const electron = vi.hoisted(() => {
                 setWindowOpenHandler: (handler: WindowDouble['openHandler']) => {
                     double.openHandler = handler;
                 },
-                on: (event: string, listener: Listener) => {
+                on: (event: string, listener: Navigation) => {
                     double.contents[event] = listener;
                 },
             };
             windows.push(double);
         }
 
-        once(event: string, listener: Listener): void {
+        once(event: string, listener: () => void): void {
             this.double.once[event] = listener;
         }
 
@@ -99,6 +100,16 @@ function opened(options: CreateWindowOptions = OPTIONS): WindowDouble {
     }
 
     return window;
+}
+
+function navigationOf(window: WindowDouble): Navigation {
+    const listener = window.contents['will-navigate'];
+
+    if (listener === undefined) {
+        throw new Error('the window listens to no navigation');
+    }
+
+    return listener;
 }
 
 describe('opening the window of an app', () => {
@@ -180,10 +191,7 @@ describe('what the window refuses to do', () => {
         const preventDefault = vi.fn();
         const window = opened();
 
-        (window.contents['will-navigate'] as unknown as (e: object, url: string) => void)(
-            { preventDefault },
-            'https://evil.example/',
-        );
+        navigationOf(window)({ preventDefault }, 'https://evil.example/');
 
         expect(preventDefault).toHaveBeenCalledTimes(1);
     });
@@ -192,10 +200,7 @@ describe('what the window refuses to do', () => {
         const preventDefault = vi.fn();
         const window = opened();
 
-        (window.contents['will-navigate'] as unknown as (e: object, url: string) => void)(
-            { preventDefault },
-            ENTRY,
-        );
+        navigationOf(window)({ preventDefault }, ENTRY);
 
         expect(preventDefault).not.toHaveBeenCalled();
     });

@@ -1,8 +1,8 @@
 import type { PointerEvent } from 'react';
 
-/** jsdom has no pointer events to send; the handler reads nothing but the target. */
-export function event(target: Element): PointerEvent<HTMLElement> {
-    return { target } as unknown as PointerEvent<HTMLElement>;
+/** A move of the pointer as the handler reads it: nothing but the target. */
+export function event(target: Element): Pick<PointerEvent<HTMLElement>, 'target'> {
+    return { target };
 }
 
 /** A painted variable token, on the page for a pointer to come over. */

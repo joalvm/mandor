@@ -9,6 +9,9 @@ export type RawResponseHead = {
 
 type RawHeaders = Dispatcher.DispatchController['rawHeaders'];
 
+/** What the handler reads of the controller undici hands it: the header list as it crossed. */
+type HeadController = Pick<Dispatcher.DispatchController, 'rawHeaders'>;
+
 /**
  * Undici 8 names the headers in `onResponseStart` and hands the values over on the controller:
  * `rawHeaders` is the flat `name, value` list as it crossed the socket. The handler flattens it
@@ -34,7 +37,7 @@ export class RawResponseHandler {
     error: Error | undefined;
 
     onResponseStart(
-        controller: Dispatcher.DispatchController,
+        controller: HeadController,
         status: number,
         _names: unknown,
         statusMessage?: string,
@@ -52,7 +55,7 @@ export class RawResponseHandler {
         return true;
     }
 
-    onResponseError(_controller: Dispatcher.DispatchController, error: Error): boolean {
+    onResponseError(_controller: HeadController, error: Error): boolean {
         this.error = error;
 
         return true;

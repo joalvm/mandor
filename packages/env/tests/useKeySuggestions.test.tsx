@@ -1,13 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
-import type { KeyboardEvent } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useKeySuggestions } from '../src/components/key-value/useKeySuggestions.js';
 
 const NAMES = ['Accept', 'Accept-Encoding', 'User-Agent'];
 
-function keyed(key: string): KeyboardEvent<HTMLElement> {
-    return new KeyboardEvent('keydown', { key }) as unknown as KeyboardEvent<HTMLElement>;
+function keyed(key: string): KeyboardEvent {
+    return new KeyboardEvent('keydown', { key });
 }
 
 function suggestionsOf(initial: {

@@ -5,12 +5,21 @@ import { recordOf, type ActivityRecord } from '../activity/activity-record.js';
 import type { LiveConnection } from './live-connection.js';
 
 /**
+ * What the waits read of a connection: the name it goes by, the sequence and the book of open
+ * waits, and the timeline a wait that runs out writes to.
+ */
+export type AckBook = Pick<LiveConnection, 'acks' | 'ackSeq'> & {
+    batcher: Pick<LiveConnection['batcher'], 'record'>;
+    request: Pick<LiveConnection['request'], 'connectionId'>;
+};
+
+/**
  * Arms the wait of one emission that asked for an answer: it names the emission, and opens the
  * wait that closes by itself when the time runs out — the timeline sees that close as one more
  * frame, linked to the emission it belonged to, so no entry stays hanging for ever.
  */
 export function armAck(
-    connection: LiveConnection,
+    connection: AckBook,
     request: SendConnectionRequest,
 ): { record: ActivityRecord; send: AsyncClientSend } {
     const out: ActivityRecord = {
@@ -44,7 +53,7 @@ export function armAck(
 
 /** The record of an answer: linked to the emission it closes, with the time it took. */
 export function recordReply(
-    connection: LiveConnection,
+    connection: Pick<AckBook, 'acks'>,
     message: {
         data: string | Uint8Array;
         event?: string | undefined;
@@ -61,7 +70,7 @@ export function recordReply(
 }
 
 /** Closes the wait an answer came for, and answers how long it took. */
-export function settleAck(connection: LiveConnection, replyTo: string): number | undefined {
+export function settleAck(connection: Pick<AckBook, 'acks'>, replyTo: string): number | undefined {
     const waiting = connection.acks.get(replyTo);
 
     if (waiting === undefined) {
@@ -75,7 +84,7 @@ export function settleAck(connection: LiveConnection, replyTo: string): number |
 }
 
 /** Forgets every wait of a connection that is going away or being replaced. */
-export function cancelAcks(connection: LiveConnection): void {
+export function cancelAcks(connection: Pick<AckBook, 'acks'>): void {
     for (const waiting of connection.acks.values()) {
         clearTimeout(waiting.timer);
     }

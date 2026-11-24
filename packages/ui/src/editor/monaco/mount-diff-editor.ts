@@ -47,7 +47,7 @@ const DIFF: editor.IDiffEditorConstructionOptions = {
 };
 
 /** A pane that is read offers no actions on its code, so the bulb of the margin never shows. */
-const NO_BULB = { enabled: 'off' } as unknown as NonNullable<editor.IEditorOptions['lightbulb']>;
+const NO_BULB: editor.IEditorLightbulbOptions = { enabled: editor.ShowLightbulbIconMode.Off };
 
 /** What the diff is built with, and changed with when its caller asks otherwise. */
 export function diffOptionsOf(target: DiffTarget): editor.IDiffEditorConstructionOptions {

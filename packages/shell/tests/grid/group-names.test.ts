@@ -1,4 +1,3 @@
-import type { DockviewApi } from 'dockview';
 import { describe, expect, it } from 'vitest';
 
 import { groupsNamed } from '../../src/grid/group-names.js';
@@ -7,8 +6,8 @@ function groupWith(id: string) {
     return { element: document.createElement('div'), id };
 }
 
-function apiOf(...groups: ReturnType<typeof groupWith>[]): DockviewApi {
-    return { groups } as unknown as DockviewApi;
+function apiOf(...groups: ReturnType<typeof groupWith>[]): Parameters<typeof groupsNamed>[0] {
+    return { groups };
 }
 
 describe('saying which group of the window each one is', () => {

@@ -2,11 +2,12 @@ import { MessagesProvider } from '@mandor/i18n';
 import { parseConnection, type Connection } from '@mandor/schema';
 import { TooltipProvider } from '@mandor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 
 import { SettingsAuthSection } from '../../../../src/renderer/features/connections/components/dialog/SettingsAuthSection.js';
 import { SocketIoSettingsRows } from '../../../../src/renderer/features/connections/components/dialog/SocketIoSettingsRows.js';
 import { WebsocketSettingsRows } from '../../../../src/renderer/features/connections/components/dialog/WebsocketSettingsRows.js';
+import type { ConnectionWrite } from '../../../../src/renderer/features/connections/lib/pending-connection-write.js';
 
 const ENVIRONMENT = undefined;
 
@@ -28,6 +29,17 @@ function draw(ui: React.ReactElement): void {
             <TooltipProvider>{ui}</TooltipProvider>
         </MessagesProvider>,
     );
+}
+
+/** The first write the section asked for; a section that wrote nothing fails the test here. */
+function firstWrite(change: Mock<(changes: ConnectionWrite) => void>): ConnectionWrite {
+    const write = change.mock.calls[0]?.[0];
+
+    if (write === undefined) {
+        throw new Error('the section wrote nothing');
+    }
+
+    return write;
 }
 
 function noop(): void {
@@ -74,7 +86,7 @@ describe('the frame template of a websocket connection', () => {
     });
 
     it('writes the template when the draft parses', () => {
-        const change = vi.fn();
+        const change = vi.fn<(changes: ConnectionWrite) => void>();
 
         draw(
             <WebsocketSettingsRows
@@ -87,13 +99,11 @@ describe('the frame template of a websocket connection', () => {
 
         fireEvent.input(box, { target: { textContent: '{"data": {{payload}}}' } });
 
-        const write = change.mock.calls[0]?.[0] as unknown as { websocket?: { frame?: string } };
-
-        expect(write.websocket?.frame).toBe('{"data": {{payload}}}');
+        expect(firstWrite(change).websocket?.frame).toBe('{"data": {{payload}}}');
     });
 
     it('keeps the saved template while the draft does not parse, and writes nothing', () => {
-        const change = vi.fn();
+        const change = vi.fn<(changes: ConnectionWrite) => void>();
 
         draw(
             <WebsocketSettingsRows
@@ -115,7 +125,7 @@ describe('the frame template of a websocket connection', () => {
     });
 
     it('leaves the template out of the connection when the draft goes blank', () => {
-        const change = vi.fn();
+        const change = vi.fn<(changes: ConnectionWrite) => void>();
 
         draw(
             <WebsocketSettingsRows
@@ -132,9 +142,7 @@ describe('the frame template of a websocket connection', () => {
 
         fireEvent.input(box, { target: { textContent: '' } });
 
-        const write = change.mock.calls[0]?.[0] as unknown as { websocket?: { frame?: string } };
-
-        expect(write.websocket?.frame).toBeUndefined();
+        expect(firstWrite(change).websocket?.frame).toBeUndefined();
     });
 });
 

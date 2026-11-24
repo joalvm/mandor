@@ -18,6 +18,7 @@ const houseRules = {
     'mandor/dialog-needs-policy': 'error',
     'mandor/no-app-kind-branch': 'error',
     'mandor/no-component-prop': 'error',
+    'mandor/no-double-assertion': 'error',
     'mandor/no-foreign-icon-source': 'error',
     'mandor/no-inline-notice': 'error',
     'mandor/no-native-control': 'error',

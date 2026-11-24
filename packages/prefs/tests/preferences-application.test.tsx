@@ -2,7 +2,7 @@ import { useMessages } from '@mandor/i18n';
 import { Markdown, setTextZoom } from '@mandor/ui';
 import { byPart } from '@mandor/ui/testing';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { useEffect } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -22,10 +22,6 @@ function WindowReader({ onSeen }: { onSeen: (lang: string, theme: string | undef
     }, [onSeen]);
 
     return null;
-}
-
-function bridge(): FakeBridge {
-    return (window as unknown as { mandor: FakeBridge }).mandor;
 }
 
 /** Spanish, and the dark theme held whatever the system looks like. */
@@ -157,7 +153,7 @@ describe('preferences application', () => {
     });
 
     it('tells main what the person chose about the updates, when it mounts and at each change', async () => {
-        const configure = vi.spyOn(bridge().update, 'configure').mockResolvedValue({
+        const configure = vi.spyOn(windowBridge().update, 'configure').mockResolvedValue({
             ok: true,
             value: {},
         });
@@ -201,7 +197,7 @@ describe('preferences application', () => {
      * from main: asking it for a scheme while the system picks would make that reading a lie.
      */
     it('asks main to follow the system while the system picks, and the scheme of the held theme otherwise', async () => {
-        const configure = vi.spyOn(bridge().app, 'configureAppearance').mockResolvedValue({
+        const configure = vi.spyOn(windowBridge().app, 'configureAppearance').mockResolvedValue({
             ok: true,
             value: {},
         });

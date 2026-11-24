@@ -1,10 +1,8 @@
 import http from 'node:http';
 import { describe, expect, it } from 'vitest';
-import type { Dispatcher } from 'undici';
 
 import { dispatchOptionsOf, encodingsOf, responseOf } from '../../src/send/hop-response.js';
 import { RawResponseHandler } from '../../src/send/response-handler.js';
-import type { SyncRequest } from '../../src/request/sync-request.js';
 import type { ConnectionPhases } from '../../src/timing/connection-phases.js';
 
 function phases(): ConnectionPhases {
@@ -42,12 +40,7 @@ describe('responseOf', () => {
     const head = (statusText: string): RawResponseHandler => {
         const handler = new RawResponseHandler();
 
-        handler.onResponseStart(
-            { rawHeaders: ['x-one', 'first'] } as unknown as Dispatcher.DispatchController,
-            200,
-            [],
-            statusText,
-        );
+        handler.onResponseStart({ rawHeaders: ['x-one', 'first'] }, 200, [], statusText);
 
         return handler;
     };
@@ -57,8 +50,12 @@ describe('responseOf', () => {
         sizes: { transferredBytes: 2, bodyBytes: 2, decoded: true },
     };
 
-    const sent = (proxy?: { url: string }): SyncRequest =>
-        ({ method: 'GET', url: 'http://a.test/', headers: [], proxy }) as unknown as SyncRequest;
+    const sent = (proxy?: { url: string }): Parameters<typeof responseOf>[3] => ({
+        method: 'GET',
+        url: 'http://a.test/',
+        headers: [],
+        proxy,
+    });
 
     it('builds the response with the head, the body and the phases', () => {
         const response = responseOf(head('Fine'), phases(), body, sent());
@@ -97,13 +94,13 @@ describe('responseOf', () => {
 
 describe('dispatchOptionsOf', () => {
     it('carries origin, path, method and the flat header list', () => {
-        const request = {
+        const request: Parameters<typeof dispatchOptionsOf>[0] = {
             method: 'PUT',
             headers: [
                 ['a', '1'],
                 ['b', '2'],
             ],
-        } as unknown as SyncRequest;
+        };
         const options = dispatchOptionsOf(request, new URL('http://a.test/one?two=3'));
 
         expect(options).toMatchObject({
@@ -115,15 +112,11 @@ describe('dispatchOptionsOf', () => {
     });
 
     it('carries the body only when the request has one', () => {
-        const bodyless = { method: 'GET', headers: [] } as unknown as SyncRequest;
+        const bodyless = { method: 'GET', headers: [] };
 
         expect(dispatchOptionsOf(bodyless, new URL('http://a.test/')).body).toBeUndefined();
 
-        const withBody = {
-            method: 'POST',
-            headers: [],
-            body: new TextEncoder().encode('x'),
-        } as unknown as SyncRequest;
+        const withBody = { method: 'POST', headers: [], body: new TextEncoder().encode('x') };
 
         expect(dispatchOptionsOf(withBody, new URL('http://a.test/')).body).toBeDefined();
     });

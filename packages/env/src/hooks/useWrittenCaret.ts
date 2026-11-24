@@ -1,5 +1,11 @@
 import { type KeyboardEvent, type PointerEvent, type RefObject, useRef, useState } from 'react';
 
+/** What the caret reads of a key: its name. */
+type CaretKey = Pick<KeyboardEvent<HTMLElement>, 'key'>;
+
+/** What the caret reads of a press: the element listening, and the one pressed. */
+type CaretPress = Pick<PointerEvent<HTMLElement>, 'currentTarget' | 'target'>;
+
 /** The keys that move the caret without writing anything where it lands. */
 const CARET_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'End', 'Home']);
 
@@ -11,9 +17,9 @@ export type WrittenCaret = {
     /** Nothing is being written any more: the name was settled, or the field was left. */
     forget: () => void;
     /** A key that only moves the caret ends the writing. */
-    onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
+    onKeyDown: (event: CaretKey) => void;
     /** A press on the field moves the caret; one bubbling up from a portal does not. */
-    onPointerDown: (event: PointerEvent<HTMLElement>) => void;
+    onPointerDown: (event: CaretPress) => void;
     /** An edit left the caret here. */
     write: (at: number | null) => void;
 };
@@ -36,13 +42,13 @@ export function useWrittenCaret(): WrittenCaret {
         write(null);
     }
 
-    function onKeyDown(event: KeyboardEvent<HTMLElement>): void {
+    function onKeyDown(event: CaretKey): void {
         if (CARET_KEYS.has(event.key)) {
             forget();
         }
     }
 
-    function onPointerDown(event: PointerEvent<HTMLElement>): void {
+    function onPointerDown(event: CaretPress): void {
         // Lists hang from portals, and React bubbles their presses through the tree of the
         // field: only a press inside the field in the DOM moves its caret.
         if (event.currentTarget.contains(event.target as Node)) {

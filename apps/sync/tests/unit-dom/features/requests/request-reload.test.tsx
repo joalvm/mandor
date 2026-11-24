@@ -1,6 +1,6 @@
 import { itemPartsOf, itemResource } from '@mandor/collections';
 import { success } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { formatResourceUri, type RequestItem } from '@mandor/schema';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -111,7 +111,7 @@ describe('reading a request again because its file changed on disk', () => {
 describe('the request a tab shows when its file changes under it', () => {
     function push(path: string): void {
         act(() => {
-            (window.mandor as unknown as FakeBridge).emitRepoChanged({
+            windowBridge().emitRepoChanged({
                 changes: [{ area: 'collections', workspaceId: PARTS?.workspaceId ?? '', path }],
             });
         });

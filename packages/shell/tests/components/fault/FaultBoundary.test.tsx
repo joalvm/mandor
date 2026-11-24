@@ -1,6 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { success, type LogWriteRequest } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { byPart } from '@mandor/ui/testing';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useState, type ReactNode } from 'react';
@@ -8,8 +8,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { FaultBoundary } from '../../../src/components/fault/FaultBoundary.js';
 import { rootErrorOptions } from '../../../src/fault/root-error-options.js';
-
-type Mandor = { mandor: FakeBridge };
 
 let written: LogWriteRequest[];
 
@@ -36,7 +34,7 @@ function view(node: ReactNode) {
 beforeEach(() => {
     state.broken = true;
     written = [];
-    (window as unknown as Mandor).mandor.log.write = (input) => {
+    windowBridge().log.write = (input) => {
         written.push(input);
 
         return Promise.resolve(success({}));

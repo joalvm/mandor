@@ -6,10 +6,10 @@ import { registerMenuHandlers } from '../../src/menu/menu.handlers.js';
 import { spyIpc, type IpcSpy } from '../../src/testing/handler-harness.js';
 
 let ipc: IpcSpy;
-let holder: AppMenuHolder;
+let holder: AppMenuHolder<unknown>;
 let dispose: () => void;
 
-function spyHolder(): AppMenuHolder {
+function spyHolder(): AppMenuHolder<unknown> {
     return { ...holder, speak: vi.fn(holder.speak) };
 }
 

@@ -1,10 +1,11 @@
 import type { GridNode } from '@mandor/ipc';
 import { renderHook } from '@testing-library/react';
-import type { DockviewApi } from 'dockview';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useDrawnGrid } from '../../src/hooks/useDrawnGrid.js';
 import type { Tab } from '../../src/tab/tab.js';
+
+type View = NonNullable<Parameters<typeof useDrawnGrid>[0]>;
 
 function tab(id: string): Tab {
     return { id, kind: 'doc', resource: `mandor://demo/payments/doc/${id}.md` };
@@ -26,23 +27,24 @@ function split(front: string, more: readonly Tab[] = []): GridNode {
 function viewOf() {
     const fromJSON = vi.fn();
     const setActive = vi.fn();
+    const model = { openPanel: vi.fn() };
     const groups = new Map([
-        ['root', { id: 'root', panels: [], api: { setActive } }],
-        ['g1', { id: 'g1', panels: [], api: { setActive } }],
+        ['root', { id: 'root', activePanel: undefined, panels: [], api: { setActive }, model }],
+        ['g1', { id: 'g1', activePanel: undefined, panels: [], api: { setActive }, model }],
     ]);
-    const view = {
+    const view: View = {
         activeGroup: { id: 'root' },
         fromJSON,
         getGroup: (id: string) => groups.get(id),
         groups: [],
-    } as unknown as DockviewApi;
+    };
 
     return { fromJSON, setActive, view };
 }
 
 type Drawn = { activeGroupId: string; redrawn: number; shown: GridNode };
 
-function drawn(view: DockviewApi, initialProps: Drawn) {
+function drawn(view: View, initialProps: Drawn) {
     return renderHook((props: Drawn) => useDrawnGrid(view, { ...props, names: [] }), {
         initialProps,
     });

@@ -1,9 +1,9 @@
-import type { MessageItem } from '@mandor/schema';
+import { createMessageItem } from '@mandor/schema';
 import { describe, expect, it } from 'vitest';
 
 import { messagesStore } from '../../../../src/renderer/features/messages/messages-store.js';
 
-const MESSAGE = { kind: 'message', name: 'saludo', payload: 'hola' } as unknown as MessageItem;
+const MESSAGE = createMessageItem({ name: 'saludo', payload: 'hola' });
 
 describe('the messages store when the last view of a message is gone', () => {
     it('forgets what was loaded and what was being read, and keeps the others', () => {

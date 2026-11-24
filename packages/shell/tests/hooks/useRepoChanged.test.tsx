@@ -1,15 +1,9 @@
 import type { ChangedEntity } from '@mandor/schema';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { useRepoChanged } from '../../src/hooks/useRepoChanged.js';
-
-type Mandor = { mandor: FakeBridge };
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 const PAGOS: ChangedEntity = { area: 'collections', workspaceId: 'pagos', path: 'auth/login' };
 const OTHER: ChangedEntity = { area: 'collections', workspaceId: 'otro', path: 'x' };
@@ -28,7 +22,7 @@ describe('useRepoChanged', () => {
         const seen: ChangedEntity[][] = [];
 
         render(<Harness seen={seen} />);
-        bridge().emitRepoChanged({ changes: [OTHER, PAGOS] });
+        windowBridge().emitRepoChanged({ changes: [OTHER, PAGOS] });
 
         expect(seen).toEqual([[PAGOS]]);
     });
@@ -37,7 +31,7 @@ describe('useRepoChanged', () => {
         const seen: ChangedEntity[][] = [];
 
         render(<Harness seen={seen} />);
-        bridge().emitRepoChanged({ changes: [OTHER] });
+        windowBridge().emitRepoChanged({ changes: [OTHER] });
 
         expect(seen).toEqual([]);
     });
@@ -47,7 +41,7 @@ describe('useRepoChanged', () => {
         const view = render(<Harness seen={seen} />);
 
         view.unmount();
-        bridge().emitRepoChanged({ changes: [PAGOS] });
+        windowBridge().emitRepoChanged({ changes: [PAGOS] });
 
         expect(seen).toEqual([]);
     });

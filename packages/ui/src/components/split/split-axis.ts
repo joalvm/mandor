@@ -3,13 +3,21 @@ import type { KeyboardEvent, PointerEvent } from 'react';
 /** Which way the second half sits: beside the first, or under it. */
 export type SplitDirection = 'column' | 'row';
 
+/** What a divider reads of the pointer: where it is on the screen. */
+type PointerSpot = Pick<PointerEvent<HTMLElement>, 'clientX' | 'clientY'>;
+
+/** What a divider reads of a key: whether Shift is held, and the split it sits in. */
+type DividerKey = Pick<KeyboardEvent<HTMLElement>, 'shiftKey'> & {
+    currentTarget: { parentElement: Pick<HTMLElement, 'getBoundingClientRect'> | null };
+};
+
 export type SplitAxis = {
     back: string;
     forward: string;
     /** The divider runs across the axis it moves along, so the two swap names. */
     handle: string;
     orientation: 'horizontal' | 'vertical';
-    pointOf: (event: PointerEvent<HTMLElement>) => number;
+    pointOf: (event: PointerSpot) => number;
     startOf: (bounds: DOMRect) => number;
     sizeOf: (bounds: DOMRect) => number;
 };
@@ -44,7 +52,7 @@ export function clampedSplit(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
 }
 
-export function keyboardDelta(event: KeyboardEvent<HTMLElement>, axis: SplitAxis): number {
+export function keyboardDelta(event: DividerKey, axis: SplitAxis): number {
     const bounds = event.currentTarget.parentElement?.getBoundingClientRect();
     const size = bounds === undefined ? 0 : axis.sizeOf(bounds);
     const pixels = arrowPixels(event);

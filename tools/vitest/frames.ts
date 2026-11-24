@@ -7,9 +7,8 @@
 // it that waits for one hangs. So each of the three ways in starts its interval on the real clock.
 //
 // The files of a worker share one window, so the window is wrapped once per worker.
-type Frames = {
-    requestAnimationFrame: (callback: FrameRequestCallback) => number;
-    cancelAnimationFrame: (handle: number) => void;
+// The ways in: the two of the window, and the fix of the focus jsdom keeps to itself.
+type Frames = Pick<Window, 'cancelAnimationFrame' | 'requestAnimationFrame'> & {
     _requestFocusFixup?: () => void;
 };
 
@@ -40,9 +39,9 @@ function onRealClock<Args extends unknown[], Result>(
 }
 
 function wrapFrames(): void {
-    const frames = window as unknown as Frames & Record<symbol, true | undefined>;
+    const frames: Frames = window;
 
-    if (frames[WRAPPED] === true) {
+    if (Reflect.get(window, WRAPPED) === true) {
         return;
     }
 
@@ -61,7 +60,7 @@ function wrapFrames(): void {
 
     globalThis.requestAnimationFrame = frames.requestAnimationFrame;
     globalThis.cancelAnimationFrame = frames.cancelAnimationFrame;
-    frames[WRAPPED] = true;
+    Reflect.set(window, WRAPPED, true);
 }
 
 wrapFrames();

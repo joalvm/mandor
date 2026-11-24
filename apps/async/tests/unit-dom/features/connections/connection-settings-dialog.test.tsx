@@ -61,8 +61,14 @@ function draw(changes: Record<string, unknown> = {}) {
     );
 }
 
-function stored(): Record<string, unknown> {
-    return connectionsStore.getState().connections[0] as unknown as Record<string, unknown>;
+function stored(): Connection {
+    const connection = connectionsStore.getState().connections[0];
+
+    if (connection === undefined) {
+        throw new Error('the store holds no connection');
+    }
+
+    return connection;
 }
 
 function type(name: string, value: string): void {
@@ -93,13 +99,13 @@ describe('the settings dialog of a connection', () => {
         expect(screen.queryByText('Los cambios se aplican al reconectar.')).toBeNull();
 
         act(() => {
-            connectionsStore.getState().setConnectionState(stored()['id'] as string, 'open');
+            connectionsStore.getState().setConnectionState(stored().id, 'open');
         });
 
         expect(screen.getByText('Los cambios se aplican al reconectar.')).toBeVisible();
 
         act(() => {
-            connectionsStore.getState().setConnectionState(stored()['id'] as string, 'closed');
+            connectionsStore.getState().setConnectionState(stored().id, 'closed');
         });
 
         expect(screen.queryByText('Los cambios se aplican al reconectar.')).toBeNull();
@@ -109,9 +115,7 @@ describe('the settings dialog of a connection', () => {
         draw();
 
         act(() => {
-            connectionsStore
-                .getState()
-                .setConnectionState(stored()['id'] as string, 'reconnecting');
+            connectionsStore.getState().setConnectionState(stored().id, 'reconnecting');
         });
 
         expect(screen.getByText('Los cambios se aplican al reconectar.')).toBeVisible();
@@ -137,21 +141,21 @@ describe('the settings dialog of a connection', () => {
         draw({});
         type('Tamaño máximo de mensaje', '64');
 
-        expect(stored()['websocket']).toEqual({ maximumMessageSizeKiB: 64 });
+        expect(stored().websocket).toEqual({ maximumMessageSizeKiB: 64 });
     });
 
     it('keeps the frame and the subprotocols when a limit is handed back to the defaults', () => {
         draw({ websocket: { frame: FRAME, maximumMessageSizeKiB: 64 } });
         fireEvent.click(screen.getByRole('button', { name: 'Usar el valor por defecto' }));
 
-        expect(stored()['websocket']).toEqual({ frame: FRAME });
+        expect(stored().websocket).toEqual({ frame: FRAME });
     });
 
     it('keeps a half-written number off the connection', () => {
         draw({});
         type('Tamaño máximo de mensaje', '6e');
 
-        expect(stored()['websocket']).toBeUndefined();
+        expect(stored().websocket).toBeUndefined();
     });
 
     it('turns the retry policy off and keeps only that decision over the defaults', () => {
@@ -161,7 +165,7 @@ describe('the settings dialog of a connection', () => {
             screen.getByRole('switch', { name: 'Reconectar cuando el servidor cuelga' }),
         );
 
-        expect(stored()['retry']).toEqual({ enabled: false });
+        expect(stored().retry).toEqual({ enabled: false });
     });
 
     it('switches a header off and keeps its line instead of losing it', () => {
@@ -169,7 +173,7 @@ describe('the settings dialog of a connection', () => {
         fireEvent.click(screen.getByRole('option', { name: 'Headers' }));
         fireEvent.click(screen.getByRole('checkbox', { name: 'Enviar esta entrada' }));
 
-        expect(stored()['headers']).toEqual([
+        expect(stored().headers).toEqual([
             { key: 'Authorization', value: 'Bearer token', enabled: false },
         ]);
         expect(screen.getByRole('checkbox', { name: 'Enviar esta entrada' })).toHaveAttribute(
@@ -183,7 +187,7 @@ describe('the settings dialog of a connection', () => {
         fireEvent.click(screen.getByRole('option', { name: 'Headers' }));
 
         expect(screen.getAllByRole('textbox', { name: 'Clave' })).toHaveLength(1);
-        expect(stored()['headers']).toEqual([]);
+        expect(stored().headers).toEqual([]);
     });
 
     it('removes a line and stops naming the header it carried', () => {
@@ -191,7 +195,7 @@ describe('the settings dialog of a connection', () => {
         fireEvent.click(screen.getByRole('option', { name: 'Headers' }));
         fireEvent.click(screen.getByRole('button', { name: 'Quitar entrada' }));
 
-        expect(stored()['headers']).toEqual([]);
+        expect(stored().headers).toEqual([]);
         expect(screen.getAllByRole('textbox', { name: 'Clave' })).toHaveLength(1);
     });
 
@@ -207,7 +211,7 @@ describe('the settings dialog of a connection', () => {
         (value as Element).textContent = 'Basic abc';
         fireEvent.input(value as Element);
 
-        expect(stored()['headers']).toEqual([
+        expect(stored().headers).toEqual([
             { key: 'Authorization', value: 'Basic abc', enabled: true },
         ]);
     });

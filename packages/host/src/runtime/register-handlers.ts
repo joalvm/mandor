@@ -45,7 +45,7 @@ import { registerSecretHandlers } from '../secret/secret.handlers.js';
 import { registerSessionHandlers } from '../session/session.handlers.js';
 import { type WatchableWindow, watchMaximizedEvents } from '../window/maximized-events.js';
 import { registerWindowHandlers } from '../window/window.handlers.js';
-import { windowOf } from '../window/window-of.js';
+import { windowOf, type SenderWindow } from '../window/window-of.js';
 import {
     registerWorkspaceHandlers,
     type WorkspaceHandlerDeps,
@@ -76,7 +76,7 @@ export type HandlerDeps = {
     /** The system the colour scheme of the window is handed to. */
     appearance: AppearanceHandlerDeps;
     /** The options menu, installed by the runtime before the window exists. */
-    holder: AppMenuHolder;
+    holder: AppMenuHolder<SenderWindow>;
     /** The marks of this start, which the window completes by saying it is ready. */
     timeline: StartupTimeline;
     /** The channels this app answers and the other does not, registered after the common ones. */

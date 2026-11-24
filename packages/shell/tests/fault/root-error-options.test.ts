@@ -1,16 +1,14 @@
 import { type LogWriteRequest, success } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { rootErrorOptions, watchRendererFaults } from '../../src/fault/root-error-options.js';
-
-type Mandor = { mandor: FakeBridge };
 
 let written: LogWriteRequest[];
 
 beforeEach(() => {
     written = [];
-    (window as unknown as Mandor).mandor.log.write = (input) => {
+    windowBridge().log.write = (input) => {
         written.push(input);
 
         return Promise.resolve(success({}));

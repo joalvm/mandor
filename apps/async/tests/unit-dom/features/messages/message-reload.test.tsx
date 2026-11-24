@@ -1,7 +1,7 @@
 import { itemPartsOf, itemResource } from '@mandor/collections';
 import { success } from '@mandor/ipc';
 import type { FakeBridge } from '@mandor/ipc/testing';
-import { formatResourceUri, type MessageItem } from '@mandor/schema';
+import { createMessageItem, formatResourceUri } from '@mandor/schema';
 import { bridge } from '@mandor/shell';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -19,7 +19,7 @@ import { AppProviders } from '../../support/app-providers.js';
 const RESOURCE = itemResource('Local', 'local', 'saludo');
 const PARTS = itemPartsOf(RESOURCE);
 
-const TYPED = { kind: 'message', name: 'saludo', payload: 'tecleado' } as unknown as MessageItem;
+const TYPED = createMessageItem({ name: 'saludo', payload: 'tecleado' });
 
 let calls: string[];
 

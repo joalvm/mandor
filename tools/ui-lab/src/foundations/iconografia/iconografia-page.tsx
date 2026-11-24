@@ -4,10 +4,15 @@ import { AddIcon, type IconComponent } from '@mandor/icons';
 import { DocPage } from '../../pieces/doc-page.js';
 import { DocSection } from '../../pieces/doc-section.js';
 
-/** Los nombres del barril que pintan un glifo; el genérico Icon lleva name, y lo demás son constantes y tipos. */
-const NAMES = Object.keys(glyph)
-    .filter((name) => name.endsWith('Icon') && name !== 'Icon')
-    .sort();
+/** Lo que el barril exporta y pinta un glifo: todo menos el genérico Icon, que lleva name. */
+type GlyphName = Exclude<keyof typeof glyph, 'Icon'>;
+
+function isGlyphName(name: string): name is GlyphName {
+    return name !== 'Icon' && Object.hasOwn(glyph, name);
+}
+
+/** Los nombres del barril que pintan un glifo, en orden. */
+const NAMES = Object.keys(glyph).filter(isGlyphName).sort();
 
 export function IconografiaPage() {
     return (
@@ -23,9 +28,7 @@ export function IconografiaPage() {
             >
                 <ul className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-gap-control">
                     {NAMES.map((name) => {
-                        // El barril también exporta glifos de marca con otra firma: a la plataforma
-                        // del lab solo le importa la apariencia común.
-                        const Glyph = glyph[name as keyof typeof glyph] as unknown as IconComponent;
+                        const Glyph: IconComponent = glyph[name];
 
                         return (
                             <li

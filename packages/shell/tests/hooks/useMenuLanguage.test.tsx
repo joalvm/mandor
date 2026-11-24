@@ -1,15 +1,9 @@
 import { cleanup, render } from '@testing-library/react';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { MessagesProvider } from '@mandor/i18n';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useMenuLanguage } from '../../src/hooks/useMenuLanguage.js';
-
-type Mandor = { mandor: FakeBridge };
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 function mount(language: string) {
     return render(
@@ -34,7 +28,7 @@ afterEach(() => {
 
 describe('useMenuLanguage', () => {
     it('tells main which language the window speaks, as soon as it mounts', () => {
-        const speak = vi.spyOn(bridge().menu, 'speak').mockResolvedValue({
+        const speak = vi.spyOn(windowBridge().menu, 'speak').mockResolvedValue({
             ok: true,
             value: {},
         });
@@ -46,7 +40,7 @@ describe('useMenuLanguage', () => {
     });
 
     it('says it again only when the language changes', () => {
-        const speak = vi.spyOn(bridge().menu, 'speak').mockResolvedValue({
+        const speak = vi.spyOn(windowBridge().menu, 'speak').mockResolvedValue({
             ok: true,
             value: {},
         });

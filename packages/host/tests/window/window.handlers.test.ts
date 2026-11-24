@@ -20,7 +20,7 @@ let ipc: IpcSpy;
 let window: WindowSpy;
 let target: TargetSpy;
 let notifies: ((maximized: boolean) => void)[];
-let appMenu: OpenedMenu;
+let appMenu: OpenedMenu<TargetSpy>;
 let dispose: () => void;
 let relaunch: () => Promise<void>;
 const onReady = vi.fn<() => void>();

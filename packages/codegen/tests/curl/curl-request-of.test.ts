@@ -61,7 +61,10 @@ describe('the request a curl command describes', () => {
     });
 
     it('does not hide a bug of its own behind an invalid result', () => {
-        expect(() => curlRequestOf(null as unknown as string)).toThrow(TypeError);
+        // A value outside its type stands in for a bug of its own: what breaks is no curl to report.
+        expect(() => {
+            Reflect.apply(curlRequestOf, undefined, [null]);
+        }).toThrow(TypeError);
     });
 
     it.each([

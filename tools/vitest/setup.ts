@@ -195,12 +195,11 @@ Object.assign(HTMLCanvasElement.prototype, {
 // is dropped before the console guard reads it. Wrapped once: the files of a worker share it.
 const MEASURED_NOTHING = 'monospace assumptions have been violated';
 const QUIETED = Symbol.for('mandor.console.quieted');
-const quieted = console as unknown as Record<symbol, true | undefined>;
 
-if (quieted[QUIETED] === undefined) {
+if (Reflect.get(console, QUIETED) !== true) {
     const warn = console.warn.bind(console);
 
-    quieted[QUIETED] = true;
+    Reflect.set(console, QUIETED, true);
     console.warn = (...parts: unknown[]) => {
         if (typeof parts[0] !== 'string' || !parts[0].startsWith(MEASURED_NOTHING)) {
             warn(...parts);

@@ -1,4 +1,3 @@
-import type { KeyboardEvent, PointerEvent } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -13,18 +12,22 @@ import {
 
 const FULL_PANE = { width: 200, height: 100 } as DOMRect;
 
-function pointerAt(clientX: number, clientY: number): PointerEvent<HTMLElement> {
-    return { clientX, clientY } as unknown as PointerEvent<HTMLElement>;
+function pointerAt(clientX: number, clientY: number) {
+    return { clientX, clientY };
 }
 
-function keyWith(shiftKey: boolean, parentRect: DOMRect | undefined): KeyboardEvent<HTMLElement> {
+/** A key on a divider, in a split as wide as the rect, or in none. */
+function keyWith(
+    shiftKey: boolean,
+    parentRect: DOMRect | undefined,
+): Parameters<typeof keyboardDelta>[0] {
     return {
         currentTarget: {
             parentElement:
-                parentRect === undefined ? undefined : { getBoundingClientRect: () => parentRect },
+                parentRect === undefined ? null : { getBoundingClientRect: () => parentRect },
         },
         shiftKey,
-    } as unknown as KeyboardEvent<HTMLElement>;
+    };
 }
 
 describe('the axes of a split', () => {

@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { errors, type Dispatcher } from 'undici';
+import { errors } from 'undici';
 
-import { settleHop } from '../../src/send/settle-hop.js';
+import { settleHop, type HopParts } from '../../src/send/settle-hop.js';
 import { RawResponseHandler } from '../../src/send/response-handler.js';
-import type { BodyReader } from '../../src/body/read-body.js';
-import type { SyncRequest } from '../../src/request/sync-request.js';
 
 function phases() {
     return {
@@ -18,7 +16,7 @@ function phases() {
     };
 }
 
-function agent(): Dispatcher & { closed: () => boolean } {
+function agent(): HopParts['agent'] & { closed: () => boolean } {
     let closed = false;
 
     return {
@@ -28,15 +26,15 @@ function agent(): Dispatcher & { closed: () => boolean } {
             return Promise.resolve();
         },
         closed: () => closed,
-    } as unknown as Dispatcher & { closed: () => boolean };
+    };
 }
 
 /** A dispatcher whose close fails the way the given error says. */
-function failingAgent(error: Error): Dispatcher {
-    return { close: () => Promise.reject(error) } as unknown as Dispatcher;
+function failingAgent(error: Error): HopParts['agent'] {
+    return { close: () => Promise.reject(error) };
 }
 
-function reader(outcome: 'ok' | 'broken'): BodyReader {
+function reader(outcome: 'ok' | 'broken'): HopParts['reader'] {
     return {
         finish: () =>
             outcome === 'ok'
@@ -46,22 +44,17 @@ function reader(outcome: 'ok' | 'broken'): BodyReader {
                   })
                 : Promise.reject(new Error('the body was broken')),
         abort: () => Promise.resolve(),
-    } as unknown as BodyReader;
+    };
 }
 
-const request = { method: 'GET', url: 'http://a.test/', headers: [] } as unknown as SyncRequest;
+const request = { method: 'GET', url: 'http://a.test/', headers: [] };
 
 describe('settleHop', () => {
     it('answers with the response of the hop and closes the dispatcher', async () => {
         const hop = agent();
         const handler = new RawResponseHandler();
 
-        handler.onResponseStart(
-            { rawHeaders: [] } as unknown as Dispatcher.DispatchController,
-            200,
-            [],
-            'OK',
-        );
+        handler.onResponseStart({ rawHeaders: [] }, 200, [], 'OK');
 
         const outcome = await settleHop(
             { agent: hop, reader: reader('ok'), handler, phases: phases() },

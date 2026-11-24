@@ -1,6 +1,6 @@
 import { ItemProvider } from '@mandor/collections';
 import { success } from '@mandor/ipc';
-import { MESSAGE_ITEM_KIND, type MessageItem } from '@mandor/schema';
+import { createMessageItem } from '@mandor/schema';
 import { shellStore, TabProvider } from '@mandor/shell';
 import { byPart } from '@mandor/ui/testing';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
@@ -14,13 +14,12 @@ import { registerOutboundPort } from '../../../../../../src/renderer/outbound/ou
 import { AppProviders } from '../../../../support/app-providers.js';
 
 const RESOURCE = 'mandor://local/events/item/pedido-creado';
-const MESSAGE = {
-    kind: MESSAGE_ITEM_KIND,
+const MESSAGE = createMessageItem({
     name: 'Pedido creado',
     channel: 'pedidos.creado',
     payload: '{ "id": 1 }',
     payloadType: 'json',
-} as unknown as MessageItem;
+});
 
 /** Longer than the pause the writer waits for, so the timer has certainly gone off. */
 const AFTER_THE_PAUSE = 2000;

@@ -4,6 +4,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useImportReading } from '../../src/import/hooks/useImportReading.js';
+import type { DroppedTransfer } from '../../src/import/lib/read-dropped.js';
 
 import { AppProviders } from '../support/providers.js';
 
@@ -12,8 +13,8 @@ function reading(fail = vi.fn()) {
 }
 
 /** A drop as the browser gives it, of the files it lists and no entries. */
-function dropOf(files: File[]): DataTransfer {
-    return { files, items: [] } as unknown as DataTransfer;
+function dropOf(files: File[]): DroppedTransfer {
+    return { files, items: [] };
 }
 
 afterEach(() => {

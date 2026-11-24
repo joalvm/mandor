@@ -3,6 +3,9 @@ import { type KeyboardEvent, useState } from 'react';
 import { headerMatches } from '../../lib/header-matches.js';
 import { steppedMatch } from '../../lib/stepped-match.js';
 
+/** What the list reads of a key: its name, and the way to keep it from the cell. */
+type KeyPress = Pick<KeyboardEvent<HTMLElement>, 'key' | 'preventDefault'>;
+
 type KeySuggestionsInput = {
     /** Writes the picked name into the cell, the way the cell writes what its keys type. */
     complete: (name: string) => void;
@@ -20,7 +23,7 @@ export type KeySuggestions = {
     /** Whether the list hangs now: focused, with matches, and not sent away for this query. */
     open: boolean;
     /** The keys the list answers while it is open; `true` means the grid must not walk. */
-    onKeyDown: (event: KeyboardEvent<HTMLElement>) => boolean;
+    onKeyDown: (event: KeyPress) => boolean;
     options: readonly string[];
     pick: (name: string) => void;
     /** The pointer joins the keyboard: the option under it becomes the active one. */
@@ -60,7 +63,7 @@ export function useKeySuggestions({
         return true;
     }
 
-    function stepBy(step: number): (event: KeyboardEvent<HTMLElement>) => boolean {
+    function stepBy(step: number): (event: KeyPress) => boolean {
         return (event) => {
             event.preventDefault();
             setActiveName(steppedMatch(matches, active, step));
@@ -70,7 +73,7 @@ export function useKeySuggestions({
     }
 
     /** Enter takes the match the keyboard is on; with none, the key is the cell's. */
-    function take(event: KeyboardEvent<HTMLElement>): boolean {
+    function take(event: KeyPress): boolean {
         if (active === null) {
             return false;
         }
@@ -81,7 +84,7 @@ export function useKeySuggestions({
         return true;
     }
 
-    function onKeyDown(event: KeyboardEvent<HTMLElement>): boolean {
+    function onKeyDown(event: KeyPress): boolean {
         const answer = new Map([
             ['Escape', close],
             ['ArrowDown', stepBy(1)],

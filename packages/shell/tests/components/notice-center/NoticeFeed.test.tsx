@@ -1,12 +1,10 @@
 import { MessagesProvider } from '@mandor/i18n';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { ToastProvider, TooltipProvider } from '@mandor/ui';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { NoticeFeed } from '../../../src/components/notice-center/NoticeFeed.js';
-
-type Mandor = { mandor: FakeBridge };
 
 afterEach(() => {
     cleanup();
@@ -27,7 +25,7 @@ describe('the feed of notices as a component', () => {
         );
 
         act(() => {
-            (window as unknown as Mandor).mandor.emitNotice({
+            windowBridge().emitNotice({
                 id: 1,
                 code: 'files-unreadable',
                 tone: 'warning',

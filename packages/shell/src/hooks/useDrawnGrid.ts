@@ -1,17 +1,30 @@
 import { useTranslator } from '@mandor/i18n';
 import type { GridNode } from '@mandor/ipc';
-import type { DockviewApi } from 'dockview';
+import type { DockviewApi, DockviewGroupPanel } from 'dockview';
 import { useEffect, useEffectEvent, useState } from 'react';
 
 import { dockviewLayoutOf } from '../grid/dockview-layout.js';
 import { emptyGroupHosts, type EmptyGroupHost } from '../grid/empty-group-hosts.js';
-import { gridPointingOf, gridStructureOf, pointGrid } from '../grid/grid-pointing.js';
+import {
+    gridPointingOf,
+    gridStructureOf,
+    pointGrid,
+    type PointableView,
+} from '../grid/grid-pointing.js';
 import { groupsNamed, type GroupName } from '../grid/group-names.js';
 import { tabTitleOf } from '../tab/tab-title.js';
 import type { Tab } from '../tab/tab.js';
 
 /** Under this a group is a sliver with no room for a tab, so nothing may drag it there. */
 const MIN_GROUP = 120;
+
+/** A group as a build leaves it: named, read for its blank, and held to a size. */
+type BuiltGroup = Pick<DockviewGroupPanel, 'element' | 'id'> & {
+    api: Pick<DockviewGroupPanel['api'], 'setConstraints'>;
+};
+
+/** What drawing the tree asks of the view: to be built from a layout, and pointed into. */
+type DrawnView = PointableView & Pick<DockviewApi, 'fromJSON'> & { groups: readonly BuiltGroup[] };
 
 /** What the grid draws: the tree on screen, the group in front, the names of the groups. */
 type DrawnGrid = {
@@ -27,7 +40,7 @@ type DrawnGrid = {
  * build left, and the structure it was built from for whoever must follow a build.
  */
 export function useDrawnGrid(
-    api: DockviewApi | null,
+    api: DrawnView | null,
     { activeGroupId, names, redrawn, shown }: DrawnGrid,
 ): { blanks: EmptyGroupHost[]; structure: string } {
     const [blanks, setBlanks] = useState<EmptyGroupHost[]>([]);
@@ -40,7 +53,7 @@ export function useDrawnGrid(
 
     // A build carries what is in front at that moment, so it draws the right panels at once; what
     // is in front is no reason to build.
-    const build = useEffectEvent((view: DockviewApi): void => {
+    const build = useEffectEvent((view: DrawnView): void => {
         view.fromJSON(dockviewLayoutOf(shown, activeGroupId, titleOf));
 
         for (const group of view.groups) {
@@ -51,7 +64,7 @@ export function useDrawnGrid(
         setBlanks(emptyGroupHosts(view));
     });
 
-    const point = useEffectEvent((view: DockviewApi): void => {
+    const point = useEffectEvent((view: DrawnView): void => {
         pointGrid(view, shown, activeGroupId);
     });
 

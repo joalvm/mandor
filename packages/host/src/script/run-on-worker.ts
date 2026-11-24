@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import type { Worker } from 'node:worker_threads';
 
 import type { ScriptError } from '@mandor/schema';
 import { SCRIPT_LIMITS, workerMessageSchema, type WorkerMessage } from '@mandor/script';
@@ -7,7 +6,7 @@ import { SCRIPT_LIMITS, workerMessageSchema, type WorkerMessage } from '@mandor/
 import { startRunDeadline, type RunDeadline } from './run-deadline.js';
 import { newRunProtocol, rulesOf, type RunProtocol } from './run-protocol.js';
 import { failedReply } from './send-reply.js';
-import { failureOf, listen, type Listeners } from './worker-events.js';
+import { failureOf, listen, type Listeners, type RunWorker } from './worker-events.js';
 
 type Kind = WorkerMessage['kind'];
 type Done = Extract<WorkerMessage, { kind: 'done' }>;
@@ -34,7 +33,7 @@ export type RunSettings = {
 export type Finished = { outcome: ScriptOutcome; reuse: boolean };
 
 type Session = {
-    worker: Worker;
+    worker: RunWorker;
     runId: string;
     protocol: RunProtocol;
     deadline: RunDeadline;
@@ -195,7 +194,7 @@ function listenersOf(session: Session): Listeners {
     };
 }
 
-type Run = { worker: Worker; signal: AbortSignal; settings: RunSettings; input: string };
+type Run = { worker: RunWorker; signal: AbortSignal; settings: RunSettings; input: string };
 
 function openSession(run: Run, resolve: (finished: Finished) => void): Session {
     const { worker, signal, settings, input } = run;
@@ -242,7 +241,7 @@ function openSession(run: Run, resolve: (finished: Finished) => void): Session {
  * outcome. The worker is for the caller to give back, and to end when `reuse` is false.
  */
 export function runOnWorker(
-    worker: Worker,
+    worker: RunWorker,
     input: string,
     signal: AbortSignal,
     settings: RunSettings,

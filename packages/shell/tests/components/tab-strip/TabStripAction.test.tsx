@@ -1,14 +1,13 @@
 import { ROOT_GROUP_ID } from '@mandor/ipc';
 import { cleanup, render, renderHook, screen } from '@testing-library/react';
-import type { DockviewGroupPanel } from 'dockview';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { TabStripActions } from '../../../src/components/tab-strip/TabStripActions.js';
 import { TabStripAction, useTabStrip } from '../../../src/index.js';
 import { TabStripContext } from '../../../src/tab/tab-strip-context.js';
 
-function groupDouble(): DockviewGroupPanel {
-    return { id: ROOT_GROUP_ID, panels: [] } as unknown as DockviewGroupPanel;
+function groupDouble() {
+    return { id: ROOT_GROUP_ID };
 }
 
 function AddAction() {

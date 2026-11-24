@@ -1,16 +1,15 @@
-import type { i18n } from 'i18next';
+import type { i18n, TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 
 import { createPlainI18n } from '../src/create-plain-i18n.js';
 
 /**
- * Main reads the menu words by their bare key, without the window's typing of the keys, whose
- * default namespace is another one: the test reads them the way main does.
+ * Main reads the menu words by their bare key, because the menu is the default namespace of this
+ * instance. The window's typing of the keys has another default, so the test names the menu
+ * namespace, and checks apart that it is the default one.
  */
-function read(instance: i18n, key: string, values?: Record<string, string>): string {
-    const t = instance.t as unknown as (key: string, values?: Record<string, string>) => string;
-
-    return t(key, values);
+function menuOf(instance: i18n): TFunction<'menu'> {
+    return instance.getFixedT(null, 'menu');
 }
 
 describe('createPlainI18n', () => {
@@ -18,11 +17,12 @@ describe('createPlainI18n', () => {
         const instance = createPlainI18n();
 
         expect(instance.isInitialized).toBe(true);
-        expect(read(instance, 'quit')).toBe('Quit');
+        expect(instance.options.defaultNS).toBe('menu');
+        expect(menuOf(instance)('quit')).toBe('Quit');
     });
 
     it('answers in the language it was made for, filling the values in', () => {
-        expect(read(createPlainI18n('es'), 'aboutApp', { name: 'Mandor' })).toBe(
+        expect(menuOf(createPlainI18n('es'))('aboutApp', { name: 'Mandor' })).toBe(
             'Acerca de Mandor',
         );
     });
@@ -32,6 +32,6 @@ describe('createPlainI18n', () => {
     });
 
     it('falls back to the default language for one it does not speak', () => {
-        expect(read(createPlainI18n('fr'), 'copy')).toBe('Copy');
+        expect(menuOf(createPlainI18n('fr'))('copy')).toBe('Copy');
     });
 });

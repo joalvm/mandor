@@ -30,15 +30,16 @@ export type WindowTarget = {
     unmaximize: () => void;
 };
 
-export type WindowHandlerDeps = {
+/** What the handlers act through; `W` is the window they resolve, and the menu opens under. */
+export type WindowHandlerDeps<W extends WindowTarget> = {
     /** The window the app opened, which is where the maximized push goes. */
     window: PushTarget;
     /** Resolves the window that sent the message. It never reads one from the payload. */
-    windowOf: (event: unknown) => WindowTarget | undefined;
+    windowOf: (event: unknown) => W | undefined;
     /** Subscribes the maximized announcements of the window. The listeners die with it. */
     watchMaximized: (notify: (maximized: boolean) => void) => void;
     /** The options menu, read at popup time: it may have been rebuilt in another language. */
-    holder: AppMenuHolder;
+    holder: Pick<AppMenuHolder<W>, 'current'>;
     /** Starts the app over once what was being written has landed; it does not come back. */
     relaunch: () => Promise<void>;
     /** The window drew what it restored: the start, or a reload, is over. */
@@ -49,7 +50,10 @@ export type WindowHandlerDeps = {
  * The channels through which the renderer moves its own window, and the push that tells it
  * which icon the maximize button draws.
  */
-export function registerWindowHandlers(ipc: HandlerIpc, deps: WindowHandlerDeps): () => void {
+export function registerWindowHandlers<W extends WindowTarget>(
+    ipc: HandlerIpc,
+    deps: WindowHandlerDeps<W>,
+): () => void {
     ipc.handle(CHANNELS.windowMinimize, (event, raw) =>
         Promise.resolve(
             act(deps.windowOf(event), windowMinimizeRequestSchema, raw, (target) => {

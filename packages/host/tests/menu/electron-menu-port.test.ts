@@ -1,12 +1,16 @@
+import { BaseWindow } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { electronMenuPort } from '../../src/menu/electron-menu-port.js';
 
-const { Menu } = vi.hoisted(() => ({
+const { Menu, Window } = vi.hoisted(() => ({
     Menu: { buildFromTemplate: vi.fn(), setApplicationMenu: vi.fn() },
+    Window: class {
+        readonly id = 7;
+    },
 }));
 
-vi.mock('electron', () => ({ Menu }));
+vi.mock('electron', () => ({ BaseWindow: Window, Menu }));
 
 beforeEach(() => {
     Menu.buildFromTemplate.mockReset();
@@ -28,7 +32,10 @@ describe("the port over Electron's own menu", () => {
 
     it('installs a menu and clears it with null through the same door', () => {
         const port = electronMenuPort();
-        const menu = { popup: vi.fn() };
+
+        Menu.buildFromTemplate.mockReturnValue({ popup: vi.fn() });
+
+        const menu = port.buildFromTemplate([]);
 
         port.setApplicationMenu(menu);
         port.setApplicationMenu(null);
@@ -43,7 +50,7 @@ describe("the port over Electron's own menu", () => {
         Menu.buildFromTemplate.mockReturnValue({ popup });
 
         const menu = electronMenuPort().buildFromTemplate([]);
-        const window = { id: 7 };
+        const window = new BaseWindow();
 
         menu.popup({ window, x: 4, y: 8 });
 

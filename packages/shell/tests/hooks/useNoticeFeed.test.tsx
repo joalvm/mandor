@@ -1,6 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { success, type NoticePush } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { ToastProvider, TooltipProvider } from '@mandor/ui';
 import { act, cleanup, renderHook, screen } from '@testing-library/react';
 import { StrictMode, type PropsWithChildren } from 'react';
@@ -9,12 +9,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { useNoticeFeed } from '../../src/hooks/useNoticeFeed.js';
 import { shellStore } from '../../src/index.js';
 import { recordNotice } from '../../src/record-notice.js';
-
-type Mandor = { mandor: FakeBridge };
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 const FILES: NoticePush = {
     id: 1,
@@ -65,7 +59,7 @@ describe('useNoticeFeed', () => {
         mount();
 
         act(() => {
-            bridge().emitNotice(FILES);
+            windowBridge().emitNotice(FILES);
         });
 
         expect(screen.getByText(TEXT)).toBeVisible();
@@ -73,12 +67,12 @@ describe('useNoticeFeed', () => {
     });
 
     it('tells once a notice that came by the list and is pushed again', async () => {
-        bridge().notice.list = () => Promise.resolve(success([FILES]));
+        windowBridge().notice.list = () => Promise.resolve(success([FILES]));
         mount();
 
         await screen.findByText(TEXT);
         act(() => {
-            bridge().emitNotice(FILES);
+            windowBridge().emitNotice(FILES);
         });
 
         expect(shellStore.getState().notices).toHaveLength(1);

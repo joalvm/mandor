@@ -171,3 +171,22 @@ export function createFakeBridge(overrides: FakeBridgeOverrides = {}): FakeBridg
         },
     };
 }
+
+/**
+ * The double on the window of a jsdom test: the setup installs one per worker and renews its areas
+ * per file. A test emits through it or spies on it.
+ */
+export function windowBridge(): FakeBridge {
+    const installed: unknown = Reflect.get(globalThis, 'mandor');
+
+    if (!isFakeBridge(installed)) {
+        throw new Error('The window has no bridge double: only the jsdom setup installs one.');
+    }
+
+    return installed;
+}
+
+/** The doors only the double has: main pushes through them, and a real bridge has none. */
+function isFakeBridge(value: unknown): value is FakeBridge {
+    return typeof value === 'object' && value !== null && 'emitNotice' in value;
+}

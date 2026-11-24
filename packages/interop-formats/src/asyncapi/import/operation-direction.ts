@@ -14,7 +14,9 @@ const AS_THE_APPLICATION_SEES_IT: Record<string, InteropDirection | undefined> =
     receive: 'outgoing',
 };
 
-export function operationDirection(operation: OperationInterface): InteropDirection {
+export function operationDirection(
+    operation: Pick<OperationInterface, 'action'>,
+): InteropDirection {
     const action = operation.action();
     const direction = AS_THE_APPLICATION_SEES_IT[action];
 

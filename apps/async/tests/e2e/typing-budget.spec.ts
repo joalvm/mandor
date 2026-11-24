@@ -39,20 +39,21 @@ const EVENT = 'Saludo';
 
 /** Counts the frames of a burst of typing, and hands back the ones that took too long. */
 async function longFramesWhileTyping(page: Page): Promise<number> {
-    await page.evaluate(() => {
-        const frames: number[] = [];
-
-        Object.assign(window, { mandorFrames: frames });
+    // The page keeps filling the list it hands back; the handle reads the same list afterwards.
+    const frames = await page.evaluateHandle(() => {
+        const durations: number[] = [];
         let previous = performance.now();
         const tick = (): void => {
             const now = performance.now();
 
-            frames.push(now - previous);
+            durations.push(now - previous);
             previous = now;
             requestAnimationFrame(tick);
         };
 
         requestAnimationFrame(tick);
+
+        return durations;
     });
 
     const composer = page.getByRole('group', { name: 'Message composer' }).first();
@@ -66,11 +67,10 @@ async function longFramesWhileTyping(page: Page): Promise<number> {
     // What was typed has to have arrived, or the frames counted are the frames of an idle window.
     await expect(composer).toContainText(TAIL);
 
-    return page.evaluate((limit) => {
-        const frames = (window as unknown as { mandorFrames: number[] }).mandorFrames;
-
-        return frames.filter((frame) => frame > limit).length;
-    }, LONG_FRAME_MS);
+    return frames.evaluate(
+        (durations, limit) => durations.filter((frame) => frame > limit).length,
+        LONG_FRAME_MS,
+    );
 }
 
 async function expectWorkloadRestored(page: Page): Promise<void> {

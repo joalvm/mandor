@@ -23,11 +23,14 @@ const HTTP_VERSION_OF_ALPN: ReadonlyMap<string | null, SyncResponse['httpVersion
     ['h2', '2'],
 ]);
 
+/** What a response reads of the request it answers: its head and body, and whether a proxy carried it. */
+export type AnsweredRequest = Pick<SyncRequest, 'body' | 'headers' | 'method' | 'proxy' | 'url'>;
+
 export function responseOf(
     handler: RawResponseHandler,
     phases: ConnectionPhases,
     body: ReadBodyOutcome,
-    request: SyncRequest,
+    request: AnsweredRequest,
 ): SyncResponse {
     const { status, headers } = handler.head;
     const raw = handler.head.statusText;
@@ -54,7 +57,10 @@ export function responseOf(
 }
 
 /** The request head and body undici sends, or nothing when the request carries no body. */
-export function dispatchOptionsOf(request: SyncRequest, url: URL): Dispatcher.DispatchOptions {
+export function dispatchOptionsOf(
+    request: Pick<SyncRequest, 'body' | 'headers' | 'method'>,
+    url: URL,
+): Dispatcher.DispatchOptions {
     const options: Dispatcher.DispatchOptions = {
         origin: url.origin,
         path: `${url.pathname}${url.search}`,

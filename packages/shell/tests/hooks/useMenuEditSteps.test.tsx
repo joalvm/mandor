@@ -1,18 +1,12 @@
 import { render } from '@testing-library/react';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { useMenuEditSteps } from '../../src/hooks/useMenuEditSteps.js';
 
-type Mandor = { mandor: FakeBridge };
-
 const execCommand = vi.fn(() => true);
 
 Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand });
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 function Harness() {
     useMenuEditSteps();
@@ -28,7 +22,7 @@ describe('useMenuEditSteps', () => {
     it('takes the step the Edit menu of the window asked for', () => {
         render(<Harness />);
 
-        bridge().emitEditStep({ step: 'undo' });
+        windowBridge().emitEditStep({ step: 'undo' });
 
         expect(execCommand).toHaveBeenCalledWith('undo');
     });
@@ -38,7 +32,7 @@ describe('useMenuEditSteps', () => {
         const view = render(<Harness />);
 
         view.unmount();
-        bridge().emitEditStep({ step: 'redo' });
+        windowBridge().emitEditStep({ step: 'redo' });
 
         expect(execCommand).not.toHaveBeenCalled();
     });

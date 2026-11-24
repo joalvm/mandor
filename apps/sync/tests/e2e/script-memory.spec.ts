@@ -291,14 +291,14 @@ test('eight bombs at once stay under the ceiling of their workers', async () => 
 });
 
 test('a ninth chain waits for a worker and cancels, and main keeps up', async () => {
-    await app.evaluate(() => {
+    // Main keeps measuring the histogram it hands back; the handle reads the same one afterwards.
+    const lag = await app.evaluateHandle(() => {
         const { monitorEventLoopDelay } = process.getBuiltinModule('node:perf_hooks');
-        const holder = globalThis as unknown as {
-            __lag?: ReturnType<typeof monitorEventLoopDelay>;
-        };
+        const histogram = monitorEventLoopDelay({ resolution: 20 });
 
-        holder.__lag = monitorEventLoopDelay({ resolution: 20 });
-        holder.__lag.enable();
+        histogram.enable();
+
+        return histogram;
     });
 
     // Eight loops take every worker; the ninth waits for one, and the person lets it go.
@@ -314,15 +314,10 @@ test('a ninth chain waits for a worker and cancels, and main keeps up', async ()
         timeout: 20_000,
     });
 
-    const p99 = await app.evaluate(() => {
-        const holder = globalThis as unknown as {
-            __lag?: { disable: () => void; percentile: (which: number) => number };
-        };
-        const lag = holder.__lag;
+    const p99 = await lag.evaluate((histogram) => {
+        histogram.disable();
 
-        lag?.disable();
-
-        return (lag?.percentile(99) ?? 0) / 1e6;
+        return histogram.percentile(99) / 1e6;
     });
 
     expect(p99).toBeLessThanOrEqual(50);

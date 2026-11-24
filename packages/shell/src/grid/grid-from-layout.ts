@@ -26,7 +26,10 @@ type LayoutNode =
  * view invented crosses over: every tab is one the session already had, looked up by name, and
  * a panel it never opened is left where it was found.
  */
-export function gridFrom(layout: SerializedDockview, tabs: ReadonlyMap<string, Tab>): GridNode {
+export function gridFrom(
+    layout: Pick<SerializedDockview, 'grid'>,
+    tabs: ReadonlyMap<string, Tab>,
+): GridNode {
     const axis = layout.grid.orientation === Orientation.VERTICAL ? 'column' : 'row';
 
     return nodeFrom(layout.grid.root as LayoutNode, axis, tabs);
