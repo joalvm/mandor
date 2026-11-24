@@ -20,7 +20,7 @@ beforeEach(() => {
 });
 
 describe('starting a connection', () => {
-    it('creates a websocket connection with its starting url and opens its tab', async () => {
+    it('creates a websocket connection with an empty url and opens its tab', async () => {
         const fakeBridge = window.mandor as FakeBridge;
         const create = vi.spyOn(fakeBridge.connection, 'create');
 
@@ -29,7 +29,7 @@ describe('starting a connection', () => {
         expect(create).toHaveBeenCalledWith({
             name: 'New connection',
             transport: 'websocket',
-            url: 'ws://localhost:3000',
+            url: '',
             workspaceId: 'events',
         });
         expect(selectTabs(shellStore.getState())).toEqual([

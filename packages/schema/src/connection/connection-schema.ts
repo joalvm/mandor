@@ -45,9 +45,13 @@ export const connectionSchema = z.preprocess(
     withHeaderLines,
     connectionFieldsSchema
         // The pair is the rule the file is read by: a websocket dialls ws(s), socket.io dials
-        // http(s). One transport per connection is what makes the url mean one thing.
+        // http(s). One transport per connection is what makes the url mean one thing. An empty
+        // url says no scheme at all, so it disagrees with neither.
         .superRefine((connection, context) => {
-            if (!urlMatchesTransport(connection.transport, connection.url)) {
+            if (
+                connection.url !== '' &&
+                !urlMatchesTransport(connection.transport, connection.url)
+            ) {
                 context.addIssue({ code: 'custom', message: 'url', path: ['url'] });
             }
         }),

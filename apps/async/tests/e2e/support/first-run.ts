@@ -27,7 +27,7 @@ export async function expectFirstRun(page: Page): Promise<void> {
 /**
  * Creates one connection from the add action of its section: the connection exists from the
  * first click and its tab opens with the URL in focus. Its row menu names it, which retitles the
- * tab, and the URL is written over its starting value in the composer below.
+ * tab, and the URL is written in its address bar, empty until then.
  *
  * The save pauses while the typing settles, and the run does not go on until the pause is
  * over: `repoRoot` is where the run looks for the file, and everything after this reads the

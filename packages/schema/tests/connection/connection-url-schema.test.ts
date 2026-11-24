@@ -19,6 +19,12 @@ describe('connectionUrlSchema', () => {
         expect(connectionUrlSchema.safeParse(url).success).toBe(true);
     });
 
+    /** A connection is born with its address bar empty; the dial is what refuses it. */
+    it('accepts the empty url a new connection is born with', () => {
+        expect(connectionUrlSchema.safeParse('').success).toBe(true);
+        expect(urlMatchesTransport('websocket', '')).toBe(false);
+    });
+
     it.each(['ftp://example.com', 'example.com/socket', 'ws://'])('rejects %s', (url) => {
         expect(connectionUrlSchema.safeParse(url).success).toBe(false);
     });
