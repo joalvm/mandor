@@ -128,6 +128,8 @@ describe('the top row of Mandor Realtime', () => {
         // air the row opens with, so what is left between them is the middle of the window.
         expect(byPart('title-start')).toHaveClass('flex-1', 'basis-0');
         expect(byPart('title-end')).toHaveClass('flex-1', 'basis-0', 'pl-pad-panel');
+        // The end is as tall as the row, so the window buttons it holds reach top and bottom.
+        expect(byPart('title-end')).toHaveClass('h-full');
         expect(byPart('titlebar')).toHaveClass('pl-pad-panel');
         expect(byPart('title-start')).not.toHaveClass('pl-pad-panel');
     });
