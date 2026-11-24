@@ -363,6 +363,7 @@ export {
     requestScriptOutputSchema,
     type RequestScriptOutput,
 } from './request/request-script-output.js';
+export { requestSendLogSchema, type RequestSendLog } from './request/request-send-log.js';
 export type { RequestArea } from './request/request-area.js';
 
 export type { GraphqlArea } from './graphql/graphql-area.js';

@@ -115,6 +115,7 @@ const BRIDGE_METHODS: Record<ChannelKey, (bridge: WholeBridge) => unknown> = {
     requestBodySave: (bridge) => bridge.request.saveBody,
     requestHideSecrets: (bridge) => bridge.request.hideSecrets,
     requestScriptOutput: (bridge) => bridge.request.onScriptOutput,
+    requestSendLog: (bridge) => bridge.request.onSendLog,
     historyList: (bridge) => bridge.history.list,
     historyRead: (bridge) => bridge.history.read,
     historyDelete: (bridge) => bridge.history.remove,

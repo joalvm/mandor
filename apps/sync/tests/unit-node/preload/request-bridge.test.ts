@@ -110,6 +110,22 @@ describe('the request bridge', () => {
         expect(ipc.listeners.get(CHANNELS.requestScriptOutput)).toEqual([]);
     });
 
+    it('delivers what a send left and got and refuses a push out of its schema', () => {
+        const ipc = spyBridgeIpc();
+        const seen: unknown[] = [];
+
+        createRequestBridge(bridgeKitOf(ipc)).onSendLog((push) => seen.push(push));
+
+        const push = { sendId: ID, error: { code: 'request-failed', message: 'no' } };
+
+        ipc.emit(CHANNELS.requestSendLog, push);
+
+        expect(seen).toEqual([push]);
+        expect(() => {
+            ipc.emit(CHANNELS.requestSendLog, { sendId: ID, extra: 1 });
+        }).toThrow();
+    });
+
     it('refuses a push of the scripts that does not match its schema', () => {
         const ipc = spyBridgeIpc();
 

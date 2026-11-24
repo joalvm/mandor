@@ -5,6 +5,7 @@ import {
     requestBodySaveResultSchema,
     emptyResultSchema,
     requestScriptOutputSchema,
+    requestSendLogSchema,
     requestSendResultSchema,
     type RequestArea,
 } from '@mandor/ipc';
@@ -24,6 +25,10 @@ export function createRequestBridge({ call, subscribe }: BridgeKit): RequestArea
         onScriptOutput: (handler) =>
             subscribe(CHANNELS.requestScriptOutput, (push) => {
                 handler(requestScriptOutputSchema.parse(push));
+            }),
+        onSendLog: (handler) =>
+            subscribe(CHANNELS.requestSendLog, (push) => {
+                handler(requestSendLogSchema.parse(push));
             }),
     };
 }

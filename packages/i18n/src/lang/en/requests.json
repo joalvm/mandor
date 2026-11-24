@@ -137,6 +137,8 @@
     "graphqlSubscription": "{{name}} · subscriptions live in Mandor Realtime",
     "graphqlVariables": "Variables",
     "headers": "Headers",
+    "consoleRequestHeaders": "Request headers",
+    "consoleResponseHeaders": "Response headers",
     "headerAutoAuth": "The authorization this request goes by",
     "headerAutoAuthFollow": "Go to Authorization",
     "headerAutoContentType": "The type of the body, set on the Body tab",

@@ -16,6 +16,7 @@ import { registerHistoryHandlers } from './history/history.handlers.js';
 import { createSendRecorder } from './history/send-recorder.js';
 import { registerRequestHandlers } from './request/request.handlers.js';
 import type { SendDeps } from './request/run-send.js';
+import { tellingSendLog } from './request/send-log.js';
 
 /** The jars of the app: one in memory per file, so every send and the window see the same cookies. */
 const cookieJars = createCookieJarStore();
@@ -35,7 +36,10 @@ const requestHandlers: AppHandlers = (ipc, context) => [
         cookieJars,
         // A body is saved with whatever extension its name carries: no filter narrows the dialog.
         chooseSavePath: systemSaveDialog(() => []),
-        afterSend: createSendRecorder(context),
+        // The console hears every send, the history keeps those that left.
+        afterSend: tellingSendLog((log) => {
+            pushToWindow(context.window, CHANNELS.requestSendLog, log);
+        }, createSendRecorder(context)),
         scripts: context.scripts,
         scriptVariables: context.scriptVariables,
         logger: context.logger,
