@@ -1,4 +1,4 @@
-import type { IDockviewPanelHeaderProps } from 'dockview';
+import type { DockviewGroupPanel, DockviewPanelApi } from 'dockview';
 import { memo, useEffect, useRef, useState } from 'react';
 
 import type { TabParams } from '../../grid/dockview-layout.js';
@@ -18,7 +18,13 @@ import { TabTrailing } from '../tab-strip/TabTrailing.js';
 import { useTabWrapper } from './useTabWrapper.js';
 import { useTrailingAction } from './useTrailingAction.js';
 
-type GroupTabProps = IDockviewPanelHeaderProps<TabParams>;
+/** What a tab reads of the panel dockview hands it: its name, its group and whether it is in front. */
+type TabPanel = Pick<
+    DockviewPanelApi,
+    'id' | 'isActive' | 'onDidActiveChange' | 'setTitle' | 'title'
+> & { group: Pick<DockviewGroupPanel, 'id'> };
+
+type GroupTabProps = { api: TabPanel; params: TabParams };
 
 /**
  * One tab of a group. Selection is a filled shape and not a line under the title, and which
@@ -40,7 +46,7 @@ export const GroupTab = memo(function GroupTab({ api, params }: GroupTabProps) {
     return <DeclaredGroupTab api={api} kind={kind} params={params} />;
 });
 
-type DeclaredGroupTabProps = Pick<GroupTabProps, 'api' | 'params'> & { kind: TabKindSpec };
+type DeclaredGroupTabProps = GroupTabProps & { kind: TabKindSpec };
 
 function DeclaredGroupTab({ api, kind, params }: DeclaredGroupTabProps) {
     const { onCloseTab, resources } = useGroupGrid();

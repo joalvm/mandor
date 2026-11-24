@@ -48,15 +48,7 @@ function draw(stale: string, active: boolean) {
             <TooltipProvider>
                 <GroupGridContext value={{ onCloseTab: () => undefined, resources: {} }}>
                     <GroupTab
-                        api={api as unknown as Parameters<typeof GroupTab>[0]['api']}
-                        containerApi={
-                            {} as unknown as Parameters<typeof GroupTab>[0]['containerApi']
-                        }
-                        tabLocation={
-                            { type: 'dock' } as unknown as Parameters<
-                                typeof GroupTab
-                            >[0]['tabLocation']
-                        }
+                        api={api}
                         params={{
                             kind: 'sample',
                             resource: 'mandor://demo/payments/connection/tab',

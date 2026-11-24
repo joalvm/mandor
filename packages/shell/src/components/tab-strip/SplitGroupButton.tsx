@@ -4,7 +4,8 @@ import type { DockviewGroupPanel } from 'dockview';
 
 import { shellStore } from '../../shell-store.js';
 
-type SplitGroupButtonProps = { group: DockviewGroupPanel };
+/** Only the group's id: the rest of the group is dockview's. */
+type SplitGroupButtonProps = { group: Pick<DockviewGroupPanel, 'id'> };
 
 /**
  * The split at the far end of the strip, beside the list of its tabs: the command of the palette

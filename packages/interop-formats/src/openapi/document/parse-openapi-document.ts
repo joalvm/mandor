@@ -1,7 +1,11 @@
 import { degradation, type Degradation, isRecord } from '@mandor/interop-core';
-import { dereference, type ParserOptions, validate } from '@readme/openapi-parser';
+import {
+    type APIDocument,
+    dereference,
+    type ParserOptions,
+    validate,
+} from '@readme/openapi-parser';
 import { upgrade } from '@scalar/openapi-upgrader';
-import type { OpenAPIV3_1 } from 'openapi-types';
 import { parse } from 'yaml';
 
 import { OpenapiParseError } from './openapi-parse-error.js';
@@ -71,28 +75,30 @@ export async function parseOpenapiDocument(text: string): Promise<ParsedOpenapi>
 }
 
 /**
- * The upgrader and the parser type the same document with two packages of types that do not
- * meet. What the first returns is a document the second reads: the cast says so in one place.
+ * The document lifted to OpenAPI 3.1, the one shape everything after this reads. The upgrader
+ * allows a result with no version, which the parser does not read: it is checked like the text.
  */
-function upgraded(raw: OpenAPIV3_1.Document): OpenAPIV3_1.Document {
-    return upgrade(structuredClone(raw), '3.1') as unknown as OpenAPIV3_1.Document;
+function upgraded(raw: APIDocument): APIDocument {
+    return apiDocumentOf(upgrade(structuredClone(raw), '3.1'));
 }
 
 /** What the validator needs from here is that it is an API document; it checks the rest. */
-function isApiDocument(value: unknown): value is OpenAPIV3_1.Document {
+function isApiDocument(value: unknown): value is APIDocument {
     return isRecord(value) && ('openapi' in value || 'swagger' in value);
 }
 
-function rawDocumentOf(text: string): OpenAPIV3_1.Document {
-    const parsed = parseText(text);
+function rawDocumentOf(text: string): APIDocument {
+    return apiDocumentOf(parseText(text));
+}
 
-    if (!isApiDocument(parsed)) {
+function apiDocumentOf(value: unknown): APIDocument {
+    if (!isApiDocument(value)) {
         throw new OpenapiParseError([
             'The document is not an OpenAPI or Swagger description: it has no "openapi" or "swagger" field',
         ]);
     }
 
-    return parsed;
+    return value;
 }
 
 function parseText(text: string): unknown {
@@ -105,7 +111,7 @@ function parseText(text: string): unknown {
 
 function conversionNotes(
     specification: 'OpenAPI' | 'Swagger' | null,
-    raw: OpenAPIV3_1.Document,
+    raw: APIDocument,
 ): Degradation[] {
     if (specification === 'Swagger') {
         return [degradation('convertedSwagger')];

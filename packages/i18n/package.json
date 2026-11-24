@@ -10,9 +10,9 @@
     },
     "dependencies": {
         "@mandor/ipc": "0.0.0",
-        "i18next": "27.1.2",
+        "i18next": "27.2.2",
         "react": "19.3.1",
-        "react-i18next": "18.0.1"
+        "react-i18next": "18.0.3"
     },
     "devDependencies": {
         "@testing-library/react": "16.3.3",

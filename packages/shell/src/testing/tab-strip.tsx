@@ -1,5 +1,5 @@
 import { ROOT_GROUP_ID } from '@mandor/ipc';
-import { useMemo, useState, type ComponentProps, type PropsWithChildren } from 'react';
+import { useMemo, useState, type PropsWithChildren } from 'react';
 
 import { GroupTab } from '../components/group-grid/GroupTab.js';
 import { GroupGridContext } from '../grid/group-grid-scope.js';
@@ -16,8 +16,6 @@ type TabStripOfProps = PropsWithChildren<{ groupId: string }>;
 export function TabStripOf({ children, groupId }: TabStripOfProps) {
     return <TabStripContext value={{ groupId }}>{children}</TabStripContext>;
 }
-
-type GroupTabProps = ComponentProps<typeof GroupTab>;
 
 type TabOfProps = {
     active?: boolean;
@@ -58,18 +56,13 @@ export function TabOf({
             title: '',
         };
 
-        return panel as unknown as GroupTabProps['api'];
+        return panel;
     }, [active, groupId, tab.id]);
 
     return (
         <GroupGridContext value={{ onCloseTab: onClose, resources }}>
             <div aria-label={title} className="dv-tab" role="tab">
-                <GroupTab
-                    api={api}
-                    containerApi={{} as GroupTabProps['containerApi']}
-                    params={{ kind: tab.kind, resource: tab.resource }}
-                    tabLocation="header"
-                />
+                <GroupTab api={api} params={{ kind: tab.kind, resource: tab.resource }} />
             </div>
         </GroupGridContext>
     );
