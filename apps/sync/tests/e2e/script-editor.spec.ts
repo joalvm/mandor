@@ -156,11 +156,37 @@ test('what a script names of another app is underlined, and the bulb converts it
     await expect(editorOfScript()).toContainText('mandor.variables.get("z")');
     await expect(editorOfScript()).toContainText('pm.environment.get("x")');
 
-    await page.keyboard.press('ControlOrMeta+Home');
+    // Back to the first line, by the pointer: a key to the top of the text is not the same key on
+    // every system.
+    await editorLines(page, 'event-script')
+        .filter({ visible: true })
+        .locator('.view-line')
+        .first()
+        .click();
     await page.keyboard.press('ControlOrMeta+Period');
     await bulb.getByText('Convert the whole script to mandor.').click();
 
     await expect(editorOfScript()).toContainText('mandor.variables.get("x")');
     await expect(editorOfScript()).toContainText('bru.runRequest("y")');
     await expect(underlined).toHaveCount(1);
+});
+
+/**
+ * In the smallest window the half of the request has no room for the moments in a column and a
+ * script beside them: the moments go over the script, and a line of it reads whole.
+ */
+test('in the smallest window the moments go over the script, which keeps the width', async () => {
+    await app.evaluate(({ BrowserWindow }) => {
+        BrowserWindow.getAllWindows()[0]?.setSize(1024, 640);
+    });
+
+    await expect(page.getByRole('tablist', { name: 'Moment of the send' })).toHaveAttribute(
+        'aria-orientation',
+        'horizontal',
+    );
+
+    await typeScript('mandor.variables;');
+    await expect(
+        editorLines(page, 'event-script').filter({ visible: true }).locator('.view-line'),
+    ).toHaveCount(1);
 });

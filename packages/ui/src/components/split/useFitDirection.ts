@@ -13,10 +13,14 @@ export type SplitLayout = SplitDirection | 'fit';
  * it is a group the user splits and a panel the user drags, and it is followed while they do.
  * Until the box has been measured it counts as wide: that is what it nearly always is, and the
  * first frame is not the moment to flip it. A pane that stands one way measures nothing.
+ *
+ * `room` is the narrowest box that still holds both halves side by side: two halves of a pane
+ * ask for more than a list beside what it opens.
  */
 export function useFitDirection(
     box: RefObject<HTMLElement | null>,
     layout: SplitLayout,
+    room = SIDE_BY_SIDE,
 ): SplitDirection {
     const [wide, setWide] = useState(true);
     const fits = layout === 'fit';
@@ -30,7 +34,7 @@ export function useFitDirection(
 
         const observer = new ResizeObserver(([entry]) => {
             if (entry !== undefined) {
-                setWide(entry.contentRect.width >= SIDE_BY_SIDE);
+                setWide(entry.contentRect.width >= room);
             }
         });
 
@@ -39,7 +43,7 @@ export function useFitDirection(
         return () => {
             observer.disconnect();
         };
-    }, [box, fits]);
+    }, [box, fits, room]);
 
     return directionOf(layout, wide);
 }

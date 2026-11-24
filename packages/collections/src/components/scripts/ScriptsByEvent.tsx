@@ -2,7 +2,7 @@ import { useMessages } from '@mandor/i18n';
 import type { SCRIPT_EVENTS, ScriptEntry, ScriptLevel } from '@mandor/schema';
 import type { ScriptContext } from '@mandor/script';
 import { useResourceSection } from '@mandor/shell';
-import { Switch, Tabs, TabsList, TabsPanel, TabsTab } from '@mandor/ui';
+import { Switch, Tabs, TabsList, TabsPanel, TabsStrip, TabsTab } from '@mandor/ui';
 
 import type { ScriptPlace } from '../../hooks/useScriptApproval.js';
 import { momentMarksOf, switchedScript, withScript } from '../../lib/script-entries.js';
@@ -61,7 +61,9 @@ const STRIP = 'scripts';
  * with a dot when it holds code and its name dimmed when it is switched off, and the script of the
  * one open on the right, under a header with its name and its switch. A script that would not run
  * as it is carries its band above the text, which stays readable. The column is walked with the
- * arrows up and down; the moment open stays while the place is.
+ * arrows up and down; the moment open stays while the place is. Where the place is too narrow for
+ * the column and a script beside it, as in the half of a small window, the moments go over the
+ * script in a strip and the script takes the whole width.
  */
 export function ScriptsByEvent<Event extends ScriptEvent>(props: ScriptsByEventProps<Event>) {
     const labels = useMessages('collections');
@@ -70,21 +72,23 @@ export function ScriptsByEvent<Event extends ScriptEvent>(props: ScriptsByEventP
     const open = events.find((each) => each === remembered) ?? events[0];
 
     return (
-        <Tabs onValueChange={setOpen} orientation="vertical" value={open}>
-            <TabsList label={labels(LIST_LABEL_OF[place.level])}>
-                {events.map((each) => {
-                    const name: MomentLabel = LABEL_OF[each];
+        <Tabs onValueChange={setOpen} orientation="fit" value={open}>
+            <TabsStrip>
+                <TabsList label={labels(LIST_LABEL_OF[place.level])}>
+                    {events.map((each) => {
+                        const name: MomentLabel = LABEL_OF[each];
 
-                    return (
-                        <TabsTab
-                            key={each}
-                            label={labels(name)}
-                            value={each}
-                            {...momentMarksOf(scripts?.[each])}
-                        />
-                    );
-                })}
-            </TabsList>
+                        return (
+                            <TabsTab
+                                key={each}
+                                label={labels(name)}
+                                value={each}
+                                {...momentMarksOf(scripts?.[each])}
+                            />
+                        );
+                    })}
+                </TabsList>
+            </TabsStrip>
             {events.map((each) => (
                 <TabsPanel key={each} value={each}>
                     <Moment {...props} event={each} />

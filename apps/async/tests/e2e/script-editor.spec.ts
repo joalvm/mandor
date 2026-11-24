@@ -173,7 +173,13 @@ test('what a script names of another app is underlined, and the bulb converts it
     await expect(editorOfScript()).toContainText('mandor.variables.get("z")');
     await expect(editorOfScript()).toContainText('pm.environment.get("x")');
 
-    await page.keyboard.press('ControlOrMeta+Home');
+    // Back to the first line, by the pointer: a key to the top of the text is not the same key on
+    // every system.
+    await editorLines(dialog, 'event-script')
+        .filter({ visible: true })
+        .locator('.view-line')
+        .first()
+        .click();
     await page.keyboard.press('ControlOrMeta+Period');
     await bulb.getByText('Convert the whole script to mandor.').click();
 
