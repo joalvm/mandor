@@ -61,6 +61,25 @@ describe('logging what fails in a channel', () => {
         ]);
     });
 
+    /** The window only tells the code: which file and why live here, or nowhere. */
+    it('writes a fault of the disk or of git as a warning, with its message', async () => {
+        const { bare, ipc, logged } = setup();
+
+        ipc.handle(CHANNELS.collectionTree, () =>
+            Promise.resolve(failure('fs-read', 'Cannot read item.yaml: EBUSY')),
+        );
+        ipc.handle(CHANNELS.collectionMove, () =>
+            Promise.resolve(failure('git-failed', 'index.lock exists')),
+        );
+        await bare.call(CHANNELS.collectionTree);
+        await bare.call(CHANNELS.collectionMove);
+
+        expect(logged).toEqual([
+            ['warn', `${CHANNELS.collectionTree} answered fs-read: Cannot read item.yaml: EBUSY`],
+            ['warn', `${CHANNELS.collectionMove} answered git-failed: index.lock exists`],
+        ]);
+    });
+
     it('writes nothing for a success or for a refusal the interface already understands', async () => {
         const { bare, ipc, logged } = setup();
 
