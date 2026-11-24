@@ -10,7 +10,7 @@ import {
     closeOriginRuntime,
     openOriginRuntime,
 } from '../../src/origin/origin-runtime.js';
-import { flushCommits } from '../../src/repo/commit-scheduler.js';
+import { flushCommits, hasPendingCommit } from '../../src/repo/commit-scheduler.js';
 import {
     announceConflictRecorded,
     announceConflictsChanged,
@@ -88,11 +88,14 @@ describe('the runtime of the open origin', () => {
         openOriginRuntime({ root: repo.root() }, logger);
         await repo.write('notes.txt', 'hola\n');
 
-        await vi.waitFor(async () => {
-            await flushCommits(repo.root());
-
-            expect(await repo.subjects()).toContain('update notes.txt');
+        // What is waited for is the edit being heard, which is memory; git runs once it is, outside
+        // the wait, where a slow commit cannot use up its time.
+        await vi.waitFor(() => {
+            expect(hasPendingCommit(repo.root(), 'outside:notes.txt')).toBe(true);
         });
+        await flushCommits(repo.root());
+
+        expect(await repo.subjects()).toContain('update notes.txt');
     });
 
     it('forgets what the window believed when the origin is left', () => {
