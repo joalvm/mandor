@@ -107,6 +107,20 @@ describe('the table and the request lines it is a view of', () => {
         ]);
     });
 
+    /** The table draws the type it was given; a type cleared there is gone, not kept from before. */
+    it('a line whose type the table cleared leaves without it', () => {
+        const before = [requestLine('page', '1', { meta: { required: true, type: 'integer' } })];
+        const [drawn] = keyValueLinesOf(before);
+
+        if (drawn === undefined) {
+            throw new Error('no line drawn');
+        }
+
+        expect(requestLinesOf([{ ...drawn, meta: undefined }], before)).toEqual([
+            requestLine('page', '1'),
+        ]);
+    });
+
     it('a round trip gives back the lines it took, in the order they were written', () => {
         const lines = [
             requestLine('dryRun', 'true', { enabled: false }),
