@@ -55,7 +55,7 @@ export function ConsoleEntryRow({
 
     return (
         <li
-            className={cn('border-b border-border-subtle font-mono text-code', look.row)}
+            className={cn('border-b border-border-subtle font-mono text-xs', look.row)}
             data-index={index}
             data-level={entry.level}
             data-part="console-entry"

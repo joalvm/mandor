@@ -103,8 +103,8 @@
 }
 
 /**
- * The sheet of github.com (`github-markdown-css`, MIT): Mona Sans at 16 px on lines of 1.5, the
- * headings on GitHub's scale, a column of 980 px at most with 45 px of air around it. The code is
+ * The sheet of github.com (`github-markdown-css`, MIT), at the size a desktop tool reads at: Mona
+ * Sans at the medium step of the interface on lines of 1.5, the headings on GitHub's scale, a column of 980 px at most with 45 px of air around it. The code is
  * written in the mono type of the product, the one the editor beside the page writes it in.
  */
 [data-part='markdown'] {
@@ -119,7 +119,7 @@
         Helvetica,
         Arial,
         sans-serif;
-    font-size: 16px;
+    font-size: var(--mandor-text-md-size);
     letter-spacing: normal;
     line-height: 1.5;
     margin-inline: auto;

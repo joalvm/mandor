@@ -6,8 +6,8 @@ import { ObjectInspector } from 'react-inspector';
  */
 const THEME = {
     BASE_FONT_FAMILY: 'var(--mandor-font-mono)',
-    BASE_FONT_SIZE: 'var(--mandor-text-code-size)',
-    BASE_LINE_HEIGHT: 'var(--mandor-text-code-line)',
+    BASE_FONT_SIZE: 'var(--mandor-text-xs-size)',
+    BASE_LINE_HEIGHT: 'var(--mandor-text-xs-line)',
     BASE_BACKGROUND_COLOR: 'transparent',
     BASE_COLOR: 'var(--text-primary)',
     OBJECT_PREVIEW_ARRAY_MAX_PROPERTIES: 10,
@@ -26,8 +26,8 @@ const THEME = {
     ARROW_FONT_SIZE: 10,
     ARROW_ANIMATION_DURATION: '0s',
     TREENODE_FONT_FAMILY: 'var(--mandor-font-mono)',
-    TREENODE_FONT_SIZE: 'var(--mandor-text-code-size)',
-    TREENODE_LINE_HEIGHT: 'var(--mandor-text-code-line)',
+    TREENODE_FONT_SIZE: 'var(--mandor-text-xs-size)',
+    TREENODE_LINE_HEIGHT: 'var(--mandor-text-xs-line)',
     TREENODE_PADDING_LEFT: 14,
 };
 
@@ -46,7 +46,7 @@ export function ConsoleValue({ value }: ConsoleValueProps) {
     if (typeof value !== 'object' || value === null) {
         return (
             <pre
-                className="font-mono text-code break-all whitespace-pre-wrap text-text-primary select-text"
+                className="font-mono text-xs break-all whitespace-pre-wrap text-text-primary select-text"
                 data-part="console-value-text"
             >
                 {String(value)}
