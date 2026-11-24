@@ -11,8 +11,8 @@ type ConnectionFaultDetailProps = {
 };
 
 /**
- * The failure read whole, in the same dock as any other line of the timeline. It has a code and
- * a moment and nothing else: a network error is something that happened, so it is shown the way
+ * The failure read whole, in the same dock as any other line of the timeline. It has a code, a moment
+ * and the words of the transport: a network error is something that happened, so it is shown the way
  * the frames around it are shown, and it can be copied out of here like them. Its moment is the
  * band's to say — the dock says it the same way it says a frame's. A script that kept the socket
  * shut leaves the way past it here: the row stays a line to select.
@@ -30,9 +30,23 @@ export function ConnectionFaultDetail({ entry }: ConnectionFaultDetailProps) {
                 data-part="activity-detail"
             >
                 <p className="text-sm text-text-error">{errorMessages(fault.code)}</p>
+                <FaultMessage message={fault.message} />
                 <ConnectWithoutScripts fault={fault} />
             </div>
         </>
+    );
+}
+
+/** What the transport said, word for word, to be read and copied as it came. */
+function FaultMessage({ message }: { message: string | undefined }) {
+    if (message === undefined || message === '') {
+        return null;
+    }
+
+    return (
+        <p className="font-mono text-code break-all whitespace-pre-wrap text-text-primary select-text">
+            {message}
+        </p>
     );
 }
 

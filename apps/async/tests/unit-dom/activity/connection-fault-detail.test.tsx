@@ -14,11 +14,11 @@ function Wrapper({ children }: { children: ReactNode }) {
     return <MessagesProvider preferences={{ language: 'es' }}>{children}</MessagesProvider>;
 }
 
-function faultEntry(code: ErrorCode): ConnectionFaultEntry {
+function faultEntry(code: ErrorCode, message?: string): ConnectionFaultEntry {
     return {
         at: 1700000000000,
         bytes: 0,
-        detail: { at: 1700000000000, code },
+        detail: { at: 1700000000000, code, message },
         id: 'fault-1',
         kind: 'connection-fault',
     };
@@ -51,6 +51,19 @@ describe('the detail of a fault', () => {
 
         expect(shown).toHaveAttribute('data-format', 'text');
         expect(shown.textContent).toBe('Mandor no pudo leer el archivo solicitado.');
+    });
+
+    it('says under the failure what the transport said, as it said it', () => {
+        render(
+            <ConnectionFaultDetail
+                entry={faultEntry('ws-open-failed', 'getaddrinfo ENOTFOUND badurl')}
+            />,
+            { wrapper: Wrapper },
+        );
+
+        expect(byPart('activity-detail').textContent).toBe(
+            'No se pudo abrir la conexión.getaddrinfo ENOTFOUND badurl',
+        );
     });
 
     it('offers to connect past the scripts when one kept the socket shut', () => {
