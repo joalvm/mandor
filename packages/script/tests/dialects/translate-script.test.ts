@@ -59,9 +59,9 @@ describe('translateScript', () => {
     });
 
     it('leaves a name past what the table knows', () => {
-        expect(translateScript('pm.test.skip("later", () => {});')).toMatchObject({
-            text: 'pm.test.skip("later", () => {});',
-            untranslated: [{ dialect: 'postman', from: 0, to: 12, translatable: false }],
+        expect(translateScript('const at = pm.test.index();')).toMatchObject({
+            text: 'const at = pm.test.index();',
+            untranslated: [{ dialect: 'postman', from: 11, to: 24, translatable: false }],
         });
     });
 
