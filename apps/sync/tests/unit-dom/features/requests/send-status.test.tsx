@@ -120,7 +120,7 @@ describe('the way out of a script that broke the send', () => {
         expect(consoleStore.getState().open).toBe(true);
     });
 
-    it('offers no such way when it was not a script that failed', () => {
+    it('offers no way without scripts when it was not a script that failed, but the console', () => {
         render(
             <SendStatus
                 entry={{ error: 'request-timeout', sendId: SEND, state: 'failed' }}
@@ -130,7 +130,7 @@ describe('the way out of a script that broke the send', () => {
         );
 
         expect(screen.queryByRole('button', { name: 'Send without scripts' })).toBeNull();
-        expect(screen.queryByRole('button', { name: 'Open console' })).toBeNull();
+        expect(screen.getByRole('button', { name: 'Open console' })).toBeVisible();
     });
 });
 

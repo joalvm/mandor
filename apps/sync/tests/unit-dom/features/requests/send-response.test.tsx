@@ -1,4 +1,4 @@
-import { registerSurface } from '@mandor/shell';
+import { consoleStore, registerSurface } from '@mandor/shell';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -50,6 +50,28 @@ describe('the response beside a request, with its ResponseActions', () => {
         expect(screen.getByRole('status')).toHaveTextContent('The server did not answer in time.');
         expect(screen.queryByText('HTTP/2')).toBeNull();
         expect(summary()).toHaveAttribute('data-fault', 'true');
+    });
+
+    it('shows what the transport said under the words of the error, as it said it', () => {
+        draw({
+            error: 'request-failed',
+            message: 'invalid user-agent header',
+            state: 'failed',
+        });
+
+        expect(screen.getByRole('status')).toHaveTextContent('The request could not be sent.');
+        expect(screen.getByText('invalid user-agent header')).toBeVisible();
+    });
+
+    it('opens the console from any send that failed, not only from a broken script', () => {
+        draw({
+            error: 'request-unreachable',
+            message: 'getaddrinfo ENOTFOUND api',
+            state: 'failed',
+        });
+        fireEvent.click(screen.getByRole('button', { name: 'Open console' }));
+
+        expect(consoleStore.getState().open).toBe(true);
     });
 
     it('says the request was cancelled in the words of the error, without the red', () => {

@@ -20,9 +20,9 @@ async function outcomeOf(input: RequestSendRequest): Promise<SendOutcome> {
 
         return result.ok
             ? { query: input.request.query, response: result.value, state: 'done' }
-            : { error: result.error.code, state: 'failed' };
-    } catch {
-        return { error: 'unknown', state: 'failed' };
+            : { error: result.error.code, message: result.error.message, state: 'failed' };
+    } catch (error) {
+        return { error: 'unknown', message: String(error), state: 'failed' };
     }
 }
 

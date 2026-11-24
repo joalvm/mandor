@@ -26,10 +26,13 @@ function SendOutcome({ outcome, resource }: SendOutcomeProps) {
 
     if (outcome.kind === 'failure') {
         return (
-            <div className={BAND} data-part="history-entry-failure">
-                <span className="min-w-0 truncate text-text-error">
-                    {errors(failureCodeOf(outcome.code))}
-                </span>
+            <div className="flex min-w-0 flex-col" data-part="history-entry-failure">
+                <div className={BAND}>
+                    <span className="min-w-0 truncate text-text-error">
+                        {errors(failureCodeOf(outcome.code))}
+                    </span>
+                </div>
+                <FailureMessage message={outcome.message} />
             </div>
         );
     }
@@ -38,6 +41,19 @@ function SendOutcome({ outcome, resource }: SendOutcomeProps) {
         <div className="min-h-0 flex-1">
             <ResponsePanel resource={resource} response={outcome.response} />
         </div>
+    );
+}
+
+/** What the transport said when the send failed, as it said it, selectable to be copied. */
+function FailureMessage({ message }: { message: string }) {
+    if (message === '') {
+        return null;
+    }
+
+    return (
+        <p className="min-w-0 px-pad-panel pb-pad-panel font-mono text-code break-all whitespace-pre-wrap text-text-primary select-text">
+            {message}
+        </p>
     );
 }
 

@@ -80,8 +80,10 @@ function SendOutcomeStatus({ entry, onSendWithoutScripts }: SendOutcomeStatusPro
 }
 
 /**
- * A cut the user asked for is not a fault: the red is for what went wrong on its own. A long
- * fault gives way before the ways out do, so they stay whole on a narrow half.
+ * A cut the user asked for is not a fault: the red is for what went wrong on its own. Under the
+ * words of the error, what the transport said, as it said it, the way Postman shows it: the words
+ * alone hide the cause. A long fault gives way before the ways out do, so they stay whole on a
+ * narrow half; the console is always one of them, because every send writes there.
  */
 function FailureBand({ entry, onSendWithoutScripts }: SendOutcomeStatusProps) {
     const errors = useMessages('errors');
@@ -94,28 +96,47 @@ function FailureBand({ entry, onSendWithoutScripts }: SendOutcomeStatusProps) {
     const fault = entry.error !== 'request-aborted';
 
     return (
-        <div
-            className={cn(BAND, fault && 'text-text-error')}
-            data-fault={fault}
-            data-part="response-summary"
-            data-state={entry.state}
-        >
-            <span aria-hidden className="min-w-0 truncate">
-                {errors(entry.error)}
-            </span>
-            <div className="ml-auto flex shrink-0 items-center gap-gap-control">
-                <SendWithoutScriptsButton
-                    broke={entry.error === 'script-failed'}
-                    onSend={onSendWithoutScripts}
-                >
-                    {labels('sendWithoutScripts')}
-                </SendWithoutScriptsButton>
-                <OpenConsoleButton broke={entry.error === 'script-failed'}>
-                    {labels('openConsole')}
-                </OpenConsoleButton>
-                <OpenHistoryButton />
+        <div className="flex min-w-0 flex-col" data-part="send-failure">
+            <div
+                className={cn(BAND, fault && 'text-text-error')}
+                data-fault={fault}
+                data-part="response-summary"
+                data-state={entry.state}
+            >
+                <span aria-hidden className="min-w-0 truncate">
+                    {errors(entry.error)}
+                </span>
+                <div className="ml-auto flex shrink-0 items-center gap-gap-control">
+                    <SendWithoutScriptsButton
+                        broke={entry.error === 'script-failed'}
+                        onSend={onSendWithoutScripts}
+                    >
+                        {labels('sendWithoutScripts')}
+                    </SendWithoutScriptsButton>
+                    <Button onClick={showConsole} size="sm">
+                        {labels('openConsole')}
+                    </Button>
+                    <OpenHistoryButton />
+                </div>
             </div>
+            <FailureMessage fault={fault} message={entry.message} />
         </div>
+    );
+}
+
+/** What the transport said, selectable and whole: it is what gets copied into a search. */
+function FailureMessage({ fault, message }: { fault: boolean; message: string | undefined }) {
+    if (!fault || message === undefined || message === '') {
+        return null;
+    }
+
+    return (
+        <p
+            className="min-w-0 px-pad-panel pb-pad-panel font-mono text-code break-all whitespace-pre-wrap text-text-primary select-text"
+            data-part="send-failure-message"
+        >
+            {message}
+        </p>
     );
 }
 
@@ -132,24 +153,6 @@ function SendWithoutScriptsButton({ broke, children, onSend }: SendWithoutScript
 
     return (
         <Button onClick={onSend} size="sm">
-            {children}
-        </Button>
-    );
-}
-
-type OpenConsoleButtonProps = PropsWithChildren<{ broke: boolean }>;
-
-/**
- * The way to what a broken script wrote: the console of the window, which stays put away until
- * it is asked for, as a browser keeps its own.
- */
-function OpenConsoleButton({ broke, children }: OpenConsoleButtonProps) {
-    if (!broke) {
-        return null;
-    }
-
-    return (
-        <Button onClick={showConsole} size="sm">
             {children}
         </Button>
     );

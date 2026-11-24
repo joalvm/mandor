@@ -17,7 +17,13 @@ export type SendEntry =
           sendId?: string | undefined;
           state: 'done';
       }
-    | { error: ErrorCode; sendId?: string | undefined; state: 'failed' };
+    | {
+          error: ErrorCode;
+          /** What the transport said, as it said it: the words of the code alone hide the cause. */
+          message?: string | undefined;
+          sendId?: string | undefined;
+          state: 'failed';
+      };
 
 /** What a send ends in: the two entries that no longer wait for anything. */
 export type SendOutcome = Extract<SendEntry, { state: 'done' | 'failed' }>;
