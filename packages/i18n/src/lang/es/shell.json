@@ -12,6 +12,7 @@
     "consoleResize": "Cambiar el alto de la consola",
     "consoleShow": "Mostrar la consola",
     "consoleTitle": "Consola",
+    "consoleWindowTitle": "Ventana",
     "consoleWarnings_one": "{{count}} aviso",
     "consoleWarnings_other": "{{count}} avisos",
     "copied": "Copiado",

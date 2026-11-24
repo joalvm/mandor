@@ -31,6 +31,7 @@ export type { SearchEntry, SearchField, WorkspaceEntries } from './search/search
 export { useMenuEditSteps } from './hooks/useMenuEditSteps.js';
 export { useMenuLanguage } from './hooks/useMenuLanguage.js';
 export { useMenuSettings } from './hooks/useMenuSettings.js';
+export { useWindowConsole } from './hooks/useWindowConsole.js';
 export { useWindowReady } from './hooks/useWindowReady.js';
 export { useFollowedResource } from './hooks/useFollowedResource.js';
 export { useResourceSection } from './hooks/useResourceSection.js';

@@ -26,6 +26,7 @@ import {
     useMenuSettings,
     useShellStore,
     useShortcuts,
+    useWindowConsole,
     useWindowReady,
 } from '@mandor/shell';
 import {
@@ -64,6 +65,7 @@ export function AsyncApp() {
     useMenuEditSteps();
     useMenuSettings();
     useWindowReady();
+    useWindowConsole();
 
     return (
         <TooltipProvider>

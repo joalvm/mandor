@@ -25,6 +25,7 @@ import {
     useMenuSettings,
     useShellStore,
     useShortcuts,
+    useWindowConsole,
     useWindowReady,
 } from '@mandor/shell';
 import {
@@ -60,6 +61,7 @@ export function SyncApp() {
     useMenuEditSteps();
     useMenuSettings();
     useWindowReady();
+    useWindowConsole();
 
     return (
         <TooltipProvider>

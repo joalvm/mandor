@@ -12,6 +12,7 @@
     "consoleResize": "Resize the console",
     "consoleShow": "Show the console",
     "consoleTitle": "Console",
+    "consoleWindowTitle": "Window",
     "consoleWarnings_one": "{{count}} warning",
     "consoleWarnings_other": "{{count}} warnings",
     "copied": "Copied",
