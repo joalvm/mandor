@@ -11,6 +11,7 @@ import {
 } from '@mandor/shell';
 
 import { docsStore } from '../../docs-store.js';
+import { cancelDocNaming } from '../../lib/cancel-doc-naming.js';
 import { docResource } from '../../lib/doc-resource.js';
 import { openDoc } from '../../lib/open-doc.js';
 import { renameDoc } from '../../lib/rename-doc.js';
@@ -61,7 +62,14 @@ export function DocRow({ name, title, workspaceId }: DocRowProps) {
             selected={selected}
         >
             <DocIcon size="sm" />
-            <DocRowName onCommit={commit} renaming={renaming} title={title} />
+            <DocRowName
+                onCommit={commit}
+                onEscape={() => {
+                    fireAndForget(cancelDocNaming(workspaceId, name));
+                }}
+                renaming={renaming}
+                title={title}
+            />
             <DocRowMenu name={name} />
         </ListRow>
     );
@@ -69,10 +77,12 @@ export function DocRow({ name, title, workspaceId }: DocRowProps) {
 
 function DocRowName({
     onCommit,
+    onEscape,
     renaming,
     title,
 }: {
     onCommit: (value: string) => boolean;
+    onEscape: () => void;
     renaming: boolean;
     title: DocRowProps['title'];
 }) {
@@ -87,6 +97,7 @@ function DocRowName({
                     docsStore.getState().setRenaming(null);
                 }}
                 onCommit={onCommit}
+                onEscape={onEscape}
                 value={title}
             />
         );

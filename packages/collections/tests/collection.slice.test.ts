@@ -9,6 +9,7 @@ describe('the collection of a window before anything is read', () => {
             folded: {},
             examplesClosed: {},
             renaming: null,
+            justMade: false,
             selected: [],
             deleting: null,
             error: null,

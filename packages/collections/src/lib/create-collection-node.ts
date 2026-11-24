@@ -42,7 +42,7 @@ export async function createCollectionNode(
     await loadCollection(workspaceId);
 
     if (itemKind === null) {
-        collectionStore.getState().setRenaming(result.value);
+        collectionStore.getState().nameJustMade(result.value);
 
         return;
     }

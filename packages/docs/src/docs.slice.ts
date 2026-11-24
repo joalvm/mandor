@@ -15,6 +15,11 @@ export type DocsSlice = {
     reading: string[];
     /** The file name being renamed in place, if any. */
     renaming: string | null;
+    /**
+     * Whether the row being renamed was made a moment ago and this field is the first name it
+     * gets: Escape there takes the making back. Any other rename, and any end of this one, clears it.
+     */
+    justMade: boolean;
     /** The text of each doc, by resource: two tabs on one file share one entry. */
     texts: Record<string, string>;
     /** How each open tab is showing its doc, by tab. A tab that closes takes its entry along. */
@@ -34,6 +39,7 @@ export function initialDocsSlice(): DocsSlice {
         error: null,
         reading: [],
         renaming: null,
+        justMade: false,
         texts: {},
         views: {},
         folderDescriptions: {},

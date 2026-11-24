@@ -10,6 +10,7 @@ import { collectionStore } from '../../collection-store.js';
 import { useCollectionDrag } from '../../hooks/useCollectionDrag.js';
 import { useItemLeaf } from '../../hooks/useItemLeaf.js';
 import { ItemProvider } from '../../item-context.js';
+import { cancelNaming } from '../../lib/cancel-naming.js';
 import { collectionItemMode } from '../../lib/collection-item-mode.js';
 import { itemResource } from '../../lib/item-resource.js';
 import { renameCollectionNode } from '../../lib/rename-collection-node.js';
@@ -130,6 +131,9 @@ function RowName({
                     collectionStore.getState().setRenaming(null);
                 }}
                 onCommit={commit}
+                onEscape={() => {
+                    fireAndForget(cancelNaming(workspaceId, node));
+                }}
                 value={node.name}
             />
         );
