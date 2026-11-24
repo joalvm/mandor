@@ -10,13 +10,13 @@ import { payload, useGraphqlWorld } from './support/graphql-world.js';
 const world = useGraphqlWorld();
 
 describe('the channels of the schema of a server, when they cannot answer', () => {
-    it('answers nothing when the request cannot be resolved yet, and refuses to ask', async () => {
+    it('answers no schema while the url holds a variable, and asks a server that is not there', async () => {
         expect(
             await world.ipc.call(CHANNELS.graphqlSchemaRead, payload('{{nobody}}/graphql')),
         ).toEqual({ ok: true, value: null });
         expect(
             await world.ipc.call(CHANNELS.graphqlIntrospect, payload('{{nobody}}/graphql')),
-        ).toMatchObject({ ok: false, error: { code: 'bad-request' } });
+        ).toMatchObject({ ok: false, error: { code: 'request-unreachable' } });
         expect(world.seen).toEqual([]);
     });
 
