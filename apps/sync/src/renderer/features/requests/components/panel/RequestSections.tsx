@@ -14,11 +14,17 @@ import { useMemo } from 'react';
 
 import { CookiesButton } from '../../../cookies/index.js';
 import { changesOfBody } from '../../lib/body-change.js';
-import { DEFAULT_REQUEST_SECTION, openSectionOf, sectionsOf } from '../../lib/request-section.js';
+import {
+    DEFAULT_REQUEST_SECTION,
+    openSectionOf,
+    sectionsOf,
+    type RequestSection,
+} from '../../lib/request-section.js';
 import { bodyVerdict } from '../../lib/request-verdict.js';
 import { marksOf } from '../../lib/section-marks.js';
 import { useBodySchemaGeneration } from '../../hooks/useBodySchemaGeneration.js';
 import { useGraphqlSchema } from '../../hooks/useGraphqlSchema.js';
+import { useScriptsBroke } from '../../hooks/useScriptsBroke.js';
 import { RequestBodyEditor } from '../body/RequestBodyEditor.js';
 import { RequestBodySchema } from '../body/RequestBodySchema.js';
 import { RequestScripts } from '../scripts/RequestScripts.js';
@@ -63,6 +69,11 @@ export function RequestSections({
         [checked, settled],
     );
     const generation = useBodySchemaGeneration(request, onChange);
+    const scriptsBroke = useScriptsBroke(resource);
+    const verdicts: Partial<Record<RequestSection, boolean>> = {
+        schema: broken.length > 0,
+        scripts: scriptsBroke,
+    };
 
     return (
         <Tabs onValueChange={setSection} value={section}>
@@ -73,7 +84,7 @@ export function RequestSections({
                             key={each}
                             label={labels(each)}
                             value={each}
-                            {...marksOf(request, each, broken.length > 0)}
+                            {...marksOf(request, each, verdicts[each])}
                         />
                     ))}
                 </TabsList>

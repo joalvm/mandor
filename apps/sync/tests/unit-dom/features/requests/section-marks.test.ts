@@ -46,7 +46,7 @@ describe('what the strip says about each section', () => {
             examples: [{ body: '{}', contentType: 'application/json', name: '', status: '200' }],
         };
 
-        expect(marksOf(request, 'scripts')).toEqual({ filled: false });
+        expect(marksOf(request, 'scripts')).toEqual({ broken: false, filled: false });
         expect(marksOf(request, 'settings')).toEqual({});
         expect(marksOf(request, 'path')).toEqual({});
     });
@@ -56,8 +56,21 @@ describe('what the strip says about each section', () => {
 
         expect(
             marksOf({ ...request, scripts: { onResponse: { source: 'a()' } } }, 'scripts'),
-        ).toEqual({ filled: true });
-        expect(marksOf({ ...request, scripts: {} }, 'scripts')).toEqual({ filled: false });
+        ).toEqual({ broken: false, filled: true });
+        expect(marksOf({ ...request, scripts: {} }, 'scripts')).toEqual({
+            broken: false,
+            filled: false,
+        });
+    });
+
+    /** A script brought in from another tool often speaks its words: the dot turns red. */
+    it('marks the scripts broken, not green, once one of them stopped on the last send', () => {
+        const written = {
+            ...createRequestItem({ name: 'own' }),
+            scripts: { onResponse: { source: 'pm.response.to.have.status(200)' } },
+        };
+
+        expect(marksOf(written, 'scripts', true)).toEqual({ broken: true, filled: false });
     });
 
     it('nothing about the file travels in a section: the draft is the tab of the request to say', () => {

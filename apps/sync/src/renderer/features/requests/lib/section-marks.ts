@@ -27,15 +27,18 @@ const FILLED: Partial<Record<RequestSection, (request: RequestItem) => boolean>>
     scripts: (request) => hasOwnScripts(request.scripts),
 };
 
-/** The sections whose dot answers to the verdict of the body: a rule broken outweighs the green. */
-const JUDGED: ReadonlySet<RequestSection> = new Set(['schema']);
+/**
+ * The sections whose dot answers to a verdict: the schema to the body that breaks it, the scripts
+ * to the last send, where one of them stopped. What is wrong outweighs the green.
+ */
+const JUDGED: ReadonlySet<RequestSection> = new Set(['schema', 'scripts']);
 
 /**
  * What a section tells from the strip without being opened: that it holds something, as a
  * quiet green dot. Whether what was typed is on the file yet is the tab of the request's to
  * say — the draft is of the whole item, and never of one section. Settings and the path say
  * nothing about content: they always have a value. The schema says, besides, whether the body
- * breaks it, and then its dot is the broken one and never the green.
+ * breaks it, and the scripts whether one of them stopped: then the dot is the broken one.
  */
 export function marksOf(
     request: RequestItem,
