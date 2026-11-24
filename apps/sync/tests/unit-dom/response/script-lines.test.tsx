@@ -101,6 +101,17 @@ describe('what one moment of a send writes to the console (consoleLines)', () =>
         ]);
     });
 
+    it('warns that a script moved the destination, so the secrets stayed behind', () => {
+        expect(consoleLines(pushOf({ destinationMoved: true }), labels(), words())).toEqual([
+            {
+                key: 'before-destinationMoved',
+                tone: 'warn',
+                text: 'A script changed the destination: it left without secrets',
+                detail: 'Put the host in the environment and the secrets go along.',
+            },
+        ]);
+    });
+
     it('keys every line by its moment, so the two moments of a send never collide', () => {
         const said = { logs: [{ level: 'log' as const, text: 'hola' }] };
         const before = consoleLines(pushOf(said), labels(), words());

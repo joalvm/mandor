@@ -69,7 +69,7 @@ describe('the response beside a request, with its ResponseActions', () => {
             message: 'getaddrinfo ENOTFOUND api',
             state: 'failed',
         });
-        fireEvent.click(screen.getByRole('button', { name: 'Open console' }));
+        fireEvent.click(screen.getByRole('button', { name: 'View in console' }));
 
         expect(consoleStore.getState().open).toBe(true);
     });

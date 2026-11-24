@@ -1,7 +1,5 @@
-import { envStore } from '@mandor/env';
-import { failure, success } from '@mandor/ipc';
-import { bridge, consoleStore, registerSurface, selectTabs, shellStore } from '@mandor/shell';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { consoleStore, registerSurface, selectTabs, shellStore } from '@mandor/shell';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { OpenHistoryButton } from '../../../../src/renderer/features/requests/components/response/OpenHistoryButton.js';
@@ -115,7 +113,7 @@ describe('the way out of a script that broke the send', () => {
         expect(screen.queryByText('antes de romper')).toBeNull();
         expect(consoleStore.getState().open).toBe(false);
 
-        fireEvent.click(screen.getByRole('button', { name: 'Open console' }));
+        fireEvent.click(screen.getByRole('button', { name: 'View in console' }));
 
         expect(consoleStore.getState().open).toBe(true);
     });
@@ -130,14 +128,14 @@ describe('the way out of a script that broke the send', () => {
         );
 
         expect(screen.queryByRole('button', { name: 'Send without scripts' })).toBeNull();
-        expect(screen.getByRole('button', { name: 'Open console' })).toBeVisible();
+        expect(screen.getByRole('button', { name: 'View in console' })).toBeVisible();
     });
 });
 
 describe('the marks of what the scripts changed on the way out', () => {
     const DONE = { response: httpResponse(), sendId: SEND, state: 'done' } as const;
 
-    it('marks the scripts left out, a destination a script moved and a redirect held', () => {
+    it('marks the scripts left out and a redirect held, and leaves a moved destination to the console', () => {
         told({
             skipped: [
                 { name: 'altas', level: 'folder', event: 'onBeforeRequest', bytes: 4 },
@@ -150,11 +148,8 @@ describe('the marks of what the scripts changed on the way out', () => {
 
         expect(screen.getByText('Sent without 2 unapproved scripts')).toBeVisible();
         expect(
-            screen.getByText('A script changed the destination: it left without secrets'),
-        ).toBeVisible();
-        expect(
-            screen.getByText('Put the host in the environment and the secrets go along.'),
-        ).toBeVisible();
+            screen.queryByText('A script changed the destination: it left without secrets'),
+        ).toBeNull();
         expect(
             screen.getByText('Redirect stopped: it carried a secret to another site'),
         ).toBeVisible();
@@ -165,38 +160,5 @@ describe('the marks of what the scripts changed on the way out', () => {
         render(<SendStatus entry={DONE} />, { wrapper: AppProviders });
 
         expect(document.querySelector('[data-part="script-mark"]')).toBeNull();
-    });
-
-    it('forgets what the scripts set in the workspace of the send', async () => {
-        const clear = vi.spyOn(bridge.scripts, 'clearVariables').mockResolvedValue(success({}));
-
-        envStore.setState({ scriptVariables: { pagos: { prod: [{ name: 'a', preview: '1' }] } } });
-        told({ destinationMoved: true });
-        render(<SendStatus entry={DONE} />, { wrapper: AppProviders });
-        fireEvent.click(screen.getByRole('button', { name: 'Forget what scripts set' }));
-
-        expect(clear).toHaveBeenCalledWith('pagos');
-        await waitFor(() => {
-            expect(envStore.getState().scriptVariables).toEqual({});
-        });
-    });
-
-    it('keeps what the scripts set when forgetting it is refused, and says so', async () => {
-        const notify = vi.fn();
-
-        vi.spyOn(bridge.scripts, 'clearVariables').mockResolvedValue(failure('not-found', 'gone'));
-        envStore.setState({ scriptVariables: { pagos: { prod: [{ name: 'a', preview: '1' }] } } });
-        told({ destinationMoved: true });
-        render(<SendStatus entry={DONE} />, {
-            wrapper: ({ children }) => <AppProviders onNotify={notify}>{children}</AppProviders>,
-        });
-        fireEvent.click(screen.getByRole('button', { name: 'Forget what scripts set' }));
-
-        await waitFor(() => {
-            expect(notify).toHaveBeenCalledOnce();
-        });
-        expect(envStore.getState().scriptVariables).toEqual({
-            pagos: { prod: [{ name: 'a', preview: '1' }] },
-        });
     });
 });

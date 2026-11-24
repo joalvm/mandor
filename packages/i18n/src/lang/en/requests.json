@@ -183,7 +183,7 @@
     "responseIdle": "Send the request to see its response here.",
     "responseSections": "Sections of the response",
     "saveBody": "Save…",
-    "openConsole": "Open console",
+    "openConsole": "View in console",
     "scriptEditor": "Script",
     "scriptErrorLine": "line {{line}}",
     "scriptEventBefore": "Before the request",
