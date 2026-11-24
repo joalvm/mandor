@@ -66,6 +66,21 @@ describe('how the layers that float over the window come and go', () => {
     });
 
     /**
+     * A menu fading out still stands under the pointer, and a line the pointer crosses takes the
+     * focus: the field a Rename line just opened would lose it, and a field that loses it ends.
+     */
+    it('lets the pointer through a layer while it fades out', async () => {
+        const runtime = await cssOf('runtime.css');
+
+        for (const [part] of LAYERS) {
+            expect(
+                rulesNaming(runtime, `[data-part='${part}']`, "[data-state='closed']"),
+                part,
+            ).toContain('pointer-events: none');
+        }
+    });
+
+    /**
      * A tooltip that opens after the pointer rested fades in; one that opens at once, because
      * the pointer moved over from another, shows at once, the way a row of tooltips is read.
      */

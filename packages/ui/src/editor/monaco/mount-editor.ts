@@ -182,6 +182,17 @@ function selectRange(
     shown.focus();
 }
 
+/** A field outside the editor someone is writing in: the name of a row being renamed. */
+function typingElsewhere(element: HTMLElement): boolean {
+    const held = document.activeElement;
+
+    return (
+        held instanceof HTMLElement &&
+        !element.contains(held) &&
+        held.closest('input, textarea, [contenteditable]:not([contenteditable="false"])') !== null
+    );
+}
+
 /**
  * Mounts one editor in an element. Every change of its text is handed out, whoever made it:
  * two views of one document both hear what is typed in either, and both hold the same text.
@@ -204,7 +215,7 @@ export function mountEditor(
         }),
     ];
 
-    if (target.options.focusOnMount === true) {
+    if (target.options.focusOnMount === true && !typingElsewhere(element)) {
         shown.focus();
     }
 

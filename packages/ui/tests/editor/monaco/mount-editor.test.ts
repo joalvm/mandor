@@ -67,6 +67,23 @@ describe('mounting an editor', () => {
         expect(shown.hasTextFocus()).toBe(true);
     });
 
+    /**
+     * A doc made from the lateral opens its editor while its row waits for a name: the editor,
+     * built a moment later, would take the caret from that field, and a field that loses it ends.
+     */
+    it('leaves the caret in a field being typed in elsewhere', () => {
+        const field = document.body.appendChild(document.createElement('span'));
+
+        field.setAttribute('contenteditable', 'plaintext-only');
+        field.focus();
+
+        const { shown } = mount({ ...JSONC, options: { focusOnMount: true } });
+
+        expect(shown.hasTextFocus()).toBe(false);
+        expect(field).toHaveFocus();
+        field.remove();
+    });
+
     it('hands out every change of the text', () => {
         const onChange = vi.fn();
         const { shown } = mount({ ...JSONC, language: 'plaintext', value: 'a' }, onChange);

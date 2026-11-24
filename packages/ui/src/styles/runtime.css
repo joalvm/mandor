@@ -959,6 +959,11 @@ textarea,
     [data-part='tooltip']
 )[data-state='closed'] {
     animation: mandor-layer-out var(--mandor-duration-fast) var(--mandor-ease-in);
+    /*
+     * A layer fading out still stands under the pointer, and a menu line the pointer crosses
+     * takes the focus: the name a Rename line just opened would lose it and end at once.
+     */
+    pointer-events: none;
 }
 
 /*
