@@ -5,7 +5,7 @@ import type { AppMenuHolder } from './app-menu-holder.js';
 
 export type MenuHandlerDeps = {
     /** The installed menu, which knows how to rebuild itself in another language. */
-    holder: AppMenuHolder;
+    holder: Pick<AppMenuHolder<unknown>, 'speak'>;
 };
 
 /**

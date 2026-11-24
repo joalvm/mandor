@@ -1,4 +1,14 @@
-import type { DockviewApi } from 'dockview';
+import type { DockviewActivePanelChangeEvent } from 'dockview';
+
+/** What the pointing hears of a change of the tab in front: who made it, and the tab it brought. */
+type Pointed = Pick<DockviewActivePanelChangeEvent, 'origin'> & {
+    panel: { group: { id: string }; id: string } | undefined;
+};
+
+/** The one thing the pointing asks of the view: to be told whenever the tab in front changes. */
+type PointingView = {
+    onDidActivePanelChange: (listener: (event: Pointed) => void) => { dispose: () => void };
+};
 
 /**
  * Which tab of a group the user put in front is pointing too, and the tree decides what it
@@ -9,7 +19,7 @@ import type { DockviewApi } from 'dockview';
  * not a click — and echoing those back would only answer itself.
  */
 export function tabPointingOf(
-    api: DockviewApi,
+    api: PointingView,
     pointed: (groupId: string, tabId: string) => void,
 ): () => void {
     const heard = api.onDidActivePanelChange((event) => {

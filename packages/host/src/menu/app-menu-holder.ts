@@ -5,17 +5,18 @@ import type { MenuItemConstructorOptions } from 'electron';
 import type { OpenedMenu } from './install-app-menu.js';
 import { updateMenuKey, type UpdateMenu } from './update-menu.js';
 
-export type AppMenuHolderDeps = {
+/** What the holder is made of; `W` is the window its menu opens under. */
+export type AppMenuHolderDeps<W> = {
     /** Builds the template in the language it is given. It is `buildAppMenu`, wired. */
     build: (language: Language, updates?: UpdateMenu) => MenuItemConstructorOptions[];
     /** Installs a template where the platform shows it, and hands back the built menu. */
-    install: (template: MenuItemConstructorOptions[]) => OpenedMenu;
+    install: (template: MenuItemConstructorOptions[]) => OpenedMenu<W>;
     kind: WorkspaceKind;
 };
 
-export type AppMenuHolder = {
+export type AppMenuHolder<W> = {
     /** The menu the popup button opens: whichever language was spoken last. */
-    current: () => OpenedMenu;
+    current: () => OpenedMenu<W>;
     /** The language spoken last: what main says on its own, like a dialog, is said in it. */
     language: () => Language;
     /** Rebuilds and reinstalls the menu in the language of the interface. */
@@ -33,7 +34,7 @@ export type AppMenuHolder = {
  * builds none of its own; its language is the provisional English, not a decision — the
  * renderer owns the preference and says so through `menu:language` the moment it is up.
  */
-export function createAppMenuHolder(deps: AppMenuHolderDeps): AppMenuHolder {
+export function createAppMenuHolder<W>(deps: AppMenuHolderDeps<W>): AppMenuHolder<W> {
     let spoken: Language = DEFAULT_LANGUAGE;
     let updating: UpdateMenu | undefined;
     let menu = deps.install(deps.build(spoken));

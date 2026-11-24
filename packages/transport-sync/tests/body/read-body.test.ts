@@ -59,11 +59,10 @@ describe('BodyReader', () => {
         const brotli = BodyReader.start(['br'], port(memorySpill()));
 
         brotli.onWireChunk(brotliCompressSync(Buffer.from('brotlied')));
-        expect(
-            Buffer.from(
-                ((await brotli.finish()).body as unknown as { bytes: Buffer }).bytes,
-            ).toString(),
-        ).toBe('brotlied');
+        expect((await brotli.finish()).body).toEqual({
+            kind: 'inline',
+            bytes: Buffer.from('brotlied'),
+        });
     });
 
     it('leaves an unknown encoding raw and says so', async () => {
@@ -80,11 +79,10 @@ describe('BodyReader', () => {
         const reader = BodyReader.start(['deflate', 'gzip'], port(memorySpill()));
 
         reader.onWireChunk(gzipSync(deflateSync(Buffer.from('twice gzipped'))));
-        expect(
-            Buffer.from(
-                ((await reader.finish()).body as unknown as { bytes: Buffer }).bytes,
-            ).toString(),
-        ).toBe('twice gzipped');
+        expect((await reader.finish()).body).toEqual({
+            kind: 'inline',
+            bytes: Buffer.from('twice gzipped'),
+        });
     });
 
     it('spills a body over the threshold and reports reference, count and hash', async () => {

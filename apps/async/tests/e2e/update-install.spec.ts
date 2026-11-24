@@ -48,11 +48,11 @@ async function setUpUpdates(page: Page): Promise<void> {
 
 async function currentVersion(page: Page): Promise<string> {
     return page.evaluate(async () => {
-        const result = await (
-            window as unknown as {
-                mandor: { update: { state: () => Promise<{ value: { current: string } }> } };
-            }
-        ).mandor.update.state();
+        const result = await window.mandor.update.state();
+
+        if (!result.ok) {
+            throw new Error(result.error.message);
+        }
 
         return result.value.current;
     });

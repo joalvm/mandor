@@ -3,7 +3,12 @@ import { describe, expect, it } from 'vitest';
 
 import { unwrapVariant } from '../../src/engine/unwrap-variant.js';
 
-const variant = { type: 'sync' } as unknown as QuickJSSyncVariant;
+/** A variant whose build is never loaded: the test only asks which object comes back. */
+const variant: QuickJSSyncVariant = {
+    type: 'sync',
+    importFFI: () => Promise.reject(new Error('not loaded')),
+    importModuleLoader: () => Promise.reject(new Error('not loaded')),
+};
 
 describe('unwrapVariant', () => {
     it('returns the variant when the loader gives it bare', () => {

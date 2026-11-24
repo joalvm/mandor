@@ -1,13 +1,7 @@
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { describe, expect, it } from 'vitest';
 
 import { listenRepoChanges } from '../../src/repo/repo-change-feed.js';
-
-type Mandor = { mandor: FakeBridge };
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 const ONE = { changes: [{ area: 'repo' as const }] };
 
@@ -18,7 +12,7 @@ describe('the feed of what changed on disk', () => {
         const stopFirst = listenRepoChanges((changes) => first.push(changes));
         const stopSecond = listenRepoChanges((changes) => second.push(changes));
 
-        bridge().emitRepoChanged(ONE);
+        windowBridge().emitRepoChanged(ONE);
         stopFirst();
         stopSecond();
 
@@ -33,7 +27,7 @@ describe('the feed of what changed on disk', () => {
         const stopGone = listenRepoChanges((changes) => gone.push(changes));
 
         stopGone();
-        bridge().emitRepoChanged(ONE);
+        windowBridge().emitRepoChanged(ONE);
         stopKept();
 
         expect(kept).toHaveLength(1);
@@ -43,9 +37,9 @@ describe('the feed of what changed on disk', () => {
     it('holds one subscription of the bridge while someone listens and none after', () => {
         let subscribed = 0;
         let released = 0;
-        const real = bridge().repo.onChanged;
+        const real = windowBridge().repo.onChanged;
 
-        bridge().repo.onChanged = (handler) => {
+        windowBridge().repo.onChanged = (handler) => {
             subscribed += 1;
 
             const stop = real(handler);
@@ -61,7 +55,7 @@ describe('the feed of what changed on disk', () => {
 
         stopA();
         stopB();
-        bridge().repo.onChanged = real;
+        windowBridge().repo.onChanged = real;
 
         expect([subscribed, released]).toEqual([1, 1]);
     });
@@ -73,7 +67,7 @@ describe('the feed of what changed on disk', () => {
 
         const stop = listenRepoChanges((changes) => heard.push(changes));
 
-        bridge().emitRepoChanged(ONE);
+        windowBridge().emitRepoChanged(ONE);
         stop();
 
         expect(heard).toEqual([ONE.changes]);

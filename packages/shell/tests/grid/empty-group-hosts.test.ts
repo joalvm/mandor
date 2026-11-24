@@ -1,4 +1,3 @@
-import type { DockviewApi } from 'dockview';
 import { describe, expect, it } from 'vitest';
 
 import { emptyGroupHosts } from '../../src/grid/empty-group-hosts.js';
@@ -16,8 +15,8 @@ function groupWith(id: string, blank: boolean) {
     return { element, id };
 }
 
-function apiOf(...groups: ReturnType<typeof groupWith>[]): DockviewApi {
-    return { groups } as unknown as DockviewApi;
+function apiOf(...groups: ReturnType<typeof groupWith>[]): Parameters<typeof emptyGroupHosts>[0] {
+    return { groups };
 }
 
 describe('where the empty groups keep their blank', () => {

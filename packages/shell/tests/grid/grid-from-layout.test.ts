@@ -1,4 +1,4 @@
-import type { SerializedDockview } from 'dockview';
+import { Orientation, type SerializedDockview } from 'dockview';
 import { describe, expect, it } from 'vitest';
 
 import { gridFrom } from '../../src/grid/grid-from-layout.js';
@@ -9,17 +9,24 @@ const TABS = new Map<string, Tab>([
     ['two', { id: 'two', kind: 'doc', resource: 'mandor://demo/payments/doc/two.md' }],
 ]);
 
-/** The view writes its arrangement with a shape it keeps to itself, so a test writes it plainly. */
-function layoutOf(root: unknown, orientation = 'HORIZONTAL'): SerializedDockview {
-    return {
-        grid: { root, width: 1000, height: 800, orientation },
-        panels: {},
-        activeGroup: 'root',
-    } as unknown as SerializedDockview;
+type Layout = Pick<SerializedDockview, 'grid'>;
+
+type LayoutNode = Layout['grid']['root'];
+
+/** The arrangement the view writes, reduced to the tree a test draws. */
+function layoutOf(root: LayoutNode, orientation = Orientation.HORIZONTAL): Layout {
+    return { grid: { root, width: 1000, height: 800, orientation } };
 }
 
-function group(id: string, views: string[], size: number) {
-    return { type: 'leaf', size, data: { views, activeView: views[0], id } };
+/** A group with its tabs, the first of them in front. */
+function group(id: string, views: string[], size: number): LayoutNode {
+    const [activeView] = views;
+
+    return {
+        type: 'leaf',
+        size,
+        data: activeView === undefined ? { views, id } : { views, activeView, id },
+    };
 }
 
 describe('reading back the tree the view arranged', () => {
@@ -81,7 +88,7 @@ describe('reading back the tree the view arranged', () => {
                         },
                     ],
                 },
-                'VERTICAL',
+                Orientation.VERTICAL,
             ),
             TABS,
         );

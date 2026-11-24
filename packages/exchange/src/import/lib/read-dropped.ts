@@ -12,7 +12,7 @@ export type DropWatch = { signal: AbortSignal; onRead: (files: number) => void }
 const NOBODY: DropWatch = { signal: new AbortController().signal, onRead: () => undefined };
 
 /** The part of a drop that is read: the entries the browser can walk, and the files as a fallback. */
-type DroppedTransfer = {
+export type DroppedTransfer = {
     files: ArrayLike<File>;
     items: ArrayLike<{ webkitGetAsEntry: () => unknown }>;
 };

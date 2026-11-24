@@ -90,11 +90,11 @@ describe('runSource', () => {
     });
 
     it('reports a trap of the instance as a fault, apart from a throw of the script', async () => {
-        const broken = {
+        const broken: WasmModule = {
             newRuntime: () => {
                 throw new WebAssembly.RuntimeError('unreachable');
             },
-        } as unknown as WasmModule;
+        };
 
         expect(await runSource(broken, '"x"')).toEqual({
             ok: false,

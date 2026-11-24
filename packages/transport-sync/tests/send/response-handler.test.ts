@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { RawResponseHandler } from '../../src/send/response-handler.js';
 
-function controllerWith(rawHeaders: unknown): Parameters<RawResponseHandler['onResponseStart']>[0] {
-    return { rawHeaders } as unknown as Parameters<RawResponseHandler['onResponseStart']>[0];
+type Controller = Parameters<RawResponseHandler['onResponseStart']>[0];
+
+function controllerWith(rawHeaders: Controller['rawHeaders']): Controller {
+    return rawHeaders === undefined ? {} : { rawHeaders };
 }
 
 describe('RawResponseHandler', () => {

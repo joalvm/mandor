@@ -1,4 +1,9 @@
-import type { InteropDocument, InteropOperation } from '@mandor/interop-core';
+import type {
+    InteropDocument,
+    InteropHttpOperation,
+    InteropOperation,
+    InteropParameter,
+} from '@mandor/interop-core';
 import { describe, expect, it } from 'vitest';
 
 import { importResourcesOf } from '../../../src/postman/import/import-resources.js';
@@ -16,21 +21,24 @@ const EMPTY: InteropDocument = {
     notes: [],
 };
 
-function operation(http: Record<string, unknown>): InteropOperation {
+function operation(http: Partial<InteropHttpOperation>): InteropOperation {
     return {
-        id: 'o',
         name: 'Ping',
-        kind: 'http',
+        channel: 'Ping',
+        direction: 'outgoing',
+        security: [],
         extras: {},
         http: {
             method: 'GET',
+            path: '',
             url: 'http://x.test',
+            tags: [],
             security: null,
             parameters: [],
             responses: [],
             ...http,
         },
-    } as unknown as InteropOperation;
+    };
 }
 
 describe('request-resource and folder-resources: what a document may leave out', () => {
@@ -41,7 +49,7 @@ describe('request-resource and folder-resources: what a document may leave out',
     });
 
     it('lets a parameter with no switch be on when it is required, and off when it is not', () => {
-        const parameters = [
+        const parameters: InteropParameter[] = [
             { name: 'a', in: 'query', required: true, value: '1' },
             { name: 'b', in: 'query', required: false, value: '2' },
         ];

@@ -5,7 +5,7 @@ import { installAppMenu, type AppMenuPort } from '../../src/menu/install-app-men
 function spyPort() {
     const calls: (unknown[] | null)[] = [];
     const menu = { popup: vi.fn() };
-    const port: AppMenuPort = {
+    const port: AppMenuPort<typeof menu> = {
         buildFromTemplate: vi.fn(() => menu),
         setApplicationMenu: vi.fn((given) => {
             calls.push(given === null ? null : [given]);

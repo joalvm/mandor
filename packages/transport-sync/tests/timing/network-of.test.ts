@@ -1,5 +1,4 @@
 import type net from 'node:net';
-import type tls from 'node:tls';
 import { describe, expect, it } from 'vitest';
 
 import { networkOf, tlsDetailsOf } from '../../src/timing/network-of.js';
@@ -8,12 +7,17 @@ function socket(fields: Partial<net.Socket>): net.Socket {
     return fields as net.Socket;
 }
 
-function secure(certificate: object, protocol: string | null = 'TLSv1.3'): tls.TLSSocket {
+type Handshake = Parameters<typeof tlsDetailsOf>[0];
+
+function secure(
+    certificate: ReturnType<Handshake['getPeerCertificate']>,
+    protocol: string | null = 'TLSv1.3',
+): Handshake {
     return {
         getPeerCertificate: () => certificate,
         getProtocol: () => protocol,
         getCipher: () => ({ standardName: 'TLS_AES_128_GCM_SHA256' }),
-    } as unknown as tls.TLSSocket;
+    };
 }
 
 describe('networkOf, both ends of the socket in a sync-network', () => {

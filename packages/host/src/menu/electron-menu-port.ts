@@ -1,18 +1,19 @@
 import { Menu } from 'electron';
 
-import type { AppMenuPort, OpenedMenu } from './install-app-menu.js';
+import type { AppMenuPort } from './install-app-menu.js';
 
 /**
- * The port of Electron's own `Menu`, and the only place that knows the real object. The casts
- * stay here because Electron's `popup` takes a looser shape than the one the bridge sends:
- * the popup channel always names a window and a corner, so the looser signature is the one
- * the rest of the code sees.
+ * The menu Electron builds: the base class of the `Menu` the module exports, which is what its
+ * own methods answer and take.
  */
-export function electronMenuPort(): AppMenuPort {
+type BuiltMenu = ReturnType<typeof Menu.buildFromTemplate>;
+
+/** The port of Electron's own `Menu`, and the only place that knows the real object. */
+export function electronMenuPort(): AppMenuPort<BuiltMenu> {
     return {
-        buildFromTemplate: (template) => Menu.buildFromTemplate(template) as OpenedMenu,
+        buildFromTemplate: (template) => Menu.buildFromTemplate(template),
         setApplicationMenu: (menu) => {
-            Menu.setApplicationMenu(menu as unknown as Menu | null);
+            Menu.setApplicationMenu(menu);
         },
     };
 }

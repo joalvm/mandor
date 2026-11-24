@@ -14,6 +14,7 @@ import {
 } from '../lib/import-plan-tree.js';
 import type { ImportChoice, ImportPick } from '../lib/import-choice.js';
 import { IMPORT_DOORS } from '../lib/import-doors.js';
+import type { DroppedTransfer } from '../lib/read-dropped.js';
 import type { ImportedDocument } from '../lib/imported-document.js';
 import { notifyImported } from '../lib/imported-signal.js';
 import { scriptsToAdjustIn } from '../lib/scripts-to-adjust-in.js';
@@ -46,7 +47,7 @@ export function useImportFlow(
     choose: (chosen: ReadonlySet<string>) => void;
     chosen: ReadonlySet<string>;
     counts: { selected: number; total: number };
-    drop: (transfer: DataTransfer) => Promise<InteropFile[] | null>;
+    drop: (transfer: DroppedTransfer) => Promise<InteropFile[] | null>;
     name: string;
     nodes: readonly ChoiceNode[];
     pick: (input: ImportPick) => Promise<InteropFile[] | null>;

@@ -1,4 +1,3 @@
-import type { KeyboardEvent, MouseEvent } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -7,15 +6,23 @@ import {
     type RowModifiers,
 } from '../../../src/components/row/row-activation.js';
 
-function keyOf(key: string, modifiers: Partial<RowModifiers> = {}): KeyboardEvent<HTMLElement> {
+/** A key pressed on the row itself, with the keys held beside it. */
+function keyOf(
+    key: string,
+    modifiers: Partial<RowModifiers> = {},
+): Parameters<typeof activateRow>[0] {
+    const row = document.createElement('li');
+
     return {
         altKey: modifiers.altKey ?? false,
         ctrlKey: modifiers.ctrlKey ?? false,
+        currentTarget: row,
         key,
         metaKey: modifiers.metaKey ?? false,
         preventDefault: vi.fn(),
         shiftKey: modifiers.shiftKey ?? false,
-    } as unknown as KeyboardEvent<HTMLElement>;
+        target: row,
+    };
 }
 
 describe('activateRow', () => {
@@ -85,14 +92,8 @@ describe('activateRow', () => {
 });
 
 describe('clickActivation', () => {
-    function clickOf(detail: number): MouseEvent<HTMLElement> {
-        return {
-            altKey: false,
-            ctrlKey: true,
-            detail,
-            metaKey: false,
-            shiftKey: false,
-        } as unknown as MouseEvent<HTMLElement>;
+    function clickOf(detail: number): Parameters<typeof clickActivation>[0] {
+        return { altKey: false, ctrlKey: true, detail, metaKey: false, shiftKey: false };
     }
 
     it('only looks on a single click and keeps on the second click of a double one', () => {

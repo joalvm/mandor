@@ -5,13 +5,16 @@ import { describe, expect, it } from 'vitest';
 import { useWrittenCaret } from '../src/hooks/useWrittenCaret.js';
 
 /** The hook reads nothing of a key but its name. */
-function key(name: string): KeyboardEvent<HTMLElement> {
-    return { key: name } as unknown as KeyboardEvent<HTMLElement>;
+function key(name: string): Pick<KeyboardEvent<HTMLElement>, 'key'> {
+    return { key: name };
 }
 
 /** A press as React hands it over: the element listening, and the one pressed. */
-function press(currentTarget: HTMLElement, target: HTMLElement): PointerEvent<HTMLElement> {
-    return { currentTarget, target } as unknown as PointerEvent<HTMLElement>;
+function press(
+    currentTarget: HTMLElement,
+    target: HTMLElement,
+): Pick<PointerEvent<HTMLElement>, 'currentTarget' | 'target'> {
+    return { currentTarget, target };
 }
 
 function writtenAt(offset: number) {

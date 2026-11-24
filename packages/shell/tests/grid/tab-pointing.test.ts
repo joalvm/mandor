@@ -1,4 +1,3 @@
-import type { DockviewApi } from 'dockview';
 import { describe, expect, it, vi } from 'vitest';
 
 import { tabPointingOf } from '../../src/grid/tab-pointing.js';
@@ -9,7 +8,10 @@ type Heard = (event: {
 }) => void;
 
 /** An api of the test that keeps the listeners the way a real emitter does. */
-function apiOf(): { api: DockviewApi; fire: (event: Parameters<Heard>[0]) => void } {
+function apiOf(): {
+    api: Parameters<typeof tabPointingOf>[0];
+    fire: (event: Parameters<Heard>[0]) => void;
+} {
     const listeners: Heard[] = [];
     const api = {
         onDidActivePanelChange: (handler: Heard) => {
@@ -21,7 +23,7 @@ function apiOf(): { api: DockviewApi; fire: (event: Parameters<Heard>[0]) => voi
                 },
             };
         },
-    } as unknown as DockviewApi;
+    };
 
     return {
         api,

@@ -1,5 +1,5 @@
 import { cleanup, render } from '@testing-library/react';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -9,14 +9,8 @@ import {
     useMenuSettings,
 } from '../../src/index.js';
 
-type Mandor = { mandor: FakeBridge };
-
 const OPENED: string[] = [];
 const UNDO: (() => void)[] = [];
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 function Harness() {
     useMenuSettings();
@@ -44,7 +38,7 @@ describe('the Settings entry of the menu', () => {
         UNDO.push(registerSurface({ id: 'settings', open: () => OPENED.push('settings') }));
         render(<Harness />);
 
-        bridge().emitMenuSettings();
+        windowBridge().emitMenuSettings();
 
         expect(OPENED).toEqual(['settings']);
     });
@@ -53,7 +47,7 @@ describe('the Settings entry of the menu', () => {
     it('does nothing while nobody has built the settings', () => {
         render(<Harness />);
 
-        bridge().emitMenuSettings();
+        windowBridge().emitMenuSettings();
 
         expect(OPENED).toEqual([]);
     });
@@ -63,7 +57,7 @@ describe('the Settings entry of the menu', () => {
         const view = render(<Harness />);
 
         view.unmount();
-        bridge().emitMenuSettings();
+        windowBridge().emitMenuSettings();
 
         expect(OPENED).toEqual([]);
     });

@@ -1,5 +1,5 @@
 import { success } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MessagesProvider } from '@mandor/i18n';
 import { TooltipProvider } from '@mandor/ui';
@@ -7,11 +7,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { AppMenuButton } from '../../../src/components/title-bar/AppMenuButton.js';
 
-type Mandor = { mandor: FakeBridge };
-
 function renderButton(options: { mac?: boolean } = {}) {
     const popupAppMenu = vi
-        .spyOn((window as unknown as Mandor).mandor.window, 'popupAppMenu')
+        .spyOn(windowBridge().window, 'popupAppMenu')
         .mockResolvedValue(success({}));
 
     if (options.mac === true) {

@@ -1,6 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { success } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useContext, type ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -10,9 +10,6 @@ import { rootErrorOptions } from '../../../src/fault/root-error-options.js';
 import { GroupGridContext } from '../../../src/grid/group-grid-scope.js';
 import { TabProvider } from '../../../src/tab/tab-context.js';
 import { declareTabKindSpec } from '../../../src/testing/tab-kind.js';
-
-type Mandor = { mandor: FakeBridge };
-type ContentProps = Parameters<typeof GroupTabContent>[0];
 
 const state = { broken: false };
 
@@ -30,15 +27,13 @@ function Body() {
 }
 
 function contentFor(resource: string, kind = 'sample', onCloseTab = vi.fn()): ReactNode {
-    const props = {
-        api: { group: { id: 'group-1' }, id: 'tab-1' },
-        params: { kind, resource },
-    } as unknown as ContentProps;
-
     return (
         <MessagesProvider preferences={{ language: 'en' }}>
             <GroupGridContext value={{ onCloseTab, resources: {} }}>
-                <GroupTabContent {...props} />
+                <GroupTabContent
+                    api={{ group: { id: 'group-1' }, id: 'tab-1' }}
+                    params={{ kind, resource }}
+                />
             </GroupGridContext>
         </MessagesProvider>
     );
@@ -50,7 +45,7 @@ function view(node: ReactNode) {
 
 beforeEach(() => {
     state.broken = false;
-    (window as unknown as Mandor).mandor.log.write = () => Promise.resolve(success({}));
+    windowBridge().log.write = () => Promise.resolve(success({}));
     undo = [
         declareTabKindSpec({
             body: <Body />,

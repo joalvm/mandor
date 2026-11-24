@@ -6,19 +6,17 @@ import {
     type Result,
     success,
 } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { reportFault } from '../../src/fault/report-fault.js';
-
-type Mandor = { mandor: FakeBridge };
 
 let written: LogWriteRequest[];
 let said: unknown[][];
 
 /** What the bridge answers to a line; the console is where the window says a line was lost. */
 function answerWith(answer: () => Promise<Result<Record<string, never>>>): void {
-    (window as unknown as Mandor).mandor.log.write = (input) => {
+    windowBridge().log.write = (input) => {
         written.push(input);
 
         return answer();

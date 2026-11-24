@@ -8,6 +8,9 @@ import { variableHints } from '../lib/variable-hints.js';
 import { declaredNames } from '../lib/window-scope.js';
 import { variableMatches } from '../lib/variable-matches.js';
 
+/** What the list reads of a key: its name, and the way to keep it from the field. */
+type KeyPress = Pick<KeyboardEvent<HTMLElement>, 'key' | 'preventDefault'>;
+
 type VariableSuggestionsInput = {
     /**
      * Where the last edit left the caret, so a token closed in advance still asks for a name;
@@ -27,7 +30,7 @@ export type VariableSuggestions = {
     active: string | null;
     /** One list entry per name still writable, with the hint it may show. */
     options: readonly SuggestOption[];
-    onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
+    onKeyDown: (event: KeyPress) => void;
     open: boolean;
     pick: (name: string) => void;
     /** The pointer joins the keyboard: an option under it becomes the active one. */
@@ -67,7 +70,7 @@ export function useVariableSuggestions({
         }
     }
 
-    function stepBy(step: number): (event: KeyboardEvent<HTMLElement>) => void {
+    function stepBy(step: number): (event: KeyPress) => void {
         return (event) => {
             event.preventDefault();
             setActiveName(steppedMatch(matches, active, step));
@@ -75,7 +78,7 @@ export function useVariableSuggestions({
     }
 
     /** Enter is the list's while it hangs: it takes the match the keyboard is on, if any. */
-    function take(event: KeyboardEvent<HTMLElement>): void {
+    function take(event: KeyPress): void {
         event.preventDefault();
 
         if (active !== null) {
@@ -84,7 +87,7 @@ export function useVariableSuggestions({
         }
     }
 
-    function onKeyDown(event: KeyboardEvent<HTMLElement>): void {
+    function onKeyDown(event: KeyPress): void {
         const answer = new Map([
             ['Escape', dismiss],
             ['ArrowDown', stepBy(1)],

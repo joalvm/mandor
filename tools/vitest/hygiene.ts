@@ -12,19 +12,21 @@ import { afterAll, afterEach, vi } from 'vitest';
 
 const SAID = Symbol.for('mandor.console.said');
 
-type Holder = Record<symbol, string[] | undefined>;
+// What the console holds under its mark: the lines written so far, once it was wrapped.
+function isSaid(value: unknown): value is string[] {
+    return Array.isArray(value);
+}
 
 function said(): string[] {
-    const holder = console as unknown as Holder;
-    const existing = holder[SAID];
+    const existing: unknown = Reflect.get(console, SAID);
 
-    if (existing !== undefined) {
+    if (isSaid(existing)) {
         return existing;
     }
 
     const fresh: string[] = [];
 
-    holder[SAID] = fresh;
+    Reflect.set(console, SAID, fresh);
 
     // The files of a worker share one console, so it is wrapped once and read by every file.
     for (const level of ['error', 'warn'] as const) {

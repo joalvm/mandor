@@ -1,8 +1,20 @@
 import { leavesOf, type GridNode } from '@mandor/ipc';
-import type { DockviewApi } from 'dockview';
+import type { DockviewGroupPanel, IDockviewGroupPanel } from 'dockview';
 
 import { dockviewLayoutOf } from './dockview-layout.js';
 import type { Tab } from '../tab/tab.js';
+
+/** What pointing reads of a group: its tabs, the one in front, and how to bring either forward. */
+type PointableGroup = Pick<IDockviewGroupPanel, 'activePanel' | 'panels'> & {
+    api: Pick<IDockviewGroupPanel['api'], 'setActive'>;
+    model: Pick<IDockviewGroupPanel['model'], 'openPanel'>;
+};
+
+/** What pointing reads of the view: the group in front, and any group by its name. */
+export type PointableView = {
+    activeGroup: Pick<DockviewGroupPanel, 'id'> | undefined;
+    getGroup: (id: string) => PointableGroup | undefined;
+};
 
 /** The tree with no tab in front of any group: what a grid is, before anybody points into it. */
 function unpointed(node: GridNode): GridNode {
@@ -31,7 +43,7 @@ export function gridPointingOf(grid: GridNode, activeGroupId: string): string {
  * group the window is on. Building the grid again for a click would tear down every panel under
  * the gesture that made it: a drag that starts on a tab of another group would die at once.
  */
-export function pointGrid(api: DockviewApi, grid: GridNode, activeGroupId: string): void {
+export function pointGrid(api: PointableView, grid: GridNode, activeGroupId: string): void {
     for (const leaf of leavesOf(grid)) {
         const group = api.getGroup(leaf.id);
         const front = group?.panels.find((panel) => panel.id === leaf.activeTab);

@@ -27,7 +27,10 @@ function linesBytes(headers: readonly (readonly [string, string])[]): number {
     );
 }
 
-export function headSizesOf(request: SyncRequest, head: Head): SyncHeadSizes {
+export function headSizesOf(
+    request: Pick<SyncRequest, 'body' | 'headers' | 'method' | 'url'>,
+    head: Head,
+): SyncHeadSizes {
     const url = new URL(request.url);
     const bodyBytes = request.body?.byteLength ?? 0;
     const added: [string, string][] = [['host', url.host]];

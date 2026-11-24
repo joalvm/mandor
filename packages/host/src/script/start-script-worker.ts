@@ -3,6 +3,7 @@ import { Worker } from 'node:worker_threads';
 import { SCRIPT_LIMITS } from '@mandor/script';
 
 import { runOnWorker, type RunSettings, type ScriptOutcome } from './run-on-worker.js';
+import type { RunWorker } from './worker-events.js';
 import { newWorkerSlots, type WorkerSlots } from './worker-slots.js';
 
 /** What a worker may use of the heap. The WASM memory is outside it and has its own maximum. */
@@ -80,8 +81,8 @@ function failed(errorName: string, message: string): ScriptOutcome {
  * new one under the limit, or the next to be free), runs on it and gives it back: to be reused if
  * the script ended clean, ended if it threw a fault, broke the protocol, hung, died or was cancelled.
  */
-export function startScriptWorker(
-    slots: WorkerSlots<Worker>,
+export function startScriptWorker<W extends RunWorker>(
+    slots: WorkerSlots<W>,
     options: ScriptChainOptions = {},
 ): ScriptChain {
     const closing = new AbortController();
@@ -96,7 +97,7 @@ export function startScriptWorker(
     async function run(input: string, signal?: AbortSignal): Promise<ScriptOutcome> {
         const wait =
             signal === undefined ? closing.signal : AbortSignal.any([signal, closing.signal]);
-        let worker: Worker;
+        let worker: W;
 
         try {
             worker = await slots.acquire(wait);

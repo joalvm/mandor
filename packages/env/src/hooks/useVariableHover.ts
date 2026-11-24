@@ -2,6 +2,9 @@ import type { PointerEvent } from 'react';
 
 import { useHoverGrace, type HoverGrace } from './useHoverGrace.js';
 
+/** What the hover reads of a move of the pointer: the element it came over or left. */
+type PointerMove = Pick<PointerEvent<HTMLElement>, 'target'>;
+
 /**
  * How long the pointer has to rest on a token before its panel comes up, the same wait every
  * tooltip of the window takes. A panel that opens on contact opens while the pointer is still
@@ -10,8 +13,8 @@ import { useHoverGrace, type HoverGrace } from './useHoverGrace.js';
 const OPEN_DELAY_MS = 400;
 
 export type VariableHover = HoverGrace & {
-    onPointerOut: (event: PointerEvent<HTMLElement>) => void;
-    onPointerOver: (event: PointerEvent<HTMLElement>) => void;
+    onPointerOut: (event: PointerMove) => void;
+    onPointerOver: (event: PointerMove) => void;
 };
 
 /**
@@ -27,7 +30,7 @@ export function useVariableHover(): VariableHover {
         controls.show({ name, rect: found.getBoundingClientRect() });
     }
 
-    function onPointerOver(event: PointerEvent<HTMLElement>): void {
+    function onPointerOver(event: PointerMove): void {
         const found = (event.target as HTMLElement).closest<HTMLElement>('[data-variable]');
 
         if (found === null || controls.held()) {
@@ -54,7 +57,7 @@ export function useVariableHover(): VariableHover {
         });
     }
 
-    function onPointerOut(event: PointerEvent<HTMLElement>): void {
+    function onPointerOut(event: PointerMove): void {
         if ((event.target as HTMLElement).closest('[data-variable]') !== null) {
             hover.schedule();
         }

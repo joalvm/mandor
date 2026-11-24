@@ -4,7 +4,7 @@ import { bridge, fireAndForget } from '@mandor/shell';
 import { useEffect, useRef, useState } from 'react';
 
 import type { ImportPick } from '../lib/import-choice.js';
-import { readDropped } from '../lib/read-dropped.js';
+import { readDropped, type DroppedTransfer } from '../lib/read-dropped.js';
 
 /**
  * Bringing the files in, however many they are: a pick is read by main, which says how it goes; a
@@ -12,7 +12,7 @@ import { readDropped } from '../lib/read-dropped.js';
  * Stopped, both answer as nothing picked.
  */
 export function useImportReading(fail: (failure: { error: { code: ErrorCode } }) => void): {
-    drop: (transfer: DataTransfer) => Promise<InteropFile[] | null>;
+    drop: (transfer: DroppedTransfer) => Promise<InteropFile[] | null>;
     pick: (input: ImportPick) => Promise<InteropFile[] | null>;
     reading: number | null;
     stop: () => void;
@@ -42,7 +42,7 @@ export function useImportReading(fail: (failure: { error: { code: ErrorCode } })
         return result.value.files;
     };
 
-    const drop = async (transfer: DataTransfer): Promise<InteropFile[] | null> => {
+    const drop = async (transfer: DroppedTransfer): Promise<InteropFile[] | null> => {
         const controller = new AbortController();
 
         dropping.current = controller;

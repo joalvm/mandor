@@ -9,7 +9,8 @@ import { SCRIPT_LIMITS } from '../limits/script-limits.js';
 
 import { unwrapVariant } from './unwrap-variant.js';
 
-export type WasmModule = QuickJSWASMModule;
+/** What a run takes of the WASM instance: a runtime of its own, made fresh for each run. */
+export type WasmModule = Pick<QuickJSWASMModule, 'newRuntime'>;
 
 const PAGE_BYTES = 65_536;
 const INITIAL_BYTES = 16 * 1024 * 1024;
@@ -27,7 +28,7 @@ function newWasmMemory(): WebAssembly.Memory {
 }
 
 /** The WASM instance of QuickJS, in a memory of its own with a maximum. It lives as long as its worker. */
-export function newWasmModule(): Promise<WasmModule> {
+export function newWasmModule(): Promise<QuickJSWASMModule> {
     const variant = newVariant(unwrapVariant(variantModule), { wasmMemory: newWasmMemory() });
 
     return newQuickJSWASMModuleFromVariant(variant);

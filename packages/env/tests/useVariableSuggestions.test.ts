@@ -17,12 +17,9 @@ const ENVIRONMENT = createEnvironment({
     ],
 });
 
-/** jsdom has no keyboard events here; the hook reads nothing but the key. */
-function key(keyName: string): KeyboardEvent<HTMLElement> {
-    return {
-        key: keyName,
-        preventDefault: () => undefined,
-    } as unknown as KeyboardEvent<HTMLElement>;
+/** A key as the hook reads it: its name, and the way to keep it from the field. */
+function key(keyName: string): Pick<KeyboardEvent<HTMLElement>, 'key' | 'preventDefault'> {
+    return { key: keyName, preventDefault: () => undefined };
 }
 
 /** The caret the last edit left, at the end of what it wrote. */

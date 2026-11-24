@@ -1,5 +1,5 @@
 import { success } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { type FakeBridge, windowBridge } from '@mandor/ipc/testing';
 import { cleanup, act, fireEvent, render, screen } from '@testing-library/react';
 import { MessagesProvider } from '@mandor/i18n';
 import { TooltipProvider } from '@mandor/ui';
@@ -7,10 +7,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { WindowControls } from '../../../src/components/title-bar/WindowControls.js';
 
-type Mandor = { mandor: FakeBridge };
-
 function mandor(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
+    return windowBridge();
 }
 
 function renderControls(options: { mac?: boolean } = {}) {

@@ -1,15 +1,9 @@
 import { success, type NoticePush } from '@mandor/ipc';
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import type { ToastRequest } from '@mandor/ui';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { listenNotices } from '../../src/notice/notice-feed.js';
-
-type Mandor = { mandor: FakeBridge };
-
-function bridge(): FakeBridge {
-    return (window as unknown as Mandor).mandor;
-}
 
 const FILES: NoticePush = {
     id: 1,
@@ -35,7 +29,7 @@ function listen(told?: Set<number>): ToastRequest[] {
 
 /** The list main answers to a window that listens late. */
 function answerList(list: NoticePush[]): void {
-    bridge().notice.list = () => Promise.resolve(success(list));
+    windowBridge().notice.list = () => Promise.resolve(success(list));
 }
 
 afterEach(() => {
@@ -48,10 +42,10 @@ afterEach(() => {
 
 describe('the feed of notices', () => {
     it('offers to start the app over beside a fault of main, and does it when chosen', () => {
-        const relaunch = vi.spyOn(bridge().window, 'relaunch');
+        const relaunch = vi.spyOn(windowBridge().window, 'relaunch');
         const shown = listen();
 
-        bridge().emitNotice({ id: 7, code: 'main-fault', tone: 'error', key: 'main-fault' });
+        windowBridge().emitNotice({ id: 7, code: 'main-fault', tone: 'error', key: 'main-fault' });
 
         expect(shown[0]?.action?.label).toBe('relaunch {}');
 
@@ -63,7 +57,7 @@ describe('the feed of notices', () => {
     it('translates a notice raised after listening, joining the list of names', () => {
         const shown = listen();
 
-        bridge().emitNotice(FILES);
+        windowBridge().emitNotice(FILES);
 
         expect(shown).toEqual([
             {
@@ -90,7 +84,7 @@ describe('the feed of notices', () => {
 
         const shown = listen();
 
-        bridge().emitNotice(FILES);
+        windowBridge().emitNotice(FILES);
         await vi.waitFor(() => {
             expect(say).toHaveBeenCalledOnce();
         });
@@ -102,12 +96,12 @@ describe('the feed of notices', () => {
         const told = new Set<number>();
         const first = listen(told);
 
-        bridge().emitNotice(FILES);
+        windowBridge().emitNotice(FILES);
         stops.pop()?.();
 
         const second = listen(told);
 
-        bridge().emitNotice(FILES);
+        windowBridge().emitNotice(FILES);
 
         expect(first).toHaveLength(1);
         expect(second).toEqual([]);
@@ -116,7 +110,7 @@ describe('the feed of notices', () => {
     it('goes quiet once it is let go of, even for a list that answers late', async () => {
         let answer: (() => void) | undefined;
 
-        bridge().notice.list = () =>
+        windowBridge().notice.list = () =>
             new Promise((resolve) => {
                 answer = () => {
                     resolve(success([FILES]));
@@ -126,7 +120,7 @@ describe('the feed of notices', () => {
         const shown = listen();
 
         stops.pop()?.();
-        bridge().emitNotice(FILES);
+        windowBridge().emitNotice(FILES);
         answer?.();
         await Promise.resolve();
 
@@ -134,13 +128,13 @@ describe('the feed of notices', () => {
     });
 
     it('survives a list the host refused', async () => {
-        bridge().notice.list = () =>
+        windowBridge().notice.list = () =>
             Promise.resolve({ ok: false, error: { code: 'bad-request', message: 'no' } });
 
         const shown = listen();
 
         await Promise.resolve();
-        bridge().emitNotice(FILES);
+        windowBridge().emitNotice(FILES);
 
         expect(shown).toHaveLength(1);
     });

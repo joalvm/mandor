@@ -34,7 +34,6 @@ un fallo de esta lista se relanza con `gh run rerun <run> --failed`.
 | `packages/host/tests/repo/commit-scheduler.test.ts`        | llega un commit de dos                                          | `git` lento en el runner                                                                                                            |
 | `packages/host/tests/sync/merge-divergence.test.ts`        | timeout de 30 s                                                 | varios `git` por paso                                                                                                               |
 | `packages/host/tests/origin/clone-origin.handlers.test.ts` | `EBUSY` al borrar                                               | un handle abierto (vigía o `git` hijo) en el teardown                                                                               |
-| `packages/host/tests/origin/origin-runtime.test.ts`        | el vigía no avisa del archivo escrito a mano                    | vigía aún no listo en NTFS                                                                                                          |
 
 Orden: (1) workflow manual `flakes.yml` en `windows-latest` con `--repeat-each` y traza como
 artefacto al fallar, hasta ver rojo; (2) arreglar la causa que el rojo señale, con su test de

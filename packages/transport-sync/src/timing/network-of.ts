@@ -11,10 +11,24 @@ function nameOf(names: CertificateNames): string | undefined {
     return Array.isArray(name) ? name.join(', ') : name;
 }
 
+/**
+ * What the handshake is read off: the version and the cipher agreed, and the certificate of the
+ * peer as the runtime answers it. A repeated name comes as a list, and a socket without a peer
+ * certificate answers an empty object, whatever the type of the runtime says.
+ */
+type Handshake = {
+    getCipher: () => Pick<tls.CipherNameAndProtocol, 'standardName'>;
+    getPeerCertificate: () => {
+        issuer?: CertificateNames;
+        subject?: CertificateNames;
+        valid_to?: string;
+    };
+    getProtocol: () => string | null;
+};
+
 /** What the handshake settled on a secure socket, and who its certificate names. */
-export function tlsDetailsOf(secure: tls.TLSSocket): SyncTlsDetails {
-    // A socket without a peer certificate answers an empty object, whatever the type says.
-    const certificate: Partial<tls.PeerCertificate> = secure.getPeerCertificate();
+export function tlsDetailsOf(secure: Handshake): SyncTlsDetails {
+    const certificate = secure.getPeerCertificate();
     const subject = nameOf(certificate.subject);
     const issuer = nameOf(certificate.issuer);
 

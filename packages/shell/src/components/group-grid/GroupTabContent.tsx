@@ -1,10 +1,16 @@
-import type { IDockviewPanelProps } from 'dockview';
+import type { DockviewGroupPanel, DockviewPanelApi } from 'dockview';
 
 import type { TabParams } from '../../grid/dockview-layout.js';
 import { useGroupGrid } from '../../grid/group-grid-scope.js';
 import { useTabKind } from '../../hooks/useTabKind.js';
 import { TabProvider } from '../../tab/tab-context.js';
 import { FaultBoundary } from '../fault/FaultBoundary.js';
+
+/** What the content reads of the panel dockview hands it: the tab and the group it sits in. */
+type GroupTabContentProps = {
+    api: Pick<DockviewPanelApi, 'id'> & { group: Pick<DockviewGroupPanel, 'id'> };
+    params: TabParams;
+};
 
 /**
  * What a group shows: whatever the kind of its tab in front draws. The view mounts one of these
@@ -13,7 +19,7 @@ import { FaultBoundary } from '../fault/FaultBoundary.js';
  * A tab that throws while it draws is left as a state of failure and takes nothing else with it;
  * it draws again when the resource it shows changes. The tab reads itself with `useTab`.
  */
-export function GroupTabContent({ api, params }: IDockviewPanelProps<TabParams>) {
+export function GroupTabContent({ api, params }: GroupTabContentProps) {
     const { onCloseTab } = useGroupGrid();
     const kind = useTabKind(params.kind);
 

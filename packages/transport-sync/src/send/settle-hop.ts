@@ -1,16 +1,15 @@
 import { errors, type Dispatcher } from 'undici';
 
-import { responseOf } from './hop-response.js';
+import { responseOf, type AnsweredRequest } from './hop-response.js';
 import type { RawResponseHandler } from './response-handler.js';
 import type { BodyReader } from '../body/read-body.js';
 import type { ConnectionPhases } from '../timing/connection-phases.js';
-import type { SyncRequest } from '../request/sync-request.js';
 import type { SyncResponse } from '../response/sync-response.js';
 
 /** The live pieces of one dispatch: what reads the body, what read the head, what carries the timings. */
 export type HopParts = {
-    agent: Dispatcher;
-    reader: BodyReader | undefined;
+    agent: Pick<Dispatcher, 'close'>;
+    reader: Pick<BodyReader, 'abort' | 'finish'> | undefined;
     handler: RawResponseHandler;
     phases: ConnectionPhases;
 };
@@ -27,7 +26,7 @@ export type HopOutcome = {
  */
 export async function settleHop(
     parts: HopParts,
-    request: SyncRequest,
+    request: AnsweredRequest,
     error?: Error,
 ): Promise<HopOutcome> {
     const { agent, handler, phases } = parts;

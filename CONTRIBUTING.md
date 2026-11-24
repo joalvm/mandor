@@ -158,6 +158,7 @@ Project rules (`tools/eslint-rules/`; the ones about file shape apply to `src/` 
 | `mandor/no-kind-branch`                  | what differs by kind comes from a typed table, not `switch` or `if` runs      |
 | `mandor/hook-file-name`                  | the file that exports a hook is named after the hook                          |
 | `mandor/no-pending-work-comment`         | no `TODO`, `FIXME`, `XXX` or `HACK` in a comment                              |
+| `mandor/no-double-assertion`             | no `as unknown as`: the value gets the type it has, by a narrow type or guard |
 
 ## Tests
 

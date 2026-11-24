@@ -5,7 +5,8 @@ import { useDeclaredList } from '../../declare/useDeclared.js';
 import { tabStripActionDeclarations } from '../../tab/tab-strip-action-registry.js';
 import { TabStripContext } from '../../tab/tab-strip-context.js';
 
-type TabStripActionsProps = { group: DockviewGroupPanel };
+/** What the slot reads of the group dockview hands it: its name, for the actions to act on. */
+type TabStripActionsProps = { group: Pick<DockviewGroupPanel, 'id'> };
 
 /**
  * The slot dockview puts right after the tabs of the group, wherever the strip ends: the add of

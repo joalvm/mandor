@@ -1,5 +1,5 @@
 import { MessagesProvider } from '@mandor/i18n';
-import { createConnection } from '@mandor/schema';
+import { createConnection, type Connection } from '@mandor/schema';
 import { TooltipProvider } from '@mandor/ui';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -54,8 +54,14 @@ function draw(changes: Record<string, unknown> = {}) {
     );
 }
 
-function stored(): Record<string, unknown> {
-    return connectionsStore.getState().connections[0] as unknown as Record<string, unknown>;
+function stored(): Connection {
+    const connection = connectionsStore.getState().connections[0];
+
+    if (connection === undefined) {
+        throw new Error('the store holds no connection');
+    }
+
+    return connection;
 }
 
 /** Types into the first field of that name: a table of pairs also draws the empty row last. */
@@ -91,7 +97,7 @@ describe('the socket.io settings of the dialog', () => {
         draw({ transport: 'socketio', url: 'http://localhost:3000' });
         type('Namespace', '/admin');
 
-        expect(stored()['socketio']).toEqual({ namespace: '/admin' });
+        expect(stored().socketio).toEqual({ namespace: '/admin' });
     });
 
     /** A v2 server only answers a v2 client: the version is the server's, and the file keeps it. */
@@ -107,17 +113,17 @@ describe('the socket.io settings of the dialog', () => {
             within(await screen.findByRole('listbox')).getByRole('option', { name: 'v2' }),
         );
 
-        expect(stored()['socketio']).toEqual({ version: 'v2' });
+        expect(stored().socketio).toEqual({ version: 'v2' });
     });
 
     it('writes the handshake wait the connection decides, and nothing while it follows the app', () => {
         draw({ transport: 'socketio', url: 'http://localhost:3000' });
 
-        expect(stored()['handshake']).toBeUndefined();
+        expect(stored().handshake).toBeUndefined();
 
         type('Timeout del handshake', '5000');
 
-        expect(stored()['handshake']).toEqual({ timeoutMs: 5_000 });
+        expect(stored().handshake).toEqual({ timeoutMs: 5_000 });
     });
 
     /** MessageSizeRow: a Socket.IO frame is a websocket frame underneath, with the same ceiling. */
@@ -130,14 +136,14 @@ describe('the socket.io settings of the dialog', () => {
 
         type('Tamaño máximo de mensaje', '64');
 
-        expect(stored()['socketio']).toEqual({ maximumMessageSizeKiB: 64 });
+        expect(stored().socketio).toEqual({ maximumMessageSizeKiB: 64 });
     });
 
     it('keeps a half-written namespace off the connection', () => {
         draw({ transport: 'socketio', url: 'http://localhost:3000' });
         type('Namespace', 'admin');
 
-        expect(stored()['socketio']).toBeUndefined();
+        expect(stored().socketio).toBeUndefined();
     });
 
     it('writes an auth entry into the socketio group of the connection', () => {
@@ -146,7 +152,7 @@ describe('the socket.io settings of the dialog', () => {
         type('Clave', 'token');
         type('Valor', '{{token}}');
 
-        expect(stored()['socketio']).toEqual({
+        expect(stored().socketio).toEqual({
             auth: { token: '{{token}}' },
             disabledAuth: {},
         });

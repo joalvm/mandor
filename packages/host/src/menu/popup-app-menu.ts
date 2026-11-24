@@ -10,6 +10,6 @@ import type { OpenedMenu } from './install-app-menu.js';
  * one. Electron takes only whole numbers there and throws over the argument instead of
  * rounding it, so the rounding happens here, at the edge, and the menu opens.
  */
-export function popupAppMenu(menu: OpenedMenu, window: unknown, x: number, y: number): void {
+export function popupAppMenu<W>(menu: OpenedMenu<W>, window: W, x: number, y: number): void {
     menu.popup({ window, x: Math.round(x), y: Math.round(y) });
 }

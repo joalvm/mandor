@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { Parser, type OperationInterface } from '@asyncapi/parser';
+import { Parser } from '@asyncapi/parser';
 import { describe, expect, it } from 'vitest';
 
 import { operationDirection } from '../../../src/asyncapi/import/operation-direction.js';
@@ -50,8 +50,8 @@ describe('operationDirection', () => {
     });
 
     it('answers from the model of the parser, never from a raw key of the document', () => {
-        const operation = { action: () => 'publish' };
+        const operation: Parameters<typeof operationDirection>[0] = { action: () => 'publish' };
 
-        expect(operationDirection(operation as unknown as OperationInterface)).toBe('incoming');
+        expect(operationDirection(operation)).toBe('incoming');
     });
 });

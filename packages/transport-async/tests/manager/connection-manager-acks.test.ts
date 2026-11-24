@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { armAck, cancelAcks, recordReply, settleAck } from '../../src/manager/ack-waiting.js';
-import type { LiveConnection } from '../../src/manager/live-connection.js';
+import {
+    armAck,
+    cancelAcks,
+    recordReply,
+    settleAck,
+    type AckBook,
+} from '../../src/manager/ack-waiting.js';
 import { startSocketIoServer, type SocketIoServer } from '../support/socketio-server.js';
 import { watchManager } from '../support/manager-watch.js';
 import { waitFor } from '../support/wait-for.js';
@@ -15,14 +20,18 @@ describe('the book of open waits', () => {
         vi.useRealTimers();
     });
 
-    function connectionOf(): { connection: LiveConnection; recorded: unknown[] } {
+    function connectionOf(): { connection: AckBook; recorded: unknown[] } {
         const recorded: unknown[] = [];
-        const connection = {
+        const connection: AckBook = {
             acks: new Map(),
-            batcher: { record: (entry: unknown) => recorded.push(entry) },
+            batcher: {
+                record: (entry) => {
+                    recorded.push(entry);
+                },
+            },
             ackSeq: 0,
-            request: { connectionId: 'gateway', transport: 'socketio', url: 'http://127.0.0.1:1' },
-        } as unknown as LiveConnection;
+            request: { connectionId: 'gateway' },
+        };
 
         return { connection, recorded };
     }

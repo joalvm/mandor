@@ -1,12 +1,10 @@
-import type { FakeBridge } from '@mandor/ipc/testing';
+import { windowBridge } from '@mandor/ipc/testing';
 import { success } from '@mandor/ipc';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { shellStore } from '../../src/index.js';
 import { useWindowReady } from '../../src/hooks/useWindowReady.js';
-
-type Mandor = { mandor: FakeBridge };
 
 let told: number;
 let frames: (() => void)[];
@@ -29,7 +27,7 @@ beforeEach(() => {
     frames = [];
     vi.stubGlobal('requestAnimationFrame', (callback: () => void) => frames.push(callback));
     vi.stubGlobal('cancelAnimationFrame', () => undefined);
-    (window as unknown as Mandor).mandor.window.ready = () => {
+    windowBridge().window.ready = () => {
         told += 1;
 
         return Promise.resolve(success({}));

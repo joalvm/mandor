@@ -2,9 +2,10 @@ import { MessagesProvider } from '@mandor/i18n';
 import { parseConnection, type Connection, type Environment } from '@mandor/schema';
 import { TooltipProvider } from '@mandor/ui';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 import { SettingsParamsSection } from '../../../../src/renderer/features/connections/components/dialog/SettingsParamsSection.js';
+import type { ConnectionWrite } from '../../../../src/renderer/features/connections/lib/pending-connection-write.js';
 
 function connectionOf(changes: Record<string, unknown>): Connection {
     return parseConnection({
@@ -30,10 +31,21 @@ function draw(ui: React.ReactElement): void {
     );
 }
 
+/** The first write the section asked for; a section that wrote nothing fails the test here. */
+function firstWrite(change: Mock<(changes: ConnectionWrite) => void>): ConnectionWrite {
+    const write = change.mock.calls[0]?.[0];
+
+    if (write === undefined) {
+        throw new Error('the section wrote nothing');
+    }
+
+    return write;
+}
+
 function drawParams(
     connection: Connection,
     environment: Environment | undefined,
-    onChange: (changes: unknown) => void,
+    onChange: (changes: ConnectionWrite) => void,
 ): void {
     draw(
         <SettingsParamsSection
@@ -76,7 +88,7 @@ describe('the params of a connection', () => {
     });
 
     it('writes the table back into the params of the connection', () => {
-        const change = vi.fn();
+        const change = vi.fn<(changes: ConnectionWrite) => void>();
 
         drawParams(connectionOf({}), undefined, change);
 
@@ -91,9 +103,7 @@ describe('the params of a connection', () => {
         ghost.textContent = 'team';
         fireEvent.input(ghost);
 
-        const write = change.mock.calls[0]?.[0] as unknown as { params?: unknown[] };
-
-        expect(write.params).toEqual([
+        expect(firstWrite(change).params).toEqual([
             expect.objectContaining({ enabled: true, key: 'room', value: '1' }),
             expect.objectContaining({ enabled: false, key: 'draft', value: 'x' }),
             expect.objectContaining({ enabled: true, key: 'team', value: '' }),

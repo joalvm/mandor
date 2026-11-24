@@ -1,7 +1,10 @@
-import type { DockviewApi } from 'dockview';
+import type { DockviewGroupPanel } from 'dockview';
 
 /** A group with nothing in it, and the element the library keeps for what such a group shows. */
 export type EmptyGroupHost = readonly [groupId: string, element: Element];
+
+/** What the blanks are read off: the groups of the view, each by its name and its element. */
+type GroupsView = { groups: readonly Pick<DockviewGroupPanel, 'element' | 'id'>[] };
 
 /**
  * Where each empty group of the view keeps its blank.
@@ -11,7 +14,7 @@ export type EmptyGroupHost = readonly [groupId: string, element: Element];
  * component for it: that one leaves its React portal behind every time the layout is handed
  * over again, and with it the whole group it was drawn in.
  */
-export function emptyGroupHosts(api: DockviewApi): EmptyGroupHost[] {
+export function emptyGroupHosts(api: GroupsView): EmptyGroupHost[] {
     return api.groups.flatMap((group) => {
         const blank = group.element.querySelector('.dv-watermark');
 

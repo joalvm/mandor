@@ -49,7 +49,11 @@ type Listener = (...args: never[]) => void;
 
 /** What the client asks of a socket, whichever version dialled it. */
 export type DialedSocket = {
-    on: (event: string, listener: Listener) => unknown;
+    /**
+     * A method, so a listener names the arguments of its own event and is taken the way an
+     * emitter takes it: the typed `on` of the v4 client asks the same of each reserved event.
+     */
+    on(event: string, listener: Listener): unknown;
     onAny: (listener: (event: string, ...args: unknown[]) => void) => unknown;
     emit: (event: string, ...args: unknown[]) => unknown;
     connect: () => unknown;
@@ -68,13 +72,11 @@ type Dial = (uri: string, options: SocketIoDialOptions) => DialedSocket;
 /** The dial each protocol version answers by, keyed by the version the server speaks. */
 const DIALS: Record<SocketIoVersion, Dial> = {
     v2: dialV2,
-    // The typed `on` of the v4 client names each reserved event's listener, which a listener of
-    // any arguments cannot meet: the socket is the surface below, said once here.
     v4: (uri, options) =>
         io(uri, {
             ...sharedOptionsOf(uri, options),
             ...(options.auth === undefined ? {} : { auth: options.auth }),
-        }) as unknown as DialedSocket,
+        }),
 };
 
 /**

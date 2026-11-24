@@ -50,11 +50,15 @@ function callerFiles(): string[] {
     return Array.isArray(files) ? (files as string[]) : [];
 }
 
-function ledger(): Ledger {
-    const holder = globalThis as unknown as Record<symbol, Ledger | undefined>;
-    const existing = holder[LEDGER];
+// What the global scope holds under the mark: the ledger of this worker, once it was made.
+function isLedger(value: unknown): value is Ledger {
+    return typeof value === 'object' && value !== null && 'runLeftovers' in value;
+}
 
-    if (existing !== undefined) {
+function ledger(): Ledger {
+    const existing: unknown = Reflect.get(globalThis, LEDGER);
+
+    if (isLedger(existing)) {
         return existing;
     }
 
@@ -65,11 +69,17 @@ function ledger(): Ledger {
         fromCode: () => calledFromCode(callerFiles()),
     });
 
-    holder[LEDGER] = fresh;
-    // `promisify(setTimeout)` reads its promise form off the function itself.
-    globalThis.setTimeout = Object.assign(fresh.start, {
-        [promisify.custom]: (set as unknown as Record<symbol, unknown>)[promisify.custom],
-    }) as unknown as typeof setTimeout;
+    Reflect.set(globalThis, LEDGER, fresh);
+    // `promisify(setTimeout)` reads its promise form off the function itself. The clock of the
+    // ledger takes what the runtime's does, and is set as one: the overloads of the runtime's
+    // type are not something a wrapper can be written as.
+    const promised: unknown = Reflect.get(set, promisify.custom);
+
+    Reflect.set(
+        globalThis,
+        'setTimeout',
+        Object.assign(fresh.start, { [promisify.custom]: promised }),
+    );
     globalThis.clearTimeout = fresh.stop;
 
     return fresh;
