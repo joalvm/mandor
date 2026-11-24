@@ -19,20 +19,14 @@ export function folderSettingsOf(folder: InsomniaFolder): {
     const auth = authOf(folder.authentication, 'folder');
     const variables = variablesOf([{ name: folder.name, data: folder.environment }]);
     const mapped = withTemplates({ auth: auth.auth, headers: listOrNone(linesOf(folder.headers)) });
-    const scripts = scriptsOf(folder.scripts);
 
     return {
         settings: {
             description: folder.description === '' ? undefined : folder.description,
             variables: listOrNone(variables.variables),
-            importedScripts: listOrNone(scripts.importedScripts),
+            scripts: scriptsOf(folder.scripts),
             ...mapped.value,
         },
-        degradations: distinct([
-            ...variables.degradations,
-            ...auth.degradations,
-            ...scripts.degradations,
-            ...mapped.notes,
-        ]),
+        degradations: distinct([...variables.degradations, ...auth.degradations, ...mapped.notes]),
     };
 }

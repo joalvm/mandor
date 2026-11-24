@@ -40,9 +40,10 @@ afterEach(() => {
 
 describe('the editor of the window', () => {
     /**
-     * Every language is a download and a registry entry. Three of them are opened as editors;
-     * the rest are never opened on their own and are held for the fenced blocks of a doc, which
-     * the markdown grammar colours in the language the fence names.
+     * Every language is a download and a registry entry. A few of them are opened as editors,
+     * scripts among them under a name of their own; the rest are never opened on their own and
+     * are held for the fenced blocks of a doc, which the markdown grammar colours in the language
+     * the fence names.
      */
     it('knows the languages it opens and the ones a fenced block can name', () => {
         const ids = languages.getLanguages().map((language) => language.id);
@@ -69,6 +70,7 @@ describe('the editor of the window', () => {
             'python',
             'ruby',
             'rust',
+            'script',
             'shell',
             'sql',
             'swift',

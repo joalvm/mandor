@@ -120,7 +120,8 @@ test('the files of a workspace enter together: the secret empty, the globals amo
     expect(await originGlobalsText()).not.toContain('name: base');
 });
 
-test('the imported request sends with the environment filled in, and its scripts are read-only text', async () => {
+/** Fills the base and the token of the Local environment, the token made plain to be sent. */
+async function fillLocalEnvironment(): Promise<void> {
     const dialog = await openEnvironments();
 
     await dialog.getByRole('option', { exact: true, name: 'Local' }).click();
@@ -139,7 +140,10 @@ test('the imported request sends with the environment filled in, and its scripts
     await fillVariable(dialog, 'token', 't0k');
     await expect.poll(madeEnvironment).toContain('t0k');
     await closeDialog(dialog);
+}
 
+test('the imported request sends with the environment filled in, its scripts waiting for approval', async () => {
+    await fillLocalEnvironment();
     await pickerOf(page).click();
     await page.getByRole('menuitem', { name: /^local$/iu }).click();
     // While the menu fades out the window is hidden from the tree: the row is looked for after.
@@ -153,9 +157,9 @@ test('the imported request sends with the environment filled in, and its scripts
 
     await item.click();
     await openSection(page, 'Scripts');
-    // The editor of the moment stands first; the two imported scripts follow, each read-only
-    // beside its own heading, kept as text nothing here runs.
-    await expect(page.getByRole('textbox', { name: 'Script' })).toHaveCount(3);
+    // The imported script is in the editor of its moment, waiting for approval: nothing runs it.
+    await expect(page.getByRole('textbox', { name: 'Script' })).toHaveCount(1);
+    await expect(page.getByText('It does not run until you approve it')).toBeVisible();
     await page.getByRole('button', { exact: true, name: 'Send' }).click();
 
     await expect.poll(() => server.users).toEqual(['/users/7 Bearer t0k']);

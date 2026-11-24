@@ -4,11 +4,11 @@ import { BrunoParseError } from './bruno-parse-error.js';
 import type { BrunoDocument, BrunoSkipped } from './bruno-tree.js';
 import { dirTreeOf } from './dir-tree.js';
 import { documentSourceId } from './document-source-id.js';
-import { leftOutOf } from './left-out-of.js';
 import { authOfBru } from './read-bru-auth.js';
 import { environmentOfBru } from './read-bru-environment.js';
 import { levelOfBru } from './read-bru-level.js';
 import { rowsOfBru, variablesOfBru } from './read-bru-rows.js';
+import { scriptsOfBru } from './read-bru-scripts.js';
 import { nodesOfBruDir } from './read-bru-tree.js';
 
 const CONFIG_FILE = 'bruno.json';
@@ -49,6 +49,7 @@ export function readBru(files: readonly InteropFile[]): BrunoDocument {
             .filter((file) => file.path.startsWith(ENVIRONMENTS))
             .map(environmentOfBru),
         skipped,
-        leftOut: leftOutOf({ scripts: level.script, tests: level.tests }),
+        scripts: scriptsOfBru(level.script, level.tests),
+        leftOut: [],
     };
 }

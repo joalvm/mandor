@@ -5,6 +5,8 @@
 // list of its own language.
 import 'monaco-editor/features/bracketMatching/register.js';
 import 'monaco-editor/features/clipboard/register.js';
+// The bulb: what the caller of an editor offers to fix where the caret is.
+import 'monaco-editor/features/codeAction/register.js';
 import 'monaco-editor/features/codicon/register.js';
 import 'monaco-editor/features/comment/register.js';
 import 'monaco-editor/features/contextmenu/register.js';
@@ -14,9 +16,15 @@ import 'monaco-editor/features/folding/register.js';
 import 'monaco-editor/features/hover/register.js';
 import 'monaco-editor/features/linesOperations/register.js';
 import 'monaco-editor/features/multicursor/register.js';
+// The signature of a call while its arguments are written, which the service of scripts gives.
+import 'monaco-editor/features/parameterHints/register.js';
 // The widget of suggestions: the controller of the editor carries it, and the feature folder
 // named suggest only brings the inline completions of another name.
 import 'monaco-editor/editor/contrib/suggest/browser/suggestController.js';
+// What a script proposes after the caret, greyed until Tab takes it, and the snippets of the list
+// of suggestions, with their places to fill.
+import 'monaco-editor/features/inlineCompletions/register.js';
+import 'monaco-editor/features/snippet/register.js';
 import 'monaco-editor/features/toggleTabFocusMode/register.js';
 // The characters somebody might not see, a bidi or a space of no width: off in every editor, and
 // on in the editors of scripts, where code that reads one way and runs another is the trick.
@@ -63,6 +71,7 @@ import { JSONC_CONFIGURATION, JSONC_MONARCH } from './jsonc-monarch.js';
 import './markdown-language.js';
 import { markdownTheme } from './markdown-theme.js';
 import './schema-language.js';
+import './script-language.js';
 
 // The grammar of the payload: comments allowed, and a `{{template}}` standing where a value
 // goes. It keeps its own id — the `json` of the standard language service belongs to the schema
@@ -97,8 +106,7 @@ watchWindowTheme((theme) => {
 });
 
 /*
- * Lines break with `
-` in every document of the app, whatever machine it runs on. Left to
+ * Lines break with LF in every document of the app, whatever machine it runs on. Left to
  * itself the editor breaks the lines of a text that has none yet the way the system does, so a
  * doc written on Windows would reach the repo with a carriage return on every line and read as
  * a whole file rewritten by whoever opened it.

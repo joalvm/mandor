@@ -24,8 +24,7 @@ const FILLED: Partial<Record<RequestSection, (request: RequestItem) => boolean>>
     headers: (request) => enabledIn(request.headers) > 0,
     params: (request) => enabledIn(request.query) > 0,
     schema: (request) => (request.bodySchema ?? '').trim() !== '',
-    scripts: (request) =>
-        hasOwnScripts(request.scripts) || (request.importedScripts ?? []).length > 0,
+    scripts: (request) => hasOwnScripts(request.scripts),
 };
 
 /** The sections whose dot answers to the verdict of the body: a rule broken outweighs the green. */

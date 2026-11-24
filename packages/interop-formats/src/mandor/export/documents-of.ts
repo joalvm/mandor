@@ -50,7 +50,7 @@ function itemOf(item: CollectionItem): Document {
 
 /** A collection or a folder: what it declares of itself, then what hangs from it. */
 function levelOf(level: WorkspaceFolderNode): Document {
-    const { description, variables, auth, headers, importedScripts, scripts } = level.settings;
+    const { description, variables, auth, headers, scripts } = level.settings;
 
     return {
         name: level.name,
@@ -59,7 +59,6 @@ function levelOf(level: WorkspaceFolderNode): Document {
             variables,
             auth,
             headers,
-            importedScripts,
             scripts: ownScriptsOrNothing(scripts),
             folders: level.folders.map(levelOf),
             items: level.items.map(itemOf),

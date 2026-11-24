@@ -12,11 +12,12 @@ import { linesOf } from './request-lines.js';
 import { interopVariablesOf } from './workspace-resources.js';
 
 /** A `folder.bru`, a `collection.bru` or their form in OpenCollection, as the tree holds them. */
-type BrunoLevel = Pick<BrunoFolder, 'description' | 'headers' | 'auth' | 'variables'>;
+type BrunoLevel = Pick<BrunoFolder, 'description' | 'headers' | 'auth' | 'variables' | 'scripts'>;
 
 /**
  * The settings of one level, one to one: what the level says stays there, and an environment
- * overrides the variables of a collection, as in Bruno. A secret enters blank, and it says so.
+ * overrides the variables of a collection, as in Bruno. A secret enters blank, and it says so. The
+ * scripts come as they were written, not yet approved.
  */
 export function folderSettingsOf(
     level: BrunoLevel,
@@ -31,6 +32,7 @@ export function folderSettingsOf(
             variables: listOrNone(variables.variables),
             auth: auth.auth,
             headers: listOrNone(linesOf(level.headers)),
+            scripts: level.scripts,
         },
         degradations: distinct([...variables.degradations, ...auth.degradations]),
     };

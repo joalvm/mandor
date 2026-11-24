@@ -10,7 +10,13 @@ import { requestPartsOf } from '../lib/request-parts.js';
  * window shows would paint one thing and send another the day a tab of another workspace is open.
  */
 export function useRequestEnvironment(resource: string): Environment | undefined {
-    const workspaceId = requestPartsOf(resource)?.workspaceId;
+    return useEnvironmentOfWorkspace(requestPartsOf(resource)?.workspaceId);
+}
+
+/** The environment a send from the workspace resolves against: its active one, saved or not. */
+export function useEnvironmentOfWorkspace(
+    workspaceId: string | undefined,
+): Environment | undefined {
     // With none chosen on this machine, the default of the workspace rules, as it does in main.
     const activeId = useStore(envStore, (state) =>
         workspaceId === undefined

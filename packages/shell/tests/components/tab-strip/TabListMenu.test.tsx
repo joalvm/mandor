@@ -2,7 +2,6 @@ import { MessagesProvider } from '@mandor/i18n';
 import { ROOT_GROUP_ID } from '@mandor/ipc';
 import { TooltipProvider } from '@mandor/ui';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import type { DockviewGroupPanel } from 'dockview';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TAB_WALK_COMMANDS } from '../../../src/command/tab-walk-commands.js';
@@ -27,7 +26,7 @@ function draw(): void {
         <MessagesProvider preferences={{ language: 'es' }}>
             <TooltipProvider>
                 <GroupGridContext value={{ onCloseTab: closed, resources: {} }}>
-                    <TabListMenu group={{ id: ROOT_GROUP_ID } as DockviewGroupPanel} />
+                    <TabListMenu group={{ id: ROOT_GROUP_ID }} />
                 </GroupGridContext>
             </TooltipProvider>
         </MessagesProvider>,

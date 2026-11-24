@@ -5,7 +5,6 @@ import { plainVariableSchema } from '../environment/plain-variable-schema.js';
 import { entityNameSchema } from '../fields/entity-name-schema.js';
 import { slugSchema } from '../fields/slug-schema.js';
 import { requestLineSchema } from '../request/request-item-schema.js';
-import { importedScriptSchema } from '../script/imported-script-schema.js';
 import { requestScriptsSchema } from '../script/own-scripts-schema.js';
 import { itemOriginSchema } from './item-origin-schema.js';
 
@@ -27,6 +26,5 @@ export const folderSettingsSchema = z.object({
     // they say which API is spoken to, and neither the workspace nor an environment says that.
     headers: z.array(requestLineSchema).optional(),
     importOrigin: itemOriginSchema.optional(),
-    importedScripts: z.array(importedScriptSchema).optional(),
     scripts: requestScriptsSchema.optional(),
 });

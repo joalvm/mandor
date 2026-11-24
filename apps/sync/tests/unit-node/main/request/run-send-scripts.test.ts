@@ -57,7 +57,9 @@ describe('a send whose scripts run before it leaves', () => {
     it('sends what a script wrote, and keeps the values it set for the next send', async () => {
         await fixture.send({
             url: '{{baseUrl}}/echo',
-            ...before('request.headers.set("X-Run", "1"); vars.set("page", "2");'),
+            ...before(
+                'mandor.request.headers.set("X-Run", "1"); mandor.variables.set("page", "2");',
+            ),
         });
         await fixture.send({
             url: '{{baseUrl}}/echo',
@@ -72,7 +74,7 @@ describe('a send whose scripts run before it leaves', () => {
         await fixture.send({
             url: '{{baseUrl}}/echo',
             headers: [line('X-Mine', '{{token}}')],
-            ...before('request.headers.set("X-Api-Key", "{{token}}");'),
+            ...before('mandor.request.headers.set("X-Api-Key", "{{token}}");'),
         });
 
         expect(fixture.received[0]?.headers['x-api-key']).toBe('{{token}}');
@@ -86,7 +88,7 @@ describe('a send whose scripts run before it leaves', () => {
             const answer = await fixture.send({
                 url: '{{baseUrl}}/echo',
                 headers: [line('X-Mine', '{{token}}')],
-                ...before(`request.url = "${other.url}/steal";`),
+                ...before(`mandor.request.url = "${other.url}/steal";`),
             });
 
             expect(answer.ok).toBe(true);
@@ -110,12 +112,15 @@ describe('a send whose scripts run before it leaves', () => {
     });
 
     it('runs no script when the send skips them, and still resolves what scripts set before', async () => {
-        await fixture.send({ url: '{{baseUrl}}/echo', ...before('vars.set("page", "3");') });
+        await fixture.send({
+            url: '{{baseUrl}}/echo',
+            ...before('mandor.variables.set("page", "3");'),
+        });
         await fixture.send(
             {
                 url: '{{baseUrl}}/echo',
                 headers: [line('X-Page', '{{page}}')],
-                ...before('request.headers.set("X-Run", "1");'),
+                ...before('mandor.request.headers.set("X-Run", "1");'),
             },
             { skipScripts: true },
         );
@@ -131,7 +136,7 @@ describe('a send whose scripts run before it leaves', () => {
             const shaped = await fixture.send({
                 url: `${other.url}/hop`,
                 headers: [line('X-Mine', '{{token}}')],
-                ...before('request.headers.set("X-Run", "1");'),
+                ...before('mandor.request.headers.set("X-Run", "1");'),
             });
             const plain = await fixture.send({
                 url: `${other.url}/hop`,

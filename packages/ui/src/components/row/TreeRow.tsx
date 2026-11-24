@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, type PropsWithChildren } from 'react';
 import { cn } from '../../lib/cn.js';
 import { useTreeLine } from '../tree/tree-scope.js';
 import { chevronPressed } from './chevron-pressed.js';
-import { clickActivation } from './row-activation.js';
+import { clickActivation, clickedOnRow } from './row-activation.js';
 import { RowNameProvider } from './row-name.js';
 
 type TreeRowProps = PropsWithChildren;
@@ -56,6 +56,10 @@ export function TreeRow({ children }: TreeRowProps) {
             data-level={String(line.level)}
             data-part="tree-row"
             onClick={(event) => {
+                if (!clickedOnRow(event)) {
+                    return;
+                }
+
                 if (chevronPressed(event.target, line)) {
                     line.onToggle();
 

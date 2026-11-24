@@ -9,7 +9,8 @@ import {
     type ExpectNoDrift,
     type WaitUntil,
 } from '../../../../packages/host/tests/support/memory-drift.js';
-import { approveWhatWasLeftOut } from './support/attack-flow.js';
+import { openSection } from '../../../../packages/ui/tests/support/open-section.js';
+import { approveWhatWasLeftOut, openItem } from './support/attack-flow.js';
 import { PERSONAL, workspaceDir } from './support/disk-names.js';
 import { launch, makeSandbox, type Sandbox } from './support/launch-app.js';
 import { startLocalHttpServer, type LocalHttpServer } from './support/local-http-server.js';
@@ -179,6 +180,33 @@ function rssMb(app: ElectronApplication): Promise<number> {
     );
 }
 
+/** The threads the service of scripts runs in: one while an editor of scripts is open. */
+function scriptThreads(): number {
+    return page.workers().filter((worker) => worker.url().includes('script-worker-main')).length;
+}
+
+/**
+ * Opens the script of the day's request in its editor, and closes it with its tab: a section once
+ * open stays mounted while the tab lives, so going to another one keeps the editor.
+ */
+async function openAndCloseTheScript(): Promise<void> {
+    await openItem(page, 'pedida');
+    await openSection(page, 'Scripts');
+    await openSection(page, 'Before the request');
+    await expect(
+        page.locator('[data-part="event-script"] .monaco-editor').filter({ visible: true }),
+    ).toHaveCount(1);
+    // One thread, however many times the editor opened: a closed one never leaves its own behind.
+    await expect.poll(scriptThreads).toBe(1);
+
+    const tab = page.getByRole('tab', { name: /pedida$/u });
+
+    // The close of a tab is only there while the pointer is on it.
+    await tab.hover();
+    await tab.getByRole('button', { name: 'Close tab' }).click();
+    await expect(page.locator('[data-part="event-script"]')).toHaveCount(0);
+}
+
 /** Sends once so the review offers the scripts of one request, approves them, and moves on. */
 async function warmTheChain(page: Page, name: string, count: number): Promise<void> {
     await fire(page, name);
@@ -298,4 +326,10 @@ test('a ninth chain waits for a worker and cancels, and main keeps up', async ()
     });
 
     expect(p99).toBeLessThanOrEqual(50);
+});
+
+/** The service weighs megabytes: a window that closed its last script carries none of them. */
+test('the script service stops when no script editor is open', async () => {
+    await expectBackAfterRounds({ app, page, until, noDrift }, openAndCloseTheScript, 5);
+    await expect.poll(scriptThreads, { timeout: 60_000 }).toBe(0);
 });

@@ -1,8 +1,8 @@
-import type { RequestItem } from '@mandor/schema';
+import { ScriptsByEvent } from '@mandor/collections';
+import { REQUEST_SCRIPT_EVENTS, type RequestItem } from '@mandor/schema';
 
+import { useRequestScriptContext } from '../../hooks/useRequestScriptContext.js';
 import { requestPartsOf } from '../../lib/request-parts.js';
-import { EventScripts } from './EventScripts.js';
-import { RequestImportedScripts } from './RequestImportedScripts.js';
 
 type RequestScriptsProps = {
     request: RequestItem;
@@ -13,30 +13,28 @@ type RequestScriptsProps = {
 };
 
 /**
- * The scripts of a request, one tab per moment of the send. What a document brought stays under
- * them, as the text it is.
+ * The scripts of a request, by moment of the send: the moments in a column, the script of the one
+ * open beside them, completing with what the request knows. What a document brought is there, in
+ * its moment, not yet approved.
  */
 export function RequestScripts({ request, resource, onChange }: RequestScriptsProps) {
+    const context = useRequestScriptContext(resource, request);
+
     return (
         <div className="flex h-full min-h-0 flex-col gap-gap-control" data-part="request-scripts">
-            <EventScripts
-                level="request"
+            <ScriptsByEvent
+                context={context}
+                events={REQUEST_SCRIPT_EVENTS}
                 onChange={(scripts) => {
                     onChange({ scripts });
                 }}
+                place={{
+                    level: 'request',
+                    workspaceId: requestPartsOf(resource)?.workspaceId ?? '',
+                }}
                 resource={resource}
                 scripts={request.scripts}
-                workspaceId={requestPartsOf(resource)?.workspaceId ?? ''}
             />
-            <ImportedScripts onChange={onChange} request={request} resource={resource} />
         </div>
     );
-}
-
-function ImportedScripts({ request, resource, onChange }: RequestScriptsProps) {
-    if ((request.importedScripts ?? []).length === 0) {
-        return null;
-    }
-
-    return <RequestImportedScripts modelKey={resource} onChange={onChange} parts={request} />;
 }

@@ -1,11 +1,7 @@
-import { createRequestItem, type FolderChainLevel, type ImportedScript } from '@mandor/schema';
+import { createRequestItem, type FolderChainLevel } from '@mandor/schema';
 import { describe, expect, it } from 'vitest';
 
 import { requestScripts } from '../../../../src/main/request/request-scripts.js';
-
-function imported(event: ImportedScript['event']): ImportedScript {
-    return { event, dialect: 'postman', source: 'pm.environment.set("a", 1)' };
-}
 
 const PLACE_OF: Record<FolderChainLevel['level'], (name: string) => FolderChainLevel['place']> = {
     workspace: () => ({ kind: 'workspace' }),
@@ -25,20 +21,17 @@ function group(
 const CHAIN: FolderChainLevel[] = [
     group('folder', 'Orders', {
         scripts: { onBeforeRequest: { source: 'orders()' }, onResponse: { source: 'after()' } },
-        importedScripts: [imported('onBeforeRequest')],
     }),
     group('folder', 'Shop', { scripts: { onBeforeRequest: { source: 'shop()', enabled: false } } }),
     group('collection', 'Store', { scripts: { onBeforeRequest: { source: 'store()' } } }),
     group('workspace', 'Payments', {
         scripts: { onBeforeRequest: { source: 'never()' } },
-        importedScripts: [imported('onBeforeRequest'), imported('onResponse')],
     }),
 ];
 
 const REQUEST = {
     ...createRequestItem({ name: 'List' }),
     scripts: { onBeforeRequest: { source: 'request()' } },
-    importedScripts: [imported('onBeforeRequest')],
 };
 
 describe('requestScripts', () => {
@@ -83,15 +76,10 @@ describe('requestScripts', () => {
         expect(entries.map(({ source }) => source)).toEqual(['after()']);
     });
 
-    it('counts the scripts that came with an import, and never lists one to run', () => {
+    it('never lists a script of the workspace: it holds none of its own', () => {
         const before = requestScripts(CHAIN, REQUEST, 'onBeforeRequest');
-        const after = requestScripts(CHAIN, REQUEST, 'onResponse');
-        const sources = [...before.entries, ...after.entries].map(({ source }) => source);
 
-        expect(before.imported).toBe(3);
-        expect(after.imported).toBe(1);
-        expect(sources.some((source) => source.includes('pm.'))).toBe(false);
-        expect(sources).not.toContain('never()');
+        expect(before.entries.map(({ source }) => source)).not.toContain('never()');
     });
 
     it('runs nothing of a level that could not be read, and says so in the console', () => {
@@ -113,7 +101,6 @@ describe('requestScripts', () => {
 
         expect(requestScripts([group('workspace', 'Payments')], bare, 'onBeforeRequest')).toEqual({
             entries: [],
-            imported: 0,
             logs: [],
         });
     });

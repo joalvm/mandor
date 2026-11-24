@@ -1,4 +1,4 @@
-import { hasOwnScripts, type RequestSettings, type ScriptDialect } from '@mandor/schema';
+import { hasOwnScripts, type RequestSettings } from '@mandor/schema';
 
 import type { OutlineLoss, UnwrittenKinds } from './outline-kind.js';
 import type {
@@ -11,8 +11,7 @@ import type {
  * What a level holds and a format may lose: each of its settings, the folders under it, and those
  * of its variables that are switched off, for a format that cannot say that.
  */
-type LevelPart =
-    Exclude<keyof WorkspaceFolderSettings, 'scripts'> | 'folders' | 'disabledVariables';
+type LevelPart = keyof WorkspaceFolderSettings | 'folders' | 'disabledVariables';
 
 /** What a format says of each part it does not keep. A part not named here is kept. */
 export type UnkeptParts = Partial<Record<LevelPart, OutlineLoss>>;
@@ -31,8 +30,11 @@ export type UnkeptLevels = {
     environments?: OutlineLoss;
     connectionQueryOff?: OutlineLoss;
     messagesNeedConnection?: OutlineLoss;
-    /** The only dialect of script it writes, at any level; `none` when it writes no script. */
-    scriptsIn?: ScriptDialect | 'none';
+    /**
+     * Whether it writes the scripts of a request and of its levels, as they are. Absent for the
+     * format of Mandor itself, the only one that also keeps the scripts of a connection.
+     */
+    writesScripts?: boolean;
     request?: UnkeptOfRequest;
     message?: UnkeptOfMessage;
 };
@@ -59,7 +61,7 @@ const HOLDS: Readonly<Record<LevelPart, (level: WorkspaceFolderNode) => boolean>
     variables: ({ settings }) => settings.variables.length > 0,
     auth: ({ settings }) => settings.auth !== undefined,
     headers: ({ settings }) => settings.headers.length > 0,
-    importedScripts: ({ settings }) => (settings.importedScripts ?? []).length > 0,
+    scripts: ({ settings }) => hasOwnScripts(settings.scripts),
     disabledVariables: ({ settings }) => settings.variables.some(({ enabled }) => !enabled),
     folders: ({ folders }) => folders.length > 0,
 };
@@ -70,7 +72,7 @@ const IN_ORDER: readonly LevelPart[] = [
     'disabledVariables',
     'auth',
     'headers',
-    'importedScripts',
+    'scripts',
     'folders',
 ];
 
@@ -86,22 +88,20 @@ export function unkeptOf(
     return losses.length === 0 ? undefined : losses;
 }
 
-/** The scripts the format does not write, as the one thing it says of them. */
-export function scriptsLossOf(
-    scripts: readonly { dialect: string }[] | undefined,
-    { scriptsIn }: UnkeptLevels,
+/** The own scripts of a level or a request, when the format writes no script. */
+export function ownScriptsLossOf(
+    held: Record<string, unknown> | undefined,
+    { writesScripts }: UnkeptLevels,
 ): OutlineLoss[] {
-    return scriptsIn !== undefined && (scripts ?? []).some(({ dialect }) => dialect !== scriptsIn)
-        ? ['scriptsNotCarried']
-        : [];
+    return writesScripts === false && hasOwnScripts(held) ? ['scriptsNotCarried'] : [];
 }
 
-/** The own scripts of a level, a request or a connection, when the format writes no script. */
-export function nativeScriptsLossOf(
+/** The scripts of a connection: no format but Mandor's own has a place for them. */
+function connectionScriptsLossOf(
     held: Record<string, unknown> | undefined,
-    { scriptsIn }: UnkeptLevels,
+    { writesScripts }: UnkeptLevels,
 ): OutlineLoss[] {
-    return scriptsIn !== undefined && hasOwnScripts(held) ? ['scriptsNotCarried'] : [];
+    return writesScripts !== undefined && hasOwnScripts(held) ? ['scriptsNotCarried'] : [];
 }
 
 /** The note of a level, when the format loses something it holds. */
@@ -112,8 +112,7 @@ export function levelNoteOf(
 ): LevelNote {
     const losses = [
         ...(unkeptOf(level, parts) ?? []),
-        ...scriptsLossOf(level.settings.importedScripts, unkept),
-        ...nativeScriptsLossOf(level.settings.scripts, unkept),
+        ...ownScriptsLossOf(level.settings.scripts, unkept),
     ];
 
     return losses.length === 0 ? {} : { unkept: [...new Set(losses)] };
@@ -146,7 +145,7 @@ export function connectionNoteOf(
 ): LevelNote {
     const queryOff = (connection.params ?? []).some(({ enabled }) => !enabled);
     const losses = [
-        ...nativeScriptsLossOf(connection.scripts, unkept),
+        ...connectionScriptsLossOf(connection.scripts, unkept),
         ...(data.collections.length > 1 ? [unkept.connections] : []),
         ...(queryOff ? [unkept.connectionQueryOff] : []),
     ].filter((loss) => loss !== undefined);

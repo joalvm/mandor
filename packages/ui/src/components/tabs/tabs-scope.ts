@@ -1,9 +1,13 @@
 import { createContext, useContext } from 'react';
 
+/** How the sections stand: side by side in a strip, or one under another in a column. */
+export type TabsOrientation = 'horizontal' | 'vertical';
+
 type TabsScopeValue = {
     /** Opens a section, as the holder of the strip would on a click. */
     choose: (value: string) => void;
     open: string;
+    orientation: TabsOrientation;
 };
 
 /**
@@ -31,6 +35,11 @@ function useTabsScope(): TabsScopeValue {
 /** The section that is open, for a panel that is asking whether it is the one. */
 export function useOpenSection(): string {
     return useTabsScope().open;
+}
+
+/** How the sections of the strip stand, for the list that lays them out. */
+export function useTabsOrientation(): TabsOrientation {
+    return useTabsScope().orientation;
 }
 
 /** Opens a section of the strip from outside its list, like the menu of those out of view. */

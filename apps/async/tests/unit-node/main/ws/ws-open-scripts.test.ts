@@ -76,7 +76,7 @@ describe('the script that runs before a connection opens', () => {
                 transport: 'websocket',
                 template: { url: echo.url, headers: { 'X-Ticket': '{{ticket}}' } },
                 ...before(
-                    `const r = await sendRequest({ url: '${tickets.url}/ticket' }); vars.set('ticket', r.text());`,
+                    `const r = await mandor.sendRequest({ url: '${tickets.url}/ticket' }); mandor.variables.set('ticket', r.text());`,
                 ),
             });
 
@@ -106,7 +106,9 @@ describe('the script that runs before a connection opens', () => {
         await sockets.open({
             transport: 'websocket',
             template: { url: echo.url },
-            ...before('console.log("hi"); vars.set("a", "1"); test("ok", () => {});'),
+            ...before(
+                'console.log("hi"); mandor.variables.set("a", "1"); mandor.test("ok", () => {});',
+            ),
         });
 
         expect(saidBefore()).toEqual([
@@ -152,7 +154,7 @@ describe('the script that runs before a connection opens', () => {
         await sockets.open({
             transport: 'websocket',
             template: { url: echo.url },
-            ...before('vars.set("ran", "1");'),
+            ...before('mandor.variables.set("ran", "1");'),
         });
         echo.closeClients(1011);
 
@@ -172,7 +174,7 @@ describe('a close or another open while the script runs', () => {
             const opening = sockets.open({
                 transport: 'websocket',
                 template: { url: echo.url },
-                ...before(`await sendRequest({ url: '${tickets.url}/slow' });`),
+                ...before(`await mandor.sendRequest({ url: '${tickets.url}/slow' });`),
             });
 
             await waitFor(() => {
@@ -199,7 +201,7 @@ describe('a close or another open while the script runs', () => {
             const first = sockets.open({
                 transport: 'websocket',
                 template: { url: echo.url },
-                ...before(`await sendRequest({ url: '${tickets.url}/slow' });`),
+                ...before(`await mandor.sendRequest({ url: '${tickets.url}/slow' });`),
             });
 
             await waitFor(() => {

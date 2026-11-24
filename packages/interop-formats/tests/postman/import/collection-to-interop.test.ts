@@ -51,7 +51,6 @@ describe('collectionToInterop: the fixture', () => {
         expect(fixture.scripts).toEqual([
             {
                 event: 'onBeforeRequest',
-                dialect: 'postman',
                 source: "console.log('collection');",
                 enabled: true,
             },

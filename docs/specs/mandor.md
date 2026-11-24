@@ -1,6 +1,6 @@
 # Mandor — estado actual
 
-Fecha: 2026-11-13, sobre `main` en `4d1cfc0f`. Hitos H1 a H10 cerrados.
+Fecha: 2026-11-23. Hitos H1 a H11 cerrados.
 
 Única spec de lo construido. Dice qué hay y por qué es así. Paquetes, gates, fronteras, lint y
 tests viven en `CONTRIBUTING.md` y aquí no se repiten. Lo que falta: [pendiente.md](pendiente.md).
@@ -27,17 +27,18 @@ Lo que no cambia nunca:
 
 ## Hitos cerrados
 
-| Hito                                | Dejó                                                                                                                               | Lo prueba (e2e)                                                                                                            |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| H1 Rebanada vertical                | WebSocket de punta a punta: abrir, enviar, leer, guardar en disco                                                                  | `realtime-road`                                                                                                            |
-| H2 Workbench                        | Rejilla de grupos, pestañas de cualquier tipo, lateral, paleta, sesión restaurada                                                  | `workbench-path`, `group-layout`, `chrome-shape`                                                                           |
-| H3 Colecciones, entornos, variables | Árbol de colecciones, entornos, `{{var}}`, secretos                                                                                | `collection-path`, `environment-connection`, `globals`                                                                     |
-| H4 Async completo                   | Socket.IO v2 a v4 con acks, AsyncAPI entra y sale, reconexión, grabación, schema por mensaje                                       | `socketio-path`, `asyncapi-*`, `reconnect-path`, `schema-editor`                                                           |
-| H5 Sync (absorbió H6)               | HTTP, GraphQL, OpenAPI, Postman, HAR, curl, snippets, historial, cookies, OAuth; instaladores con fuses                            | `request-road`, `request-send`, `graphql`, `import-*`, `har`, `curl-and-snippets`, `history`, `oauth-and-cookies`          |
-| H7 Orígenes y conflictos            | Orígenes conectados, sincronización, merge de tres vías, pestaña de conflicto                                                      | `two-machines-one-origin`                                                                                                  |
-| H8 Robustez                         | Memoria plana, entrada hostil topada, arranque con presupuesto, updater por canales beta y estable, respuesta validada por esquema | `startup-budget`, `release-memory`, `workload-memory`, `typing-budget`, `faults`, `unreadable-file`; workflow `update-e2e` |
-| H9 Colecciones completas            | Colección y carpeta guardan docs, variables, auth y cabeceras; globales pasan al origen; una carpeta entra y sale sola             | `folder-exchange`, `folder-variables`, `folder-settings`, `folder-auth-headers`                                            |
-| H10 Scripts                         | Scripts en sandbox antes y después de cada envío, aprobados por máquina                                                            | `scripts`, `script-attacks`, `script-memory`, `installed-smoke`                                                            |
+| Hito                                | Dejó                                                                                                                                                                                                                    | Lo prueba (e2e)                                                                                                            |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| H1 Rebanada vertical                | WebSocket de punta a punta: abrir, enviar, leer, guardar en disco                                                                                                                                                       | `realtime-road`                                                                                                            |
+| H2 Workbench                        | Rejilla de grupos, pestañas de cualquier tipo, lateral, paleta, sesión restaurada                                                                                                                                       | `workbench-path`, `group-layout`, `chrome-shape`                                                                           |
+| H3 Colecciones, entornos, variables | Árbol de colecciones, entornos, `{{var}}`, secretos                                                                                                                                                                     | `collection-path`, `environment-connection`, `globals`                                                                     |
+| H4 Async completo                   | Socket.IO v2 a v4 con acks, AsyncAPI entra y sale, reconexión, grabación, schema por mensaje                                                                                                                            | `socketio-path`, `asyncapi-*`, `reconnect-path`, `schema-editor`                                                           |
+| H5 Sync (absorbió H6)               | HTTP, GraphQL, OpenAPI, Postman, HAR, curl, snippets, historial, cookies, OAuth; instaladores con fuses                                                                                                                 | `request-road`, `request-send`, `graphql`, `import-*`, `har`, `curl-and-snippets`, `history`, `oauth-and-cookies`          |
+| H7 Orígenes y conflictos            | Orígenes conectados, sincronización, merge de tres vías, pestaña de conflicto                                                                                                                                           | `two-machines-one-origin`                                                                                                  |
+| H8 Robustez                         | Memoria plana, entrada hostil topada, arranque con presupuesto, updater por canales beta y estable, respuesta validada por esquema                                                                                      | `startup-budget`, `release-memory`, `workload-memory`, `typing-budget`, `faults`, `unreadable-file`; workflow `update-e2e` |
+| H9 Colecciones completas            | Colección y carpeta guardan docs, variables, auth y cabeceras; globales pasan al origen; una carpeta entra y sale sola                                                                                                  | `folder-exchange`, `folder-variables`, `folder-settings`, `folder-auth-headers`                                            |
+| H10 Scripts                         | Scripts en sandbox antes y después de cada envío, aprobados por máquina                                                                                                                                                 | `scripts`, `script-attacks`, `script-memory`, `installed-smoke`                                                            |
+| H11 Nombre, marco y scripts         | El producto se llama Mandor; la ventana es un marco con tres tarjetas, superposiciones sólidas y el ui-lab al día; scripts con `mandor.`, editor con tipos y contexto, bombilla que convierte Postman, Insomnia y Bruno | `chrome-shape`, `script-editor`                                                                                            |
 
 Entre hitos, sin número: ejemplos de respuesta en Request (`request-examples`), ids opacos en
 disco, intercambio de workspace con Insomnia y Bruno (`workspace-exchange`), tabla clave-valor
@@ -133,8 +134,17 @@ Diseño público en `SCRIPTS.md` y `SECURITY.md`. Lo esencial:
 - Regla de destino: un script no manda a un host que el item no nombra.
 - Topes en `SCRIPT_LIMITS`: 5 s por script, 30 s y 32 scripts por cadena, 64 MiB, 8 workers,
   10 `sendRequest` por corrida.
+- API `mandor.`: `variables`, `request`, `response`, `test`, `expect`, `sendRequest`; en Realtime,
+  `socket` y `message`. Lo que un momento no muestra no existe en sus tipos.
+- Editor: los tipos de su momento con la ayuda en el idioma de la ventana, más su contexto
+  (variables, headers y una muestra de la respuesta) en la completación y el texto gris.
+- Importar de Postman, Insomnia o Bruno deja cada script en su momento, tal como vino, sin
+  aprobar; los tests de Bruno se suman al script de después de la respuesta. Exportar los escribe
+  tal cual.
+- Lo de otra app se subraya con su nombre; la bombilla lo escribe en `mandor.` (la línea o el
+  script entero) con las tablas de `script/src/dialects/`. Nunca al importar, guardar ni exportar.
 - Fuera de v1: runner, `setNextRequest`, datasets, visualizador, módulos, variables de script
-  persistidas, scripts de workspace, scripts por mensaje en Realtime, scripts de Bruno.
+  persistidas, scripts de workspace, scripts por mensaje en Realtime.
 
 ## Límites vigentes
 
@@ -194,3 +204,16 @@ Manda el código: tokens en `packages/ui/src/styles/` (`scales.css` es la verdad
 componentes en `packages/ui`, glifos y perfil de dibujo en `packages/icons` y su README. `npm run
 design` comprueba marcado y tokens. Estándar de interfaz e iconos: skills `ui-design` e
 `iconography`.
+
+- Marco y tarjetas: la ventana es `surface-frame` y cada zona una `Card` (`surface-card`) con hueco
+  de 8 y radio de 10. Request y Realtime parten su item en tres tarjetas con nombre (destino,
+  request o mensaje, respuesta o actividad); lo que se parte dentro de una tarjeta sigue pegado.
+- Pestañas de la rejilla: inactiva sin relleno, activa con `surface-tab-active`, nunca acento.
+- Foco sin anillo exterior: `data-focus-frame` recolorea un borde propio de 1 px. Un control se
+  rellena (`surface-control`) con borde transparente que el foco recolorea y el error pinta.
+- Densidad y animaciones son preferencias de apariencia (`data-density`, `data-motion`). Compacta
+  pone hueco y radio a 0; el movimiento reducido quita escala y desplazamiento y conserva el
+  fundido.
+- Lo que flota es sólido: diálogos de una superficie con radio 12, menús y capas con radio 10, y
+  avisos como tarjetas de 380 px apiladas de a tres. Ajustes es una lista, sin cajas.
+- El ui-lab se dibuja como las apps y lee el valor de cada token de la página.

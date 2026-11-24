@@ -42,14 +42,18 @@ describe('folderOfBru', () => {
         expect(folder.children.map((child) => child.name)).toEqual(['a', 'b']);
     });
 
-    it('names what the folder keeps that Mandor has no place for', () => {
+    it('reads the scripts and the tests of the folder into their moments', () => {
         const folder = folderOfBru(
             { script: { req: 'x()' }, tests: 'test(1)', vars: { req: [{ name: 'a' }] } },
             'M',
             [],
         );
 
-        expect(folder.leftOut).toEqual(['scripts', 'tests']);
+        expect(folder.scripts).toEqual({
+            onBeforeRequest: { source: 'x()' },
+            onResponse: { source: 'test(1)' },
+        });
+        expect(folder.leftOut).toEqual([]);
     });
 
     it('reads the variables of the folder', () => {

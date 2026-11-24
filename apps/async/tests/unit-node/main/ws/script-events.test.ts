@@ -67,7 +67,7 @@ afterEach(async () => {
 
 describe('onConnect as the socket opens', () => {
     it('greets through the socket and says what it ran', async () => {
-        await openWith({ onConnect: 'console.log("hi"); socket.send("hola");' });
+        await openWith({ onConnect: 'console.log("hi"); mandor.socket.send("hola");' });
 
         await waitFor(() => {
             expect(sent()).toEqual(['hola']);
@@ -92,7 +92,9 @@ describe('onConnect as the socket opens', () => {
 
 describe('onMessage on each frame that arrives', () => {
     it('answers a ping with a pong', async () => {
-        await openWith({ onMessage: 'if (message.text === "ping") { socket.send("pong"); }' });
+        await openWith({
+            onMessage: 'if (mandor.message.text === "ping") { mandor.socket.send("pong"); }',
+        });
         echo.broadcastText('ping');
 
         await waitFor(() => {
@@ -102,7 +104,8 @@ describe('onMessage on each frame that arrives', () => {
 
     it('reads bytes as bytes, with no text', async () => {
         await openWith({
-            onMessage: 'socket.send(String(message.binary) + ":" + String(message.text));',
+            onMessage:
+                'mandor.socket.send(String(mandor.message.binary) + ":" + String(mandor.message.text));',
         });
         echo.broadcastBinary(new Uint8Array([0, 1, 2]));
 
@@ -112,7 +115,7 @@ describe('onMessage on each frame that arrives', () => {
     });
 
     it('never holds the socket back in a flood, and counts what it dropped', async () => {
-        await openWith({ onMessage: 'console.log(message.text);' });
+        await openWith({ onMessage: 'console.log(mandor.message.text);' });
 
         const rssBefore = process.memoryUsage().rss;
 
@@ -139,7 +142,7 @@ describe('onMessage on each frame that arrives', () => {
         // how fast a machine runs. Every frame comes back, so the loop goes on until the close.
         await sockets.stop();
         sockets = await startScriptSockets({ socketSendsPerSecond: 1 });
-        await openWith({ onMessage: 'socket.send("again"); socket.send("again");' });
+        await openWith({ onMessage: 'mandor.socket.send("again"); mandor.socket.send("again");' });
         echo.broadcastText('start');
 
         await waitFor(() => {
@@ -154,7 +157,9 @@ describe('onMessage on each frame that arrives', () => {
     });
 
     it('stops on the next frame once the switch of this machine is off', async () => {
-        await openWith({ onMessage: 'if (message.text === "ping") { socket.send("pong"); }' });
+        await openWith({
+            onMessage: 'if (mandor.message.text === "ping") { mandor.socket.send("pong"); }',
+        });
         echo.broadcastText('ping');
         await waitFor(() => {
             expect(sent()).toEqual(['pong']);

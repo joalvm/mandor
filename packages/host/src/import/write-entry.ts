@@ -115,7 +115,7 @@ export async function removeEntry(
 
 /** The workspace file is never deleted: removing what an import wrote there empties it. */
 async function emptyImportedWorkspace(root: string, workspaceId: string): Promise<void> {
-    await writeImportedWorkspace(root, workspaceId, { auth: null, importedScripts: null }, null);
+    await writeImportedWorkspace(root, workspaceId, { auth: null }, null);
 }
 
 /** Who writes each place an import lands on. */

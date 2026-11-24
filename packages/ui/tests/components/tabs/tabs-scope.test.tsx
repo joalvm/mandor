@@ -6,12 +6,17 @@ import {
     TabsScopeProvider,
     useChooseSection,
     useOpenSection,
+    useTabsOrientation,
 } from '../../../src/components/tabs/tabs-scope.js';
 
 const choose = vi.fn();
 
 function Strip({ children }: PropsWithChildren) {
-    return <TabsScopeProvider value={{ choose, open: 'payload' }}>{children}</TabsScopeProvider>;
+    return (
+        <TabsScopeProvider value={{ choose, open: 'payload', orientation: 'vertical' }}>
+            {children}
+        </TabsScopeProvider>
+    );
 }
 
 describe('the open section of a strip', () => {
@@ -27,6 +32,12 @@ describe('the open section of a strip', () => {
         result.current('headers');
 
         expect(choose).toHaveBeenCalledWith('headers');
+    });
+
+    it('tells the list how the sections stand', () => {
+        const { result } = renderHook(() => useTabsOrientation(), { wrapper: Strip });
+
+        expect(result.current).toBe('vertical');
     });
 
     /** A panel mounted outside a strip has no section to show; failing beats guessing. */

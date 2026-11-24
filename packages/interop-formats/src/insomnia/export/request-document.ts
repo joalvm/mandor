@@ -62,6 +62,6 @@ export function requestDocumentOf(
     return {
         ...withReferences(content),
         ...requestSettingsDocumentOf(request.settings),
-        ...scriptsDocumentOf(request.importedScripts),
+        ...scriptsDocumentOf(request.scripts),
     };
 }

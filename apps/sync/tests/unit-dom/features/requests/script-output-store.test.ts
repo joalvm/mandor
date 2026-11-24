@@ -21,7 +21,6 @@ function pushOf(sendId: string, change: Partial<RequestScriptOutput> = {}): Requ
         logs: [],
         tests: [],
         skipped: [],
-        imported: 0,
         switchedOff: 0,
         variables: [],
         withheld: [],
@@ -52,7 +51,6 @@ describe('what the scripts of a send said, as the window keeps it', () => {
         store.receive(
             pushOf(FIRST, {
                 logs: [{ level: 'log', text: 'antes' }],
-                imported: 1,
                 destinationMoved: true,
             }),
         );
@@ -73,7 +71,6 @@ describe('what the scripts of a send said, as the window keeps it', () => {
             ],
             tests: [{ name: 'status', passed: true }],
             skipped: [],
-            imported: 1,
             switchedOff: 0,
             errors: [{ message: 'boom', errorName: 'Error', line: 3 }],
             withheld: [],

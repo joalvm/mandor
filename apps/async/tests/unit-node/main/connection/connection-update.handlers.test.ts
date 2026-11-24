@@ -154,10 +154,10 @@ describe('updating a connection from the renderer', () => {
         await update({
             ...WORKSPACE,
             connectionId: ecoId,
-            changes: { scripts: { onConnect: { source: 'socket.send("hola");' } } },
+            changes: { scripts: { onConnect: { source: 'mandor.socket.send("hola");' } } },
         });
 
-        expect(await readFile(file, 'utf8')).toContain('socket.send("hola");');
+        expect(await readFile(file, 'utf8')).toContain('mandor.socket.send("hola");');
 
         const cleared = await update({
             ...WORKSPACE,

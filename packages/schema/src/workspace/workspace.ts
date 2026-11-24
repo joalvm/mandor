@@ -1,6 +1,5 @@
 import type { AuthConfig } from '../auth/auth-config.js';
 import type { ItemOrigin } from '../collection/item-origin.js';
-import type { ImportedScript } from '../script/imported-script.js';
 import type { WorkspaceKind } from './workspace-kinds.js';
 
 /** A project. Owns its environments, collection and docs; nothing is shared upward. */
@@ -14,12 +13,10 @@ export type Workspace = {
      */
     auth?: AuthConfig | undefined;
     /**
-     * Where what an import wrote into this file came from: its `auth` and its scripts. Absent
-     * means a person wrote it, and an import then reports a conflict instead of writing over it.
+     * Where what an import wrote into this file came from: its `auth`. Absent means a person
+     * wrote it, and an import then reports a conflict instead of writing over it.
      */
     importOrigin?: ItemOrigin | undefined;
-    /** Scripts an import brought and Mandor keeps but does not run. The person reads them. */
-    importedScripts?: ImportedScript[] | undefined;
     /**
      * The environment that rules when nobody chose one: a machine with no selection in Request,
      * a connection with no environment in Realtime. It travels with the workspace.

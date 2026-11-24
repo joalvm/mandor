@@ -1,7 +1,6 @@
 import type { AuthConfig } from '../auth/auth-config.js';
 import type { PlainVariable } from '../environment/plain-variable-schema.js';
 import type { RequestLine } from '../request/request-line.js';
-import type { ImportedScript } from '../script/imported-script.js';
 import type { RequestScripts } from '../script/own-scripts.js';
 import type { ItemOrigin } from './item-origin.js';
 
@@ -29,8 +28,6 @@ export type FolderSettings = {
      * belongs to whoever set it by hand.
      */
     importOrigin?: ItemOrigin | undefined;
-    /** Scripts that came with an import. Kept as text; nothing runs them. */
-    importedScripts?: ImportedScript[] | undefined;
     /** The scripts the user wrote for the group, one per event. Absent until somebody writes one. */
     scripts?: RequestScripts | undefined;
 };

@@ -51,19 +51,11 @@ describe('writing a collection with what its document declares', () => {
     });
 
     it('writes the scripts it brings', async () => {
-        const importedScripts = [
-            { event: 'onBeforeRequest', dialect: 'postman', source: 'x()' } as const,
-        ];
+        const scripts = { onBeforeRequest: { source: 'x()' } };
 
-        await writeCollectionEntry(
-            root,
-            WORKSPACE,
-            collectionEntry('otra', 'Otra', { importedScripts }),
-        );
+        await writeCollectionEntry(root, WORKSPACE, collectionEntry('otra', 'Otra', { scripts }));
 
-        expect((await readFolderSettings(root, WORKSPACE, 'otra')).importedScripts).toEqual(
-            importedScripts,
-        );
+        expect((await readFolderSettings(root, WORKSPACE, 'otra')).scripts).toEqual(scripts);
     });
 
     it('reads back as what it claimed: nobody touched it', async () => {

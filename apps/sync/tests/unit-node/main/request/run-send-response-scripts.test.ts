@@ -65,9 +65,9 @@ describe('a send whose scripts read its answer', () => {
                 url: '{{baseUrl}}/echo',
                 headers: [line('X-Login', 'abc')],
                 ...scripts(`
-                    await sendRequest({ url: '${fixture.origin}/echo' });
-                    vars.set('tok', response.json().headers['x-login']);
-                    test('is 200', () => { if (response.status !== 200) throw new Error('no'); });
+                    await mandor.sendRequest({ url: '${fixture.origin}/echo' });
+                    mandor.variables.set('tok', mandor.response.json().headers['x-login']);
+                    mandor.test('is 200', () => { if (mandor.response.status !== 200) throw new Error('no'); });
                 `),
             },
             { sendId },
@@ -91,9 +91,9 @@ describe('a send whose scripts read its answer', () => {
                 url: '{{baseUrl}}/echo',
                 headers: [line('X-Late', 'late-secret-value')],
                 ...scripts(
-                    `vars.set('seen', response.json().headers['x-late']);
-                     vars.set('sent', request.headers.get('x-late'));`,
-                    `await sendRequest({ url: '${marker.url}/mark' });`,
+                    `mandor.variables.set('seen', mandor.response.json().headers['x-late']);
+                     mandor.variables.set('sent', mandor.request.headers.get('x-late'));`,
+                    `await mandor.sendRequest({ url: '${marker.url}/mark' });`,
                 ),
             });
             await fixture.send({
@@ -130,7 +130,7 @@ describe('a send whose scripts read its answer', () => {
     it('gives a script no text of a body that is not text, and says so', async () => {
         await fixture.send({
             url: '{{baseUrl}}/binary',
-            ...scripts('vars.set("t", String(response.text()));'),
+            ...scripts('mandor.variables.set("t", String(mandor.response.text()));'),
         });
         await fixture.send({ url: '{{baseUrl}}/echo', headers: [line('X-T', '{{t}}')] });
 
@@ -147,7 +147,7 @@ describe('a send whose scripts read its answer', () => {
         await fixture.send(
             {
                 url: '{{baseUrl}}/echo',
-                ...scripts('vars.set("v", "1");', 'throw new Error("not yet");'),
+                ...scripts('mandor.variables.set("v", "1");', 'throw new Error("not yet");'),
             },
             { sendId },
         );
@@ -160,7 +160,7 @@ describe('a send whose scripts read its answer', () => {
         const sendId = crypto.randomUUID();
 
         await fixture.send(
-            { url: '{{baseUrl}}/echo', ...scripts('vars.set("v", "1");') },
+            { url: '{{baseUrl}}/echo', ...scripts('mandor.variables.set("v", "1");') },
             { sendId, skipScripts: true },
         );
         await fixture.send({ url: '{{baseUrl}}/echo', headers: [line('X-V', '{{v}}')] });
@@ -175,7 +175,7 @@ describe('a send whose scripts read its answer', () => {
 
         await fixture.send({
             url: '{{baseUrl}}/echo',
-            ...scripts(`await sendRequest({ url: '${fixture.origin}/slow' });`),
+            ...scripts(`await mandor.sendRequest({ url: '${fixture.origin}/slow' });`),
         });
         // The script of the answer is on the network now, and stays there.
         await vi.waitFor(() => {

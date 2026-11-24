@@ -39,6 +39,11 @@ export const bruBodySchema = z.object({
     ws: z.array(z.object({ name: text, type: text, content: text, selected: flag })).nullish(),
 });
 
+/** The `script:pre-request` and `script:post-response` blocks, by the parser's names. */
+const bruScriptSchema = z.object({ req: text, res: text }).nullish();
+
+export type BruScript = z.output<typeof bruScriptSchema>;
+
 /** The rows of a table, which may not be there. */
 export const bruRowsSchema = z.array(rowSchema).nullish();
 
@@ -51,8 +56,8 @@ export const bruRequestSchema = z.object({
     auth: authBlocksSchema,
     body: bruBodySchema.nullish(),
     vars: z.unknown().optional(),
-    script: z.unknown().optional(),
-    tests: z.unknown().optional(),
+    script: bruScriptSchema,
+    tests: text,
     assertions: z.unknown().optional(),
     settings: z.unknown().optional(),
     examples: z.unknown().optional(),
@@ -67,8 +72,8 @@ export const bruCollectionSchema = z.object({
     headers: z.array(rowSchema).nullish(),
     auth: z.object({ mode: text }).catchall(z.unknown()).nullish(),
     vars: z.object({ req: z.array(rowSchema).nullish() }).nullish(),
-    script: z.unknown().optional(),
-    tests: z.unknown().optional(),
+    script: bruScriptSchema,
+    tests: text,
     docs: text,
 });
 

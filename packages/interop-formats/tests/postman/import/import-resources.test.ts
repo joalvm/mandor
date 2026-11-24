@@ -55,7 +55,7 @@ describe('importResourcesOf: the collection as the resources of a workspace', ()
             folderSettingsSchema.safeParse({ ...folder.fields, name: folder.name }).success,
         ).toBe(true);
         expect(folder.fields['auth']).toMatchObject({ type: 'apikey', name: 'X-Admin' });
-        expect(folder.fields['importedScripts']).toHaveLength(1);
+        expect(Object.keys(folder.fields['scripts'] as object)).toHaveLength(1);
         expect(folder.fields['description']).toBe('The people in charge.');
     });
 
@@ -73,18 +73,15 @@ describe('importResourcesOf: the collection as the resources of a workspace', ()
         expect(item.fields['auth']).toEqual({ type: 'bearer', token: '{{token}}' });
     });
 
-    it('keeps the scripts of the three levels as text, and says they do not run', () => {
+    it('puts the scripts of the three levels in their moments, untouched and not approved', () => {
         const collection = resourceAt(resources, 'collection', 'demo-api');
         const item = resourceAt(resources, 'item', 'demo-api/users/get-user');
 
-        expect(collection.fields['importedScripts']).toHaveLength(1);
-        expect(item.fields['importedScripts']).toEqual([
-            { event: 'onBeforeRequest', dialect: 'postman', source: "pm.variables.set('x', 1);" },
-            expect.objectContaining({ event: 'onResponse', dialect: 'postman' }),
-        ]);
-        expect(item.degradations).toContainEqual(
-            degradation('scriptAsText', { kind: 'pre-request' }),
-        );
+        expect(Object.keys(collection.fields['scripts'] as object)).toHaveLength(1);
+        expect(item.fields['scripts']).toEqual({
+            onBeforeRequest: { source: "pm.variables.set('x', 1);" },
+            onResponse: { source: expect.stringContaining('pm.') as unknown },
+        });
     });
 
     it('holds the auth in the collection as it came', () => {

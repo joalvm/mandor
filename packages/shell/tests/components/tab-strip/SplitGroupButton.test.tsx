@@ -2,7 +2,6 @@ import { MessagesProvider } from '@mandor/i18n';
 import { leavesOf, ROOT_GROUP_ID } from '@mandor/ipc';
 import { TooltipProvider } from '@mandor/ui';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import type { DockviewGroupPanel } from 'dockview';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { SplitGroupButton } from '../../../src/components/tab-strip/SplitGroupButton.js';
@@ -12,7 +11,7 @@ function draw(groupId: string): void {
     render(
         <MessagesProvider preferences={{ language: 'es' }}>
             <TooltipProvider>
-                <SplitGroupButton group={{ id: groupId } as DockviewGroupPanel} />
+                <SplitGroupButton group={{ id: groupId }} />
             </TooltipProvider>
         </MessagesProvider>,
     );

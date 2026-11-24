@@ -11,6 +11,7 @@ import { collectionSchema, environmentSchema } from './opencollection-schema.js'
 import { ordered } from './order-nodes.js';
 import { parseOcFile } from './parse-oc-file.js';
 import { authOfOpenCollection } from './read-oc-auth.js';
+import { scriptPartsOf } from './read-bru-scripts.js';
 import { descriptionTextOf, rowsOf } from './read-oc-parts.js';
 import { nodesOfDir, nodesOfItems } from './read-oc-tree.js';
 import { environmentFrom, variablesFrom } from './read-oc-variables.js';
@@ -71,6 +72,7 @@ export function readOpenCollection(files: readonly InteropFile[]): BrunoDocument
     const skipped: BrunoSkipped[] = [];
     const name = collection.info?.name ?? '';
     const defaults = collection.request;
+    const scripts = scriptPartsOf(defaults?.scripts);
 
     return {
         sourceId: documentSourceId(name),
@@ -85,6 +87,10 @@ export function readOpenCollection(files: readonly InteropFile[]): BrunoDocument
             yaml.filter((file) => file.path.startsWith(ENVIRONMENTS)),
         ),
         skipped,
-        leftOut: leftOutOf({ scripts: defaults?.scripts, actions: defaults?.actions }),
+        scripts: scripts.read,
+        leftOut: leftOutOf({
+            scripts: scripts.unread,
+            actions: defaults?.actions,
+        }),
     };
 }

@@ -77,12 +77,12 @@ describe('what a level of Postman declares stays at that level', () => {
         ]);
 
         expect(resourceOf(read.resources, 'workspace')).toBeUndefined();
-        expect(resourceOf(read.resources, 'collection', 'uno')?.fields['importedScripts']).toEqual([
-            { event: 'onResponse', dialect: 'postman', source: 'uno()' },
-        ]);
-        expect(resourceOf(read.resources, 'collection', 'dos')?.fields['importedScripts']).toEqual([
-            { event: 'onResponse', dialect: 'postman', source: 'dos()' },
-        ]);
+        expect(resourceOf(read.resources, 'collection', 'uno')?.fields['scripts']).toEqual({
+            onResponse: { source: 'uno()' },
+        });
+        expect(resourceOf(read.resources, 'collection', 'dos')?.fields['scripts']).toEqual({
+            onResponse: { source: 'dos()' },
+        });
     });
 
     it('covers each setting in the fingerprint a collection is claimed with', async () => {

@@ -25,13 +25,7 @@ const config: KnipConfig = {
             ignore: ['vendor/**'],
         },
         'apps/async': {
-            // The preload too: the plugin of electron-vite reads the inputs of `rollupOptions`
-            // and the build names them under `rolldownOptions`, the name of Vite 8.
-            entry: [
-                'src/main/start-*.ts',
-                'src/preload/expose-bridge.ts',
-                'src/renderer/app/mount-*.tsx',
-            ],
+            entry: ['src/main/start-*.ts', 'src/renderer/app/mount-*.tsx'],
             // The update test waits for the NSIS installer to end by asking Windows for its tasks.
             ignoreBinaries: ['tasklist'],
             ignoreDependencies: [
@@ -43,11 +37,7 @@ const config: KnipConfig = {
             ],
         },
         'apps/sync': {
-            entry: [
-                'src/main/start-*.ts',
-                'src/preload/expose-bridge.ts',
-                'src/renderer/app/mount-*.tsx',
-            ],
+            entry: ['src/main/start-*.ts', 'src/renderer/app/mount-*.tsx'],
             ignoreDependencies: [
                 // Same reason as `ws` in the other app: external in main, node loads it from
                 // the asar, for the packages that main bundles.

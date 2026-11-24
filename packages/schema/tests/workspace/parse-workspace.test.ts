@@ -45,13 +45,12 @@ describe('parseWorkspace', () => {
         expect(parseWorkspace(validWorkspace).importOrigin).toBeUndefined();
     });
 
-    it('keeps the scripts an import brought and leaves them absent when the file has none', () => {
+    it('leaves out the scripts an older import kept: they went to the root of each collection', () => {
         const importedScripts = [{ event: 'onResponse', dialect: 'postman', source: 'a()' }];
 
-        expect(parseWorkspace({ ...validWorkspace, importedScripts }).importedScripts).toEqual(
-            importedScripts,
+        expect(parseWorkspace({ ...validWorkspace, importedScripts })).not.toHaveProperty(
+            'importedScripts',
         );
-        expect(parseWorkspace(validWorkspace).importedScripts).toBeUndefined();
     });
 
     it('leaves out the variables an older build kept: the workspace holds none', () => {

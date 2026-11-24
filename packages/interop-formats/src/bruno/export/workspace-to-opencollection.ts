@@ -11,6 +11,7 @@ import {
 import { authDocumentOf } from './auth-document.js';
 import { FOLDER_FILE, levelFilesOf } from './folder-files.js';
 import type { SavedMessages } from './saved-messages.js';
+import { scriptBlocksOf } from './script-blocks.js';
 import { ENVIRONMENTS_DIR, environmentFilesOf, variableDocumentsOf } from './variable-documents.js';
 import { websocketFilesOf } from './websocket-files.js';
 
@@ -19,7 +20,7 @@ const SPEC_VERSION = '1.0.0';
 
 /**
  * What the collection asks of every request: its headers, the auth of the collection, or of the
- * workspace when it has none, and its variables over the globals of the origin. Bruno has no place
+ * workspace when it has none, its variables over the globals of the origin, and its scripts. Bruno has no place
  * for the last two above the collection, so each collection carries them.
  */
 function defaultsOf(
@@ -36,6 +37,7 @@ function defaultsOf(
         ...listedRows('headers', namedRowsOf(collection.settings.headers)),
         ...(document === undefined ? {} : { auth: document }),
         ...(variables.length === 0 ? {} : { variables }),
+        ...listedRows('scripts', scriptBlocksOf(collection.settings.scripts)),
     };
 
     return Object.keys(defaults).length === 0 ? {} : { request: defaults };

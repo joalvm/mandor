@@ -2,7 +2,12 @@ import { useId, useRef, type PropsWithChildren } from 'react';
 
 import { cn } from '../../lib/cn.js';
 import { useInRowList } from './in-row-list.js';
-import { activateRow, clickActivation, type RowActivation } from './row-activation.js';
+import {
+    activateRow,
+    clickActivation,
+    clickedOnRow,
+    type RowActivation,
+} from './row-activation.js';
 import { RowNameProvider } from './row-name.js';
 import { useRevealedRow } from './useRevealedRow.js';
 
@@ -88,7 +93,9 @@ export function ListRow({
             data-part="list-row"
             id={id}
             onClick={(event) => {
-                onSelect(clickActivation(event));
+                if (clickedOnRow(event)) {
+                    onSelect(clickActivation(event));
+                }
             }}
             onKeyDown={(event) => {
                 activateRow(event, onSelect);

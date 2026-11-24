@@ -104,16 +104,16 @@ describe('folder-resources: a document with little to say', () => {
     });
 });
 
-describe('collection scripts that do not come in', () => {
-    it('says why a script disabled in Postman stays out, and keeps no scripts key', () => {
+describe('collection scripts switched off in Postman', () => {
+    it('come in switched off, in their moment, with nothing to say', () => {
         const [resource] = importResourcesOf({
             ...EMPTY,
-            scripts: [
-                { event: 'onResponse', dialect: 'postman', source: 'pm.test()', enabled: false },
-            ],
+            scripts: [{ event: 'onResponse', source: 'pm.test()', enabled: false }],
         });
 
-        expect(resource?.fields).not.toHaveProperty('importedScripts');
-        expect(resource?.degradations).toEqual([degradation('scriptDisabled', { kind: 'test' })]);
+        expect(resource?.fields['scripts']).toEqual({
+            onResponse: { source: 'pm.test()', enabled: false },
+        });
+        expect(resource?.degradations).toEqual([]);
     });
 });

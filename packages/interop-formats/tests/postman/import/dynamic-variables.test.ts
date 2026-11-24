@@ -38,10 +38,10 @@ describe('the dynamic variables of the fields of a resource', () => {
 
 describe('withDynamicFields', () => {
     it('maps the fields and says what it could not, but never touches the scripts', () => {
-        const importedScripts = [{ event: 'onResponse', dialect: 'postman', source: '{{$guid}}' }];
-        const mapped = withDynamicFields({ url: '{{$guid}}/{{$nope}}', importedScripts });
+        const scripts = { onResponse: { source: '{{$guid}}' } };
+        const mapped = withDynamicFields({ url: '{{$guid}}/{{$nope}}', scripts });
 
-        expect(mapped.fields).toEqual({ url: '{{$uuid}}/{{$nope}}', importedScripts });
+        expect(mapped.fields).toEqual({ url: '{{$uuid}}/{{$nope}}', scripts });
         expect(mapped.notes).toEqual([
             degradation('dynamicVariableUnsupported', { name: '$nope' }),
         ]);

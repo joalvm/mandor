@@ -27,7 +27,7 @@ describe('a script that shadows where a token of OAuth2 is asked for', () => {
     it('takes the token from the url of the environment, never from a script', async () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
-            ...scripts(`vars.set('tokenUrl', '${attack.evil.url}/token');`),
+            ...scripts(`mandor.variables.set('tokenUrl', '${attack.evil.url}/token');`),
         });
 
         const answer = await attack.send({

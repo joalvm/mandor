@@ -129,9 +129,7 @@ describe('requestDocumentOf', () => {
                     method: 'GET',
                     url: 'https://x',
                     settings: { followRedirects: false },
-                    importedScripts: [
-                        { event: 'onResponse', dialect: 'insomnia', source: 'a("{{b}}");' },
-                    ],
+                    scripts: { onResponse: { source: 'a("{{b}}");' } },
                 },
             },
             ['Tienda'],

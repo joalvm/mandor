@@ -2,7 +2,6 @@ import { collectionFingerprint, folderFingerprint } from '@mandor/interop-core';
 import type {
     AuthConfig,
     ConcreteAuth,
-    ImportedScript,
     RequestLine,
     RequestScripts,
     Variable,
@@ -14,7 +13,6 @@ export type OwnedSettings = {
     auth?: AuthConfig | undefined;
     variables?: readonly Variable[] | undefined;
     headers?: readonly RequestLine[] | undefined;
-    importedScripts?: readonly ImportedScript[] | undefined;
     scripts?: RequestScripts | undefined;
 };
 

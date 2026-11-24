@@ -29,7 +29,7 @@ export const openapiFormat: InteropFormat = {
             ...LEVEL_SETTINGS,
             folders: 'foldersFlattened',
         },
-        scriptsIn: 'none',
+        writesScripts: false,
         request: { settingsKept: [] },
     },
     sniff: sniffSoleFile(sniffOpenapi),

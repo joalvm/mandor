@@ -55,7 +55,7 @@ describe('the groups of an intermediate document', () => {
 
     it('reads the variables, environments and scripts of the document as a whole', () => {
         const variable = { name: 'host', value: 'a', enabled: true, secret: false };
-        const script = { event: 'onResponse', dialect: 'postman', source: 'a()', enabled: true };
+        const script = { event: 'onResponse', source: 'a()', enabled: true };
 
         expect(
             accepts({

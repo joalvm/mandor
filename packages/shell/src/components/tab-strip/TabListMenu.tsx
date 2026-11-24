@@ -6,7 +6,8 @@ import { useShellStore } from '../../hooks/useShellStore.js';
 import { shellStore } from '../../shell-store.js';
 import { TabListPanel } from './TabListPanel.js';
 
-type TabListMenuProps = { group: DockviewGroupPanel };
+/** Only the group's id: the rest of the group is dockview's. */
+type TabListMenuProps = { group: Pick<DockviewGroupPanel, 'id'> };
 
 /**
  * The button at the far end of the strip and the list it opens: every tab of the group, found by

@@ -11,30 +11,46 @@ import { present, textOf } from './tree-files.mjs';
 const MILESTONE = /^\| \*{0,2}\[?(H(\d+)).*?\|\s*\*{0,2}([^*|]+?)\*{0,2}\s*\|$/gm;
 const PLAN_ROW = /^\| \[\d+\]\((\d+-[a-z0-9-]+\.md)\).*\|\s*([a-zé ]+?)\s*\|$/gm;
 
+/**
+ * The states a milestone folder may stand beside: the open milestone, and one whose plans were
+ * written ahead of opening it. Any other state means the milestone is over, or was never listed.
+ */
+const KEPT_STATES = new Set(['abierto', 'pendiente']);
+
+/** The rows of the milestone table, each as its number and its state. */
+function milestoneRows(root) {
+    return [...textOf(`${root}/docs/plans/README.md`).matchAll(MILESTONE)].map(
+        ([, , number, state]) => ({ number, state }),
+    );
+}
+
 /** The folder of the one open milestone, or nothing when no milestone is open. */
 export function openMilestone(root) {
-    const rows = [...textOf(`${root}/docs/plans/README.md`).matchAll(MILESTONE)];
-    const open = rows.find(([, , , state]) => state === 'abierto');
+    const open = milestoneRows(root).find(({ state }) => state === 'abierto');
 
-    return open === undefined ? undefined : `${root}/docs/plans/hito-${open[2]}`;
+    return open === undefined ? undefined : `${root}/docs/plans/hito-${open.number}`;
 }
 
 /**
- * The milestone folders that should not be there: every `hito-N` but the open one. A closed
- * milestone leaves no folder behind. The plans live outside the repo: a checkout without them
- * has nothing left over.
+ * The milestone folders that should not be there: every `hito-N` but the open one and those the
+ * table marks `pendiente`, whose plans were written before their turn. A closed milestone leaves
+ * no folder behind. The plans live outside the repo: a checkout without them has nothing left over.
  */
 export function leftoverMilestones(root) {
-    const open = openMilestone(root);
-
     if (!present(`${root}/docs/plans`)) {
         return [];
     }
 
+    const kept = new Set(
+        milestoneRows(root)
+            .filter(({ state }) => KEPT_STATES.has(state))
+            .map(({ number }) => `hito-${number}`),
+    );
+
     return readdirSync(`${root}/docs/plans`, { withFileTypes: true })
         .filter((entry) => entry.isDirectory() && /^hito-\d+$/.test(entry.name))
         .map((entry) => entry.name)
-        .filter((name) => open !== `${root}/docs/plans/${name}`)
+        .filter((name) => !kept.has(name))
         .sort();
 }
 

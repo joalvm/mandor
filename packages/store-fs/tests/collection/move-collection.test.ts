@@ -155,7 +155,7 @@ describe('moving one collection', () => {
     it('moves the file of a folder that rises to the top, with everything it held', async () => {
         await mountCollection(root, WORKSPACE, {
             'pedidos/altas/folder.yaml':
-                '# a mano\nname: Altas\nimportedScripts:\n  - event: onResponse\n    dialect: postman\n    source: pm.test()\nfuture: kept\n',
+                '# a mano\nname: Altas\nscripts:\n  onResponse:\n    source: pm.test()\nfuture: kept\n',
         });
 
         await moveCollectionNode(root, WORKSPACE, {
@@ -172,9 +172,9 @@ describe('moving one collection', () => {
         expect(await fileExists(join(collectionDir(root, WORKSPACE), 'altas', 'folder.yaml'))).toBe(
             false,
         );
-        expect((await readFolderSettings(root, WORKSPACE, 'altas')).importedScripts).toEqual([
-            { event: 'onResponse', dialect: 'postman', source: 'pm.test()' },
-        ]);
+        expect((await readFolderSettings(root, WORKSPACE, 'altas')).scripts).toEqual({
+            onResponse: { source: 'pm.test()' },
+        });
     });
 
     it('raises a folder that never had a file, which reads as its directory', async () => {

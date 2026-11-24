@@ -39,7 +39,7 @@
             "atob": "Decodifica un texto en base64.",
             "btoa": "Codifica un texto en base64.",
             "URLSearchParams": "Lee o arma una query string.",
-            "vars": {
+            "variables": {
                 "get": "Valor de una variable. Un secreto da undefined.",
                 "set": "Fija una variable de script para los envíos que siguen.",
                 "has": "Si la variable existe.",
@@ -66,7 +66,7 @@
             },
             "response": {
                 "status": "Código de estado de la response.",
-                "timeMs": "Milisegundos que tardó la response.",
+                "time": "Milisegundos que tardó la response.",
                 "text": "Body de la response como texto.",
                 "json": "Body de la response leído como JSON.",
                 "headers": {
@@ -78,12 +78,186 @@
                 "text": "Texto del mensaje.",
                 "direction": "Si el mensaje llegó o salió.",
                 "binary": "Si el mensaje es binario.",
-                "event": "Nombre del evento de Socket.IO del mensaje."
+                "event": "Nombre del evento de Socket.IO del mensaje.",
+                "json": "Texto del mensaje leído como JSON."
             },
             "socket": {
                 "send": "Envía un mensaje por la conexión."
             },
             "sendRequest": "Envía otro request y espera su response. Sus variables no se resuelven y no sigue redirects."
+        },
+        "param": {
+            "console": {
+                "log": {
+                    "values": "Valores a escribir, separados por un espacio."
+                },
+                "info": {
+                    "values": "Valores a escribir, separados por un espacio."
+                },
+                "warn": {
+                    "values": "Valores a escribir, separados por un espacio."
+                },
+                "error": {
+                    "values": "Valores a escribir, separados por un espacio."
+                }
+            },
+            "atob": {
+                "data": "Texto en base64."
+            },
+            "btoa": {
+                "data": "Texto a codificar."
+            },
+            "URLSearchParams": {
+                "init": "Query string, objeto o lista de pares con que empieza."
+            },
+            "variables": {
+                "get": {
+                    "name": "Nombre de la variable."
+                },
+                "set": {
+                    "name": "Nombre de la variable.",
+                    "value": "Valor que toma la variable."
+                },
+                "has": {
+                    "name": "Nombre de la variable."
+                },
+                "replaceIn": {
+                    "text": "Texto con variables entre llaves dobles."
+                }
+            },
+            "test": {
+                "name": "Nombre del test en los resultados.",
+                "body": "Función del test; puede ser async."
+            },
+            "expect": {
+                "actual": "Valor sobre el que se afirma."
+            },
+            "request": {
+                "headers": {
+                    "get": {
+                        "name": "Nombre del header."
+                    },
+                    "has": {
+                        "name": "Nombre del header."
+                    },
+                    "set": {
+                        "name": "Nombre del header.",
+                        "value": "Valor del header."
+                    },
+                    "delete": {
+                        "name": "Nombre del header."
+                    }
+                },
+                "query": {
+                    "get": {
+                        "name": "Nombre del parámetro."
+                    },
+                    "has": {
+                        "name": "Nombre del parámetro."
+                    },
+                    "set": {
+                        "name": "Nombre del parámetro.",
+                        "value": "Valor del parámetro."
+                    },
+                    "delete": {
+                        "name": "Nombre del parámetro."
+                    }
+                }
+            },
+            "response": {
+                "headers": {
+                    "get": {
+                        "name": "Nombre del header."
+                    },
+                    "has": {
+                        "name": "Nombre del header."
+                    }
+                }
+            },
+            "socket": {
+                "send": {
+                    "text": "Texto del mensaje."
+                }
+            },
+            "sendRequest": {
+                "options": "URL, método, headers y body del request."
+            }
+        },
+        "assertion": {
+            "not": "Niega lo que sigue.",
+            "chain": "Solo se lee: no cambia la aserción.",
+            "equal": "Igual con ===.",
+            "eql": "Igual en profundidad: objetos y listas por su contenido.",
+            "include": "Contiene el texto, el elemento de la lista o los pares del objeto.",
+            "match": "El texto cumple la expresión regular.",
+            "a": "Es de ese tipo: string, number, object, array, null…",
+            "an": "Es de ese tipo: string, number, object, array, null…",
+            "property": "Tiene la propiedad y, si se da, con ese valor.",
+            "lengthOf": "Tiene ese largo.",
+            "above": "Es un número mayor.",
+            "below": "Es un número menor.",
+            "true": "Es true.",
+            "false": "Es false.",
+            "null": "Es null.",
+            "undefined": "Es undefined.",
+            "exist": "No es null ni undefined."
+        },
+        "assertionParam": {
+            "equal": {
+                "expected": "Valor esperado."
+            },
+            "eql": {
+                "expected": "Valor esperado."
+            },
+            "include": {
+                "item": "Texto, elemento o pares que debe contener."
+            },
+            "match": {
+                "pattern": "Expresión regular."
+            },
+            "a": {
+                "type": "Nombre del tipo."
+            },
+            "an": {
+                "type": "Nombre del tipo."
+            },
+            "property": {
+                "name": "Nombre de la propiedad.",
+                "value": "Valor que debe tener; opcional."
+            },
+            "lengthOf": {
+                "length": "Largo esperado."
+            },
+            "above": {
+                "limit": "Número que debe superar."
+            },
+            "below": {
+                "limit": "Número que no debe alcanzar."
+            }
+        },
+        "completion": {
+            "origin": {
+                "collection": "Colección",
+                "environment": "Entorno",
+                "script": "Declarada por un script"
+            },
+            "secret": "secreto"
+        },
+        "snippet": {
+            "fieldTest": "Test de un campo",
+            "headerFromVariable": "Header desde una variable",
+            "sendRequest": "Enviar un request",
+            "statusTest": "Test del estado",
+            "variableFromMessage": "Guardar un campo del mensaje",
+            "variableFromResponse": "Guardar un campo de la respuesta"
+        },
+        "foreign": {
+            "translatable": "Esto es de {{app}}: Convertir a mandor.",
+            "untranslatable": "Esto es de {{app}} y no tiene equivalente en mandor."
+        },
+        "convert": {
+            "line": "Convertir a mandor.",
+            "script": "Convertir todo el script a mandor."
         }
     },
     "scriptApprove": "Aprobar",
@@ -115,5 +289,13 @@
     "scriptLevel-folder": "Carpeta",
     "scriptLevel-collection": "Colección",
     "scriptLevel-connection": "Conexión",
+    "scriptEvent-onBeforeRequest": "Antes del request",
+    "scriptEvent-onResponse": "Tras la response",
+    "scriptEvent-onBeforeConnect": "Antes de conectar",
+    "scriptEvent-onConnect": "Al conectar",
+    "scriptEvent-onMessage": "Con los mensajes",
+    "scriptEvents-send": "Momento del envío",
+    "scriptEvents-connection": "Momento de la conexión",
+    "scriptEnabled": "Activo",
     "reviewSkipped": "Revisar"
 }

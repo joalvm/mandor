@@ -150,7 +150,7 @@ test('an origin with variables of the workspace migrates and every send stays as
         expect((await sentQuery(page)).get('level')).toBe('prod');
 
         expect(await readFile(join(localRepo(root), 'mandor.yaml'), 'utf8')).toContain(
-            'formatVersion: 2',
+            'formatVersion: 3',
         );
     } finally {
         await app?.close();

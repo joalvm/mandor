@@ -155,16 +155,12 @@ describe('parseRequestItem', () => {
         });
     });
 
-    it('reads the scripts an import kept, and refuses one with a key it does not know', () => {
+    it('reads a file that still keeps the scripts of an older import apart, and leaves them out', () => {
         const script = { event: 'onResponse', dialect: 'postman', source: 'a()' };
 
         expect(
-            requestItemSchema.parse({ name: 'a', importedScripts: [script] }).importedScripts,
-        ).toEqual([script]);
-        expect(
-            requestItemSchema.safeParse({ name: 'a', importedScripts: [{ ...script, x: 1 }] })
-                .success,
-        ).toBe(false);
+            requestItemSchema.parse({ name: 'a', importedScripts: [script] }),
+        ).not.toHaveProperty('importedScripts');
     });
 
     it('reads an example written before it could change its request, and the new fields', () => {

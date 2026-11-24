@@ -11,12 +11,14 @@ import { expect, type Locator, type Page } from '@playwright/test';
  * A menu fades out after its choice, and while it fades it still holds the keys and hides the
  * window from the tree: the next key waits until it is gone, as a person waits to see it close.
  *
+ * A column of sections stands whole, one under another, so its tabs are always in view.
+ *
  * The strip is of this package, and so is the one place that knows how it hides what does not
- * fit: the runs of both apps come here for it. Without a closer scope the strip is the first on
- * the page.
+ * fit: the runs of both apps come here for it. Without a closer scope the list is the first on
+ * the page with a section of that name.
  */
 export async function openSection(scope: Page | Locator, name: string | RegExp): Promise<void> {
-    const tab = scope.locator('[data-part="tabs-strip"]').getByRole('tab', { name }).first();
+    const tab = scope.locator('[data-part="tabs-list"]').getByRole('tab', { name }).first();
 
     await expect(() => openOnce(tab, name)).toPass({ timeout: 30_000 });
 }

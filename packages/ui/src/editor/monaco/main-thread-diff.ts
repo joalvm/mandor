@@ -18,10 +18,9 @@ type DiffOptions = { ignoreTrimWhitespace: boolean; maxComputationTimeMs: number
 const NOBODY = { dispose: () => undefined };
 
 /**
- * The comparison of two documents, made right here. The standard one asks a worker for it, and
- * this window has none on purpose: a worker that asks the scheme of the window for its script
- * never starts, and the policy of the window does not allow one. A diff of two texts a person
- * reads is small, and the computer is the same one the worker runs.
+ * The comparison of two documents, made right here. The standard one asks the worker of the
+ * editor for it, a thread that holds a copy of both documents for as long as it lives. A diff of
+ * two texts a person reads is small, and the computer is the same one the worker runs.
  */
 export const mainThreadDiff = {
     computeDiff: (

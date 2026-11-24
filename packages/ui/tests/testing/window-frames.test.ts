@@ -29,6 +29,20 @@ describe('the frames of the window', () => {
         await expect(nextFrame()).resolves.toBeTypeOf('number');
     }, 2_000);
 
+    // The editor asks for its next frame only once the last one came: one lost to a fake clock
+    // would leave every editor of the worker without frames. The config keeps frames off the clock.
+    it('are not faked by a fake clock, so one asked for meanwhile still comes', async () => {
+        const drawn = vi.fn();
+
+        vi.useFakeTimers();
+        requestAnimationFrame(drawn);
+        vi.useRealTimers();
+
+        await vi.waitFor(() => {
+            expect(drawn).toHaveBeenCalledOnce();
+        });
+    }, 2_000);
+
     it('still come after a frame was asked for on a fake clock that faked no frames', async () => {
         vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
         requestAnimationFrame(() => undefined);

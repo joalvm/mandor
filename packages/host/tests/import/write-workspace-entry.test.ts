@@ -75,16 +75,16 @@ describe('writeWorkspaceEntry', () => {
         expect(read.ok && read.value.auth).toBeUndefined();
     });
 
-    it('writes the scripts of the entry, and no variables: the workspace keeps none', async () => {
-        const script = { event: 'onResponse', dialect: 'postman', source: 'b()' };
+    it('writes no variables and no scripts: the workspace keeps neither', async () => {
         const variables = [{ name: 'host', value: 'a', enabled: true, secret: false }];
-        const entry = entryOf(null, { variables, importedScripts: [script] });
+        const scripts = { onResponse: { source: 'b()' } };
+        const entry = entryOf(null, { variables, scripts });
 
         await writeWorkspaceEntry(root, 'shop', entry, origin);
 
         const read = await readWorkspace(root, 'shop');
 
-        expect(read.ok && read.value.importedScripts).toEqual([script]);
         expect(read.ok && 'variables' in read.value).toBe(false);
+        expect(read.ok && 'scripts' in read.value).toBe(false);
     });
 });

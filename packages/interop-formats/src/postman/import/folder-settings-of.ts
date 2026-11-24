@@ -6,13 +6,13 @@ import {
     type InteropSecurityScheme,
     type InteropVariable,
     listOrNone,
+    ownScriptsOf,
     variablesOf,
 } from '@mandor/interop-core';
-import type { AuthConfig, ImportedScript, Variable } from '@mandor/schema';
+import type { AuthConfig, RequestScripts, Variable } from '@mandor/schema';
 
 import { authAt } from './auth-at.js';
 import { withDynamicFields } from './dynamic-variables.js';
-import { scriptsOf } from './scripts-of.js';
 
 /** The root of a collection or one of its folders, as the intermediate document says it. */
 export type DocumentLevel = {
@@ -27,7 +27,7 @@ type LevelSettings = {
     description?: string | undefined;
     variables?: Variable[] | undefined;
     auth?: AuthConfig | undefined;
-    importedScripts?: ImportedScript[] | undefined;
+    scripts?: RequestScripts | undefined;
 };
 
 type LevelPlace = 'collection' | 'folder';
@@ -50,11 +50,10 @@ export function folderSettingsOf(
 ): { settings: LevelSettings; degradations: Degradation[] } {
     const auth = authAt(level.security, schemes, place);
     const variables = variablesOf(level.variables, place);
-    const scripts = scriptsOf(level.scripts);
     const mapped = withDynamicFields({
         variables: listOrNone(variables.variables),
         auth: auth.auth,
-        importedScripts: listOrNone(scripts.importedScripts),
+        scripts: ownScriptsOf(level.scripts),
     });
 
     return {
@@ -63,7 +62,6 @@ export function folderSettingsOf(
             ...(variables.variables.length === 0 ? [] : VARIABLE_NOTES[place]),
             ...variables.degradations,
             ...auth.degradations,
-            ...scripts.degradations,
             ...mapped.notes,
         ]),
     };

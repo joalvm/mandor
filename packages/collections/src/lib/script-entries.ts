@@ -1,6 +1,7 @@
 import { ownScriptsOrNothing, type ScriptEntry } from '@mandor/schema';
+import { declaredVariablesOf } from '@mandor/script';
 
-type ScriptsOf<Event extends string> = Partial<Record<Event, ScriptEntry | undefined>>;
+export type ScriptsOf<Event extends string> = Partial<Record<Event, ScriptEntry | undefined>>;
 
 /**
  * The scripts of a level with the one of an event replaced. An empty text that would run is no
@@ -28,4 +29,26 @@ export function switchedScript(entry: ScriptEntry | undefined, enabled: boolean)
     const source = entry?.source ?? '';
 
     return enabled ? { source } : { source, enabled: false };
+}
+
+/**
+ * What the name of a moment tells from the list without opening it: a dot when it holds code,
+ * dimmed when it is switched off. A text of blanks is no code.
+ */
+export function momentMarksOf(entry: ScriptEntry | undefined): { filled: boolean; muted: boolean } {
+    return { filled: (entry?.source ?? '').trim() !== '', muted: entry?.enabled === false };
+}
+
+/**
+ * The names the scripts of every level that runs for a place declare: its own, its folders, its
+ * collection. A script switched off does not run, so it declares nothing.
+ */
+export function declaredInScripts(levels: readonly (ScriptsOf<string> | undefined)[]): string[] {
+    const sources = levels.flatMap((level) =>
+        Object.values(level ?? {}).flatMap((entry) =>
+            entry === undefined || entry.enabled === false ? [] : [entry.source],
+        ),
+    );
+
+    return declaredVariablesOf(sources);
 }

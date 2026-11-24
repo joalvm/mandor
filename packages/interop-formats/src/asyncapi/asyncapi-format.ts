@@ -16,7 +16,7 @@ export const asyncapiFormat: InteropFormat = {
     input: 'file',
     unwritten: {},
     unkept: {
-        scriptsIn: 'none',
+        writesScripts: false,
         collection: { variables: 'noVariables' },
         folder: {
             variables: 'noVariables',

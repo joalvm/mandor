@@ -101,12 +101,12 @@ describe('request-document: a request as the item Postman lists', () => {
         ]);
     });
 
-    it('writes the scripts it kept under the event Postman calls them by', () => {
+    it('writes the scripts of the request under the event Postman calls them by', () => {
         const item = requestOf('con script', {
-            importedScripts: [
-                { event: 'onBeforeRequest', dialect: 'postman', source: 'a();\nb();' },
-                { event: 'onResponse', dialect: 'postman', source: 'pm.test()' },
-            ],
+            scripts: {
+                onBeforeRequest: { source: 'a();\nb();' },
+                onResponse: { source: 'pm.test()' },
+            },
         });
 
         expect(requestDocumentOf(item)['event']).toEqual([

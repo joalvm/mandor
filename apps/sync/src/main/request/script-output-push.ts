@@ -14,7 +14,6 @@ const NOTHING_RAN: Omit<ScriptsOutput, 'effects'> = {
     logs: [],
     tests: [],
     skipped: [],
-    imported: 0,
     switchedOff: 0,
     variables: [],
 };
@@ -30,7 +29,7 @@ export function scriptOutputPush(
     output: ScriptsOutput | undefined,
     marks: SendMarks,
 ): RequestScriptOutput {
-    const { logs, tests, skipped, imported, switchedOff, variables, error } = output ?? NOTHING_RAN;
+    const { logs, tests, skipped, switchedOff, variables, error } = output ?? NOTHING_RAN;
     const { withheld, destinationMoved } = marks.guarded ?? NOT_GUARDED;
 
     return {
@@ -38,7 +37,6 @@ export function scriptOutputPush(
         logs,
         tests,
         skipped,
-        imported,
         switchedOff,
         variables,
         withheld,

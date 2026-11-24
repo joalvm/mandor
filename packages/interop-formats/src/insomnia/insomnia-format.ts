@@ -24,13 +24,13 @@ export const insomniaFormat: InteropFormat = {
         collection: {
             auth: 'authMovedDown',
             headers: 'headersMovedDown',
-            importedScripts: 'scriptsNotCarried',
+            scripts: 'scriptsNotCarried',
             disabledVariables: 'disabledVariablesDropped',
         },
         folder: { disabledVariables: 'disabledVariablesDropped' },
         connections: 'connectionsInFirstCollection',
         environments: 'disabledVariablesDropped',
-        scriptsIn: 'insomnia',
+        writesScripts: true,
         request: {
             tags: 'tagsDropped',
             examples: 'examplesDropped',

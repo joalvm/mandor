@@ -52,14 +52,12 @@ describe('folderSettingsOf', () => {
         expect(degradations).toEqual([]);
     });
 
-    it('keeps the scripts of a folder, and says they do not run', () => {
+    it('puts the scripts of a folder in their moments, with nothing to say', () => {
         const { settings, degradations } = folderSettingsOf(
             folderNode({ scripts: { preRequest: '', afterResponse: 'b({{ _.c }});' } }),
         );
 
-        expect(settings.importedScripts).toEqual([
-            { event: 'onResponse', dialect: 'insomnia', source: 'b({{ _.c }});' },
-        ]);
-        expect(degradations).toEqual([degradation('scriptAsText', { kind: 'after-response' })]);
+        expect(settings.scripts).toEqual({ onResponse: { source: 'b({{ _.c }});' } });
+        expect(degradations).toEqual([]);
     });
 });

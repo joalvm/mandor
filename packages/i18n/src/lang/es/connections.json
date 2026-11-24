@@ -159,8 +159,6 @@
     "scriptEventOnConnect": "Al conectar",
     "scriptEventOnMessage": "Con los mensajes",
     "scriptsHelp": "Los scripts no escriben la auth ni los subprotocolos de la conexión.",
-    "scriptEvents": "Momento de la conexión",
-    "scriptEnabled": "Activo",
     "connectWithoutScripts": "Conectar sin scripts",
     "scriptFailed": "falló",
     "scriptLines_one": "{{count}} línea",

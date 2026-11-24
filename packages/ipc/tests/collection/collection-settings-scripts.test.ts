@@ -25,24 +25,11 @@ describe('the write of the scripts of a folder', () => {
         ).toBe(false);
     });
 
-    it('takes the scripts an import brought, and null once the person moved the last one', () => {
-        const kept = {
-            ...BASE,
-            patch: {
-                importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'pm.x()' }],
-            },
-        };
-        const moved = { ...BASE, patch: { importedScripts: null } };
-
-        expect(collectionSettingsWriteRequestSchema.parse(kept)).toEqual(kept);
-        expect(collectionSettingsWriteRequestSchema.parse(moved)).toEqual(moved);
-    });
-
-    it('refuses an imported script of a tool it does not know', () => {
+    it('refuses the key an older import kept its scripts under: they live in their moment', () => {
         expect(
             collectionSettingsWriteRequestSchema.safeParse({
                 ...BASE,
-                patch: { importedScripts: [{ event: 'onResponse', dialect: 'x', source: '' }] },
+                patch: { importedScripts: null },
             }).success,
         ).toBe(false);
     });

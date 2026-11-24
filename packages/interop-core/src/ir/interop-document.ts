@@ -1,10 +1,9 @@
 import type { Degradation } from '../resource/degradation.js';
 import type {
     AuthConfig,
-    ImportedScriptEvent,
     MessagePayloadType,
+    RequestScriptEvent,
     ResponseCookie,
-    ScriptDialect,
 } from '@mandor/schema';
 
 /**
@@ -75,10 +74,12 @@ export type InteropEnvironment = {
     extras: Record<string, unknown>;
 };
 
-/** A script as the document wrote it. Nothing runs it: see `ImportedScript` in `@mandor/schema`. */
+/**
+ * A script as the document wrote it, by the moment it runs at. It lands in the own script of that
+ * moment, as it came and not yet approved: nothing runs it until a person does.
+ */
 export type InteropScript = {
-    event: ImportedScriptEvent;
-    dialect: ScriptDialect;
+    event: RequestScriptEvent;
     source: string;
     enabled: boolean;
 };

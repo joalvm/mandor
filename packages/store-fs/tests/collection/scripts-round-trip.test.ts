@@ -8,7 +8,8 @@ import {
 } from '../../src/collection/patch-folder-settings.js';
 
 // A right-to-left mark and a zero width space hide in this text: review has to see them as they are.
-const SOURCE = "// \u202E hidden \u200B here\nvars.set('a', 1);\n\nif (ok) {\n    go();\n}\n";
+const SOURCE =
+    "// \u202E hidden \u200B here\nmandor.variables.set('a', 1);\n\nif (ok) {\n    go();\n}\n";
 const TEXT = '# a mano\nname: Pagos\n# del vecino\ndescription: algo\nfuture: kept\n';
 
 function written(): string {

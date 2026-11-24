@@ -12,8 +12,6 @@ export const requestScriptOutputSchema = z
         sendId: z.uuid(),
         phase: z.enum(['before', 'response']),
         ...SCRIPT_SAID_SHAPE,
-        /** The scripts of another tool on the way: counted, never run. */
-        imported: z.number().int().nonnegative(),
         /** A script moved where the send went: it left with no secret. */
         destinationMoved: z.boolean(),
         /** Where a redirect stopped, because going on would have taken a secret along. */

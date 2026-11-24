@@ -4,4 +4,4 @@
  * not know. It moves apart from the bundle's: an origin and an exported file age at their own
  * pace.
  */
-export const REPO_FORMAT = 2;
+export const REPO_FORMAT = 3;

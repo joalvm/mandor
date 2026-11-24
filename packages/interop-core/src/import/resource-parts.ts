@@ -1,11 +1,5 @@
 import type { Degradation } from '../resource/degradation.js';
-import type {
-    AuthConfig,
-    ImportedScript,
-    RequestLine,
-    RequestScripts,
-    Variable,
-} from '@mandor/schema';
+import type { AuthConfig, RequestLine, RequestScripts, Variable } from '@mandor/schema';
 
 /** What a level holds once it is Mandor's. An absent key says nothing, as in its file. */
 export type LevelSettings = {
@@ -13,7 +7,6 @@ export type LevelSettings = {
     variables?: Variable[] | undefined;
     auth?: AuthConfig | undefined;
     headers?: RequestLine[] | undefined;
-    importedScripts?: ImportedScript[] | undefined;
     scripts?: RequestScripts | undefined;
 };
 

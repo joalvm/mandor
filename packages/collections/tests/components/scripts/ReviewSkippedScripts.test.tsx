@@ -10,7 +10,7 @@ const SKIPPED: SkippedScript = {
     level: 'connection',
     event: 'onConnect',
     bytes: 12,
-    source: 'socket.send("hi");',
+    source: 'mandor.socket.send("hi");',
 };
 
 afterEach(() => {

@@ -78,6 +78,9 @@ export function codeSize(): CodeOptions {
     return { fontSize, lineHeight: Math.round(fontSize * CODE_LEADING) };
 }
 
+/** The languages a service of their own completes. */
+const SERVED: ReadonlySet<EditorLanguage> = new Set(['json', 'script']);
+
 /** A document that cannot change takes no keys, not even from the text area under it. */
 function access(readOnly: boolean): CodeOptions {
     return { domReadOnly: readOnly, readOnly };
@@ -85,11 +88,11 @@ function access(readOnly: boolean): CodeOptions {
 
 /**
  * Whether a list of suggestions opens by itself while somebody types. The editor has no source
- * of words, so it opens one only where there is a source: the language of the schema brings its
- * service, and any other language has what its caller suggests.
+ * of words, so it opens one only where there is a source: the languages of the schema and of
+ * scripts bring their services, and any other language has what its caller suggests.
  */
 function suggesting(setup: EditorSetup): CodeOptions {
-    const suggests = setup.language === 'json' || setup.options.suggest !== undefined;
+    const suggests = SERVED.has(setup.language) || setup.options.suggest !== undefined;
 
     return { quickSuggestions: suggests, suggestOnTriggerCharacters: suggests };
 }

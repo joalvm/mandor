@@ -82,25 +82,18 @@ describe('a setting of a folder on its way to disk', () => {
         expect(write.mock.calls[0]?.[0].patch).toEqual({ scripts: null });
     });
 
-    it('takes the imported scripts off the level on screen once the last one was moved', async () => {
+    it('shows the scripts of the level on screen at once, and sends them as they are', async () => {
         const write = vi.spyOn(bridge.collections, 'writeSettings').mockResolvedValue(success({}));
-        const moved = { onBeforeRequest: { source: 'pm.x()' } };
+        const edited = { onBeforeRequest: { source: 'mandor.x()' } };
 
-        keepOnScreen({
-            importedScripts: [{ event: 'onBeforeRequest', dialect: 'postman', source: 'pm.x()' }],
-        });
-        scheduleFolderSettingsWrite(
-            'events',
-            'pedidos',
-            { scripts: moved, importedScripts: null },
-            vi.fn(),
-        );
+        keepOnScreen({ scripts: { onBeforeRequest: { source: 'pm.x()' } } });
+        scheduleFolderSettingsWrite('events', 'pedidos', { scripts: edited }, vi.fn());
 
-        expect(shown()).toEqual({ scripts: moved });
+        expect(shown()).toEqual({ scripts: edited });
 
         await settlePendingWrites();
 
-        expect(write.mock.calls[0]?.[0].patch).toEqual({ scripts: moved, importedScripts: null });
+        expect(write.mock.calls[0]?.[0].patch).toEqual({ scripts: edited });
     });
 
     it('sends what one pause gathered in one patch, without one edit erasing the other', async () => {

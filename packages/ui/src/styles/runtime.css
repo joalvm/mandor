@@ -425,6 +425,17 @@ textarea,
     color: var(--text-primary);
 }
 
+/* In a column the name takes the room left, so the marks of every section line up at the edge. */
+[data-part='tabs-trigger'][data-orientation='vertical'] > [data-fade-overflow] {
+    flex-grow: 1;
+    text-align: start;
+}
+
+/* A section whose content is set aside reads dimmed, pointed at or open: the name says it is off. */
+[data-part='tabs-trigger'][data-muted] {
+    color: var(--text-disabled);
+}
+
 /* A section with no room for its whole name goes to the menu of the strip. It stays in the list,
    for the arrow keys and for whoever reads the strip aloud, and opening it brings it into view. */
 [data-part='tabs-trigger'][data-out-of-view] {

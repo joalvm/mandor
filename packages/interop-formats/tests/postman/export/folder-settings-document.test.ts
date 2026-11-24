@@ -44,7 +44,7 @@ describe('folderSettingsDocumentOf', () => {
         const document = folderSettingsDocumentOf({
             variables: [],
             headers: [],
-            importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'a();' }],
+            scripts: { onResponse: { source: 'a();' } },
         });
 
         expect(document['event']).toEqual([

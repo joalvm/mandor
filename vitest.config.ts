@@ -32,6 +32,28 @@ const BUDGET = {
 // rises like the budget above; a poll still ends the moment its condition holds.
 const STRICT = { expect: { requireAssertions: true, poll: { timeout: 10_000 } } } as const;
 
+// A fake clock leaves the frames of the window alone. The editor keeps one queue of frames for the
+// whole window and asks for the next frame only once the last one came: a frame asked for on a fake
+// clock that the test then gives back never comes, and no editor drawn after it in that worker paints
+// a line again. The frames run on the real clock (`tools/vitest/frames.ts`); a test that wants them
+// faked names them in its own `toFake`. The rest is what the fake clock fakes by default.
+const FAKE_CLOCK: NonNullable<Project['test']['fakeTimers']> = {
+    ...configDefaults.fakeTimers,
+    toFake: [
+        'setTimeout',
+        'clearTimeout',
+        'setImmediate',
+        'clearImmediate',
+        'setInterval',
+        'clearInterval',
+        'Date',
+        'requestIdleCallback',
+        'cancelIdleCallback',
+        'performance',
+        'hrtime',
+    ],
+};
+
 // graphql ships as ES modules and as CommonJS, and the language service asks for the CommonJS copy
 // while a test would import the ES one: two copies of the same classes, and the first `instanceof`
 // between them throws. Pointing the test at the file Node's own `require` finds leaves one copy. The
@@ -210,6 +232,7 @@ export default defineConfig({
                         // The setup registers Testing Library's cleanup for every file; left on,
                         // the library would register it once more, for the first file only.
                         env: { RTL_SKIP_AUTO_CLEANUP: 'true' },
+                        fakeTimers: FAKE_CLOCK,
                         setupFiles: [
                             './tools/vitest/hygiene.ts',
                             './tools/vitest/timers.ts',

@@ -5,7 +5,7 @@ import { mandorCodecFor } from '../../src/mandor/mandor-codec.js';
 import { asyncapiFormat } from '../../src/asyncapi/asyncapi-format.js';
 import { ASYNC_WORKSPACE } from './support/sample-workspace.js';
 
-const SOURCE = "// \u202E oculto\nvars.set('a', 1);\n\nif (ok) {\n    go();\n}\n";
+const SOURCE = "// \u202E oculto\nmandor.variables.set('a', 1);\n\nif (ok) {\n    go();\n}\n";
 
 function script(name: string) {
     return { onBeforeRequest: { source: `${name}()`, enabled: false } };

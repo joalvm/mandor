@@ -103,35 +103,42 @@ afterEach(async () => {
 
 describe('an onMessage on the frame that arrived', () => {
     it('reads the frame and answers through the socket it ran for', async () => {
-        const note = await run(onMessage('if (message.text === "ping") { socket.send("pong"); }'));
+        const note = await run(
+            onMessage('if (mandor.message.text === "ping") { mandor.socket.send("pong"); }'),
+        );
 
         expect(sent).toEqual([{ connectionId: 'echo', data: 'pong' }]);
         expect(note).toMatchObject({ event: 'onMessage', dropped: 0, switchedOff: 0 });
     });
 
     it('reads bytes as bytes, with no text', async () => {
-        await run(onMessage('socket.send(String(message.binary) + ":" + String(message.text));'), {
-            frame: frame(undefined, { binary: true }),
-        });
+        await run(
+            onMessage(
+                'mandor.socket.send(String(mandor.message.binary) + ":" + String(mandor.message.text));',
+            ),
+            {
+                frame: frame(undefined, { binary: true }),
+            },
+        );
 
         expect(sent.map((one) => one.data)).toEqual(['true:undefined']);
     });
 
     it('emits message over Socket.IO, which names every emission', async () => {
-        await run(onMessage('socket.send("pong");', 'socketio'));
+        await run(onMessage('mandor.socket.send("pong");', 'socketio'));
 
         expect(sent).toEqual([{ connectionId: 'echo', data: 'pong', event: 'message' }]);
     });
 
     it('resolves a send with its secrets off: a script is not the person asking', async () => {
-        const note = await run(onMessage('socket.send("{{who}} {{token}}");'));
+        const note = await run(onMessage('mandor.socket.send("{{who}} {{token}}");'));
 
         expect(sent.map((one) => one.data)).toEqual(['web {{token}}']);
         expect(note?.withheld).toEqual(['token']);
     });
 
     it('sends nothing through a socket that took the place of the one it ran for', async () => {
-        const socket = onMessage('socket.send("late");');
+        const socket = onMessage('mandor.socket.send("late");');
 
         onMessage('');
 
@@ -148,7 +155,7 @@ describe('an onMessage on the frame that arrived', () => {
 
     it('drops the sends over the rate of the connection, and counts them', async () => {
         const note = await run(
-            onMessage('for (let i = 0; i < 5; i += 1) { socket.send(String(i)); }'),
+            onMessage('for (let i = 0; i < 5; i += 1) { mandor.socket.send(String(i)); }'),
             { rate: newSendRate(3) },
         );
 
@@ -157,7 +164,9 @@ describe('an onMessage on the frame that arrived', () => {
     });
 
     it('has no sendRequest: a frame never starts a request', async () => {
-        const note = await run(onMessage('await sendRequest({ url: "http://127.0.0.1:1" });'));
+        const note = await run(
+            onMessage('await mandor.sendRequest({ url: "http://127.0.0.1:1" });'),
+        );
 
         expect(note?.error).toBeDefined();
     });
@@ -171,7 +180,7 @@ describe('an onMessage on the frame that arrived', () => {
     it('runs nothing for a socket without that script, or with it switched off', async () => {
         await expect(run(socketWith({}))).resolves.toBeUndefined();
         await expect(
-            run(socketWith({ onMessage: { source: 'socket.send("x");', enabled: false } })),
+            run(socketWith({ onMessage: { source: 'mandor.socket.send("x");', enabled: false } })),
         ).resolves.toBeUndefined();
         expect(sent).toEqual([]);
     });
@@ -184,7 +193,7 @@ describe('an onMessage on the frame that arrived', () => {
             scriptsSwitch: { enabled: () => false, set: off.scripts.scriptsSwitch.set },
         };
 
-        const note = await run(onMessage('socket.send("x");'), {}, off);
+        const note = await run(onMessage('mandor.socket.send("x");'), {}, off);
 
         expect(note?.switchedOff).toBe(1);
         expect(sent).toEqual([]);
@@ -196,7 +205,7 @@ describe('an onMessage on the frame that arrived', () => {
         controller.abort();
 
         await expect(
-            run(onMessage('socket.send("x");'), { signal: controller.signal }),
+            run(onMessage('mandor.socket.send("x");'), { signal: controller.signal }),
         ).resolves.toBeUndefined();
         expect(sent).toEqual([]);
     });
@@ -205,7 +214,11 @@ describe('an onMessage on the frame that arrived', () => {
 describe('an onConnect as the socket opens', () => {
     it('greets through the socket and sets a value of the connection', async () => {
         const note = await run(
-            socketWith({ onConnect: { source: 'vars.set("hello", "1"); socket.send("hola");' } }),
+            socketWith({
+                onConnect: {
+                    source: 'mandor.variables.set("hello", "1"); mandor.socket.send("hola");',
+                },
+            }),
             { event: 'onConnect', frame: undefined },
         );
 

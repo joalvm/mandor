@@ -18,8 +18,7 @@ const CURRENT: RequestItem = {
     pathParams: [{ key: 'id', value: '7', enabled: true }],
     bodySchema: '{"type":"object"}',
     examples: [{ name: 'ok', status: '200', contentType: 'application/json', body: '{}' }],
-    importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'pm.test()' }],
-    scripts: { onBeforeRequest: { source: 'vars.set("a", 1)', enabled: false } },
+    scripts: { onBeforeRequest: { source: 'mandor.variables.set("a", 1)', enabled: false } },
     settings: { ...BLANK.settings, timeoutMs: 1000 },
     auth: { type: 'bearer', token: '{{token}}' },
 };
@@ -66,13 +65,12 @@ describe('filling a request from a pasted curl', () => {
         expect(applyCurl(CURRENT, PARSED).auth).toEqual(CURRENT.auth);
     });
 
-    it('keeps the name, the description, the examples and the scripts, own and of an import', () => {
+    it('keeps the name, the description, the examples and the scripts', () => {
         const next = applyCurl(CURRENT, PARSED);
 
         expect(next.name).toBe('Orders');
         expect(next.description).toBe('What this is for');
         expect(next.examples).toEqual(CURRENT.examples);
-        expect(next.importedScripts).toEqual(CURRENT.importedScripts);
         expect(next.scripts).toEqual(CURRENT.scripts);
     });
 

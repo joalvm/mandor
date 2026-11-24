@@ -40,7 +40,7 @@ describe('migrateOrigin', () => {
         expect(files).toContain('workspaces/pagos/workspace.yaml');
         expect((await repo.subjects())[0]).toBe('migrate repo format');
         expect(await readFile(join(repo.root(), 'mandor.yaml'), 'utf8')).toContain(
-            'formatVersion: 2',
+            'formatVersion: 3',
         );
     });
 

@@ -151,7 +151,6 @@ function settingsOf(file: FolderSettings): WorkspaceFolderSettings {
         variables: file.variables ?? [],
         auth: concreteOf(file.auth),
         headers: file.headers ?? [],
-        ...(file.importedScripts === undefined ? {} : { importedScripts: file.importedScripts }),
         ...(file.scripts === undefined ? {} : { scripts: file.scripts }),
     };
 }

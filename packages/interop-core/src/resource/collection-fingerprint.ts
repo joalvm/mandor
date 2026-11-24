@@ -8,7 +8,6 @@ type OwnedSettings = {
     auth?: unknown;
     variables?: unknown;
     headers?: unknown;
-    importedScripts?: unknown;
     scripts?: unknown;
 };
 
@@ -23,7 +22,6 @@ function ownedOf(settings: OwnedSettings): Record<string, unknown> {
         auth: settings.auth,
         variables: listed(settings.variables),
         headers: listed(settings.headers),
-        importedScripts: listed(settings.importedScripts),
         scripts: ownScriptsOrNothing(settings.scripts),
     };
 }

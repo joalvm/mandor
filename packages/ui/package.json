@@ -36,7 +36,7 @@
         "rehype-sanitize": "6.0.0",
         "remark-gfm": "4.0.1",
         "saxes": "6.0.0",
-        "tailwind-merge": "3.7.0",
+        "tailwind-merge": "3.7.1",
         "tailwindcss": "4.3.5",
         "vscode-json-languageservice": "5.7.2",
         "vscode-languageserver-textdocument": "1.0.16"

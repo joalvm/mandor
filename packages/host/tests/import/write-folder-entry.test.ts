@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { fingerprintOf } from '@mandor/interop-core';
-import type { ImportedScript } from '@mandor/schema';
+import type { RequestScripts } from '@mandor/schema';
 import {
     createCollection,
     createCollectionFolder,
@@ -21,7 +21,7 @@ import { folderEntry, ORIGIN } from './support/folder-entry.js';
 let root: string;
 
 const WORKSPACE = 'mi-workspace';
-const SCRIPT: ImportedScript = { event: 'onBeforeRequest', dialect: 'postman', source: 'a()' };
+const SCRIPTS: RequestScripts = { onBeforeRequest: { source: 'a()' } };
 
 beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), 'mandor-folder-entry-'));
@@ -90,25 +90,23 @@ describe('writing a folder entry', () => {
     });
 
     it('recognizes its own scripts on a second import of a folder with no auth', async () => {
-        const fields = { importedScripts: [SCRIPT] };
+        const fields = { scripts: SCRIPTS };
 
         await writeFolderEntry(root, WORKSPACE, folderEntry('demo/users', 'Users', fields));
         await writeFolderEntry(root, WORKSPACE, folderEntry('demo/users', 'Users', fields));
 
-        expect((await readFolderSettings(root, WORKSPACE, 'demo/users')).importedScripts).toEqual([
-            SCRIPT,
-        ]);
+        expect((await readFolderSettings(root, WORKSPACE, 'demo/users')).scripts).toEqual(SCRIPTS);
     });
 
     it('stores the fingerprint of what it wrote', async () => {
         await writeFolderEntry(
             root,
             WORKSPACE,
-            folderEntry('demo/users', 'Users', { importedScripts: [SCRIPT] }),
+            folderEntry('demo/users', 'Users', { scripts: SCRIPTS }),
         );
 
         expect(
             (await readFolderSettings(root, WORKSPACE, 'demo/users')).importOrigin?.fingerprint,
-        ).toBe(fingerprintOf({ importedScripts: [SCRIPT] }));
+        ).toBe(fingerprintOf({ scripts: SCRIPTS }));
     });
 });

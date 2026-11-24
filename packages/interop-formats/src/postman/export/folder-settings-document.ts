@@ -15,7 +15,7 @@ function variableRowOf({ name, value, enabled }: PlainVariable): FormatDocument 
  */
 export function folderSettingsDocumentOf(settings: WorkspaceFolderSettings): FormatDocument {
     const { description, variables, auth } = settings;
-    const events = scriptEventsOf(settings.importedScripts);
+    const events = scriptEventsOf(settings.scripts);
 
     return {
         ...(description === undefined ? {} : { description }),

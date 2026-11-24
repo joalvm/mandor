@@ -1,4 +1,5 @@
 import type { ScriptEntry } from '@mandor/schema';
+import { EMPTY_SCRIPT_CONTEXT } from '@mandor/script';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -12,6 +13,7 @@ function shown(entry: ScriptEntry | undefined) {
     render(
         <AppProviders>
             <EventScript
+                context={EMPTY_SCRIPT_CONTEXT}
                 entry={entry}
                 modelKey="mandor://local/events/connection/alpha:script:onConnect"
                 onChange={onChange}
@@ -29,10 +31,10 @@ afterEach(() => {
 
 describe('the script of one moment (EventScript)', () => {
     it('lays the band of a text that would not run over the text, which stays editable', async () => {
-        shown({ source: 'socket.send("hi")' });
+        shown({ source: 'mandor.socket.send("hi")' });
 
         expect(await screen.findByText('It does not run until you approve it')).toBeVisible();
-        expect((await editorAt(0)).text()).toBe('socket.send("hi")');
+        expect((await editorAt(0)).text()).toBe('mandor.socket.send("hi")');
     });
 
     it('hands back the text typed, with the switch as the person set it', async () => {

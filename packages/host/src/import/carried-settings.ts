@@ -1,7 +1,6 @@
 import type { ImportPlanEntry } from '@mandor/interop-core';
 import {
     authConfigSchema,
-    importedScriptSchema,
     plainVariableSchema,
     requestLineSchema,
     requestScriptsSchema,
@@ -14,7 +13,6 @@ import { ownAuthOf, type OwnedSettings } from './own-collection.js';
 
 const variablesSchema = z.array(plainVariableSchema);
 const headersSchema = z.array(requestLineSchema);
-const scriptsSchema = z.array(importedScriptSchema);
 
 /** What the entry brings for its level, each key read the way the file reads it. */
 export function carriedBy(entry: ImportPlanEntry) {
@@ -28,7 +26,6 @@ export function carriedBy(entry: ImportPlanEntry) {
         // `inherit` is the default of a level: it brings none.
         auth: ownAuthOf(rawAuth === undefined ? undefined : authConfigSchema.parse(rawAuth)),
         headers: headersSchema.parse(fields['headers'] ?? []),
-        importedScripts: scriptsSchema.parse(fields['importedScripts'] ?? []),
         scripts: requestScriptsSchema.parse(fields['scripts'] ?? {}),
     };
 }
@@ -44,14 +41,13 @@ export function settingsPatchOf(carried: ReturnType<typeof carriedBy>) {
         variables: listOrNone(carried.variables),
         auth: carried.auth,
         headers: listOrNone(carried.headers),
-        importedScripts: listOrNone(carried.importedScripts),
         scripts: Object.keys(carried.scripts).length === 0 ? undefined : carried.scripts,
     };
 }
 
 /** Whether a level declares anything an import could have written. */
 export function holdsSettings(level: OwnedSettings): boolean {
-    const lists = [level.variables, level.headers, level.importedScripts];
+    const lists = [level.variables, level.headers];
     const writesScripts = Object.keys(level.scripts ?? {}).length > 0;
 
     return (

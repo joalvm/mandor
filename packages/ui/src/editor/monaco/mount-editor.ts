@@ -7,12 +7,16 @@ import { diagnosticsOf } from '../diagnostics-of.js';
 import { isReadOnly, type EditorOptions } from '../editor-options.js';
 import { measureCodeTypeOnArrival } from './code-type-arrival.js';
 import { constructionOptions, type EditorSetup } from './construction-options.js';
+import { fixModel } from './editor-fixes.js';
 import { lintModel } from './editor-markers.js';
 import { suggestModel } from './editor-suggestions.js';
 import { followTextZoom } from './follow-text-zoom.js';
+import { ghostModel } from './ghost-text.js';
 import { overwriteText, replaceText } from './model-text.js';
 import { routeNativeEdits } from './native-edits.js';
 import { runCommand, type EditorCommandId } from './run-command.js';
+import { explainModel } from './script-diagnostics.js';
+import { declareScript } from './script-language.js';
 import { releaseModel, retainModel, type EditorDocument } from './shared-models.js';
 import { paintVariables } from './variable-decorations.js';
 
@@ -56,18 +60,22 @@ function documentOf(target: EditorTarget): EditorDocument {
     return { key: target.modelKey, language: target.language, value: target.value };
 }
 
-/** What the options add over the text: marks, suggestions and the tones of its variables. */
+/** What the options add over the text: declarations, marks, suggestions, ghost text and variable tones. */
 function extrasOf(
     shown: editor.ICodeEditor,
     model: editor.ITextModel,
     target: EditorTarget,
 ): IDisposable[] {
     const checks = diagnosticsOf(target.language, target.options);
-    const { suggest, variables } = target.options;
+    const { check, declarations, fixes, ghostText, suggest, variables } = target.options;
 
     return [
+        ...(declarations === undefined ? [] : [declareScript(model, declarations)]),
         ...(checks === null ? [] : [lintModel(model, checks)]),
+        ...(check === undefined ? [] : [explainModel(model, check)]),
+        ...(fixes === undefined ? [] : [fixModel(model, fixes)]),
         ...(suggest === undefined ? [] : [suggestModel(model, suggest)]),
+        ...(ghostText === undefined ? [] : [ghostModel(model, ghostText)]),
         ...(variables === undefined ? [] : [paintVariables(shown, variables)]),
     ];
 }

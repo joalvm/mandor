@@ -18,7 +18,6 @@ function pushOf(sendId: string, change: Partial<RequestScriptOutput> = {}): Requ
         logs: [],
         tests: [],
         skipped: [],
-        imported: 0,
         switchedOff: 0,
         variables: [],
         withheld: [],

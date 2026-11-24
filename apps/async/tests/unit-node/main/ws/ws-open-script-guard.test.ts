@@ -52,7 +52,9 @@ afterEach(async () => {
 
 describe('a websocket whose script shaped the handshake', () => {
     it('sends the secret of the person when the script only set a value', async () => {
-        await expect(sockets.open(websocket('vars.set("a", "1");'))).resolves.toMatchObject({
+        await expect(
+            sockets.open(websocket('mandor.variables.set("a", "1");')),
+        ).resolves.toMatchObject({
             ok: true,
         });
 
@@ -61,20 +63,20 @@ describe('a websocket whose script shaped the handshake', () => {
     });
 
     it('sends the secret of the person when the script touched the query of the same origin', async () => {
-        await sockets.open(websocket('request.query.set("page", "2");'));
+        await sockets.open(websocket('mandor.request.query.set("page", "2");'));
 
         expect(echo.lastHeaders()['authorization']).toBe(`Bearer ${SECRET}`);
     });
 
     it('never fills a secret into a header the script wrote', async () => {
-        await sockets.open(websocket('request.headers.set("X-Key", "{{token}}");'));
+        await sockets.open(websocket('mandor.request.headers.set("X-Key", "{{token}}");'));
 
         expect(echo.lastHeaders()['x-key']).toBe('{{token}}');
         expect(echo.lastHeaders()['authorization']).toBe(`Bearer ${SECRET}`);
     });
 
     it('sends no secret to the server a script moved the socket to', async () => {
-        await sockets.open(websocket(`request.url = "${other.url}";`));
+        await sockets.open(websocket(`mandor.request.url = "${other.url}";`));
 
         expect(echo.clientCount()).toBe(0);
         expect(other.lastHeaders()['authorization']).toBe('Bearer {{token}}');
@@ -82,7 +84,7 @@ describe('a websocket whose script shaped the handshake', () => {
     });
 
     it('sends no secret when a script wrote the Host line', async () => {
-        await sockets.open(websocket('request.headers.set("Host", "elsewhere.example");'));
+        await sockets.open(websocket('mandor.request.headers.set("Host", "elsewhere.example");'));
 
         expect(echo.lastHeaders()['host']).toBe('elsewhere.example');
         expect(echo.lastHeaders()['authorization']).toBe('Bearer {{token}}');
@@ -95,7 +97,7 @@ describe('a websocket whose script shaped the handshake', () => {
         const first = await sockets.open({
             transport: 'websocket',
             template: { url: 'ws://{{target}}', headers: MINE },
-            ...before(`vars.set("target", "${hostOf(other)}");`),
+            ...before(`mandor.variables.set("target", "${hostOf(other)}");`),
         });
 
         expect(first).toEqual({ ok: true, value: {} });
@@ -136,27 +138,29 @@ describe('a Socket.IO whose script shaped the handshake', () => {
 
     /** Polling follows a redirect with every header: a script that shaped it sends no secret. */
     it('sends no secret when it may poll', async () => {
-        await sockets.open(socketio('request.headers.set("X-Run", "1");', 'polling-then-upgrade'));
+        await sockets.open(
+            socketio('mandor.request.headers.set("X-Run", "1");', 'polling-then-upgrade'),
+        );
 
         expect(io.lastHandshake()?.headers['authorization']).toBe('Bearer {{token}}');
         expect(saidOff()).toEqual({ secretsOff: 'polling', withheld: ['token'] });
     });
 
     it('takes the default of the client, which polls, as polling', async () => {
-        await sockets.open(socketio('request.headers.set("X-Run", "1");'));
+        await sockets.open(socketio('mandor.request.headers.set("X-Run", "1");'));
 
         expect(io.lastHandshake()?.headers['authorization']).toBe('Bearer {{token}}');
     });
 
     it('sends the secret over websocket alone, on the same origin', async () => {
-        await sockets.open(socketio('request.headers.set("X-Run", "1");', 'websocket-only'));
+        await sockets.open(socketio('mandor.request.headers.set("X-Run", "1");', 'websocket-only'));
 
         expect(io.lastHandshake()?.headers['authorization']).toBe(`Bearer ${SECRET}`);
     });
 
     it('sends no secret when a script wrote the Host line, over websocket alone too', async () => {
         await sockets.open(
-            socketio('request.headers.set("Host", "elsewhere.example");', 'websocket-only'),
+            socketio('mandor.request.headers.set("Host", "elsewhere.example");', 'websocket-only'),
         );
 
         expect(io.lastHandshake()?.headers['authorization']).toBe('Bearer {{token}}');

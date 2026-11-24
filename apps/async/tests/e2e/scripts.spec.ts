@@ -147,7 +147,7 @@ test.afterAll(async () => {
 });
 
 test('a script on connect greets through the socket and writes to the console', async () => {
-    await writeScript(ON_CONNECT, 'console.log("saludo dicho"); socket.send("hola");');
+    await writeScript(ON_CONNECT, 'console.log("saludo dicho"); mandor.socket.send("hola");');
     await connect();
 
     await expect(rowsOf('out', 'hola')).toHaveCount(1);
@@ -161,7 +161,10 @@ test('a script on connect greets through the socket and writes to the console', 
 });
 
 test('a script on messages answers what the server says', async () => {
-    await writeScript(ON_MESSAGE, 'if (message.text === "ping") { socket.send("pong"); }');
+    await writeScript(
+        ON_MESSAGE,
+        'if (mandor.message.text === "ping") { mandor.socket.send("pong"); }',
+    );
     await connect();
     echo.broadcastText('ping');
 
@@ -203,7 +206,7 @@ test('a script that fails before connecting keeps the socket shut, and the fault
 });
 
 test('a script changed on disk waits for approval and does not run', async () => {
-    await writeScript(ON_CONNECT, 'socket.send("marca uno");');
+    await writeScript(ON_CONNECT, 'mandor.socket.send("marca uno");');
 
     const file = await connectionFile();
 

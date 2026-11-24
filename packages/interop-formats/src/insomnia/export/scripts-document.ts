@@ -1,19 +1,28 @@
 import type { FormatDocument } from '@mandor/interop-core';
-import type { ImportedScript, ImportedScriptEvent } from '@mandor/schema';
+import {
+    REQUEST_SCRIPT_EVENTS,
+    type RequestScriptEvent,
+    type RequestScripts,
+} from '@mandor/schema';
 
-const SLOTS: Record<ImportedScriptEvent, string> = {
+const SLOTS: Record<RequestScriptEvent, string> = {
     onBeforeRequest: 'preRequest',
     onResponse: 'afterResponse',
 };
 
 /**
- * The scripts Insomnia can run, in the slots it has for them, on a request or a folder alike. One
- * written for another tool calls an API Insomnia does not have, so it does not leave here.
+ * The own scripts of a request or a folder in the slots Insomnia has for them, as they are:
+ * nothing is translated. Insomnia cannot switch a script off, so one that is off stays here
+ * rather than run there.
  */
-export function scriptsDocumentOf(scripts: readonly ImportedScript[] | undefined): FormatDocument {
-    const own = (scripts ?? []).filter((script) => script.dialect === 'insomnia');
+export function scriptsDocumentOf(scripts: RequestScripts | undefined): FormatDocument {
+    const slots = REQUEST_SCRIPT_EVENTS.flatMap((event) => {
+        const entry = scripts?.[event];
 
-    return own.length === 0
-        ? {}
-        : { scripts: Object.fromEntries(own.map(({ event, source }) => [SLOTS[event], source])) };
+        return entry === undefined || entry.enabled === false || entry.source.trim() === ''
+            ? []
+            : [[SLOTS[event], entry.source] as const];
+    });
+
+    return slots.length === 0 ? {} : { scripts: Object.fromEntries(slots) };
 }

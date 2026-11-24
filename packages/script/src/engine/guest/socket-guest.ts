@@ -1,6 +1,6 @@
 /**
  * `message`, the frame an `onMessage` script reads and cannot write (a write is said in a line and
- * does nothing), and `socket`, whose `send` leaves an effect for the connection. The sends of one
+ * does nothing), its text also read as JSON, and `socket`, whose `send` leaves an effect for the connection. The sends of one
  * run stop at `SOCKET_SENDS`: past it the API says so once and leaves nothing (main counts them
  * again). Needs `I`, `SNAPSHOT`, `OUT`, `SOCKET_SENDS`, `show` and `warnLine`.
  */
@@ -15,9 +15,14 @@ for (let index = 0; index < MESSAGE_FIELDS.length; index += 1) {
     I.define(messageApi, field, {
         enumerable: true,
         get: () => MESSAGE[field],
-        set: () => noticeLine('message-field-readonly', { field: 'message.' + field }),
+        set: () => noticeLine('message-field-readonly', { field: 'mandor.message.' + field }),
     });
 }
+
+I.define(messageApi, 'json', {
+    enumerable: true,
+    value: () => (MESSAGE.text === undefined ? undefined : I.parse(MESSAGE.text)),
+});
 let socketSends = 0;
 
 const socketApi = {

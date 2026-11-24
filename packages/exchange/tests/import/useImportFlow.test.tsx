@@ -34,9 +34,9 @@ const FOLDER = {
 
 const built = { name: 'Pasarela', plan: { identity: origin, entries: [FOLDER] } };
 
-const SCRIPT = { event: 'onResponse', dialect: 'insomnia', source: 'x' };
+const SCRIPTS = { onBeforeRequest: { source: 'x' }, onResponse: { source: 'y' } };
 
-/** The same plan, its folder bringing two scripts of another app. */
+/** The same plan, its folder bringing a script of another app for each moment. */
 const BRINGING_SCRIPTS = {
     ...built,
     plan: {
@@ -44,7 +44,7 @@ const BRINGING_SCRIPTS = {
         entries: [
             {
                 ...FOLDER,
-                resource: { ...FOLDER.resource, fields: { importedScripts: [SCRIPT, SCRIPT] } },
+                resource: { ...FOLDER.resource, fields: { scripts: SCRIPTS } },
             },
         ],
     },
@@ -195,7 +195,7 @@ describe('useImportFlow', () => {
         expect(onImportedHere).toHaveBeenCalledWith({ workspaceId: 'pasarela' });
     });
 
-    it('says once how many imported scripts are left to adjust', async () => {
+    it('says once how many scripts came from another app, waiting for approval', async () => {
         const onNotify = vi.fn();
 
         vi.spyOn(bridge.import, 'plan').mockResolvedValue(success(BRINGING_SCRIPTS));
@@ -205,7 +205,7 @@ describe('useImportFlow', () => {
         expect(onNotify).toHaveBeenCalledOnce();
         expect(onNotify).toHaveBeenCalledWith(
             expect.objectContaining({
-                title: '2 imported scripts do not run here: adjust them to Mandor scripts.',
+                title: '2 scripts came from another app: they are in the editor of their moment, not approved yet.',
                 tone: 'info',
             }),
         );

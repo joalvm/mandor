@@ -37,7 +37,7 @@ describe('parsing a folder', () => {
             name: 'Pedidos',
             auth: { type: 'bearer', token: '{{token}}' },
             importOrigin: { kind: 'postman', sourceId: 'collection:1', fingerprint: 'abc' },
-            importedScripts: [{ event: 'onResponse', dialect: 'postman', source: 'pm.test()' }],
+            scripts: { onResponse: { source: 'pm.test()' } },
         };
 
         const folder = parseFolderSettings(input);

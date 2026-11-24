@@ -1,16 +1,17 @@
 import type { InteropScript } from '@mandor/interop-core';
-import type { ImportedScriptEvent } from '@mandor/schema';
+import type { RequestScriptEvent } from '@mandor/schema';
 
 import type { PostmanEvent } from '../document/postman-collection-schema.js';
 
-const EVENTS = new Map<string, ImportedScriptEvent>([
+const EVENTS = new Map<string, RequestScriptEvent>([
     ['prerequest', 'onBeforeRequest'],
     ['test', 'onResponse'],
 ]);
 
 /**
  * The scripts of an `event` list. Postman has two events Mandor has an equivalent for; any other
- * `listen` goes nowhere, and so does a script with nothing in it. Nothing runs them.
+ * `listen` goes nowhere, and so does a script with nothing in it. Nothing runs them until a person
+ * approves them.
  */
 export function scriptsOf(events: readonly PostmanEvent[] | null | undefined): InteropScript[] {
     return (events ?? []).flatMap((event) => {
@@ -22,6 +23,6 @@ export function scriptsOf(events: readonly PostmanEvent[] | null | undefined): I
             return [];
         }
 
-        return [{ event: kind, dialect: 'postman', source, enabled: event.disabled !== true }];
+        return [{ event: kind, source, enabled: event.disabled !== true }];
     });
 }

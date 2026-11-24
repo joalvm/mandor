@@ -1,4 +1,4 @@
-import type { BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { nativeAsk } from '../../src/window/native-ask.js';
@@ -7,9 +7,19 @@ const { showMessageBox } = vi.hoisted(() => ({
     showMessageBox: vi.fn<(window: unknown, options: unknown) => Promise<{ response: number }>>(),
 }));
 
-vi.mock('electron', () => ({ dialog: { showMessageBox } }));
+// A window keeps what it was built with, which is what the question is asked over.
+vi.mock('electron', () => ({
+    BrowserWindow: class {
+        options: unknown;
 
-const WINDOW = { id: 1 } as BrowserWindow;
+        constructor(options: unknown) {
+            this.options = options;
+        }
+    },
+    dialog: { showMessageBox },
+}));
+
+const WINDOW = new BrowserWindow({ title: 'failing' });
 const HUNG = {
     buttons: ['wait', 'reload'],
     detail: 'hungDetail',

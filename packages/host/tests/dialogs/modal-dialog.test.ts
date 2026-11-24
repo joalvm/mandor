@@ -1,4 +1,4 @@
-import type { BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -14,9 +14,19 @@ const { dialog } = vi.hoisted(() => ({
     },
 }));
 
-vi.mock('electron', () => ({ dialog }));
+// A window keeps what it was built with: two windows read apart where a test compares them.
+vi.mock('electron', () => ({
+    BrowserWindow: class {
+        options: unknown;
 
-const WINDOW = { id: 1 } as BrowserWindow;
+        constructor(options: unknown) {
+            this.options = options;
+        }
+    },
+    dialog,
+}));
+
+const WINDOW = new BrowserWindow({ title: 'first' });
 const OPEN = { properties: ['openFile' as const] };
 const SAVE = { defaultPath: 'run.jsonl' };
 
@@ -55,7 +65,7 @@ describe('the dialogs of the system', () => {
 
     it('keep the newer window when an older one is taken back late', async () => {
         const older = bindDialogParent(WINDOW);
-        const newer = { id: 2 } as BrowserWindow;
+        const newer = new BrowserWindow({ title: 'newer' });
         const release = bindDialogParent(newer);
 
         older();

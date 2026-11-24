@@ -15,8 +15,11 @@ describe('runChain', () => {
         const deps = depsOf();
         const result = await runChain(
             runOf([
-                script('vars.set("a", "1")', 'Shop'),
-                script('console.log(vars.get("a")); vars.set("b", "2")', 'Orders'),
+                script('mandor.variables.set("a", "1")', 'Shop'),
+                script(
+                    'console.log(mandor.variables.get("a")); mandor.variables.set("b", "2")',
+                    'Orders',
+                ),
             ]),
             deps,
         );
@@ -37,15 +40,15 @@ describe('runChain', () => {
 
     it('skips a script nobody approved, tells it, and asks for no worker for it', async () => {
         const deps = depsOf({ approvals: { isApproved: () => Promise.resolve(false) } });
-        const result = await runChain(runOf([script('vars.set("a", "1")')]), deps);
+        const result = await runChain(runOf([script('mandor.variables.set("a", "1")')]), deps);
 
         expect(result.skipped).toEqual([
             {
                 name: 'Orders',
                 level: 'folder',
                 event: 'onBeforeRequest',
-                bytes: 18,
-                source: 'vars.set("a", "1")',
+                bytes: 30,
+                source: 'mandor.variables.set("a", "1")',
             },
         ]);
         expect(deps.variables.values(PLACE)).toEqual({});
@@ -54,7 +57,7 @@ describe('runChain', () => {
 
     it('leaves out a script switched off, as if it were not there', async () => {
         const deps = depsOf();
-        const off = { ...script('vars.set("a", "1")'), enabled: false };
+        const off = { ...script('mandor.variables.set("a", "1")'), enabled: false };
         const result = await runChain(runOf([off]), deps);
 
         expect(result).toMatchObject({ effects: [], logs: [], skipped: [], switchedOff: 0 });
@@ -74,7 +77,9 @@ describe('runChain', () => {
     it('runs none of a chain over the limit of scripts', async () => {
         const deps = depsOf();
         const count = SCRIPT_LIMITS.chainScripts + 1;
-        const entries = Array.from({ length: count }, () => script('vars.set("a", "1")'));
+        const entries = Array.from({ length: count }, () =>
+            script('mandor.variables.set("a", "1")'),
+        );
         const result = await runChain(runOf(entries), deps);
 
         expect(result.logs).toEqual([
@@ -93,9 +98,9 @@ describe('runChain', () => {
         const deps = depsOf();
         const result = await runChain(
             runOf([
-                script('vars.set("a", "1")', 'Shop'),
-                script('vars.set("b", "2"); throw new Error("boom")', 'Orders'),
-                script('vars.set("c", "3")', 'Last'),
+                script('mandor.variables.set("a", "1")', 'Shop'),
+                script('mandor.variables.set("b", "2"); throw new Error("boom")', 'Orders'),
+                script('mandor.variables.set("c", "3")', 'Last'),
             ]),
             deps,
         );
@@ -114,7 +119,7 @@ describe('runChain', () => {
         const variables = createScriptVariables({ ...SCRIPT_LIMITS, variables: 1 });
         const deps = depsOf({ variables });
         const result = await runChain(
-            runOf([script('vars.set("a", "1"); vars.set("b", "2")')]),
+            runOf([script('mandor.variables.set("a", "1"); mandor.variables.set("b", "2")')]),
             deps,
         );
 
@@ -150,7 +155,9 @@ describe('runChain', () => {
         const deps = depsOf();
         const result = await runChain(
             runOf([
-                script('vars.set("t", "s3cr3t"); console.log("s3cr3t"); test("s3cr3t", () => {})'),
+                script(
+                    'mandor.variables.set("t", "s3cr3t"); console.log("s3cr3t"); mandor.test("s3cr3t", () => {})',
+                ),
                 script('throw new Error("s3cr3t")'),
             ]),
             deps,

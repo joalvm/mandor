@@ -29,7 +29,7 @@ describe('carriedBy', () => {
             variables: [VARIABLE],
             auth: AUTH,
             headers: [HEADER],
-            importedScripts: [],
+            scripts: {},
         });
     });
 
@@ -56,7 +56,7 @@ describe('settingsPatchOf', () => {
             variables: undefined,
             auth: undefined,
             headers: undefined,
-            importedScripts: undefined,
+            scripts: undefined,
         });
     });
 });
@@ -72,7 +72,7 @@ describe('holdsSettings', () => {
     });
 
     it('says no for empty lists', () => {
-        expect(holdsSettings({ variables: [], headers: [], importedScripts: [] })).toBe(false);
+        expect(holdsSettings({ variables: [], headers: [], scripts: {} })).toBe(false);
     });
 });
 

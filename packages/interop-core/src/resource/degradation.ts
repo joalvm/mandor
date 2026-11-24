@@ -67,8 +67,6 @@ export const DEGRADATION_CODES = [
     'proxyNotImported',
     'redirectNotUsed',
     'requestVariablesNotImported',
-    'scriptAsText',
-    'scriptDisabled',
     'secretCollectionVariableNotImported',
     'secretEntersEmptyEnvironment',
     'secretEntersEmptyGlobals',

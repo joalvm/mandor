@@ -7,7 +7,9 @@ describe('newEngine', () => {
     it('runs a script and gives what it did', async () => {
         const engine = await newEngine();
 
-        expect(await engine.runScript(inputOf('console.log("hi"); vars.set("a", "1");'))).toEqual({
+        expect(
+            await engine.runScript(inputOf('console.log("hi"); mandor.variables.set("a", "1");')),
+        ).toEqual({
             ok: true,
             output: {
                 effects: [{ kind: 'var', name: 'a', value: '1' }],
@@ -33,7 +35,7 @@ describe('newEngine', () => {
         expect(
             await engine.runScript(
                 inputOf(
-                    "const r = await sendRequest({ url: 'https://a.test' }); console.log(r.text());",
+                    "const r = await mandor.sendRequest({ url: 'https://a.test' }); console.log(r.text());",
                 ),
                 link,
             ),

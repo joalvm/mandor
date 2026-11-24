@@ -1,5 +1,4 @@
 import type { AuthConfig } from '../auth/auth-config.js';
-import type { ImportedScript } from '../script/imported-script.js';
 import type { RequestScripts } from '../script/own-scripts.js';
 import type { RequestBody } from './request-body.js';
 import type { RequestExample } from './request-example.js';
@@ -33,8 +32,6 @@ export type RequestItem = {
     description?: string | undefined;
     /** The auth of this request. Absent inherits from its folders, and then from the workspace. */
     auth?: AuthConfig | undefined;
-    /** Scripts that came with an import. Kept as text; nothing runs them. */
-    importedScripts?: ImportedScript[] | undefined;
-    /** The scripts the user wrote for this request, one per event. Absent until somebody writes one. */
+    /** The scripts of this request, one per event: written here or brought by an import, not yet approved. */
     scripts?: RequestScripts | undefined;
 };

@@ -1,4 +1,5 @@
 import { createConnection, type ConnectionScripts } from '@mandor/schema';
+import { shellStore } from '@mandor/shell';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -16,6 +17,7 @@ function shown(scripts: ConnectionScripts | undefined) {
     render(
         <SettingsScriptsSection
             connection={connection}
+            environment={undefined}
             onConnectionChange={onConnectionChange}
             workspaceId="events"
         />,
@@ -27,6 +29,8 @@ function shown(scripts: ConnectionScripts | undefined) {
 
 afterEach(() => {
     cleanup();
+    // The moment open is remembered by the connection: each test starts on the first.
+    shellStore.getState().reset();
 });
 
 describe('the scripts of a connection, by moment of the connection', () => {
@@ -59,10 +63,13 @@ describe('the scripts of a connection, by moment of the connection', () => {
             'true',
         );
         // A tab opened once keeps its editor: the one before it is still the first.
-        (await editorAt(1)).typeOver('socket.send("hi")');
+        (await editorAt(1)).typeOver('mandor.socket.send("hi")');
 
         expect(onConnectionChange).toHaveBeenLastCalledWith({
-            scripts: { onMessage: { source: 'b()' }, onConnect: { source: 'socket.send("hi")' } },
+            scripts: {
+                onMessage: { source: 'b()' },
+                onConnect: { source: 'mandor.socket.send("hi")' },
+            },
         });
     });
 

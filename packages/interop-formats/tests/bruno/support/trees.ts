@@ -34,6 +34,7 @@ export function requestNode(overrides: Partial<BrunoRequest> = {}): BrunoRequest
         examples: [],
         body: undefined,
         auth: undefined,
+        scripts: undefined,
         leftOut: [],
         ...overrides,
     };
@@ -65,6 +66,7 @@ export function folderNode(overrides: Partial<BrunoFolder> = {}): BrunoFolder {
         auth: undefined,
         variables: [],
         children: [],
+        scripts: undefined,
         leftOut: [],
         ...overrides,
     };
@@ -81,6 +83,7 @@ export function documentNode(overrides: Partial<BrunoDocument> = {}): BrunoDocum
         children: [],
         environments: [],
         skipped: [],
+        scripts: undefined,
         leftOut: [],
         ...overrides,
     };

@@ -1,7 +1,6 @@
 import {
     authConfigSchema,
     collectionPathSchema,
-    importedScriptSchema,
     plainVariableSchema,
     requestLineSchema,
     requestScriptsSchema,
@@ -24,8 +23,6 @@ export const folderSettingsPatchSchema = z
         headers: z.array(requestLineSchema).nullable().optional(),
         // `null` takes the scripts out of the file: an empty map is not a thing the window sends.
         scripts: requestScriptsSchema.nullable().optional(),
-        // What an import brought leaves the file as the person moves it into their own scripts.
-        importedScripts: z.array(importedScriptSchema).nullable().optional(),
     })
     .strict();
 

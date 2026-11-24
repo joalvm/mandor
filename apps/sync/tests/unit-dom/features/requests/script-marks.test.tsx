@@ -17,10 +17,9 @@ const LEFT_OUT: ScriptOutput = {
             level: 'folder',
             event: 'onBeforeRequest',
             bytes: 12,
-            source: 'vars.set(1);',
+            source: 'mandor.variables.set(1);',
         },
     ],
-    imported: 0,
     switchedOff: 0,
     errors: [],
     withheld: [],
@@ -45,7 +44,7 @@ describe('the mark of the scripts a send left out', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Review' }));
 
         expect(screen.getByRole('dialog', { name: '1 script left out' })).toBeVisible();
-        expect((await editorAt(0)).text()).toBe('vars.set(1);');
+        expect((await editorAt(0)).text()).toBe('mandor.variables.set(1);');
 
         fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
 
@@ -53,7 +52,7 @@ describe('the mark of the scripts a send left out', () => {
             workspaceId: 'pagos',
             level: 'folder',
             event: 'onBeforeRequest',
-            source: 'vars.set(1);',
+            source: 'mandor.variables.set(1);',
         });
         expect(await screen.findByText('Approved: it runs from the next send')).toBeVisible();
     });

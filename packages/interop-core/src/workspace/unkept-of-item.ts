@@ -2,12 +2,7 @@ import type { CollectionItem } from '@mandor/schema';
 import { z } from 'zod';
 
 import type { OutlineLoss } from './outline-kind.js';
-import {
-    nativeScriptsLossOf,
-    scriptsLossOf,
-    type LevelNote,
-    type UnkeptLevels,
-} from './unkept-parts.js';
+import { ownScriptsLossOf, type LevelNote, type UnkeptLevels } from './unkept-parts.js';
 
 /**
  * What a row needs to know of a request. A request that does not read is not the outline's to
@@ -23,10 +18,6 @@ const requestPartsSchema = z.object({
         .catch([]),
     settings: z.record(z.string(), z.unknown()).default({}).catch({}),
     scripts: z.record(z.string(), z.unknown()).default({}).catch({}),
-    importedScripts: z
-        .array(z.object({ dialect: z.string() }))
-        .default([])
-        .catch([]),
 });
 
 const messagePartsSchema = z.object({
@@ -81,15 +72,14 @@ function graphqlLossOf(
 
 function requestLossesOf(item: CollectionItem, unkept: UnkeptLevels): (OutlineLoss | undefined)[] {
     const parts = requestPartsSchema.parse(item.body);
-    const { settings, importedScripts, scripts } = parts;
+    const { settings, scripts } = parts;
 
     return [
         ...(item.tags.length > 0 ? [unkept.request?.tags] : []),
         ...exampleLossesOf(parts, unkept),
         ...(holdsSchemas(parts) ? [unkept.request?.schemas] : []),
         ...settingsLossOf(settings, unkept),
-        ...scriptsLossOf(importedScripts, unkept),
-        ...nativeScriptsLossOf(scripts, unkept),
+        ...ownScriptsLossOf(scripts, unkept),
     ];
 }
 

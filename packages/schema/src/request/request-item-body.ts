@@ -41,7 +41,6 @@ function bodyOf(body: RequestBody): RequestBody | undefined {
  */
 export function requestItemBody(request: RequestItem): Record<string, unknown> {
     const { method, url, body, bodySchema, examples, settings, description } = request;
-    const imported = request.importedScripts ?? [];
 
     return {
         method,
@@ -54,7 +53,6 @@ export function requestItemBody(request: RequestItem): Record<string, unknown> {
         examples: examples.length === 0 ? undefined : examples,
         settings,
         description,
-        importedScripts: imported.length === 0 ? undefined : imported,
         scripts: ownScriptsOrNothing(request.scripts),
     };
 }

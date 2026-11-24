@@ -31,12 +31,24 @@ export function clickActivation(event: MouseEvent<HTMLElement>): RowActivation {
     return { ...modifiersOf(event), keep: event.detail > 1 };
 }
 
-/** Runs the action of a row for the keys that take one — Enter and space — and no others. */
+/**
+ * Whether a click landed on the row as the page draws it. React hands a row the events of what
+ * it opens in a portal too —its menu, the dialog of its settings—, and those are not the row's.
+ */
+export function clickedOnRow(event: MouseEvent<HTMLElement>): boolean {
+    return event.target instanceof Node && event.currentTarget.contains(event.target);
+}
+
+/**
+ * Runs the action of a row for the keys that take one — Enter and space — and no others, pressed
+ * on the row itself. A control inside it, or a field of what it opened in a portal, keeps them:
+ * there Enter writes a line and space a space.
+ */
 export function activateRow(
     event: KeyboardEvent<HTMLElement>,
     take: (activation: RowActivation) => void,
 ): void {
-    if (event.key !== 'Enter' && event.key !== ' ') {
+    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) {
         return;
     }
 

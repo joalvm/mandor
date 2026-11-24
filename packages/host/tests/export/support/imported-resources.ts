@@ -97,12 +97,11 @@ async function writeImportedEnvelope(
     }
 
     if (resource.place === 'workspace') {
-        const patch = {
-            auth: resource.fields['auth'] as never,
-            variables: [],
-            importedScripts: null,
-        };
-
-        await writeImportedWorkspace(dir, workspaceId, patch, resource.origin);
+        await writeImportedWorkspace(
+            dir,
+            workspaceId,
+            { auth: resource.fields['auth'] as never },
+            resource.origin,
+        );
     }
 }

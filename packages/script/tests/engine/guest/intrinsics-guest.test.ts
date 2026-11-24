@@ -42,7 +42,7 @@ describe('intrinsics of the guest', () => {
     ])('keeps the output intact when the script replaces %s', async (_name, override) => {
         const output = await outputOf(
             wasm,
-            `${override}\nconsole.log("a", { b: 1 }); vars.set("k", "v"); console.log(vars.replaceIn("{{k}}"));`,
+            `${override}\nconsole.log("a", { b: 1 }); mandor.variables.set("k", "v"); console.log(mandor.variables.replaceIn("{{k}}"));`,
         );
 
         expect(output.logs).toEqual([

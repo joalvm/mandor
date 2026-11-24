@@ -118,7 +118,11 @@ describe('requestOfBru', () => {
         expect(requestOfBru(file('A.bru', text), [])).toMatchObject([
             {
                 tags: ['smoke'],
-                leftOut: ['scripts', 'tests', 'assertions', 'request variables'],
+                scripts: {
+                    onBeforeRequest: { source: 'x()' },
+                    onResponse: { source: 'test(1)' },
+                },
+                leftOut: ['assertions', 'request variables'],
             },
         ]);
     });

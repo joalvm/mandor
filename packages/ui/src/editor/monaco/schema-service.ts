@@ -14,9 +14,9 @@ import { SCHEMA_DOCUMENTS } from './metaschemas/schema-schemas.js';
 /**
  * The service of the standard (`vscode-json-languageservice`) over the documents of the
  * window, in the editor's own thread. The same service also rides inside Monaco behind a
- * worker, but a worker that asks the scheme of the window for its script never starts, and a
- * schema is small: the service answers here, out of the metaschemas of the standard, which
- * arrive as data. Validation, completion and hover, and nothing guessed beyond them.
+ * worker, which would hold a copy of every JSON document the window opens, and a schema is
+ * small: the service answers here, out of the metaschemas of the standard, which arrive as data.
+ * Validation, completion and hover, and nothing guessed beyond them.
  */
 
 /** One answer of the validation, in the words of the service. */

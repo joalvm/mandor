@@ -21,6 +21,7 @@ export type EditorLanguage =
     | 'plaintext'
     | 'powershell'
     | 'python'
+    | 'script'
     | 'shell'
     | 'xml'
     | 'yaml';

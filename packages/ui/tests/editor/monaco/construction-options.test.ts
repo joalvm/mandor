@@ -106,4 +106,11 @@ describe('what an editor is built with', () => {
             { quickSuggestions: true, suggestOnTriggerCharacters: true },
         );
     });
+
+    /** A script is read by a service of its own, which knows the names its event shows. */
+    it('lets a script suggest with no suggestions handed: the service of scripts is the source', () => {
+        expect(
+            constructionOptions({ ariaLabel: '', language: 'script', options: {} }),
+        ).toMatchObject({ quickSuggestions: true, suggestOnTriggerCharacters: true });
+    });
 });

@@ -48,14 +48,14 @@ let page: Page;
 let echo: EchoServer;
 
 /** The log every frame costs, small on purpose: the burst is of the queue, not of the output. */
-const QUIET_LOG = "console.log('mem ' + String(message.text).slice(0, 8));";
+const QUIET_LOG = "console.log('mem ' + String(mandor.message.text).slice(0, 8));";
 /** The frame that kills its worker, and the one that proves the next frame ran. */
 const BOOM = [
-    'if (message.text === "boom") {',
+    'if (mandor.message.text === "boom") {',
     '  const a = [];',
     '  while (true) { a.push("x".repeat(1024 * 1024)); }',
     '}',
-    "console.log('vivo ' + String(message.text).slice(0, 8));",
+    "console.log('vivo ' + String(mandor.message.text).slice(0, 8));",
 ].join('\n');
 
 /** Where the file of one connection lives, by the name the screen shows. */
@@ -90,6 +90,33 @@ function rssMb(app: ElectronApplication): Promise<number> {
     return app.evaluate(
         () => process.getBuiltinModule('node:process').memoryUsage().rss / 1024 / 1024,
     );
+}
+
+/** The threads the service of scripts runs in: one while an editor of scripts is open. */
+function scriptThreads(): number {
+    return page.workers().filter((worker) => worker.url().includes('script-worker-main')).length;
+}
+
+/** Opens the settings of a connection on the script of a moment, and closes them again. */
+async function openAndCloseTheScript(): Promise<void> {
+    await page
+        .getByRole('option', { name: /Memoria/u })
+        .getByRole('button', { name: 'Connection actions' })
+        .click();
+    await page.getByRole('menuitem', { exact: true, name: 'Settings' }).click();
+
+    // The dialog takes the name of the section it shows: it is the only one open.
+    const dialog = page.getByRole('dialog');
+
+    await dialog.getByRole('option', { name: 'Scripts' }).click();
+    await dialog.getByRole('tab', { exact: true, name: ON_MESSAGE }).click();
+    await expect(
+        dialog.locator('[data-part="event-script"] .monaco-editor').filter({ visible: true }),
+    ).toHaveCount(1);
+    // One thread, however many times the editor opened: a closed one never leaves its own behind.
+    await expect.poll(scriptThreads).toBe(1);
+    await dialog.getByRole('button', { exact: true, name: 'Close' }).click();
+    await expect(dialog).toHaveCount(0);
 }
 
 test.beforeAll(async () => {
@@ -211,4 +238,10 @@ test('a connection gone quiet closes its worker and gives the memory back', asyn
     expect(await rssMb(app)).toBeLessThan(quiet + 64);
     await expect(page.getByRole('button', { exact: true, name: 'Disconnect' })).toBeVisible();
     await disconnect(page);
+});
+
+/** The service weighs megabytes: a window that closed its last script carries none of them. */
+test('the script service stops when no script editor is open', async () => {
+    await expectBackAfterRounds({ app, page, until, noDrift }, openAndCloseTheScript, 5);
+    await expect.poll(scriptThreads, { timeout: 60_000 }).toBe(0);
 });

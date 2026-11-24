@@ -18,7 +18,7 @@ let root: string;
 
 const WORKSPACE = 'mi-workspace';
 const ORIGIN = { kind: 'postman', sourceId: 'collections:1', fingerprint: 'abc' } as const;
-const SCRIPT = { event: 'onBeforeRequest', dialect: 'postman', source: 'pm.test()' } as const;
+const SCRIPTS = { onBeforeRequest: { source: 'mandor.test()' } };
 const AUTH = { type: 'bearer', token: '{{token}}' } as const;
 
 beforeEach(async () => {
@@ -38,7 +38,7 @@ describe('writing the settings of a folder by patch', () => {
         await writeFolderSettings(root, WORKSPACE, 'api/users', {
             name: 'People',
             auth: AUTH,
-            importedScripts: [SCRIPT],
+            scripts: SCRIPTS,
             importOrigin: ORIGIN,
         });
 
@@ -46,7 +46,7 @@ describe('writing the settings of a folder by patch', () => {
             name: 'People',
             order: ['get-user'],
             auth: AUTH,
-            importedScripts: [SCRIPT],
+            scripts: SCRIPTS,
             importOrigin: ORIGIN,
         });
     });
@@ -68,19 +68,19 @@ describe('writing the settings of a folder by patch', () => {
     it('takes a key out when the patch says undefined, and leaves the rest', async () => {
         await writeFolderSettings(root, WORKSPACE, 'api/users', {
             auth: AUTH,
-            importedScripts: [SCRIPT],
+            scripts: SCRIPTS,
             importOrigin: ORIGIN,
         });
         await writeFolderSettings(root, WORKSPACE, 'api/users', {
             auth: undefined,
-            importedScripts: undefined,
+            scripts: undefined,
             importOrigin: undefined,
         });
 
         const folder = await readFolderSettings(root, WORKSPACE, 'api/users');
 
         expect(folder.auth).toBeUndefined();
-        expect(folder.importedScripts).toBeUndefined();
+        expect(folder.scripts).toBeUndefined();
         expect(folder.importOrigin).toBeUndefined();
         expect(folder.order).toEqual(['get-user']);
     });

@@ -48,12 +48,12 @@ afterEach(async () => {
 
 describe('the scripts a connection runs before it opens', () => {
     it('runs the script of onBeforeConnect, at the level of the connection', () => {
-        expect(beforeConnectEntries(input('vars.set("a", "1");'))).toEqual([
+        expect(beforeConnectEntries(input('mandor.variables.set("a", "1");'))).toEqual([
             {
                 level: 'connection',
                 name: 'echo',
                 event: 'onBeforeConnect',
-                source: 'vars.set("a", "1");',
+                source: 'mandor.variables.set("a", "1");',
                 enabled: undefined,
             },
         ]);
@@ -77,7 +77,7 @@ describe('the scripts a connection runs before it opens', () => {
 
 describe('the guard an open resolves with', () => {
     it('carries the handshake as the script left it, and as the window sent it', async () => {
-        const before = await run(input('request.headers.set("X-Run", "1");'));
+        const before = await run(input('mandor.request.headers.set("X-Run", "1");'));
 
         expect(before.ran).toBe(true);
         expect(before.result).toMatchObject({
@@ -90,13 +90,13 @@ describe('the guard an open resolves with', () => {
     });
 
     it('carries what scripts set in the place of the connection', async () => {
-        const before = await run(input('vars.set("ticket", "tk-1");'));
+        const before = await run(input('mandor.variables.set("ticket", "tk-1");'));
 
         expect(before.result).toMatchObject({ ok: true, value: { script: { ticket: 'tk-1' } } });
     });
 
     it('says in the console that the socket will not reconnect on its own', async () => {
-        const before = await run(input('vars.set("a", "1");'));
+        const before = await run(input('mandor.variables.set("a", "1");'));
 
         expect(before.output?.logs.at(-1)).toEqual({ level: 'warn', notice: 'no-reconnect' });
     });
@@ -140,7 +140,7 @@ describe('the guard an open resolves with', () => {
         const before = await scriptsBeforeConnect(
             approvedScripts(),
             place(),
-            input('vars.set("a", "1");'),
+            input('mandor.variables.set("a", "1");'),
             controller.signal,
         );
 

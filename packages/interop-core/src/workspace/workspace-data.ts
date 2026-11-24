@@ -3,7 +3,6 @@ import type {
     Connection,
     ConcreteAuth,
     Environment,
-    ImportedScript,
     PlainVariable,
     RequestLine,
     RequestScripts,
@@ -21,9 +20,7 @@ export type WorkspaceFolderSettings = {
     /** The auth the level decides; absent when unset or `{ inherit: true }`. */
     auth?: ConcreteAuth | undefined;
     headers: readonly RequestLine[];
-    /** The scripts another tool left on the level, kept as text; absent when it left none. */
-    importedScripts?: readonly ImportedScript[] | undefined;
-    /** The scripts the person wrote for the level, one per event; absent when there are none. */
+    /** The scripts of the level, one per event, written here or brought by an import; absent when there are none. */
     scripts?: RequestScripts | undefined;
 };
 

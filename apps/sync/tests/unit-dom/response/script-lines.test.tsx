@@ -23,7 +23,6 @@ function pushOf(change: Partial<RequestScriptOutput> = {}): RequestScriptOutput 
         logs: [],
         tests: [],
         skipped: [],
-        imported: 0,
         switchedOff: 0,
         variables: [],
         withheld: [],
@@ -62,7 +61,6 @@ describe('what one moment of a send writes to the console (consoleLines)', () =>
     it('says the scripts that did not run, then what the rest wrote, then where one stopped', () => {
         const lines = consoleLines(
             pushOf({
-                imported: 1,
                 switchedOff: 2,
                 logs: [
                     { level: 'log', text: 'antes' },
@@ -82,11 +80,6 @@ describe('what one moment of a send writes to the console (consoleLines)', () =>
         );
 
         expect(lines).toEqual([
-            {
-                key: 'before-scriptsImported',
-                tone: 'note',
-                text: '1 imported script does not run',
-            },
             {
                 key: 'before-scriptsSwitchedOff',
                 tone: 'note',

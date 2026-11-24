@@ -96,7 +96,6 @@ describe('the request bridge', () => {
             logs: [],
             tests: [{ name: 'ok', passed: true }],
             skipped: [],
-            imported: 0,
             switchedOff: 0,
             variables: [],
             withheld: [],

@@ -16,10 +16,10 @@ const KIND_OF_WRITE: Record<RequestField, EffectKind> = {
 
 /** What a script of the event may ask for, read from the one table of the API. */
 function kindsOf(event: ScriptRunInput['event']): ReadonlySet<EffectKind> {
-    const { objects, requestWrites } = API_BY_EVENT[event];
+    const { members, requestWrites } = API_BY_EVENT[event];
     const kinds = new Set<EffectKind>(['var', ...requestWrites.map((part) => KIND_OF_WRITE[part])]);
 
-    if (objects.includes('socket')) {
+    if (members.includes('socket')) {
         kinds.add('socket');
     }
 
