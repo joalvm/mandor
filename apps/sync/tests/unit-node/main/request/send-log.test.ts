@@ -1,4 +1,4 @@
-import type { RequestSendLog } from '@mandor/ipc';
+import { SEND_LOG_BODY_MAX, type RequestSendLog } from '@mandor/ipc';
 import { describe, expect, it } from 'vitest';
 
 import { sendLogOf, tellingSendLog } from '../../../../src/main/request/send-log.js';
@@ -25,6 +25,37 @@ describe('what the console is told of a send', () => {
                 headers: [['content-type', 'application/json']],
             },
         });
+    });
+
+    it('tells the bodies that read as text, cut to the ceiling of the console', () => {
+        const long = 'x'.repeat(SEND_LOG_BODY_MAX + 5);
+        const event = sendOf('/r', 5, {
+            bytes: new TextEncoder().encode('{"a":1}'),
+            response: responseOf({ kind: 'inline', encoding: 'utf8', text: long }),
+        });
+        const log = sendLogOf(event);
+
+        expect(log.sent?.body).toBe('{"a":1}');
+        expect(log.answer?.body).toHaveLength(SEND_LOG_BODY_MAX);
+    });
+
+    it('tells no body that is not text, nor one written to disk', () => {
+        const event = sendOf('/r', 6, {
+            bytes: new Uint8Array([0xff, 0xfe, 0x00]),
+            response: responseOf({ kind: 'inline', encoding: 'base64', data: 'AAE=' }),
+        });
+        const stored = sendOf('/r', 7, {
+            response: responseOf({
+                kind: 'stored',
+                ref: 'a'.repeat(64),
+                bytes: 9,
+                contentType: 'text/plain',
+            }),
+        });
+
+        expect(sendLogOf(event).sent).not.toHaveProperty('body');
+        expect(sendLogOf(event).answer).not.toHaveProperty('body');
+        expect(sendLogOf(stored).answer).not.toHaveProperty('body');
     });
 
     it('tells why nothing came back, in the words of the transport', () => {

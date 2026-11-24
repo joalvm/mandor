@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { requestSendLogSchema } from '../../src/index.js';
+import { requestSendLogSchema, SEND_LOG_BODY_MAX } from '../../src/index.js';
 
 const sent = {
     method: 'POST',
@@ -34,6 +34,18 @@ describe('the push of request:send-log', () => {
             error,
         });
         expect(requestSendLogSchema.safeParse({ sendId: push.sendId, error }).success).toBe(true);
+    });
+
+    it('carries the bodies that read as text, and refuses one past the ceiling', () => {
+        const bodies = {
+            ...push,
+            sent: { ...sent, body: '{"a":1}' },
+            answer: { ...push.answer, body: '{"id":7}' },
+        };
+        const swollen = { ...push, sent: { ...sent, body: 'x'.repeat(SEND_LOG_BODY_MAX + 1) } };
+
+        expect(requestSendLogSchema.parse(bodies)).toEqual(bodies);
+        expect(requestSendLogSchema.safeParse(swollen).success).toBe(false);
     });
 
     it('refuses a code that is not an error of the contract', () => {
