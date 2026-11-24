@@ -90,7 +90,13 @@ function fadeMenusOut(): void {
 
                 const value: unknown = Reflect.get(target, key, target);
 
-                return typeof value === 'function' ? value.bind(target) : value;
+                if (typeof value === 'function') {
+                    const bound: unknown = value.bind(target);
+
+                    return bound;
+                }
+
+                return value;
             },
         });
     });
