@@ -28,6 +28,11 @@ const STATUS_OF_STATE: Record<WsState, (previous: WsState) => ConnectionStatus |
     reconnecting: () => undefined,
 };
 
+/** Whether a change of state brought the socket up or down, or nothing on the way there. */
+export function connectionStatusOf(previous: WsState, next: WsState): ConnectionStatus | undefined {
+    return STATUS_OF_STATE[next](previous);
+}
+
 /**
  * The entry a state push writes on the timeline when the socket comes up or goes down, or
  * nothing when the change is a step on the way.
@@ -37,7 +42,7 @@ export function connectionStatusEntry(
     next: WsState,
     at: number = Date.now(),
 ): NewActivityEntry | undefined {
-    const status = STATUS_OF_STATE[next](previous);
+    const status = connectionStatusOf(previous, next);
 
     if (status === undefined) {
         return undefined;

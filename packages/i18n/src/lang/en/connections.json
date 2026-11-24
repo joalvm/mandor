@@ -121,6 +121,7 @@
     "size": "Size",
     "spread": "Spread",
     "spreadHelp": "Randomizes each wait by this percentage, so connections that drop together do not retry at once.",
+    "consoleReconnecting": "Reconnecting, attempt {{attempt}}",
     "stateConnected": "Connected",
     "stateConnecting": "Connecting",
     "stateDisconnected": "Disconnected",
