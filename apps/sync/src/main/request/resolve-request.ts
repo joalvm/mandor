@@ -13,6 +13,8 @@ import { itemParentOf, type RequestItem, type RequestLine } from '@mandor/schema
 import {
     assertSafeAuthority,
     resolveTemplates,
+    trimHeaderValue,
+    withDefaultScheme,
     type AuthParts,
     type AuthSigning,
     type VariableScope,
@@ -213,7 +215,8 @@ export async function resolvedRequestOf(
         return failure('bad-request', `the path parameter "${filled.name}" has no value`);
     }
 
-    const url = urlWithQuery(filled.url, [
+    // A url typed without its scheme goes over http, as a browser bar takes it.
+    const url = urlWithQuery(withDefaultScheme(filled.url, 'http'), [
         ...resolvedPairs('query', request.query, values),
         ...parts.query,
     ]);
@@ -229,7 +232,13 @@ export async function resolvedRequestOf(
         value: {
             method: request.method.toUpperCase(),
             url,
-            headers: headersWithAuth(resolvedPairs('header', headers, values), parts),
+            headers: headersWithAuth(
+                resolvedPairs('header', headers, values).map(([name, value]) => [
+                    name,
+                    trimHeaderValue(value),
+                ]),
+                parts,
+            ),
             body: resolvedBody(request.body, values),
             settings: request.settings,
             signing: parts.signing,

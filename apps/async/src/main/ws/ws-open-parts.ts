@@ -1,5 +1,5 @@
 import type { WsOpenRequest } from '@mandor/ipc';
-import type { AuthParts } from '@mandor/vars';
+import { trimHeaderValue, type AuthParts } from '@mandor/vars';
 
 import type { ConnectionTemplate } from './connection-effects.js';
 import type { SocketOpenRequest } from './socket-manager.js';
@@ -124,6 +124,6 @@ export function handshakeHeaders(values: Record<string, string>): Record<string,
     return Object.fromEntries(
         Object.entries(values)
             .filter(([name]) => name.startsWith('header:'))
-            .map(([name, value]) => [name.slice('header:'.length), value]),
+            .map(([name, value]) => [name.slice('header:'.length), trimHeaderValue(value)]),
     );
 }

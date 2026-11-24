@@ -83,6 +83,17 @@ describe('a request sends the headers of its folders', () => {
         ]);
     });
 
+    it('sends a value pasted with its line break without the break, as a browser does', async () => {
+        const { headers: sent } = await resolved(null, {
+            headers: [line('User-Agent', 'Mozilla/5.0\r\n'), line('X-Inner', 'a\r\nb')],
+        });
+
+        expect(sent).toEqual([
+            ['User-Agent', 'Mozilla/5.0'],
+            ['X-Inner', 'a\r\nb'],
+        ]);
+    });
+
     it('sends no inherited header when it is saved nowhere', async () => {
         expect((await resolved(null)).headers).toEqual([]);
     });

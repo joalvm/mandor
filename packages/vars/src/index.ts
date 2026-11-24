@@ -17,6 +17,8 @@ export { resolveTemplates } from './resolution/resolve-templates.js';
 export { scanTemplate, type TemplateSegment } from './resolution/scan-template.js';
 export { assertSafeAuthority } from './resolution/assert-safe-authority.js';
 export { sameDestination } from './resolution/same-destination.js';
+export { trimHeaderValue } from './resolution/trim-header-value.js';
+export { withDefaultScheme } from './resolution/with-default-scheme.js';
 export {
     scriptGuard,
     type ScriptGuardInput,

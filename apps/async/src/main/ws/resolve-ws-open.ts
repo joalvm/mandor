@@ -16,6 +16,7 @@ import {
     scriptGuard,
     type ScriptGuardVerdict,
     type VariableScope,
+    withDefaultScheme,
 } from '@mandor/vars';
 
 import { wroteHandshake, writtenKeys, type ConnectionTemplate } from './connection-effects.js';
@@ -45,6 +46,9 @@ export type ResolvedWsOpen = {
     /** The secrets the handshake left as their name, because a script had a hand in it. */
     withheld: string[];
 };
+
+/** The scheme a url typed without one is dialed with, by the transport that dials it. */
+const DEFAULT_SCHEME: Record<ConnectionTransport, string> = { websocket: 'ws', socketio: 'http' };
 
 /** The scheme gate of one transport: websocket and Socket.IO are asserted apart. */
 export type AssertSocketUrl = (transport: ConnectionTransport, value: string) => URL;
@@ -178,7 +182,7 @@ export async function resolveWsOpen(
                   withheld: [],
               }
             : guardedHandshake(guard, templates, input);
-    const url = handshake.values['url'] ?? '';
+    const url = withDefaultScheme(handshake.values['url'] ?? '', DEFAULT_SCHEME[input.transport]);
 
     gate.assertUrl(input.transport, url);
 
