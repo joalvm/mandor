@@ -113,10 +113,6 @@ test('approved, every escape fails inside and the secret stays home', async () =
     // The line the person nested one level deep reached evil as text, never as the secret.
     expect(stolen(ATTACK.stealPath).headers['x-nested']).toBeDefined();
     expect(String(stolen(ATTACK.stealPath).headers['x-nested'])).not.toContain(secret);
-    await expect(
-        page.getByText('A script changed the destination: it left without secrets'),
-    ).toBeVisible();
-
     const echoes = server.echoes.length;
 
     await inConsole(page, async () => {
@@ -134,6 +130,8 @@ test('approved, every escape fails inside and the secret stays home', async () =
             ATTACK.marks.folder,
             ATTACK.marks.steal,
             `The variable “${ATTACK.secretName}” is a secret: a script cannot read it`,
+            // The moved destination is said where the rest of the send is told.
+            'A script changed the destination: it left without secrets',
         ]) {
             await expect(consolePanel(page).getByText(line).first()).toBeVisible();
         }

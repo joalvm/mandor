@@ -135,7 +135,7 @@ test.beforeAll(async () => {
  * long run is looked for the way a person does, from the top down, one screen at a time.
  */
 async function seekInConsole(text: RegExp): Promise<void> {
-    const log = consolePanel(page).locator('[data-part="log-lines"]');
+    const log = consolePanel(page).locator('[data-part="console-entries"]');
     const line = consolePanel(page).getByText(text).first();
     const screen = await log.evaluate((element) => element.clientHeight);
 
