@@ -49,6 +49,8 @@ import { ImportIcon } from './import.js';
 import { InfoIcon } from './info.js';
 import { KeepaliveIcon } from './keepalive.js';
 import { KeyIcon } from './key.js';
+import { LayoutHorizontalIcon } from './layout-horizontal.js';
+import { LayoutVerticalIcon } from './layout-vertical.js';
 import { LinkIcon } from './link.js';
 import { LoadingIcon } from './loading.js';
 import { MarkdownIcon } from './markdown.js';
@@ -75,7 +77,6 @@ import { SearchIcon } from './search.js';
 import { SendIcon } from './send.js';
 import { SettingsIcon } from './settings.js';
 import { SidebarLeftIcon } from './sidebar-left.js';
-import { SidebarRightIcon } from './sidebar-right.js';
 import { SlidersIcon } from './sliders.js';
 import { SplitHorizontalIcon } from './split-horizontal.js';
 import { SplitVerticalIcon } from './split-vertical.js';
@@ -142,6 +143,8 @@ export const ICONS = {
     info: InfoIcon,
     keepalive: KeepaliveIcon,
     key: KeyIcon,
+    'layout-horizontal': LayoutHorizontalIcon,
+    'layout-vertical': LayoutVerticalIcon,
     link: LinkIcon,
     loading: LoadingIcon,
     markdown: MarkdownIcon,
@@ -168,7 +171,6 @@ export const ICONS = {
     send: SendIcon,
     settings: SettingsIcon,
     'sidebar-left': SidebarLeftIcon,
-    'sidebar-right': SidebarRightIcon,
     sliders: SlidersIcon,
     'split-horizontal': SplitHorizontalIcon,
     'split-vertical': SplitVerticalIcon,

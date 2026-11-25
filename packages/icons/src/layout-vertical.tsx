@@ -2,8 +2,8 @@
 import type { IconAppearanceProps } from './icon-appearance.js';
 import { IconFrame } from './icon-frame.js';
 
-/** Represents the sidebar right icon. */
-export function SidebarRightIcon(props: IconAppearanceProps) {
+/** Represents the layout vertical icon. */
+export function LayoutVerticalIcon(props: IconAppearanceProps) {
     return (
         <IconFrame {...props}>
             <path

@@ -77,10 +77,19 @@ describe('the line of status', () => {
     /** Hiding is a width of zero, and the width it had comes back with the lateral. */
     it('says what the switch would bring back, and hides the lateral on click', () => {
         draw();
+
+        expect(screen.getByRole('button', { name: 'Ocultar barra lateral' })).toHaveAttribute(
+            'aria-pressed',
+            'true',
+        );
+
         fireEvent.click(screen.getByRole('button', { name: 'Ocultar barra lateral' }));
 
         expect(shellStore.getState().panels.sidebarWidth).toBe(0);
-        expect(screen.getByRole('button', { name: 'Mostrar barra lateral' })).toBeVisible();
+        expect(screen.getByRole('button', { name: 'Mostrar barra lateral' })).toHaveAttribute(
+            'aria-pressed',
+            'false',
+        );
 
         fireEvent.click(screen.getByRole('button', { name: 'Mostrar barra lateral' }));
 

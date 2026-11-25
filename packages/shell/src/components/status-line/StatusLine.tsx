@@ -51,9 +51,10 @@ export function StatusLine() {
             data-part="status-line"
         >
             <IconButton
-                icon={hidden ? 'sidebar-right' : 'sidebar-left'}
-                label={messages(hidden ? 'sidebarShow' : 'sidebarHide')}
+                active={!hidden}
+                icon="sidebar-left"
                 iconSize="sm"
+                label={messages(hidden ? 'sidebarShow' : 'sidebarHide')}
                 onClick={() => {
                     setPanels({ sidebarWidth: hidden ? SIDEBAR_WIDTH.default : 0 });
                 }}

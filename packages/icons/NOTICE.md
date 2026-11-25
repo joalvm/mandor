@@ -1,7 +1,7 @@
 # NOTICE — @mandor/icons
 
-Las geometrías de 68 de las 80 intenciones del registro se toman de
-[`@vscode/codicons`](https://github.com/microsoft/vscode-codicons) 0.0.45, obra de Microsoft,
+Las geometrías de 79 de las 90 intenciones del registro se toman de
+[`@vscode/codicons`](https://github.com/microsoft/vscode-codicons) 0.0.46-24, obra de Microsoft,
 con licencia [CC-BY-4.0](licenses/codicons.txt). La geometría se usa verbatim desde el paquete
 fijado; este paquete no redistribuye los SVG del proveedor ni su fuente tipográfica.
 
@@ -19,6 +19,7 @@ Intenciones con fuente propia (no provienen de Codicons):
 | `origin-gitlab`    | propia                  | marca de proveedor; Codicons no la ofrece                              |
 | `corner-radius`    | derivada de `square`    | esquina con radio; Codicons no ofrece el radio de esquina              |
 | `wrap-text-off`    | derivada de `word-wrap` | variante «apagado»; Codicons no la ofrece                              |
+| `console`          | derivada de `terminal`  | el `terminal` de Codicons, de su rejilla de 24 a la de 16              |
 
 Las derivadas son obras derivadas del arte CC-BY-4.0 del proveedor; las propias son obra
 original de Mandor (MIT).
