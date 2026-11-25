@@ -1,4 +1,4 @@
-import type { Document, ToStringOptions } from 'yaml';
+import { type Document, isScalar, type ToStringOptions } from 'yaml';
 
 /** No wrapping, two spaces. A wrapped value turns one edited field into a multi-line diff. */
 const STRINGIFY: ToStringOptions = { lineWidth: 0, indent: 2 };
@@ -19,9 +19,23 @@ export function documentTextWith(document: Document, changes: Record<string, unk
         }
 
         if (value !== undefined) {
+            forgetForcedQuotes(document, key);
             document.set(key, value);
         }
     }
 
     return document.toString(STRINGIFY);
+}
+
+/**
+ * A set over a scalar keeps its node, and the node keeps its style. An empty text can only be
+ * written in quotes, so those quotes say nothing about the value that replaces it: without this,
+ * a field born empty would stay quoted for good. Quotes a person chose for a real value stay.
+ */
+function forgetForcedQuotes(document: Document, key: string): void {
+    const node = document.get(key, true);
+
+    if (isScalar(node) && node.value === '') {
+        delete node.type;
+    }
 }
