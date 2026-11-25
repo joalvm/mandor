@@ -1,5 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { TooltipProvider } from '@mandor/ui';
+import { allByPart, byPart } from '@mandor/ui/testing';
 import {
     act,
     cleanup,
@@ -62,6 +63,28 @@ describe('the notice centre', () => {
         raise('Algo raro', 'warning');
 
         expect(screen.getByRole('button', { name: 'Avisos, 2 sin leer' })).toBeVisible();
+    });
+
+    /** What waits to be read is marked on the corner of the bell, never beside it. */
+    it('marks the corner of the bell with what is unread, until it is opened', () => {
+        draw();
+
+        expect(allByPart('corner-count-mark')).toEqual([]);
+
+        raise('No se pudo guardar');
+        raise('Algo raro', 'warning');
+
+        const mark = byPart('corner-count-mark');
+
+        expect(mark.textContent).toBe('2');
+        expect(mark).toHaveAttribute('data-tone', 'accent');
+        expect(byPart('corner-count')).toContainElement(
+            screen.getByRole('button', { name: 'Avisos, 2 sin leer' }),
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: 'Avisos, 2 sin leer' }));
+
+        expect(allByPart('corner-count-mark')).toEqual([]);
     });
 
     it('says there is nothing to read when it is empty', () => {

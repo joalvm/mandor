@@ -7,6 +7,7 @@ export { Breadcrumbs } from './components/panel/Breadcrumbs.js';
 export { Button, type ButtonVariant } from './components/button/Button.js';
 export { Card } from './components/layout/Card.js';
 export { Collapsible } from './components/collapsible/Collapsible.js';
+export { CornerCount } from './components/indicator/CornerCount.js';
 export { CollapsibleBody } from './components/collapsible/CollapsibleBody.js';
 export { CollapsibleHeader } from './components/collapsible/CollapsibleHeader.js';
 export { Disclosure } from './components/collapsible/Disclosure.js';

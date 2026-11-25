@@ -4,6 +4,8 @@ import { DocSection } from '../../pieces/doc-section.js';
 import { Demo } from '../../pieces/demo.js';
 import { ContadorDemo } from './contador.js';
 import contadorCode from './contador.tsx?raw';
+import { EsquinaDemo } from './esquina.js';
+import esquinaCode from './esquina.tsx?raw';
 import { TonosDemo } from './tonos.js';
 import tonosCode from './tonos.tsx?raw';
 
@@ -53,6 +55,15 @@ export function BadgePage() {
                 layout="start"
             >
                 <ContadorDemo />
+            </Demo>
+
+            <Demo
+                code={esquinaCode}
+                heading="En la esquina"
+                intent="CornerCount: la cuenta sobre la esquina de un icono, más chica que el glifo y de 1 a 9+. Solo se ve; el nombre del control la dice."
+                layout="start"
+            >
+                <EsquinaDemo />
             </Demo>
 
             <DocSection heading="API" intent="Todas las props; Badge no recibe handlers.">

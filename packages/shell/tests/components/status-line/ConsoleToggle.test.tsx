@@ -1,5 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { TooltipProvider } from '@mandor/ui';
+import { allByPart, byPart } from '@mandor/ui/testing';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -49,11 +50,11 @@ describe('the switch of the console on the status line', () => {
         );
     });
 
-    it('counts the faults and the warnings the console holds, and nothing when there are none', () => {
+    /** The faults wait on the corner of the glyph, never beside it; warnings leave no mark. */
+    it('marks the corner of the switch with the faults, and nothing for warnings', () => {
         draw();
 
-        expect(screen.queryByLabelText(/error/u)).toBeNull();
-        expect(screen.queryByLabelText(/aviso/u)).toBeNull();
+        expect(allByPart('corner-count-mark')).toEqual([]);
 
         act(() => {
             writeConsole([
@@ -64,7 +65,44 @@ describe('the switch of the console on the status line', () => {
             ]);
         });
 
-        expect(screen.getByLabelText('2 errores')).toHaveTextContent('2');
-        expect(screen.getByLabelText('1 aviso')).toHaveTextContent('1');
+        const mark = byPart('corner-count-mark');
+
+        expect(mark.textContent).toBe('2');
+        expect(mark).toHaveAttribute('data-tone', 'error');
+        expect(byPart('corner-count')).toContainElement(mark);
+        expect(byPart('corner-count')).toContainElement(
+            screen.getByRole('button', { name: 'Mostrar la consola, 2 errores' }),
+        );
+        expect(screen.queryByText(/aviso/u)).toBeNull();
+    });
+
+    /** Warnings alone wait in the console without a mark, and the name says nothing of them. */
+    it('leaves the switch unmarked while the console holds only warnings', () => {
+        draw();
+
+        act(() => {
+            writeConsole([{ level: 'warn', text: 'cuidado' }]);
+        });
+
+        expect(allByPart('corner-count-mark')).toEqual([]);
+        expect(screen.getByRole('button', { name: 'Mostrar la consola' })).toBeVisible();
+    });
+
+    it('reads more than nine faults as nine and more, and says all of them', () => {
+        draw();
+
+        act(() => {
+            writeConsole(
+                Array.from({ length: 12 }, (_, index) => ({
+                    level: 'error' as const,
+                    text: `Error: ${String(index)}`,
+                })),
+            );
+        });
+
+        expect(byPart('corner-count-mark').textContent).toBe('9+');
+        expect(
+            screen.getByRole('button', { name: 'Mostrar la consola, 12 errores' }),
+        ).toBeVisible();
     });
 });
