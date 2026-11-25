@@ -47,6 +47,28 @@ describe('resolvePreferenceValues', () => {
         );
     });
 
+    it('takes a text up to its length and falls back to the default past it', () => {
+        expect(
+            resolvePreferenceValues({ app: { 'editor.fontFamily': 'JetBrains Mono' } })[
+                'editor.fontFamily'
+            ],
+        ).toBe('JetBrains Mono');
+        expect(
+            resolvePreferenceValues({ app: { 'editor.fontFamily': 'x'.repeat(201) } })[
+                'editor.fontFamily'
+            ],
+        ).toBe('');
+    });
+
+    it('takes a switch only as on or off', () => {
+        expect(resolvePreferenceValues({ app: { 'tabs.alwaysNew': 'on' } })['tabs.alwaysNew']).toBe(
+            'on',
+        );
+        expect(
+            resolvePreferenceValues({ app: { 'tabs.alwaysNew': 'yes' } })['tabs.alwaysNew'],
+        ).toBe('off');
+    });
+
     it('leaves a key it does not know out of the answer', () => {
         const stored = { 'appearance.zoom': '200' } as Record<string, unknown>;
 

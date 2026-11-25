@@ -1,0 +1,68 @@
+import { SWITCH_VALUES, type PreferenceDefinition } from './preference-definition.js';
+
+/** How every code editor of the window writes: its type, its indent, what it closes and wraps. */
+export const EDITOR_PREFERENCES = [
+    {
+        // Empty writes in the mono type of the product; a family the system lacks falls back to it.
+        defaultValue: '',
+        helpKey: 'preferences:editorFontFamilyHelp',
+        key: 'editor.fontFamily',
+        labelKey: 'preferences:editorFontFamily',
+        maxLength: 200,
+        scope: 'app',
+        section: 'editor',
+        type: 'text',
+    },
+    {
+        defaultValue: '12',
+        helpKey: 'preferences:editorFontSizeHelp',
+        key: 'editor.fontSize',
+        labelKey: 'preferences:editorFontSize',
+        scope: 'app',
+        section: 'editor',
+        type: 'select',
+        unitKey: 'preferences:unitPixels',
+        values: ['10', '11', '12', '13', '14', '15', '16', '18', '20'],
+    },
+    {
+        defaultValue: '4',
+        helpKey: 'preferences:editorIndentSizeHelp',
+        key: 'editor.indentSize',
+        labelKey: 'preferences:editorIndentSize',
+        scope: 'app',
+        section: 'editor',
+        type: 'select',
+        unitKey: 'preferences:unitColumns',
+        values: ['2', '4', '8'],
+    },
+    {
+        defaultValue: 'spaces',
+        helpKey: 'preferences:editorIndentTypeHelp',
+        key: 'editor.indentType',
+        labelKey: 'preferences:editorIndentType',
+        scope: 'app',
+        section: 'editor',
+        type: 'select',
+        values: ['spaces', 'tabs'],
+    },
+    {
+        defaultValue: 'on',
+        helpKey: 'preferences:editorAutoCloseHelp',
+        key: 'editor.autoClose',
+        labelKey: 'preferences:editorAutoClose',
+        scope: 'app',
+        section: 'editor',
+        type: 'switch',
+        values: SWITCH_VALUES,
+    },
+    {
+        defaultValue: 'on',
+        helpKey: 'preferences:editorWordWrapHelp',
+        key: 'editor.wordWrap',
+        labelKey: 'preferences:editorWordWrap',
+        scope: 'app',
+        section: 'editor',
+        type: 'switch',
+        values: SWITCH_VALUES,
+    },
+] as const satisfies readonly PreferenceDefinition[];

@@ -263,7 +263,12 @@ export {
     type SkippedScript,
 } from './script/script-output.js';
 
-export type { PreferenceDefinition } from './preference/preference-definition.js';
+export {
+    acceptsPreferenceValue,
+    type ChoicePreference,
+    type PreferenceDefinition,
+    type TextPreference,
+} from './preference/preference-definition.js';
 export { PREFERENCE_DEFINITIONS } from './preference/preference-definitions.js';
 export { THEME_IDS, type ThemeId } from './preference/theme-id.js';
 export {

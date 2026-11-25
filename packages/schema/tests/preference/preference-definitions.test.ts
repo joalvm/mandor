@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
+import { EDITOR_PREFERENCES } from '../../src/preference/editor-preferences.js';
+import { INTERFACE_PREFERENCES } from '../../src/preference/interface-preferences.js';
+import { acceptsPreferenceValue } from '../../src/preference/preference-definition.js';
 import { PREFERENCE_DEFINITIONS } from '../../src/preference/preference-definitions.js';
+import { RETENTION_PREFERENCES } from '../../src/preference/retention-preferences.js';
 import { THEME_IDS } from '../../src/preference/theme-id.js';
 
 describe('PREFERENCE_DEFINITIONS', () => {
@@ -11,11 +15,9 @@ describe('PREFERENCE_DEFINITIONS', () => {
     });
 
     it.each(PREFERENCE_DEFINITIONS.map((definition) => [definition.key, definition] as const))(
-        '%s has a default that is one of its own values',
+        '%s has a default it takes',
         (_key, definition) => {
-            const values: readonly string[] = definition.values;
-
-            expect(values).toContain(definition.defaultValue);
+            expect(acceptsPreferenceValue(definition, definition.defaultValue)).toBe(true);
         },
     );
 
@@ -66,6 +68,64 @@ describe('PREFERENCE_DEFINITIONS', () => {
             type: 'select',
             values: ['system', 'full', 'reduced'],
         });
+    });
+
+    it('carries the groups of the interface, the editor and the past, each in a section of its own', () => {
+        const sections = (group: readonly { section: string }[]) =>
+            new Set(group.map((definition) => definition.section));
+
+        expect(PREFERENCE_DEFINITIONS).toEqual(expect.arrayContaining([...INTERFACE_PREFERENCES]));
+        expect(PREFERENCE_DEFINITIONS).toEqual(expect.arrayContaining([...EDITOR_PREFERENCES]));
+        expect(PREFERENCE_DEFINITIONS).toEqual(expect.arrayContaining([...RETENTION_PREFERENCES]));
+        expect(sections(INTERFACE_PREFERENCES)).toEqual(new Set(['interface']));
+        expect(sections(EDITOR_PREFERENCES)).toEqual(new Set(['editor']));
+        expect(sections(RETENTION_PREFERENCES)).toEqual(new Set(['history', 'activity']));
+    });
+
+    /** What the window did before the settings existed is what it keeps doing until changed. */
+    it('starts the interface and the editor where the window already stood', () => {
+        const defaults = Object.fromEntries(
+            [...INTERFACE_PREFERENCES, ...EDITOR_PREFERENCES].map((definition) => [
+                definition.key,
+                definition.defaultValue,
+            ]),
+        );
+
+        expect(defaults).toEqual({
+            'editor.autoClose': 'on',
+            'editor.fontFamily': '',
+            'editor.fontSize': '12',
+            'editor.indentSize': '4',
+            'editor.indentType': 'spaces',
+            'editor.wordWrap': 'on',
+            'tabs.alwaysNew': 'off',
+            'tabs.askUnsaved': 'on',
+            'tabs.closedKept': '20',
+        });
+    });
+
+    it('keeps 500 sends for 30 days and 500 entries of activity until told otherwise', () => {
+        expect(
+            Object.fromEntries(
+                RETENTION_PREFERENCES.map((definition) => [
+                    definition.key,
+                    definition.defaultValue,
+                ]),
+            ),
+        ).toEqual({
+            'activity.maxEntries': '500',
+            'history.maxAgeDays': '30',
+            'history.maxEntries': '500',
+        });
+    });
+
+    it('reads every option of a list of amounts as a whole number', () => {
+        const amounts = PREFERENCE_DEFINITIONS.flatMap((definition) =>
+            'unitKey' in definition ? definition.values : [],
+        );
+
+        expect(amounts.length).toBeGreaterThan(0);
+        expect(amounts.every((amount) => /^[1-9]\d*$/.test(amount))).toBe(true);
     });
 
     it('keeps every preference at the level of the app', () => {

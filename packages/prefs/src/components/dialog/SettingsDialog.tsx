@@ -9,6 +9,7 @@ import { ProxySettings } from '../network/ProxySettings.js';
 import { ThemesSection } from '../themes/ThemesSection.js';
 import { AboutSection } from './AboutSection.js';
 import { ForgetApprovalsRow } from './ForgetApprovalsRow.js';
+import { GeneralSection } from './GeneralSection.js';
 import { PreferenceRows } from './PreferenceRows.js';
 import { RunScriptsRow } from './RunScriptsRow.js';
 import { ShortcutsList } from './ShortcutsList.js';
@@ -16,13 +17,14 @@ import { UpdatesRow } from './UpdatesRow.js';
 
 /**
  * What every app opens with, before what it adds: the language, which is the first thing a
- * reader of the settings looks for, and how the window looks.
+ * reader of the settings looks for, with the panels, the tabs and the editors, and how the window
+ * looks.
  */
 const LEADING: readonly SettingsSectionEntry[] = [
     {
         icon: 'settings',
         id: 'general',
-        content: <PreferenceRows section="general" titleKey="preferences:language" />,
+        content: <GeneralSection />,
         titleKey: 'preferences:section-general',
     },
     {

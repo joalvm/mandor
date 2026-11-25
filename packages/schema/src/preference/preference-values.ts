@@ -1,4 +1,4 @@
-import type { PreferenceDefinition } from './preference-definition.js';
+import { acceptsPreferenceValue, type PreferenceDefinition } from './preference-definition.js';
 import { PREFERENCE_DEFINITIONS } from './preference-definitions.js';
 import type { PreferenceScope } from './preference-scope.js';
 
@@ -41,13 +41,5 @@ function resolveDefinition(definition: DefinedPreference, layers: PreferenceLaye
 }
 
 function validValueOrDefault(definition: DefinedPreference, stored: unknown): string {
-    if (typeof stored !== 'string') {
-        return definition.defaultValue;
-    }
-
-    if (!definition.values.includes(stored)) {
-        return definition.defaultValue;
-    }
-
-    return stored;
+    return acceptsPreferenceValue(definition, stored) ? stored : definition.defaultValue;
 }
