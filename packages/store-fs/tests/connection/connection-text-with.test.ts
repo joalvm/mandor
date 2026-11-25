@@ -64,6 +64,10 @@ describe('the text of a connection with changes', () => {
     it('refuses a text that is not a connection and a change the domain rejects', () => {
         expect(() => connectionTextWith('{ roto', { url: 'ws://x' })).toThrow();
         expect(() => connectionTextWith('- a\n', { url: 'ws://x' })).toThrow();
-        expect(() => connectionTextWith(text, { url: '' })).toThrow();
+        expect(() => connectionTextWith(text, { url: 'ftp://x' })).toThrow();
+    });
+
+    it('keeps an empty url, the address of a connection just born', () => {
+        expect(() => connectionTextWith(text, { url: '' })).not.toThrow();
     });
 });
