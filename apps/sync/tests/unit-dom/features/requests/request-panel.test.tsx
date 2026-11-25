@@ -1,9 +1,9 @@
 import { ItemProvider, itemResource } from '@mandor/collections';
 import { envStore } from '@mandor/env';
 import { success } from '@mandor/ipc';
-import { shellStore } from '@mandor/shell';
+import { paneLayoutStore, shellStore, togglePaneLayout } from '@mandor/shell';
 import { byPart } from '@mandor/ui/testing';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { RequestPanel } from '../../../../src/renderer/features/requests/components/panel/RequestPanel.js';
@@ -40,6 +40,7 @@ describe('the panel of a request', () => {
         envStore.getState().reset();
         requestsStore.getState().reset();
         shellStore.getState().reset();
+        paneLayoutStore.setState(paneLayoutStore.getInitialState());
     });
 
     it('opens on the query, with every half of the request one tab away', async () => {
@@ -83,6 +84,26 @@ describe('the panel of a request', () => {
         expect(request).toContainElement(screen.getByRole('tab', { name: 'Params' }));
         expect(response).not.toContainElement(screen.getByRole('tab', { name: 'Params' }));
         expect(byPart('request-panel')).toHaveClass('gap-gap-gutter');
+    });
+
+    /** The switch of the status line stands the request beside its response or over it. */
+    it('stands the request beside its response, and over it once the layout turns', async () => {
+        render(
+            <ItemProvider value={{ resource: RESOURCE, saved: undefined }}>
+                <RequestPanel />
+            </ItemProvider>,
+            { wrapper: AppProviders },
+        );
+
+        await screen.findByRole('region', { name: 'Request' });
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'row');
+
+        act(() => {
+            togglePaneLayout();
+        });
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'column');
     });
 
     it('a name nothing declares leaves the destination as it is and the send open', async () => {

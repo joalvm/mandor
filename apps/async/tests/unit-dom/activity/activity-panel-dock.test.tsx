@@ -2,8 +2,9 @@ import { MessagesProvider } from '@mandor/i18n';
 import type { ActivityRecord } from '@mandor/ipc';
 import type { ResourceUri } from '@mandor/schema';
 import { ToastProvider, TooltipProvider } from '@mandor/ui';
+import { paneLayoutStore, togglePaneLayout } from '@mandor/shell';
 import { allByPart, byPart } from '@mandor/ui/testing';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { ActivityEntry } from '../../../src/renderer/activity/activity-entry.js';
@@ -57,6 +58,20 @@ describe('the dock of the timeline', () => {
         cleanup();
 
         activityStore.getState().reset();
+        paneLayoutStore.setState(paneLayoutStore.getInitialState());
+    });
+
+    /** The dock stands across the way the message and the activity stand, so each keeps its room. */
+    it('stands the dock under the timeline, and beside it once the layout turns', () => {
+        draw();
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'column');
+
+        act(() => {
+            togglePaneLayout();
+        });
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'row');
     });
 
     /** The detail is what a selection opens, never a fixture of the panel. */

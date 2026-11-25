@@ -1,5 +1,6 @@
 import { CONSOLE_COMMANDS } from './console-commands.js';
 import { GROUP_COMMANDS } from './group-commands.js';
+import { PANE_LAYOUT_COMMANDS } from './pane-layout-commands.js';
 import { TAB_COMMANDS } from './tab-commands.js';
 import { TAB_WALK_COMMANDS } from './tab-walk-commands.js';
 import { WINDOW_COMMANDS } from './window-commands.js';
@@ -18,6 +19,7 @@ export function registerShellCommands(): () => void {
     const all = [
         ...CONSOLE_COMMANDS,
         ...GROUP_COMMANDS,
+        ...PANE_LAYOUT_COMMANDS,
         ...TAB_COMMANDS,
         ...TAB_WALK_COMMANDS,
         ...WINDOW_COMMANDS,

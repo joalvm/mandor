@@ -2,7 +2,7 @@ import { envStore } from '@mandor/env';
 import { MessagesProvider } from '@mandor/i18n';
 import { ROOT_GROUP_ID } from '@mandor/ipc';
 import type { FakeBridge } from '@mandor/ipc/testing';
-import { shellStore } from '@mandor/shell';
+import { paneLayoutStore, shellStore, togglePaneLayout } from '@mandor/shell';
 import { ToastProvider, TooltipProvider } from '@mandor/ui';
 import { byPart } from '@mandor/ui/testing';
 import { editorAt } from '@mandor/ui/testing/editors-in';
@@ -75,6 +75,7 @@ afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
     shellStore.getState().reset();
+    paneLayoutStore.setState(paneLayoutStore.getInitialState());
 
     for (const unregister of UNREGISTER.splice(0)) {
         unregister();
@@ -96,6 +97,17 @@ describe('the connection panel', () => {
         expect(screen.getByRole('region', { name: 'Mensaje' })).toBeInTheDocument();
         expect(screen.getByRole('region', { name: 'Actividad' })).not.toContainElement(target);
         expect(byPart('connection-panel')).toHaveClass('gap-gap-gutter');
+    });
+
+    /** The switch of the status line stands the message beside the activity or over it. */
+    it('stands the message beside the activity, and over it once the layout turns', () => {
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'row');
+
+        act(() => {
+            togglePaneLayout();
+        });
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'column');
     });
 
     /** A header switched off stays in the table and never reaches the handshake. */

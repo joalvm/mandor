@@ -121,4 +121,27 @@ describe('the line of status', () => {
             first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING,
         ).toBeTruthy();
     });
+
+    /** The console and the layout are the last things on the line, after what features declare. */
+    it('ends with the switch of the console and then the one of the layout', () => {
+        render(
+            <StatusItem id="declared" order={10}>
+                <i>declarado</i>
+            </StatusItem>,
+        );
+        draw();
+
+        const declared = screen.getByText('declarado');
+        const consoleSwitch = screen.getByRole('button', { name: 'Mostrar la consola' });
+        const layoutSwitch = screen.getByRole('button', {
+            name: 'Diseño vertical · pasar a horizontal',
+        });
+
+        expect(
+            declared.compareDocumentPosition(consoleSwitch) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+        expect(
+            consoleSwitch.compareDocumentPosition(layoutSwitch) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
 });

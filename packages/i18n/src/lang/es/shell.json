@@ -36,6 +36,8 @@
     "faultWindowTitle": "Algo falló en la ventana",
     "foldSections": "Colapsar secciones",
     "noCommands": "Ningún comando coincide",
+    "paneLayoutHorizontal": "Diseño horizontal · pasar a vertical",
+    "paneLayoutVertical": "Diseño vertical · pasar a horizontal",
     "ready": "Listo",
     "resizeGroups": "Redimensionar grupos",
     "resizeSidebar": "Redimensionar barra lateral",

@@ -8,6 +8,7 @@ import { useShellStore } from '../../hooks/useShellStore.js';
 import { useStatusItems } from '../../status/status-item-registry.js';
 import { type SyncNotice, syncNoticeOf } from '../../sync-notice.js';
 import { ConsoleToggle } from './ConsoleToggle.js';
+import { PaneLayoutToggle } from './PaneLayoutToggle.js';
 
 type StatusLook = {
     glyph: IconName;
@@ -27,11 +28,12 @@ const STATUS_LOOK: Readonly<Record<SyncNotice | 'ready', StatusLook>> = {
 };
 
 /**
- * The row inside the bottom zone: whether the window is busy, and, before anything it says,
- * the switch of the lateral and the one of the console. Whether the open origin keeps in step with its remote is said in
- * its few words — it works, it failed, something clashed — and never why, on a pill of the
- * tint of its tone with the glyph of its standing. Where the work lives is not said here — a path in the chrome is
- * of no use to the user and names what the domain hides.
+ * The row inside the bottom zone. At its start, the switch of the lateral. At its end, whether
+ * the open origin keeps in step with its remote, said in its few words — it works, it failed,
+ * something clashed — and never why, on a pill of the tint of its tone with the glyph of its
+ * standing; then what the features declare, and last the switches of the console and of the
+ * layout of the panels, at the far end as in Postman. Where the work lives is not said here — a
+ * path in the chrome is of no use to the user and names what the domain hides.
  *
  * The switch owns what it means to hide the lateral: a width of zero, and the width it had back
  * when it returns. Spelling that out in each window would be the same rule written twice.
@@ -60,7 +62,6 @@ export function StatusLine() {
                 }}
                 size="xs"
             />
-            <ConsoleToggle />
             <div className="ml-auto flex items-center gap-gap-control">
                 <StatusText>
                     <Badge tone={look.tone}>
@@ -78,6 +79,8 @@ export function StatusLine() {
                 {statusItems.map((item) => (
                     <Fragment key={item.id}>{item.content}</Fragment>
                 ))}
+                <ConsoleToggle />
+                <PaneLayoutToggle />
             </div>
         </div>
     );

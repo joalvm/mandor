@@ -36,6 +36,8 @@
     "faultWindowTitle": "Something failed in the window",
     "foldSections": "Collapse sections",
     "noCommands": "No command matches",
+    "paneLayoutHorizontal": "Horizontal layout · switch to vertical",
+    "paneLayoutVertical": "Vertical layout · switch to horizontal",
     "ready": "Ready",
     "resizeGroups": "Resize groups",
     "resizeSidebar": "Resize sidebar",

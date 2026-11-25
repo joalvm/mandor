@@ -21,6 +21,7 @@
     "splitRight": "Dividir el grupo a la derecha",
     "switchWorkspace": "Cambiar de workspace",
     "toggleConsole": "Mostrar u ocultar la consola",
+    "togglePaneLayout": "Alternar entre diseño vertical y horizontal",
     "searchWorkspace": "Buscar en el workspace",
     "toggleMaximized": "Alternar el grupo maximizado",
     "openHistory": "Abrir historial",

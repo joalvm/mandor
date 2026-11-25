@@ -35,6 +35,8 @@ export const DEFAULT_SHORTCUTS: readonly Shortcut[] = [
     // The console comes out from inside a field too: it is where a send or a script just wrote.
     // Postman's own key, so the hand that knows it finds it here.
     { combination: '$mod+Alt+KeyC', command: 'shell.toggleConsole', scope: 'editing' },
+    // Postman's key for its two-pane view, so the hand that knows it finds it here.
+    { combination: '$mod+Alt+KeyV', command: 'shell.togglePaneLayout', scope: 'window' },
     { combination: '$mod+Digit1', command: 'group.focus.1', scope: 'window' },
     { combination: '$mod+Digit2', command: 'group.focus.2', scope: 'window' },
     { combination: '$mod+Digit3', command: 'group.focus.3', scope: 'window' },
