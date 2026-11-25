@@ -31,7 +31,7 @@ export async function createWorkspaceIn(page: Page, from: string, name: string):
 
     const field = page.getByRole('textbox', { name: 'Nombre del workspace' });
 
-    await field.click();
+    await expect(field).toBeFocused();
     await field.pressSequentially(name);
     await page.getByRole('button', { exact: true, name: 'Crear' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();
@@ -43,7 +43,7 @@ export async function createWorkspaceIn(page: Page, from: string, name: string):
  * under its word with its tab open and the URL in focus, so the name is changed from its row.
  */
 export async function createNamedRequest(page: Page, folder: string, name: string): Promise<void> {
-    await page.getByRole('button', { name: 'Colección nueva' }).click();
+    await page.getByRole('button', { name: 'Nueva colección' }).click();
     await page.getByRole('textbox', { name: 'Nombre nuevo' }).fill(folder);
     await page.getByRole('textbox', { name: 'Nombre nuevo' }).press('Enter');
 

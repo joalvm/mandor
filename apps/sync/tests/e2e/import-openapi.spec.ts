@@ -133,7 +133,7 @@ test('a Swagger 2.0 document enters another workspace as a collection of its own
 
     const field = page.getByRole('textbox', { name: 'Workspace name' });
 
-    await field.click();
+    await expect(field).toBeFocused();
     await field.pressSequentially('Segunda');
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeHidden();

@@ -1,5 +1,5 @@
 import { useMessages } from '@mandor/i18n';
-import { LoadingIcon } from '@mandor/icons';
+import { ErrorIcon, LoadingIcon } from '@mandor/icons';
 import { showConsole } from '@mandor/shell';
 import { Button, cn } from '@mandor/ui';
 import type { PropsWithChildren } from 'react';
@@ -15,9 +15,6 @@ type SendStatusProps = {
     /** Sends the same again with no script run; without it, a script that broke offers no way out. */
     onSendWithoutScripts?: (() => void) | undefined;
 };
-
-const BAND =
-    'flex h-header min-w-0 shrink-0 items-center gap-gap-control px-pad-panel text-sm text-text-primary';
 
 /**
  * What the half says while no answer is due yet, and whether it turns while it waits. A send on
@@ -80,8 +77,10 @@ function SendOutcomeStatus({ entry, onSendWithoutScripts }: SendOutcomeStatusPro
 }
 
 /**
- * A cut the user asked for is not a fault: the red is for what went wrong on its own. A long
- * fault gives way before the ways out do, so they stay whole on a narrow half.
+ * A failed send drawn the way Postman draws it: one box where the answer would have stood, tinted
+ * red when the send broke on its own, with what went wrong, what the transport said under it, and
+ * the ways out. A cut the user asked for is not a fault: it keeps the box untinted and unmarked.
+ * The console is always one of the ways out, because every send writes there.
  */
 function FailureBand({ entry, onSendWithoutScripts }: SendOutcomeStatusProps) {
     const errors = useMessages('errors');
@@ -94,28 +93,69 @@ function FailureBand({ entry, onSendWithoutScripts }: SendOutcomeStatusProps) {
     const fault = entry.error !== 'request-aborted';
 
     return (
-        <div
-            className={cn(BAND, fault && 'text-text-error')}
-            data-fault={fault}
-            data-part="response-summary"
-            data-state={entry.state}
-        >
-            <span aria-hidden className="min-w-0 truncate">
-                {errors(entry.error)}
-            </span>
-            <div className="ml-auto flex shrink-0 items-center gap-gap-control">
-                <SendWithoutScriptsButton
-                    broke={entry.error === 'script-failed'}
-                    onSend={onSendWithoutScripts}
+        <div className="flex min-w-0 flex-col p-pad-panel" data-part="send-failure">
+            <div
+                className={cn(
+                    'flex min-w-0 flex-col gap-gap-control rounded-md border border-border-subtle p-pad-panel text-sm text-text-primary',
+                    fault && 'border-transparent bg-surface-error-tint',
+                )}
+                data-part="send-failure-box"
+            >
+                <p
+                    className="flex min-w-0 items-center gap-gap-icon-text"
+                    data-fault={fault}
+                    data-part="response-summary"
+                    data-state={entry.state}
                 >
-                    {labels('sendWithoutScripts')}
-                </SendWithoutScriptsButton>
-                <OpenConsoleButton broke={entry.error === 'script-failed'}>
-                    {labels('openConsole')}
-                </OpenConsoleButton>
-                <OpenHistoryButton />
+                    <FaultGlyph fault={fault} />
+                    <span aria-hidden className="min-w-0">
+                        {errors(entry.error)}
+                    </span>
+                </p>
+                <FailureMessage fault={fault} message={entry.message} />
+                <div className="flex min-w-0 items-center gap-gap-control">
+                    <SendWithoutScriptsButton
+                        broke={entry.error === 'script-failed'}
+                        onSend={onSendWithoutScripts}
+                    >
+                        {labels('sendWithoutScripts')}
+                    </SendWithoutScriptsButton>
+                    <Button onClick={showConsole} size="sm">
+                        {labels('openConsole')}
+                    </Button>
+                    <OpenHistoryButton />
+                </div>
             </div>
         </div>
+    );
+}
+
+/** The mark of a send that broke on its own; a cut the user asked for carries none. */
+function FaultGlyph({ fault }: { fault: boolean }) {
+    if (!fault) {
+        return null;
+    }
+
+    return (
+        <span className="flex size-icon-md shrink-0 items-center justify-center text-text-error">
+            <ErrorIcon />
+        </span>
+    );
+}
+
+/** What the transport said, selectable and whole: it is what gets copied into a search. */
+function FailureMessage({ fault, message }: { fault: boolean; message: string | undefined }) {
+    if (!fault || message === undefined || message === '') {
+        return null;
+    }
+
+    return (
+        <p
+            className="min-w-0 font-mono text-xs break-all whitespace-pre-wrap text-text-error select-text"
+            data-part="send-failure-message"
+        >
+            {message}
+        </p>
     );
 }
 
@@ -132,24 +172,6 @@ function SendWithoutScriptsButton({ broke, children, onSend }: SendWithoutScript
 
     return (
         <Button onClick={onSend} size="sm">
-            {children}
-        </Button>
-    );
-}
-
-type OpenConsoleButtonProps = PropsWithChildren<{ broke: boolean }>;
-
-/**
- * The way to what a broken script wrote: the console of the window, which stays put away until
- * it is asked for, as a browser keeps its own.
- */
-function OpenConsoleButton({ broke, children }: OpenConsoleButtonProps) {
-    if (!broke) {
-        return null;
-    }
-
-    return (
-        <Button onClick={showConsole} size="sm">
             {children}
         </Button>
     );

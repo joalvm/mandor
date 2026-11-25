@@ -22,9 +22,15 @@
     height: 100%;
 }
 
+/**
+ * The text of the window starts at the size of the interface, which a control or a page raises
+ * where it needs to. The root keeps the size of the browser, so a length in `rem` keeps its
+ * meaning; the body, which everything drawn inherits from, a portal included, says the size.
+ */
 body {
     margin: 0;
     overflow: hidden;
+    font-size: var(--mandor-text-sm-size);
 }
 
 /**

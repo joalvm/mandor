@@ -26,5 +26,5 @@ export async function createDoc(workspaceId: string, title: string): Promise<voi
 
     await loadDocs(workspaceId);
     openDoc(workspaceId, result.value);
-    docsStore.getState().setRenaming(result.value);
+    docsStore.getState().nameJustMade(result.value);
 }

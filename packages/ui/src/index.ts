@@ -39,6 +39,12 @@ export { SearchInput } from './components/input/SearchInput.js';
 export { Textarea } from './components/input/Textarea.js';
 export { ListRow } from './components/row/ListRow.js';
 export { LogLines, type LogLine, type LogTone } from './components/log/LogLines.js';
+export { ConsoleEntries } from './components/console/ConsoleEntries.js';
+export type {
+    ConsoleEntry,
+    ConsoleLevel,
+    ConsoleSection,
+} from './components/console/console-entry.js';
 export { RowList } from './components/row/RowList.js';
 export type { RowActivation } from './components/row/row-activation.js';
 export { MethodMark } from './components/indicator/MethodMark.js';
@@ -131,6 +137,7 @@ export type { EditorFix, FixesOf } from './editor/editor-fix.js';
 export { withUncheckedPatternMarks } from './editor/unchecked-pattern-marks.js';
 export type { EditorVariableHover, EditorVariables } from './editor/editor-variable.js';
 export { formattedJsonc } from './editor/jsonc-format.js';
+export { withEscapesShown } from './editor/json-escapes.js';
 export { schemaLintOf } from './editor/schema-lint-of.js';
 export { warmEditorWhenIdle } from './editor/warm-editor.js';
 export { MARKDOWN_PREVIEW_EVENT } from './editor/markdown-preview.js';

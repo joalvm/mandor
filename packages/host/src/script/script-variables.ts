@@ -7,7 +7,7 @@ export type ScriptVariablesPlace = {
     environmentId: string | null;
 };
 
-type ScriptVariableSet = { name: string; value: string };
+export type ScriptVariableSet = { name: string; value: string };
 
 /** What became of the values of one run: kept, too late, or over what the place may hold. */
 type ApplyVerdict = 'applied' | 'stale' | 'full';
@@ -24,6 +24,8 @@ export type ScriptVariables = {
         generation: number,
         sets: readonly ScriptVariableSet[],
     ): ApplyVerdict;
+    /** Lets go of names the environment of the place took: what it says of them is what counts. */
+    release(place: ScriptVariablesPlace, names: readonly string[]): void;
     /** Forgets every value of a workspace, in all its environments: what comes late is dropped. */
     clear(place: Omit<ScriptVariablesPlace, 'environmentId'>): void;
     /** What forgetting the approvals does: every place moves on, and what comes late is dropped. */
@@ -101,6 +103,11 @@ export function createScriptVariables(limits: VariableLimits = SCRIPT_LIMITS): S
             environments.set(place.environmentId ?? '', next);
 
             return 'applied';
+        },
+        release(place, names) {
+            const environment = workspaces.get(workspaceKey(place))?.get(place.environmentId ?? '');
+
+            names.forEach((name) => environment?.delete(name));
         },
         clear(place) {
             moves += 1;

@@ -53,7 +53,7 @@ function placeOf(error: ScriptError, labels: Labels): string | undefined {
 }
 
 /** The scripts that were there and did not run, said once for each moment that skipped them. */
-function notesOf(push: RequestScriptOutput, labels: Labels): LogLine[] {
+function switchedOffOf(push: RequestScriptOutput, labels: Labels): LogLine[] {
     if (push.switchedOff === 0) {
         return [];
     }
@@ -67,11 +67,28 @@ function notesOf(push: RequestScriptOutput, labels: Labels): LogLine[] {
     ];
 }
 
+/** A script moved where the send went, so it left with no secret; and how to have them go. */
+function movedOf(push: RequestScriptOutput, labels: Labels): LogLine[] {
+    if (!push.destinationMoved) {
+        return [];
+    }
+
+    return [
+        {
+            key: `${push.phase}-destinationMoved`,
+            tone: 'warn',
+            text: labels('destinationMoved'),
+            detail: labels('destinationMovedHint'),
+        },
+    ];
+}
+
 /**
  * What one moment of a send writes to the console of the window: the scripts that did not run,
- * what the rest wrote in the order they wrote it, and last where the one that broke stopped.
- * Each line is keyed by its moment, so the two moments of a send sit under one heading. What
- * main said in place of a script is said in the language of the interface.
+ * a destination a script moved, which left the secrets behind, what the rest wrote in the order
+ * they wrote it, and last where the one that broke stopped. Each line is keyed by its moment, so
+ * the two moments of a send sit under one heading. What main said in place of a script is said
+ * in the language of the interface.
  */
 export function consoleLines(
     push: RequestScriptOutput,
@@ -90,5 +107,5 @@ export function consoleLines(
         detail: placeOf(error, labels),
     }));
 
-    return [...notesOf(push, labels), ...logs, ...errors];
+    return [...switchedOffOf(push, labels), ...movedOf(push, labels), ...logs, ...errors];
 }

@@ -7,6 +7,8 @@ type InlineNameInputProps = {
     label: string;
     onCancel: () => void;
     onCommit: (value: string) => boolean;
+    /** What Escape means to the row, when it means more than letting the field go. */
+    onEscape?: (() => void) | undefined;
     value: string;
 };
 
@@ -14,7 +16,8 @@ type InlineNameInputProps = {
  * Edits a row name in place. It stands where the name stood, and the row keeps everything else:
  * the glyph before it and the actions after it. Enter on a name the row refuses keeps the field
  * open and marked; leaving the field with one, or with nothing typed, lets it go, the way a file
- * manager drops a rename nobody finished.
+ * manager drops a rename nobody finished. Escape lets it go too, unless the row reads it as more:
+ * the field of a row made a moment ago takes the making back with it.
  *
  * What happens inside the field stays in the field. A click that places the caret is not a
  * click on the row, and a double click that takes a word does not start another rename.
@@ -24,6 +27,7 @@ export function InlineNameInput({
     label,
     onCancel,
     onCommit,
+    onEscape,
     value,
 }: InlineNameInputProps) {
     const editableRef = useRef<HTMLSpanElement>(null);
@@ -42,7 +46,7 @@ export function InlineNameInput({
 
     function onKeyDown(event: KeyboardEvent<HTMLSpanElement>): void {
         const action = new Map([
-            ['Escape', onCancel],
+            ['Escape', onEscape ?? onCancel],
             ['Enter', commit],
         ]).get(event.key);
 

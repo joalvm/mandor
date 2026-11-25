@@ -32,8 +32,9 @@ export const DEFAULT_SHORTCUTS: readonly Shortcut[] = [
     { combination: '$mod+Shift+Backslash', command: 'group.splitDown', scope: 'window' },
     { combination: '$mod+Shift+KeyW', command: 'group.close', scope: 'window' },
     { combination: '$mod+KeyM', command: 'group.toggleMaximized', scope: 'window' },
-    // The console comes out from inside a field too: it is where a script that just ran wrote.
-    { combination: '$mod+Shift+KeyY', command: 'shell.toggleConsole', scope: 'editing' },
+    // The console comes out from inside a field too: it is where a send or a script just wrote.
+    // Postman's own key, so the hand that knows it finds it here.
+    { combination: '$mod+Alt+KeyC', command: 'shell.toggleConsole', scope: 'editing' },
     { combination: '$mod+Digit1', command: 'group.focus.1', scope: 'window' },
     { combination: '$mod+Digit2', command: 'group.focus.2', scope: 'window' },
     { combination: '$mod+Digit3', command: 'group.focus.3', scope: 'window' },

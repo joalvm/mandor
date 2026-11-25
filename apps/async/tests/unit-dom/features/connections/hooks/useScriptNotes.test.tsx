@@ -77,7 +77,7 @@ describe('what the window hears of the scripts of a connection', () => {
         hear().say(scriptNoteOf());
 
         expect(activityStore.getState().entries[RESOURCE]).toBeUndefined();
-        expect(consoleStore.getState().runs).toEqual([]);
+        expect(consoleStore.getState().entries).toEqual([]);
     });
 
     it('writes what the scripts said to the console, under the connection and the moment', () => {
@@ -91,25 +91,25 @@ describe('what the window hears of the scripts of a connection', () => {
             }),
         );
 
-        const [run] = consoleStore.getState().runs;
+        const entries = consoleStore.getState().entries;
 
-        expect(run).toMatchObject({ id: 'alpha/onConnect', title: 'Gateway · On connect' });
-        expect(run?.lines.map((line) => line.text)).toEqual([
+        expect(entries.map((entry) => entry.source)).toEqual([
+            'Gateway · On connect',
+            'Gateway · On connect',
+        ]);
+        expect(entries.map((entry) => entry.text)).toEqual([
             'hi',
             'A script ran before this connection opened: it does not reconnect on its own.',
         ]);
     });
 
-    it('keeps the notes of one moment under one heading', () => {
+    it('writes the notes of one moment one after the other', () => {
         const notes = hear();
 
         notes.say(scriptNoteOf({ event: 'onMessage', at: 1, logs: [{ level: 'log', text: 'a' }] }));
         notes.say(scriptNoteOf({ event: 'onMessage', at: 2, logs: [{ level: 'log', text: 'b' }] }));
 
-        const runs = consoleStore.getState().runs;
-
-        expect(runs).toHaveLength(1);
-        expect(runs[0]?.lines.map((line) => line.text)).toEqual(['a', 'b']);
+        expect(consoleStore.getState().entries.map((entry) => entry.text)).toEqual(['a', 'b']);
     });
 
     it('shows what the scripts set in the environment the connection resolves against', () => {
@@ -130,7 +130,7 @@ describe('what the window hears of the scripts of a connection', () => {
         hear().say(scriptNoteOf({ logs: [{ level: 'log', text: 'hi' }] }));
 
         expect(activityStore.getState().entries[RESOURCE]).toHaveLength(1);
-        expect(consoleStore.getState().runs).toEqual([]);
+        expect(consoleStore.getState().entries).toEqual([]);
     });
 
     it('stops hearing when the window lets go of it', () => {
@@ -141,6 +141,6 @@ describe('what the window hears of the scripts of a connection', () => {
             fakeBridge.emitScriptNote(scriptNoteOf({ logs: [{ level: 'log', text: 'hi' }] }));
         });
 
-        expect(consoleStore.getState().runs).toEqual([]);
+        expect(consoleStore.getState().entries).toEqual([]);
     });
 });

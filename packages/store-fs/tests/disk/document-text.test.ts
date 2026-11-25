@@ -25,4 +25,20 @@ describe('the text of a document with changes in it', () => {
 
         expect(text).toContain(`name: ${long}\n`);
     });
+
+    /** An empty text can only be written in quotes; the value that replaces it owes them nothing. */
+    it('writes a value plain over a key that was empty', () => {
+        const text = documentTextWith(parseDocument('url: ""\nname: \'\'\n'), {
+            url: 'wss://example.com/socket',
+            name: 'Pedidos',
+        });
+
+        expect(text).toBe('url: wss://example.com/socket\nname: Pedidos\n');
+    });
+
+    it('keeps the quotes a person chose for a value that was not empty', () => {
+        const text = documentTextWith(parseDocument("name: 'Pedidos'\n"), { name: 'Envíos' });
+
+        expect(text).toBe("name: 'Envíos'\n");
+    });
 });

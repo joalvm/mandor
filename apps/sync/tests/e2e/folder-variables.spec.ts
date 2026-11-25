@@ -118,7 +118,7 @@ test('the popover of the variable names the subfolder and what it overrides', as
     const popover = page.getByRole('dialog', { name: '{{level}}' });
 
     await expect(popover.getByText('Defined in Sub')).toBeVisible();
-    await expect(popover.getByText('Overrides Carpeta, Local, API')).toBeVisible();
+    await expect(popover.getByText('Overrides Carpeta, New environment, API')).toBeVisible();
 });
 
 test('a request at the root of the collection takes the environment over the collection', async () => {

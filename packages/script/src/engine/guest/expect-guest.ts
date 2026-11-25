@@ -115,8 +115,8 @@ function assert(spec, actual, args, negated) {
     }
 }
 
-function assertion(actual, negated) {
-    const self = {};
+// The words of an assertion of actual, on self: a new object, or one that is also a function.
+function assertion(actual, negated, self = {}) {
     const same = { get: () => self };
     const flip = { get: () => assertion(actual, !negated) };
 

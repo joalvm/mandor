@@ -154,6 +154,7 @@ export const SCRIPT_API: readonly ApiEntry[] = [
     entry('response', 'response.text', `(): ${TEXT_OR_NOTHING}`),
     entry('response', 'response.json', '(): any'),
     ...readLines('response', 'headers'),
+    entry('response', 'response.to', 'ResponseAssertion'),
     entry('message', 'message.text', TEXT_OR_NOTHING),
     entry('message', 'message.direction', "'incoming' | 'outgoing'"),
     entry('message', 'message.binary', 'boolean'),

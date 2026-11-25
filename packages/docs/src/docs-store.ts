@@ -20,6 +20,8 @@ type DocsActions = {
     forgetDocs: () => void;
     setError: (error: ErrorCode | null) => void;
     setRenaming: (name: string | null) => void;
+    /** Opens the name field of a doc made a moment ago, the one field Escape can take back. */
+    nameJustMade: (name: string) => void;
     /** Writes down which side a tab opened on, from the text it first saw. Once, per tab. */
     settleSide: (tabId: string, text: string) => void;
     setText: (resource: string, text: string) => void;
@@ -78,7 +80,10 @@ function actionsFor(set: DocsStoreApi['setState'], get: () => DocsStore): DocsAc
             set({ error });
         },
         setRenaming: (name) => {
-            set({ renaming: name });
+            set({ justMade: false, renaming: name });
+        },
+        nameJustMade: (name) => {
+            set({ justMade: true, renaming: name });
         },
         setText: (resource, text) => {
             set((state) => ({ texts: { ...state.texts, [resource]: text } }));

@@ -29,6 +29,22 @@ describe('the control primitives', () => {
         expect(iconButton.querySelector('svg')).toHaveAttribute('width', '16');
     });
 
+    it('says the keys of the action in the tooltip, after the label, and keeps them out of the name', async () => {
+        render(
+            <TooltipProvider>
+                <IconButton icon="console" label="Mostrar la consola" shortcut="Ctrl+Alt+C" />
+            </TooltipProvider>,
+        );
+
+        const button = screen.getByRole('button', { name: 'Mostrar la consola' });
+
+        fireEvent.focus(button);
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent(
+            'Mostrar la consola (Ctrl+Alt+C)',
+        );
+    });
+
     /**
      * The pending overlay hides the contents from the eye, not from the reader: a button whose
      * name vanishes the moment it is pressed leaves the assistive tech holding a disabled button

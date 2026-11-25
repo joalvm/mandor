@@ -63,7 +63,44 @@ async function choose(name: string): Promise<void> {
 
 afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
 });
+
+/**
+ * The menu of the window fades out, so it stays a moment after a line is chosen: the browser
+ * reports the animation the theme gives a closing layer, and the menu waits for it to end.
+ */
+function fadeMenusOut(): void {
+    const computed = window.getComputedStyle.bind(window);
+
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((element, pseudo) => {
+        const style = computed(element, pseudo);
+
+        if (!element.matches("[data-part='menu-content']")) {
+            return style;
+        }
+
+        return new Proxy(style, {
+            get(target, key) {
+                if (key === 'animationName') {
+                    return element.getAttribute('data-state') === 'closed'
+                        ? 'mandor-layer-out'
+                        : 'mandor-layer-in';
+                }
+
+                const value: unknown = Reflect.get(target, key, target);
+
+                if (typeof value === 'function') {
+                    const bound: unknown = value.bind(target);
+
+                    return bound;
+                }
+
+                return value;
+            },
+        });
+    });
+}
 
 describe('where the focus goes once a line is chosen', () => {
     /** The field would lose the focus as it opened, and a field that loses it commits. */
@@ -73,6 +110,31 @@ describe('where the focus goes once a line is chosen', () => {
         await choose('Renombrar');
 
         expect(screen.getByRole('textbox', { name: 'Nombre' })).toHaveFocus();
+    });
+
+    /**
+     * The pointer still over the fading line would take the focus back into the menu: the lines
+     * of a closing layer let it pass (closing-layer).
+     */
+    it('stays in the field while the menu fades out under the pointer', async () => {
+        fadeMenusOut();
+        render(<RenamingMenu />);
+        open();
+
+        const item = await screen.findByRole('menuitem', { name: 'Renombrar' });
+
+        fireEvent.click(item);
+
+        // A modal menu hides the rest of the window from the reader until it is gone.
+        const field = screen.getByRole('textbox', { hidden: true, name: 'Nombre' });
+
+        expect(item).toBeInTheDocument();
+        expect(field).toHaveFocus();
+
+        fireEvent.pointerMove(item, { pointerType: 'mouse' });
+        fireEvent.pointerLeave(item, { pointerType: 'mouse' });
+
+        expect(field).toHaveFocus();
     });
 
     it('goes back to the trigger when the line opened nothing that takes it', async () => {

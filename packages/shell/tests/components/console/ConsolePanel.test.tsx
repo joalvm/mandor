@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ConsolePanel } from '../../../src/components/console/ConsolePanel.js';
+import { setConsoleSettings } from '../../../src/console/console-settings.js';
 import { consoleStore, writeConsole } from '../../../src/index.js';
 
 function draw() {
@@ -16,12 +17,21 @@ function draw() {
     );
 }
 
+function shown(): (string | undefined)[][] {
+    return within(screen.getByRole('list', { name: 'Lo escrito en la consola' }))
+        .getAllByRole('listitem')
+        .map((item) => [item.dataset['level'], item.textContent]);
+}
+
 afterEach(() => {
     cleanup();
     consoleStore.getState().clear();
     consoleStore.getState().hide();
+    setConsoleSettings({ level: 'all', showNetwork: true, showTimestamps: false });
+    window.localStorage.clear();
 });
 
+// The settings behind the gear are ConsoleSettingsMenu, drawn here as the bar holds it.
 describe('the console panel', () => {
     it('says so while nothing was written', () => {
         draw();
@@ -30,38 +40,83 @@ describe('the console panel', () => {
         expect(screen.getByText('Nada escrito en la consola todavía.')).toBeVisible();
     });
 
-    it('draws every run under its heading, as it is written', () => {
+    it('draws every entry in the order it was written, with where it came from', () => {
         draw();
 
         act(() => {
-            writeConsole({ id: 'a', title: 'GET altas' }, [
-                { key: '1', tone: 'log', text: 'hola' },
-            ]);
-            writeConsole({ id: 'b', title: 'POST bajas' }, [
-                { key: '1', tone: 'error', text: 'Error: no' },
-            ]);
+            writeConsole([{ level: 'log', text: 'hola', source: 'GET altas' }]);
+            writeConsole([{ level: 'error', text: 'Error: no' }]);
         });
 
-        const lines = within(screen.getByRole('list', { name: 'Lo escrito en la consola' }))
-            .getAllByRole('listitem')
-            .map((item) => [item.dataset['tone'], item.textContent]);
-
-        expect(lines).toEqual([
-            ['heading', 'GET altas'],
-            ['log', 'hola'],
-            ['heading', 'POST bajas'],
+        expect(shown()).toEqual([
+            ['log', 'holaGET altas'],
             ['error', 'Error: no'],
         ]);
     });
 
+    it('filters by text and by level, and says so when nothing is left', () => {
+        writeConsole([
+            { level: 'log', text: 'hola' },
+            { level: 'error', text: 'Error: no' },
+        ]);
+        draw();
+
+        const filter = screen.getByRole('searchbox', { name: 'Filtrar la consola' });
+
+        filter.textContent = 'hola';
+        fireEvent.input(filter);
+
+        expect(shown()).toEqual([['log', 'hola']]);
+
+        act(() => {
+            setConsoleSettings({ level: 'error' });
+        });
+
+        expect(screen.getByText('Nada en la consola coincide con el filtro.')).toBeVisible();
+    });
+
+    it('stamps each entry with its time once the setting asks for it', () => {
+        writeConsole([{ level: 'log', text: 'hola' }]);
+        draw();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Ajustes de la consola' }));
+        fireEvent.click(screen.getByRole('switch', { name: 'Mostrar la hora de cada entrada' }));
+
+        // The settings stay open over the console, which hides it from the accessible tree.
+        expect(screen.getByRole('listitem', { hidden: true }).querySelector('time')).not.toBeNull();
+        expect(window.localStorage.getItem('mandor.console')).toContain('"showTimestamps":true');
+    });
+
+    it('opens an entry to read what happened and each of its parts', () => {
+        writeConsole([
+            {
+                level: 'error',
+                text: 'POST http://x',
+                detail: 'getaddrinfo ENOTFOUND x',
+                sections: [{ title: 'Headers', value: { accept: '*/*' } }],
+            },
+        ]);
+        draw();
+
+        expect(screen.queryByText('getaddrinfo ENOTFOUND x')).toBeNull();
+
+        fireEvent.click(screen.getByRole('button', { name: /POST http:\/\/x/u }));
+
+        expect(screen.getByText('getaddrinfo ENOTFOUND x')).toBeVisible();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Headers' }));
+
+        expect(screen.getByRole('region', { name: 'Headers' })).toHaveTextContent('accept');
+    });
+
     it('is emptied and put away by hand', () => {
         consoleStore.getState().show();
-        writeConsole({ id: 'a', title: 'GET altas' }, [{ key: '1', tone: 'log', text: 'hola' }]);
+        writeConsole([{ level: 'log', text: 'hola' }]);
         draw();
 
         fireEvent.click(screen.getByRole('button', { name: 'Limpiar la consola' }));
 
-        expect(consoleStore.getState().runs).toEqual([]);
+        expect(consoleStore.getState().entries).toEqual([]);
         expect(screen.getByText('Nada escrito en la consola todavía.')).toBeVisible();
 
         fireEvent.click(screen.getByRole('button', { name: 'Ocultar la consola' }));

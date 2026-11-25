@@ -157,5 +157,9 @@ function LineDetail({ detail }: { detail: string | undefined }) {
         return null;
     }
 
-    return <span className="text-xs break-words text-text-secondary">{detail}</span>;
+    return (
+        <span className="text-xs break-words whitespace-pre-wrap text-text-secondary">
+            {detail}
+        </span>
+    );
 }

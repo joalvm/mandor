@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import { useExampleActions } from './hooks/useExampleActions.js';
 import { useScriptConsole } from './hooks/useScriptConsole.js';
+import { useSendConsole } from './hooks/useSendConsole.js';
 import { releaseRequestItem } from './lib/release-example.js';
 import { followScriptOutput } from './lib/script-output-store.js';
 import { requestHasDraft, saveRequestAndExamples } from './lib/request-example-drafts.js';
@@ -28,6 +29,7 @@ export function RequestItemKind() {
     // The kind lives as long as the window: it follows the scripts from mount to unmount.
     useEffect(() => followScriptOutput(), []);
     useScriptConsole();
+    useSendConsole();
 
     return (
         <ItemKind

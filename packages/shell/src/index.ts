@@ -9,6 +9,7 @@ export { Sidebar } from './components/sidebar/Sidebar.js';
 export { SidebarResizer } from './components/sidebar/SidebarResizer.js';
 export { StatusLine } from './components/status-line/StatusLine.js';
 export { ConsoleDock } from './components/console/ConsoleDock.js';
+export { consoleWritesOf, type ConsoleWrite } from './console/console-entries.js';
 export { consoleStore, showConsole, writeConsole } from './console/console-store.js';
 export { WindowControls } from './components/title-bar/WindowControls.js';
 
@@ -31,6 +32,7 @@ export type { SearchEntry, SearchField, WorkspaceEntries } from './search/search
 export { useMenuEditSteps } from './hooks/useMenuEditSteps.js';
 export { useMenuLanguage } from './hooks/useMenuLanguage.js';
 export { useMenuSettings } from './hooks/useMenuSettings.js';
+export { useWindowConsole } from './hooks/useWindowConsole.js';
 export { useWindowReady } from './hooks/useWindowReady.js';
 export { useFollowedResource } from './hooks/useFollowedResource.js';
 export { useResourceSection } from './hooks/useResourceSection.js';

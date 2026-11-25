@@ -744,6 +744,15 @@
                 "license": "CC-BY-4.0"
             }
         },
+        "clear-all": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "clear-all",
+                "sha256": "614a21286e9dbe10b05bb2e24860a09e1b11d5a56c7287b035c8b86d7e1b6de6",
+                "license": "CC-BY-4.0"
+            }
+        },
         "file-code": {
             "state": "approved",
             "source": {

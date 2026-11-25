@@ -61,12 +61,14 @@ textarea,
 }
 
 [data-part='activity-viewport'],
+[data-part='console-entries-viewport'],
 [data-part='example-diff-viewport'],
 [data-part='log-lines-viewport'] {
     height: attr(data-total-size type(<length>), 0px);
 }
 
 [data-part='activity-window'],
+[data-part='console-entries-window'],
 [data-part='example-diff-lines'],
 [data-part='log-lines-window'] {
     transform: translateY(attr(data-offset type(<length>), 0px));
@@ -957,6 +959,11 @@ textarea,
     [data-part='tooltip']
 )[data-state='closed'] {
     animation: mandor-layer-out var(--mandor-duration-fast) var(--mandor-ease-in);
+    /*
+     * A layer fading out still stands under the pointer, and a menu line the pointer crosses
+     * takes the focus: the name a Rename line just opened would lose it and end at once.
+     */
+    pointer-events: none;
 }
 
 /*

@@ -1,4 +1,5 @@
 import { ASSERTION_API, type AssertionWord } from './assertion-api.js';
+import { RESPONSE_ASSERTION_API } from './response-assertion-api.js';
 import { sampleTypeOf, type ScriptContext } from './script-context.js';
 import {
     API_BY_EVENT,
@@ -130,12 +131,32 @@ function nestedInterfacesOf(path: readonly string[], node: ApiNode, printing: Pr
         ]);
 }
 
-function assertionMember(word: AssertionWord, describe: DescribeApi): string {
+/** How a word of an assertion prints: by its kind, with the type the assertion has. */
+const ASSERTION_MEMBER: Record<
+    AssertionWord['kind'],
+    (word: AssertionWord, type: string) => string
+> = {
+    chain: ({ name }, type) => `readonly ${name}: ${type};`,
+    flag: ({ name }, type) => `readonly ${name}: ${type};`,
+    verb: ({ name, signature = '' }) => `${name}${signature};`,
+    measure: ({ name, signature = '' }) => `readonly ${name}: ${signature};`,
+};
+
+function assertionMember(word: AssertionWord, type: string, describe: DescribeApi): string {
     const doc = docOf(describe, word.docKey, word.parameters, INDENT);
 
-    return word.signature === undefined
-        ? `${doc}${INDENT}readonly ${word.name}: Assertion;`
-        : `${doc}${INDENT}${word.name}${word.signature};`;
+    return `${doc}${INDENT}${ASSERTION_MEMBER[word.kind](word, type)}`;
+}
+
+/** The interface of an assertion: each word reads or calls back to the same type. */
+function assertionInterfaceOf(
+    type: string,
+    words: readonly AssertionWord[],
+    describe: DescribeApi,
+): string {
+    const members = words.map((word) => assertionMember(word, type, describe));
+
+    return `interface ${type} {\n${members.join('\n')}\n}`;
 }
 
 const SEARCH_PARAMS_MEMBERS = `    append(name: string, value: unknown): void;
@@ -179,7 +200,7 @@ function standardOf(step: string, node: ApiNode, describe: DescribeApi): string[
 
 /**
  * The declarations a script of `event` is checked against: `mandor` with what the event shows and
- * nothing more, the names of JavaScript the guest gives, and `Assertion`. A member the event does
+ * nothing more, the names of JavaScript the guest gives, `Assertion` and `ResponseAssertion`. A member the event does
  * not show is a type error, not a silence. Every name carries its text, in the language
  * `describe` speaks. Each interface of `mandor` is there, whatever the event: `sendRequest` gives
  * back a `MandorResponse` before any response. What the editor knows of the place types the rest:
@@ -207,11 +228,11 @@ export function scriptTypesOf(
         { ...printing, objects: SAMPLED_OBJECTS },
     );
     const nested = nestedInterfacesOf(['mandor'], everyMember, printing);
-    const assertion = ASSERTION_API.map((word) => assertionMember(word, describe));
 
     return [
         ...[...standard.children].flatMap(([step, node]) => standardOf(step, node, describe)),
-        `interface Assertion {\n${assertion.join('\n')}\n}`,
+        assertionInterfaceOf('Assertion', ASSERTION_API, describe),
+        assertionInterfaceOf('ResponseAssertion', RESPONSE_ASSERTION_API, describe),
         `type MandorSample = ${sampleTypeOf(context.sample)};`,
         variableNameOf(context),
         mandor,

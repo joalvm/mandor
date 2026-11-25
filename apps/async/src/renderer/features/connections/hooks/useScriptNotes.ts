@@ -1,7 +1,7 @@
 import { envStore } from '@mandor/env';
 import { useMessages, useScriptWords } from '@mandor/i18n';
 import type { WsScriptNote } from '@mandor/ipc';
-import { shellStore, writeConsole } from '@mandor/shell';
+import { consoleWritesOf, shellStore, writeConsole } from '@mandor/shell';
 import { useEffect, useEffectEvent } from 'react';
 
 import { activityStore } from '../../../activity/activity-store.js';
@@ -61,11 +61,10 @@ export function useScriptNotes(): void {
 
         if (lines.length > 0) {
             writeConsole(
-                {
-                    id: `${note.connectionId}/${note.event}`,
-                    title: labels('scriptConsoleTitle', { event, name: connection.name }),
-                },
-                lines,
+                consoleWritesOf(
+                    lines,
+                    labels('scriptConsoleTitle', { event, name: connection.name }),
+                ),
             );
         }
     });

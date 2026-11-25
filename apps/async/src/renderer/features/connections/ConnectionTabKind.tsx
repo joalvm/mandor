@@ -9,6 +9,7 @@ import { CONNECTIONS_SECTION_ID } from './components/sidebar/ConnectionsSection.
 import { ConnectionStatusDot } from './components/tab/ConnectionStatusDot.js';
 import { ConnectionTransportMark } from './components/tab/ConnectionTransportMark.js';
 import { connectionTitle, subscribeConnectionTitles } from './connection-tab-kind.js';
+import { useConnectionConsole } from './hooks/useConnectionConsole.js';
 import { useConnectionPushes } from './hooks/useConnectionPushes.js';
 import { useScriptNotes } from './hooks/useScriptNotes.js';
 import { connectionHeld } from './lib/connection-held.js';
@@ -43,6 +44,7 @@ function TabStatusDot() {
 export function ConnectionTabKind() {
     useConnectionPushes();
     useScriptNotes();
+    useConnectionConsole();
 
     return (
         <>

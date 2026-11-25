@@ -69,17 +69,18 @@ afterEach(() => {
 });
 
 describe('what the scripts of every send write to the console of the window', () => {
-    it('writes both moments of a send under one heading named after the request', () => {
+    it('writes both moments of a send, each entry named after the request', () => {
         const { tell } = heard();
 
         tell(pushOf(SEND, { logs: [{ level: 'log', text: 'antes' }] }));
         tell(pushOf(SEND, { phase: 'response', logs: [{ level: 'warn', text: 'después' }] }));
 
-        const runs = consoleStore.getState().runs;
+        const entries = consoleStore.getState().entries;
 
-        expect(runs).toHaveLength(1);
-        expect(runs[0]?.title).toBe('GET altas');
-        expect(runs[0]?.lines.map((line) => line.text)).toEqual(['antes', 'después']);
+        expect(entries.map(({ level, text, source }) => ({ level, text, source }))).toEqual([
+            { level: 'log', text: 'antes', source: 'GET altas' },
+            { level: 'warn', text: 'después', source: 'GET altas' },
+        ]);
     });
 
     it('writes nothing for a send whose scripts said nothing, nor for one it was not told of', () => {
@@ -88,7 +89,7 @@ describe('what the scripts of every send write to the console of the window', ()
         tell(pushOf(SEND));
         tell(pushOf(UNKNOWN, { logs: [{ level: 'log', text: 'suelto' }] }));
 
-        expect(consoleStore.getState().runs).toEqual([]);
+        expect(consoleStore.getState().entries).toEqual([]);
     });
 
     it('leaves the console put away, even when a script broke', () => {
@@ -96,7 +97,7 @@ describe('what the scripts of every send write to the console of the window', ()
 
         tell(pushOf(SEND, { error: { errorName: 'Error', message: 'no' } }));
 
-        expect(consoleStore.getState().runs[0]?.lines[0]?.tone).toBe('error');
+        expect(consoleStore.getState().entries[0]?.level).toBe('error');
         expect(consoleStore.getState().open).toBe(false);
     });
 

@@ -55,7 +55,7 @@ export function AsyncTitleBar({
                 <CommandCenter />
             </div>
             <div
-                className="flex flex-1 basis-0 items-center justify-end gap-gap-control pl-pad-panel"
+                className="flex h-full flex-1 basis-0 items-center justify-end gap-gap-control pl-pad-panel"
                 data-part="title-end"
             >
                 <ManageEnvironmentsButton />

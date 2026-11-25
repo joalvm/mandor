@@ -18,6 +18,7 @@ import { runCommand, type EditorCommandId } from './run-command.js';
 import { explainModel } from './script-diagnostics.js';
 import { declareScript } from './script-language.js';
 import { releaseModel, retainModel, type EditorDocument } from './shared-models.js';
+import { typingElsewhere } from './typing-elsewhere.js';
 import { paintVariables } from './variable-decorations.js';
 
 /** Where an editor stands: how it is set up, and the document it shows, by key and first text. */
@@ -204,7 +205,7 @@ export function mountEditor(
         }),
     ];
 
-    if (target.options.focusOnMount === true) {
+    if (target.options.focusOnMount === true && !typingElsewhere(element)) {
         shown.focus();
     }
 

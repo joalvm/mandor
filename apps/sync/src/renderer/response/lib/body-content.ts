@@ -1,4 +1,4 @@
-import { type EditorLanguage, formattedJsonc } from '@mandor/ui';
+import { type EditorLanguage, formattedJsonc, withEscapesShown } from '@mandor/ui';
 
 import { base64OfBytes, textOfBytes } from './body-bytes.js';
 import { languageOfBodyFormat, type BodyFormat } from './body-formats.js';
@@ -28,8 +28,8 @@ type BodyContentInput = {
 };
 
 /**
- * The text each format reads. Only JSON changes when it is laid out, and only its whitespace
- * moves; XML and HTML are shown as they came, because re-indenting them would show something the
+ * The text each format reads. Only JSON changes when it is laid out: its whitespace moves and its
+ * `\u` escapes read as the characters they stand for; XML and HTML are shown as they came, because re-indenting them would show something the
  * server did not send. The dump reads the bytes and needs no text.
  */
 const TEXT_OF_FORMAT: Readonly<
@@ -42,7 +42,7 @@ const TEXT_OF_FORMAT: Readonly<
     json: (bytes, laidOut) => {
         const text = textOfBytes(bytes);
 
-        return laidOut ? (formattedJsonc(text) ?? text) : text;
+        return laidOut ? withEscapesShown(formattedJsonc(text) ?? text) : text;
     },
     markdown: (bytes) => textOfBytes(bytes),
     raw: (bytes) => textOfBytes(bytes),

@@ -5,6 +5,7 @@ import type { BodyWindow, RequestBodyReadRequest } from './request-body-read.js'
 import type { RequestBodySaveRequest } from './request-body-save.js';
 import type { RequestCancelRequest } from './request-cancel.js';
 import type { RequestScriptOutput } from './request-script-output.js';
+import type { RequestSendLog } from './request-send-log.js';
 import type { RequestSendRequest } from './request-send.js';
 
 /**
@@ -24,4 +25,6 @@ export type RequestArea = {
     hideSecrets: (response: HttpResponse) => Promise<Result<HttpResponse>>;
     /** What the scripts of a send said, pushed as each of its phases ends; gives the unsubscribe. */
     onScriptOutput: (handler: (push: RequestScriptOutput) => void) => () => void;
+    /** What left and what came back of every send, pushed once it ends; gives the unsubscribe. */
+    onSendLog: (handler: (push: RequestSendLog) => void) => () => void;
 };

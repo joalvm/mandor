@@ -29,6 +29,14 @@ describe('parseConnection', () => {
         }).toThrow(/url/);
     });
 
+    /** The file keeps a connection nobody pointed anywhere yet; the dial is what refuses it. */
+    it('keeps a connection whose url is still empty, whatever its transport', () => {
+        expect(parseConnection({ ...validConnection, url: '' }).url).toBe('');
+        expect(parseConnection({ ...validConnection, transport: 'socketio', url: '' }).url).toBe(
+            '',
+        );
+    });
+
     it('accepts a socket.io connection that dials an http url', () => {
         const connection = {
             ...validConnection,

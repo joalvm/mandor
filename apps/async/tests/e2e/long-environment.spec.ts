@@ -41,7 +41,7 @@ function nameAt(index: number): string {
 async function growEnvironment(): Promise<void> {
     const tree = diskTree(sandbox.repoRoot);
     const dir = `${await defaultWorkspaceDir(sandbox.repoRoot)}/environments`;
-    const path = onDisk(await entityNamed(tree, dir, 'Local'), 'the environment');
+    const path = onDisk(await entityNamed(tree, dir, 'New environment'), 'the environment');
 
     await expect.poll(() => tree.read(path)).toContain('value: seed');
 
@@ -57,7 +57,7 @@ async function growEnvironment(): Promise<void> {
 
     await writeFile(
         join(sandbox.repoRoot, path),
-        `id: ${id}\nname: Local\nvariables:\n${variables.join('\n')}\n`,
+        `id: ${id}\nname: New environment\nvariables:\n${variables.join('\n')}\n`,
     );
 }
 

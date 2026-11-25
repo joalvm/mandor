@@ -10,6 +10,7 @@ export { ChevronDownIcon } from './chevron-down.js';
 export { ChevronLeftIcon } from './chevron-left.js';
 export { ChevronRightIcon } from './chevron-right.js';
 export { ChevronUpIcon } from './chevron-up.js';
+export { ClearAllIcon } from './clear-all.js';
 export { CloseIcon } from './close.js';
 export { CodeIcon } from './code.js';
 export { CollapseAllIcon } from './collapse-all.js';

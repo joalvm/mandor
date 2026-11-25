@@ -134,6 +134,14 @@ describe('resolving the request the window shows', () => {
         expect(JSON.stringify(result)).toContain('nowhere');
     });
 
+    it('takes a url typed without its scheme as http', async () => {
+        const result = await resolveRequest(place(), input({ url: 'localhost:81/session' }), {
+            networkFor: DIRECT_NETWORK,
+        });
+
+        expect(result).toMatchObject({ ok: true, value: { url: 'http://localhost:81/session' } });
+    });
+
     it('refuses a url that is not absolute', async () => {
         const result = await resolveRequest(place(), input({ url: '/orders' }), {
             networkFor: DIRECT_NETWORK,
@@ -204,14 +212,11 @@ describe('resolving against the globals of the origin', () => {
         expect(result).toMatchObject({ ok: true, value: { url: 'http://api.test/?page=2' } });
     });
 
-    it('cannot send a url that is only a name nobody declares, and says it is not absolute', async () => {
+    it('sends a url that is only a name nobody declares as the text it was written', async () => {
         const result = await resolveRequest(place(), input({ url: '{{ruta}}' }), {
             networkFor: DIRECT_NETWORK,
         });
 
-        expect(result).toMatchObject({
-            ok: false,
-            error: { code: 'bad-request', message: 'the url is not an absolute url' },
-        });
+        expect(result).toMatchObject({ ok: true, value: { url: 'http://{{ruta}}/' } });
     });
 });

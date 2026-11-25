@@ -1,4 +1,5 @@
 import type { ScriptError } from '@mandor/schema';
+import { loadSchemaChecker } from '@mandor/validate';
 import { z } from 'zod';
 
 import {
@@ -97,6 +98,11 @@ export async function runScript(
 ): Promise<ScriptRunResult> {
     const lines = spanOf(input);
     const options = { lines, rescue: `${RESCUE}()`, link };
+
+    // The checker of JSON Schema weighs two megabytes: only a script that names jsonSchema loads it.
+    if (input.source.includes('jsonSchema')) {
+        await loadSchemaChecker();
+    }
 
     return fromRun(await runSource(wasm, scriptSourceOf(input), runMs, options), lines);
 }

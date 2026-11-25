@@ -144,6 +144,23 @@ describe('resolveWsOpen', () => {
         expect(request.url).toBe('wss://echo.example/socket?room=1&token=echo.example&key=abc');
     });
 
+    it('dials a url typed without its scheme with the one its transport speaks', async () => {
+        const template = { url: 'localhost:81/socket' };
+        const websocket = await open({ template });
+        const socketio = await open({ template, transport: 'socketio' });
+
+        expect(websocket.request.url).toBe('ws://localhost:81/socket');
+        expect(socketio.request.url).toBe('http://localhost:81/socket');
+    });
+
+    it('sends a header value pasted with its line break without the break', async () => {
+        const { request } = await open({
+            template: { url: 'wss://{{host}}/', headers: { 'user-agent': 'Mozilla/5.0\r\n' } },
+        });
+
+        expect(request.headers).toEqual({ 'user-agent': 'Mozilla/5.0' });
+    });
+
     it('refuses a url the scheme gate of the transport refuses', async () => {
         await expect(
             resolveWsOpen(place(), input(), {

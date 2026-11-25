@@ -72,7 +72,8 @@
                 "headers": {
                     "get": "The value of a response header.",
                     "has": "Whether the response carries the header."
-                }
+                },
+                "to": "Assertions about the response, in the words of Postman: status, header, body…"
             },
             "message": {
                 "text": "The text of the message.",
@@ -233,6 +234,70 @@
             },
             "below": {
                 "limit": "Number it must stay under."
+            }
+        },
+        "responseAssertion": {
+            "status": "Has that status code, or that reason phrase when given a text.",
+            "statusCode": "Has that status code.",
+            "statusCodeClass": "Its status code starts with that digit: 2 for 2XX.",
+            "statusReason": "Has that reason phrase, the standard one of its status.",
+            "header": "Has the header and, if given, with exactly that value.",
+            "body": "Has a body; or one that matches the regular expression, equals the text, or is that JSON.",
+            "jsonBody": "The body is JSON; with a path, it has it and, if given, with that value; with an object, it equals it.",
+            "info": "Its status is 1XX.",
+            "success": "Its status is 2XX.",
+            "redirection": "Its status is 3XX.",
+            "clientError": "Its status is 4XX.",
+            "serverError": "Its status is 5XX.",
+            "error": "Its status is 4XX or 5XX.",
+            "ok": "Its status is 200.",
+            "accepted": "Its status is 202.",
+            "withoutContent": "Its status is 204.",
+            "badRequest": "Its status is 400.",
+            "unauthorized": "Its status is 401.",
+            "unauthorised": "Its status is 401.",
+            "forbidden": "Its status is 403.",
+            "notFound": "Its status is 404.",
+            "notAcceptable": "Its status is 406.",
+            "rateLimited": "Its status is 429.",
+            "json": "The body is valid JSON.",
+            "withBody": "The body is not empty.",
+            "jsonSchema": "The JSON of the body meets the JSON Schema.",
+            "responseTime": "Took that many milliseconds; read, asserts on the time: responseTime.below(500).",
+            "responseSize": "Weighs that many bytes, headers and body; read, asserts on the size: responseSize.below(1024)."
+        },
+        "responseAssertionParam": {
+            "status": {
+                "expected": "Status code, or reason phrase."
+            },
+            "statusCode": {
+                "code": "Expected status code."
+            },
+            "statusCodeClass": {
+                "digit": "First digit of the status: 1 to 5."
+            },
+            "statusReason": {
+                "reason": "Expected reason phrase, such as Not Found."
+            },
+            "header": {
+                "name": "Name of the header.",
+                "value": "Value it must have; optional."
+            },
+            "body": {
+                "expected": "Text, regular expression or JSON; optional."
+            },
+            "jsonBody": {
+                "path": "Path in the JSON, such as items[0].id, or the whole JSON; optional.",
+                "value": "Value at the path; optional."
+            },
+            "jsonSchema": {
+                "schema": "JSON Schema the body must meet."
+            },
+            "responseTime": {
+                "expected": "Milliseconds it must have taken; optional."
+            },
+            "responseSize": {
+                "expected": "Bytes it must weigh; optional."
             }
         },
         "completion": {

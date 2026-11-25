@@ -6,7 +6,7 @@
     "linkOtherWorkspace": "Ese enlace apunta fuera del workspace abierto, así que se deja como está.",
     "previewTitle": "{{name}} (vista previa)",
     "editor": "Editor de la doc",
-    "newDoc": "Doc nuevo",
+    "newDoc": "Nuevo doc",
     "delete": "Borrar",
     "deleteTitle": "Borrar doc",
     "deleteBody": "«{{name}}» sale del workspace. Las pestañas que lo miran se quedan abiertas, apuntando a nada.",

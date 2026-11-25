@@ -31,5 +31,6 @@ export function defaultRequest(): RequestArea {
         saveBody: () => Promise.resolve(success({ path: null })),
         hideSecrets: (response) => Promise.resolve(success(response)),
         onScriptOutput: () => () => undefined,
+        onSendLog: () => () => undefined,
     };
 }

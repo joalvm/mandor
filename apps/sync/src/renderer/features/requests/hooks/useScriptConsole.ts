@@ -1,5 +1,5 @@
 import { useMessages, useScriptWords } from '@mandor/i18n';
-import { writeConsole } from '@mandor/shell';
+import { consoleWritesOf, writeConsole } from '@mandor/shell';
 import { useEffect, useEffectEvent } from 'react';
 
 import { syncBridge } from '../../../app/sync-bridge.js';
@@ -21,7 +21,7 @@ export function useScriptConsole(): void {
         const lines = consoleLines(push, labels, words);
 
         if (place !== undefined && lines.length > 0) {
-            writeConsole({ id: push.sendId, title: place.title }, lines);
+            writeConsole(consoleWritesOf(lines, place.title));
         }
     });
 

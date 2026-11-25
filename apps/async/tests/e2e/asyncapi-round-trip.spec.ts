@@ -29,7 +29,7 @@ async function createWorkspace(page: Page, name: string): Promise<void> {
 
     const field = page.getByRole('textbox', { name: 'Workspace name' });
 
-    await field.click();
+    await expect(field).toBeFocused();
     await field.pressSequentially(name);
     await page.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeHidden();

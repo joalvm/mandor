@@ -19,7 +19,7 @@ describe('Icon', () => {
     it('gives every registry name a component', () => {
         const names = Object.keys(ICONS) as IconName[];
 
-        expect(names).toHaveLength(88);
+        expect(names).toHaveLength(89);
 
         for (const name of names) {
             expect(typeof ICONS[name], name).toBe('function');

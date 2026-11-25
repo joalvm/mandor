@@ -120,15 +120,11 @@ describe('taking a request from its variables to the wire', () => {
         );
     });
 
-    it('refuses what cannot be resolved without dialing', async () => {
-        const answer = await dispatchItem(
-            contextOf(),
-            inputOf({ url: '{{nowhere}}/echo' }),
-            {},
-            SIGNAL,
-        );
-
-        expect(answer).toMatchObject({ ok: false, error: { code: 'bad-request' } });
+    // As Postman does: the url goes as it was typed, and the network says what is wrong with it.
+    it('sends a url left with its variable as it is, and no server of it ever answers', async () => {
+        await expect(
+            dispatchItem(contextOf(), inputOf({ url: '{{nowhere}}/echo' }), {}, SIGNAL),
+        ).rejects.toThrow(/\{\{nowhere\}\}/u);
         expect(fixture.received).toEqual([]);
     });
 

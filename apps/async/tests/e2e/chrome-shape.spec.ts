@@ -96,6 +96,30 @@ async function skin(page: Page, parts: readonly string[]): Promise<Skin> {
     }, parts);
 }
 
+/** The window buttons that fall short of the top or the bottom of the title row, by name. */
+async function windowButtonsReach(page: Page): Promise<{ short: string[] }> {
+    return page.evaluate(() => {
+        const bar = document.querySelector("[data-part='titlebar']")?.getBoundingClientRect();
+        const buttons = [...document.querySelectorAll("[data-part='window-controls'] button")];
+
+        if (bar === undefined) {
+            throw new Error('the window has no title row');
+        }
+
+        return {
+            short: buttons
+                .filter((button) => {
+                    const box = button.getBoundingClientRect();
+
+                    return (
+                        Math.abs(box.top - bar.top) > 0.5 || Math.abs(box.bottom - bar.bottom) > 0.5
+                    );
+                })
+                .map((button) => button.getAttribute('aria-label') ?? ''),
+        };
+    });
+}
+
 type Drift = { allowed: number; measured: number };
 
 /**
@@ -180,6 +204,9 @@ test('rounds its tabs by a step, draws its bands on the frame and centres the co
         );
         expect(painted.strip).toBe(painted.frame);
         expect(painted.workbench).toBe(painted.frame);
+        // The window buttons run from the top of the row to its bottom, like the ones of the
+        // system: a button shorter than the row floats in its middle. macOS draws its own.
+        expect(await windowButtonsReach(page)).toEqual({ short: [] });
 
         // The command centre stands on the middle of the window, not on the middle of the room
         // the two ends leave between them.

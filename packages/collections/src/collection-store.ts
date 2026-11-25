@@ -12,6 +12,8 @@ type CollectionActions = {
     fold: (workspaceId: string, path: string, folded: boolean) => void;
     foldAll: (workspaceId: string) => void;
     foldInside: (workspaceId: string, path: string) => void;
+    /** Opens the name field of a row made a moment ago, the one field Escape can take back. */
+    nameJustMade: (path: string) => void;
     openExamples: (workspaceId: string, path: string, open: boolean) => void;
     reset: () => void;
     setDeleting: (paths: readonly string[] | null) => void;
@@ -127,8 +129,11 @@ function actionsFor(set: CollectionStoreApi['setState']): CollectionActions {
                 selected: state.selected.filter((path) => holdsRow(nodes, path)),
             }));
         },
+        nameJustMade: (path) => {
+            set({ justMade: true, renaming: path });
+        },
         setRenaming: (renaming) => {
-            set({ renaming });
+            set({ justMade: false, renaming });
         },
         setSelected: (paths) => {
             set({ selected: [...paths] });

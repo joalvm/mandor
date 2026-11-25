@@ -172,6 +172,7 @@ describe('sending the item of a resource', () => {
 
         expect(requestsStore.getState().sends[RESOURCE]).toEqual({
             error: 'request-timeout',
+            message: 'slow',
             sendId: expect.stringMatching(UUID) as string,
             state: 'failed',
         });
@@ -184,6 +185,7 @@ describe('sending the item of a resource', () => {
 
         expect(requestsStore.getState().sends[RESOURCE]).toEqual({
             error: 'unknown',
+            message: 'Error: not a response',
             sendId: expect.stringMatching(UUID) as string,
             state: 'failed',
         });

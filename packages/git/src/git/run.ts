@@ -33,6 +33,9 @@ const AMBIENT = [
  */
 const CONFIG = ['core.symlinks=false', 'core.longpaths=true'];
 
+/** The keys of those settings: simple-git lets through only the ones it is told about. */
+const ALLOWED_CONFIG = CONFIG.map((setting) => setting.slice(0, setting.indexOf('=')));
+
 /** No path of the app rewrites what an origin holds: the call is refused before git is asked. */
 function refuseForcing(args: string[]): void {
     if (isForcingPush(args)) {
@@ -57,7 +60,12 @@ export async function run(args: string[], root: string): Promise<string> {
 export async function runText(args: string[], root: string): Promise<string> {
     refuseForcing(args);
 
-    const git = simpleGit({ allowEnvironment: [...AMBIENT], baseDir: root, config: CONFIG });
+    const git = simpleGit({
+        allowConfig: ALLOWED_CONFIG,
+        allowEnvironment: [...AMBIENT],
+        baseDir: root,
+        config: CONFIG,
+    });
 
     try {
         return await git.raw(args);
@@ -112,6 +120,7 @@ export async function runNetwork(
     refuseForcing(args);
 
     const git = simpleGit({
+        allowConfig: ALLOWED_CONFIG,
         allowEnvironment: [...AMBIENT, ...NETWORK_KEYS],
         ...(root === null ? {} : { baseDir: root }),
         config: CONFIG,

@@ -55,6 +55,7 @@ export function VariablePopover({
                 label={messages('popover', { name: `{{${token.name}}}` })}
             >
                 <div
+                    data-part="variable-popover"
                     onBlur={(event) => {
                         // Moving between the controls of the panel is still being inside it.
                         if (event.currentTarget.contains(event.relatedTarget)) {

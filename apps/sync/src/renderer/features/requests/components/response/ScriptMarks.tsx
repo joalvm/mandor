@@ -1,5 +1,4 @@
 import { ReviewSkippedScripts, ScriptMark, ScriptMarkText } from '@mandor/collections';
-import { ForgetScriptVariablesButton } from '@mandor/env';
 import { useMessages } from '@mandor/i18n';
 import type { SkippedScript } from '@mandor/schema';
 
@@ -7,7 +6,10 @@ import type { ScriptOutput } from '../../../../response/lib/script-output.js';
 
 type ScriptMarksProps = { output: ScriptOutput | undefined; workspaceId: string | undefined };
 
-/** What the scripts changed on the way out, each on a line of its own; nothing when they changed nothing. */
+/**
+ * What the scripts changed on the way out that asks something of the reader, each on a line of
+ * its own; nothing when they changed nothing. A destination a script moved is told by the console.
+ */
 export function ScriptMarks({ output, workspaceId }: ScriptMarksProps) {
     if (output === undefined) {
         return null;
@@ -16,7 +18,6 @@ export function ScriptMarks({ output, workspaceId }: ScriptMarksProps) {
     return (
         <div className="flex min-w-0 shrink-0 flex-col px-pad-panel" data-part="script-marks">
             <SkippedMark scripts={output.skipped} workspaceId={workspaceId} />
-            <MovedMark moved={output.destinationMoved} workspaceId={workspaceId} />
             <HeldMark held={output.heldAt !== undefined} />
         </div>
     );
@@ -47,29 +48,6 @@ function ReviewOf({ scripts, workspaceId }: SkippedMarkProps) {
     }
 
     return <ReviewSkippedScripts scripts={scripts} workspaceId={workspaceId} />;
-}
-
-type MovedMarkProps = { moved: boolean; workspaceId: string | undefined };
-
-/** The secrets stayed behind, and the way to have them go is to name the host in the environment. */
-function MovedMark({ moved, workspaceId }: MovedMarkProps) {
-    const labels = useMessages('requests');
-
-    if (!moved || workspaceId === undefined) {
-        return null;
-    }
-
-    return (
-        <ScriptMark mark="destinationMoved">
-            <ScriptMarkText>
-                {labels('destinationMoved')}
-                <span className="text-xs text-text-secondary">
-                    {labels('destinationMovedHint')}
-                </span>
-            </ScriptMarkText>
-            <ForgetScriptVariablesButton workspaceId={workspaceId} />
-        </ScriptMark>
-    );
 }
 
 /** A redirect stopped where going on would have taken a secret along. */

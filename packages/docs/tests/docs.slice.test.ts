@@ -12,6 +12,7 @@ describe('the state of the docs at birth', () => {
             listed: false,
             reading: [],
             renaming: null,
+            justMade: false,
             texts: {},
             views: {},
         });

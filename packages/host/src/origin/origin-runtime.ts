@@ -77,7 +77,11 @@ export function bindRuntimeWindow(target: PushTarget): () => void {
     };
 }
 
-function pushChanges(changes: ChangedEntity[]): void {
+/**
+ * Tells the window that entities changed on disk. The watcher stays quiet about what the app wrote
+ * itself, as the window wrote it; a change main makes on its own, for a script, says it here.
+ */
+export function pushChanges(changes: ChangedEntity[]): void {
     if (window !== null) {
         pushToWindow(window, CHANNELS.repoChanged, { changes });
     }

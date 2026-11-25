@@ -11,8 +11,13 @@ import type { Logger } from '../log/create-logger.js';
 import { sortEntries, type ChainEntry } from './chain-entries.js';
 import { outputOfRun, redactedResult, type ChainResult } from './chain-output.js';
 import type { ApprovedScripts } from './approved-scripts.js';
+import type { ScriptEnvironment } from './script-environment.js';
 import type { ScriptSender } from './script-send.js';
-import type { ScriptVariables, ScriptVariablesPlace } from './script-variables.js';
+import type {
+    ScriptVariableSet,
+    ScriptVariables,
+    ScriptVariablesPlace,
+} from './script-variables.js';
 import type { ScriptsSwitch } from './scripts-switch.js';
 import type { ScriptChain, ScriptChainOptions } from './start-script-worker.js';
 
@@ -34,6 +39,8 @@ export type ChainDeps = {
     approvals: Pick<ApprovedScripts, 'isApproved'>;
     scriptsSwitch: Pick<ScriptsSwitch, 'enabled'>;
     variables: ScriptVariables;
+    /** Where a value goes whose name the environment of the run declares; without it, memory. */
+    environment?: ScriptEnvironment | undefined;
     /** Where the scripts run: the workers of the app, or a double in a test. */
     startChain: (options: ScriptChainOptions) => ScriptChain;
     logger: Pick<Logger, 'log'>;
@@ -75,6 +82,40 @@ function endOf(step: Step, error: ScriptError | undefined): ScriptError | undefi
     return error ?? (step.signal.aborted ? CANCELLED : undefined);
 }
 
+/**
+ * Hands the environment the values of the names it declares, and gives back the rest for the
+ * memory. A run that something moved past writes nothing there either; a write that fails leaves
+ * every value in memory, where the run still sees it, and says so in the log.
+ */
+async function intoEnvironment(
+    step: Step,
+    generation: number,
+    sets: readonly ScriptVariableSet[],
+): Promise<readonly ScriptVariableSet[]> {
+    const { run, deps } = step;
+
+    if (deps.environment === undefined || deps.variables.generation(run.place) !== generation) {
+        return sets;
+    }
+
+    try {
+        const rest = await deps.environment.keep(run.place, sets);
+        const left = new Set(rest.map(({ name }) => name));
+        const taken = sets.filter(({ name }) => !left.has(name)).map(({ name }) => name);
+
+        deps.variables.release(run.place, taken);
+
+        return rest;
+    } catch (error) {
+        deps.logger.log(
+            'warn',
+            `a value a script set did not reach its environment: ${String(error)}`,
+        );
+
+        return sets;
+    }
+}
+
 /** Runs one script on the photo; keeps what it set only if it ended clean and nothing moved on. */
 async function runOne(step: Step, entry: ChainEntry, snapshot: ChainSnapshot): Promise<Ran> {
     const { run, deps } = step;
@@ -94,7 +135,7 @@ async function runOne(step: Step, entry: ChainEntry, snapshot: ChainSnapshot): P
         return { effects: [], logs, tests, error: { ...error, ...info, level: entry.level } };
     }
 
-    const sets = output.effects.filter(isVar);
+    const sets = await intoEnvironment(step, generation, output.effects.filter(isVar));
     const full = deps.variables.apply(run.place, generation, sets) === 'full';
     const note = scriptNotice('variables-full');
 

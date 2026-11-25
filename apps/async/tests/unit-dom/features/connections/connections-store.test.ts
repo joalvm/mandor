@@ -140,6 +140,22 @@ describe('the connections store', () => {
 
         expect(selectFaultFor('alpha')(store.getState())).toBeUndefined();
     });
+
+    it('keeps what the transport said with the failure, and a new word is a new failure', () => {
+        const store = createConnectionsStore();
+
+        store.getState().setConnectionError('alpha', 'ws-open-failed', 'ECONNREFUSED');
+        const first = selectFaultFor('alpha')(store.getState());
+
+        store.getState().setConnectionError('alpha', 'ws-open-failed', 'ECONNREFUSED');
+
+        expect(selectFaultFor('alpha')(store.getState())).toBe(first);
+        expect(first?.message).toBe('ECONNREFUSED');
+
+        store.getState().setConnectionError('alpha', 'ws-open-failed', 'ENOTFOUND');
+
+        expect(selectFaultFor('alpha')(store.getState())?.message).toBe('ENOTFOUND');
+    });
 });
 
 describe('the recordings of the connections store', () => {

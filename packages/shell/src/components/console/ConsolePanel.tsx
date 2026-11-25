@@ -1,39 +1,81 @@
 import { useMessages } from '@mandor/i18n';
-import { Card, IconButton, LogLines } from '@mandor/ui';
-import { useMemo } from 'react';
+import { Card, ConsoleEntries, IconButton, SearchInput, Select } from '@mandor/ui';
+import { useMemo, useState } from 'react';
 import { useStore } from 'zustand';
 
-import { consoleLinesOf } from '../../console/console-runs.js';
+import { visibleEntries, type ConsoleLevelFilter } from '../../console/console-filter.js';
+import { consoleSettingsStore, setConsoleSettings } from '../../console/console-settings.js';
 import { consoleStore } from '../../console/console-store.js';
+import { ConsoleSettingsMenu } from './ConsoleSettingsMenu.js';
 
-const BAND =
-    'flex h-header min-w-0 shrink-0 items-center gap-gap-control px-pad-panel text-xs font-semibold text-text-secondary';
+const BAND = 'flex h-header min-w-0 shrink-0 items-center gap-gap-control px-pad-panel';
+
+type LevelLabel =
+    | 'consoleLevelAll'
+    | 'consoleLevelError'
+    | 'consoleLevelInfo'
+    | 'consoleLevelLog'
+    | 'consoleLevelWarn';
+
+/** The levels the bar filters by, in the order a browser lists them. */
+const LEVEL_LABELS: readonly { label: LevelLabel; value: ConsoleLevelFilter }[] = [
+    { label: 'consoleLevelAll', value: 'all' },
+    { label: 'consoleLevelLog', value: 'log' },
+    { label: 'consoleLevelInfo', value: 'info' },
+    { label: 'consoleLevelWarn', value: 'warn' },
+    { label: 'consoleLevelError', value: 'error' },
+];
 
 /**
- * The console itself: every run that wrote something, oldest first, the newest at the bottom
- * where the eye looks for it. It is emptied by hand and put away by hand; nothing in it opens or
- * closes on its own. It is a card of its own under the work, apart from it by the gutter of the
- * frame and not by a line.
+ * The console itself, as Postman draws its own: a bar with the filter by text, the one by level
+ * and the way to empty it on the left, its settings and the way to put it away on the right, and
+ * every entry under it, oldest first, the newest at the bottom where the eye looks
+ * for it. It is emptied by hand and put away by hand; nothing in it opens or closes on its own.
+ * It is a card of its own under the work, apart from it by the gutter of the frame.
  */
 export function ConsolePanel() {
     const messages = useMessages('shell');
-    const runs = useStore(consoleStore, (state) => state.runs);
+    const entries = useStore(consoleStore, (state) => state.entries);
     const clear = useStore(consoleStore, (state) => state.clear);
     const hide = useStore(consoleStore, (state) => state.hide);
-    const lines = useMemo(() => consoleLinesOf(runs), [runs]);
+    const settings = useStore(consoleSettingsStore, (state) => state);
+    const [query, setQuery] = useState('');
+    const shown = useMemo(
+        () => visibleEntries(entries, { ...settings, query }),
+        [entries, settings, query],
+    );
 
     return (
         <Card aria-label={messages('consoleTitle')}>
             <div className={BAND} data-part="console-header">
-                <span className="min-w-0 truncate">{messages('consoleTitle')}</span>
-                <div className="ml-auto flex shrink-0 items-center gap-gap-tight">
-                    <IconButton
-                        icon="delete"
-                        iconSize="sm"
-                        label={messages('consoleClear')}
-                        onClick={clear}
-                        size="xs"
-                    />
+                <SearchInput
+                    className="w-64 min-w-0 shrink"
+                    label={messages('consoleFilter')}
+                    onValueChange={setQuery}
+                    placeholder={messages('consoleFilterPlaceholder')}
+                    value={query}
+                />
+                <Select
+                    fitChosen
+                    label={messages('consoleLevel')}
+                    onValueChange={(level) => {
+                        setConsoleSettings({ level });
+                    }}
+                    options={LEVEL_LABELS.map(({ label, value }) => ({
+                        label: messages(label),
+                        value,
+                    }))}
+                    value={settings.level}
+                />
+                <IconButton
+                    icon="clear-all"
+                    iconSize="sm"
+                    label={messages('consoleClear')}
+                    onClick={clear}
+                    size="xs"
+                />
+                <div className="ml-auto flex shrink-0 items-center gap-gap-control">
+                    <ConsoleSettingsMenu />
                     <IconButton
                         icon="close"
                         iconSize="sm"
@@ -44,11 +86,11 @@ export function ConsolePanel() {
                 </div>
             </div>
             <div className="min-h-0 flex-1" data-part="console-lines">
-                <LogLines
-                    empty={messages('consoleEmpty')}
-                    followsEnd
+                <ConsoleEntries
+                    empty={messages(entries.length === 0 ? 'consoleEmpty' : 'consoleNoMatch')}
+                    entries={shown}
                     label={messages('consoleList')}
-                    lines={lines}
+                    showTimestamps={settings.showTimestamps}
                 />
             </div>
         </Card>

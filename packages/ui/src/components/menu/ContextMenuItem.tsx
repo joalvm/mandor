@@ -1,6 +1,8 @@
 import { ContextMenu as ContextMenuPrimitive } from 'radix-ui';
 import type { PropsWithChildren } from 'react';
 
+import { ignoredWhileClosing } from './closing-layer.js';
+
 type ContextMenuItemProps = PropsWithChildren<{
     disabled?: boolean | undefined;
     /** Why the line cannot run, shown while it is disabled. */
@@ -24,6 +26,8 @@ export function ContextMenuItem({
             className="flex h-control cursor-pointer items-center outline-none gap-gap-icon-text rounded-md px-2 text-sm data-disabled:cursor-not-allowed data-disabled:text-text-disabled data-highlighted:bg-surface-selected"
             data-part="context-menu-item"
             disabled={disabled === true}
+            onPointerLeave={ignoredWhileClosing}
+            onPointerMove={ignoredWhileClosing}
             onSelect={onSelect}
             title={disabled === true ? disabledReason : undefined}
         >

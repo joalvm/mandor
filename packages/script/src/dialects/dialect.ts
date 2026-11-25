@@ -18,6 +18,8 @@ export type ForeignMatch = {
     named: AnyNode;
     /** Whether the chain goes on past that name, as `pm.test.skip` goes on past `pm.test`. */
     continued: boolean;
+    /** The names the chain goes on with, in order: `have`, `status` past `pm.response.to`. */
+    rest: readonly string[];
     /** The call the name is the callee of, when it is called. */
     call: CallExpression | undefined;
     /** Whether what the call gives is awaited or read on, as `await x` or `x.then`. */
@@ -59,6 +61,34 @@ export function calledAs(text: string): DialectRule {
 
         return [edit(call, text)];
     };
+}
+
+/**
+ * The words of a chain of assertions: its own, the measures among them (`responseTime`), and the
+ * words a measure goes on with, those of an assertion of a number (`below`).
+ */
+export type AssertionWords = {
+    own: ReadonlySet<string>;
+    measures: ReadonlySet<string>;
+    ofNumber: ReadonlySet<string>;
+};
+
+function isKnownChain(rest: readonly string[], words: AssertionWords): boolean {
+    const at = rest.findIndex((word) => words.measures.has(word));
+    const head = at < 0 ? rest : rest.slice(0, at);
+    const tail = at < 0 ? [] : rest.slice(at + 1);
+
+    return (
+        head.every((word) => words.own.has(word)) && tail.every((word) => words.ofNumber.has(word))
+    );
+}
+
+/**
+ * A chain of assertions that `mandor` words the same: it has a match while every name it goes on
+ * with is one `mandor` has. Any other, such as `cookie`, keeps the whole use marked.
+ */
+export function assertedAs(text: string, words: AssertionWords): DialectRule {
+    return ({ named, rest }) => (isKnownChain(rest, words) ? [edit(named, text)] : undefined);
 }
 
 function isField(

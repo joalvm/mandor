@@ -18,9 +18,9 @@
     "folderVariables": "Variables",
     "heading": "Colecciones",
     "itemActions": "Más acciones",
-    "newCollection": "Colección nueva",
-    "newFolder": "Carpeta nueva",
-    "newItem": "Item nuevo",
+    "newCollection": "Nueva colección",
+    "newFolder": "Nueva carpeta",
+    "newItem": "Nuevo item",
     "openBeside": "Abrir al lado",
     "openExample": "Abrir",
     "rename": "Renombrar",
@@ -72,7 +72,8 @@
                 "headers": {
                     "get": "Valor de un header de la response.",
                     "has": "Si la response lleva el header."
-                }
+                },
+                "to": "Aserciones sobre la respuesta, con las palabras de Postman: status, header, body…"
             },
             "message": {
                 "text": "Texto del mensaje.",
@@ -233,6 +234,70 @@
             },
             "below": {
                 "limit": "Número que no debe alcanzar."
+            }
+        },
+        "responseAssertion": {
+            "status": "Tiene ese código de estado, o esa frase de estado si se le da un texto.",
+            "statusCode": "Tiene ese código de estado.",
+            "statusCodeClass": "Su código de estado empieza por ese dígito: 2 para 2XX.",
+            "statusReason": "Tiene esa frase de estado, la estándar de su código.",
+            "header": "Tiene el header y, si se da, con ese valor exacto.",
+            "body": "Tiene body; o uno que cumple la expresión regular, es igual al texto o es ese JSON.",
+            "jsonBody": "El body es JSON; con una ruta, la tiene y, si se da, con ese valor; con un objeto, es igual a él.",
+            "info": "Su estado es 1XX.",
+            "success": "Su estado es 2XX.",
+            "redirection": "Su estado es 3XX.",
+            "clientError": "Su estado es 4XX.",
+            "serverError": "Su estado es 5XX.",
+            "error": "Su estado es 4XX o 5XX.",
+            "ok": "Su estado es 200.",
+            "accepted": "Su estado es 202.",
+            "withoutContent": "Su estado es 204.",
+            "badRequest": "Su estado es 400.",
+            "unauthorized": "Su estado es 401.",
+            "unauthorised": "Su estado es 401.",
+            "forbidden": "Su estado es 403.",
+            "notFound": "Su estado es 404.",
+            "notAcceptable": "Su estado es 406.",
+            "rateLimited": "Su estado es 429.",
+            "json": "El body es JSON válido.",
+            "withBody": "El body no está vacío.",
+            "jsonSchema": "El JSON del body cumple el JSON Schema.",
+            "responseTime": "Tardó esos milisegundos; leído, afirma sobre el tiempo: responseTime.below(500).",
+            "responseSize": "Pesa esos bytes, headers y body; leído, afirma sobre el tamaño: responseSize.below(1024)."
+        },
+        "responseAssertionParam": {
+            "status": {
+                "expected": "Código de estado, o frase de estado."
+            },
+            "statusCode": {
+                "code": "Código de estado esperado."
+            },
+            "statusCodeClass": {
+                "digit": "Primer dígito del estado: de 1 a 5."
+            },
+            "statusReason": {
+                "reason": "Frase de estado esperada, como Not Found."
+            },
+            "header": {
+                "name": "Nombre del header.",
+                "value": "Valor que debe tener; opcional."
+            },
+            "body": {
+                "expected": "Texto, expresión regular o JSON; opcional."
+            },
+            "jsonBody": {
+                "path": "Ruta en el JSON, como items[0].id, o el JSON entero; opcional.",
+                "value": "Valor en la ruta; opcional."
+            },
+            "jsonSchema": {
+                "schema": "JSON Schema que el body debe cumplir."
+            },
+            "responseTime": {
+                "expected": "Milisegundos que debió tardar; opcional."
+            },
+            "responseSize": {
+                "expected": "Bytes que debe pesar; opcional."
             }
         },
         "completion": {

@@ -65,7 +65,9 @@ export async function openSocket(
 
     // A cancel is the person's own: they closed it or opened it again, and nothing failed.
     if (!opened.ok && opened.error.code !== 'ws-open-cancelled') {
-        connectionsStore.getState().setConnectionError(connection.id, opened.error.code);
+        connectionsStore
+            .getState()
+            .setConnectionError(connection.id, opened.error.code, opened.error.message);
     }
 
     return opened.ok;

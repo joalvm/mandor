@@ -121,6 +121,7 @@
     "size": "Tamaño",
     "spread": "Dispersión",
     "spreadHelp": "Varía cada espera al azar en este porcentaje, para que conexiones que caen juntas no reintenten a la vez.",
+    "consoleReconnecting": "Reconectando, intento {{attempt}}",
     "stateConnected": "Conectada",
     "stateConnecting": "Conectando",
     "stateDisconnected": "Desconectada",

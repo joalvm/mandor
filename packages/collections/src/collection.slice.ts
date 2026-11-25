@@ -17,6 +17,11 @@ export type CollectionSlice = {
     examplesClosed: Record<string, string[]>;
     /** The path being renamed in place, if any. */
     renaming: string | null;
+    /**
+     * Whether the row being renamed was made a moment ago and this field is the first name it
+     * gets: Escape there takes the making back. Any other rename, and any end of this one, clears it.
+     */
+    justMade: boolean;
     /** The paths taken in the tree, in the order it stands. Many at once with Ctrl and Shift. */
     selected: string[];
     /** The paths waiting for an answer to «delete these?», until the question is closed. */
@@ -33,6 +38,7 @@ export function initialCollectionSlice(): CollectionSlice {
         folded: {},
         examplesClosed: {},
         renaming: null,
+        justMade: false,
         selected: [],
         deleting: null,
         error: null,

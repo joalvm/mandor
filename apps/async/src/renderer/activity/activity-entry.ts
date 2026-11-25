@@ -7,6 +7,8 @@ export type ConnectionMessage = ActivityRecord & { environmentId: string | null 
 export type ConnectionFault = {
     at: number;
     code: ErrorCode;
+    /** What the transport said, as it said it: `getaddrinfo ENOTFOUND api`. */
+    message?: string | undefined;
 };
 
 /** The socket of a connection coming up or going down: the lines that frame what it moved. */

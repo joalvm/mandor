@@ -7,8 +7,8 @@ import { openConnection } from './open-connection.js';
 import { createConnection } from './create-connection.js';
 import type { WorkspaceScope } from './workspace-scope.js';
 
-/** Where a connection starts before anybody points it anywhere. */
-const STARTING_URL = 'ws://localhost:3000';
+/** A connection starts pointing nowhere: its address bar is empty until the person writes one. */
+const STARTING_URL = '';
 
 type StartConnectionOptions = {
     /** The word a connection is born with, in the language of the window: «New connection». */

@@ -2,6 +2,7 @@ import { DropdownMenu } from 'radix-ui';
 import type { PropsWithChildren } from 'react';
 
 import { cn } from '../../lib/cn.js';
+import { ignoredWhileClosing } from './closing-layer.js';
 import { useMenuContext } from './menu-context.js';
 
 type MenuItemProps = PropsWithChildren<{
@@ -35,6 +36,8 @@ export function MenuItem({
             )}
             data-part="menu-item"
             disabled={disabled === true}
+            onPointerLeave={ignoredWhileClosing}
+            onPointerMove={ignoredWhileClosing}
             onSelect={() => {
                 choose(onSelect);
             }}

@@ -63,6 +63,9 @@ describe('asking main to open a socket', () => {
         );
 
         await expect(openSocket(fakeConnection('alpha', 'Gateway'), SCOPE)).resolves.toBe(false);
-        expect(connectionsStore.getState().faults['alpha']?.code).toBe('script-failed');
+        expect(connectionsStore.getState().faults['alpha']).toMatchObject({
+            code: 'script-failed',
+            message: 'connection alpha: boom',
+        });
     });
 });

@@ -76,6 +76,7 @@ describe('one send in full', () => {
         draw(failedEntryOf(ID_A));
 
         expect(screen.getByText('The server did not answer in time.')).toBeVisible();
+        expect(screen.getByText('timed out')).toBeVisible();
         expect(screen.queryByRole('tab')).toBeNull();
     });
 

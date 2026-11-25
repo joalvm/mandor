@@ -35,6 +35,19 @@ describe('ws:open payload', () => {
         }
     });
 
+    /** A connection may be saved with no url; nothing without a scheme ever reaches a socket. */
+    it('refuses to dial an empty url', () => {
+        const result = wsOpenRequestSchema.safeParse({
+            connectionId: 'gateway',
+            workspaceId: 'payments',
+            environmentId: null,
+            template: { headers: {}, url: '' },
+            transport: 'websocket',
+        });
+
+        expect(result.success).toBe(false);
+    });
+
     it('rejects a non-websocket template', () => {
         const result = wsOpenRequestSchema.safeParse({
             connectionId: 'gateway',

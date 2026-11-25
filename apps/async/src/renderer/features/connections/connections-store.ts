@@ -11,7 +11,7 @@ type ConnectionsActions = {
     removeConnection: (connectionId: string) => void;
     reset: () => void;
     setActiveConnection: (connectionId: string | null) => void;
-    setConnectionError: (connectionId: string, code: ErrorCode | null) => void;
+    setConnectionError: (connectionId: string, code: ErrorCode | null, message?: string) => void;
     setConnections: (connections: Connection[]) => void;
     setConnectionState: (connectionId: string, state: WsState, attempt?: number) => void;
     setRecording: (connectionId: string, recording: RecordStatus) => void;
@@ -58,6 +58,7 @@ function updatedFaults(
     faults: Record<string, ConnectionFault>,
     connectionId: string,
     code: ErrorCode | null,
+    message: string | undefined,
 ): Record<string, ConnectionFault> {
     const current = faults[connectionId];
 
@@ -65,7 +66,7 @@ function updatedFaults(
         return faults;
     }
 
-    if (code !== null && current?.code === code) {
+    if (code !== null && current?.code === code && current.message === message) {
         return faults;
     }
 
@@ -74,7 +75,7 @@ function updatedFaults(
     }
 
     // The moment of the failure is stamped on arrival: it is what puts the row in the timeline.
-    return { ...faults, [connectionId]: { at: Date.now(), code } };
+    return { ...faults, [connectionId]: { at: Date.now(), code, message } };
 }
 
 function actionsFor(set: ConnectionsStoreApi['setState']): ConnectionsActions {
@@ -99,8 +100,8 @@ function actionsFor(set: ConnectionsStoreApi['setState']): ConnectionsActions {
         setActiveConnection: (activeConnectionId) => {
             set({ activeConnectionId });
         },
-        setConnectionError: (connectionId, code) => {
-            set((state) => ({ faults: updatedFaults(state.faults, connectionId, code) }));
+        setConnectionError: (connectionId, code, message) => {
+            set((state) => ({ faults: updatedFaults(state.faults, connectionId, code, message) }));
         },
         setConnections: (connections) => {
             set({ connections: [...connections] });

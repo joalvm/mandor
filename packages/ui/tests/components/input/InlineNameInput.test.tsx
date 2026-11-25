@@ -90,4 +90,40 @@ describe('the inline name in place of a row name', () => {
         expect(onCommit).toHaveBeenCalledWith('taken');
         expect(onCancel).toHaveBeenCalledTimes(2);
     });
+
+    /** Escape is a word of its own: the row may read it as taking back what it just made. */
+    it('hands Escape to the row apart from a focus that leaves', () => {
+        const onCancel = vi.fn();
+        const onEscape = vi.fn();
+
+        render(
+            <InlineNameInput
+                label="Nombre"
+                value="gateway"
+                onCancel={onCancel}
+                onCommit={vi.fn(() => true)}
+                onEscape={onEscape}
+            />,
+        );
+        fireEvent.keyDown(screen.getByRole('textbox', { name: 'Nombre' }), { key: 'Escape' });
+
+        expect(onEscape).toHaveBeenCalledOnce();
+        expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('lets go on Escape when the row has nothing else to say about it', () => {
+        const onCancel = vi.fn();
+
+        render(
+            <InlineNameInput
+                label="Nombre"
+                value="gateway"
+                onCancel={onCancel}
+                onCommit={vi.fn(() => true)}
+            />,
+        );
+        fireEvent.keyDown(screen.getByRole('textbox', { name: 'Nombre' }), { key: 'Escape' });
+
+        expect(onCancel).toHaveBeenCalledOnce();
+    });
 });

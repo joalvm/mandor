@@ -25,7 +25,7 @@ async function createHostEnvironment(page: Page, sandbox: Sandbox, host: string)
     await expect
         .poll(async () => {
             const workspace = await defaultWorkspaceDir(sandbox.repoRoot).catch(() => '');
-            const file = await entityNamed(tree, `${workspace}/environments`, 'Local');
+            const file = await entityNamed(tree, `${workspace}/environments`, 'New environment');
 
             return file === null ? '' : tree.read(file).catch(() => '');
         })

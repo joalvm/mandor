@@ -110,6 +110,7 @@ export const CHANNELS = {
     requestBodySave: 'request:body-save',
     requestHideSecrets: 'request:hide-secrets',
     requestScriptOutput: 'request:script-output',
+    requestSendLog: 'request:send-log',
     historyList: 'history:list',
     historyRead: 'history:read',
     historyDelete: 'history:delete',

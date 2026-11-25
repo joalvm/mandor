@@ -1,6 +1,7 @@
 import { LOG_MESSAGE_MAX, LOG_STACK_MAX, type LogSource } from '@mandor/ipc';
 
 import { bridge } from '../bridge.js';
+import { tellWindowConsole } from '../console/window-console.js';
 
 type Fault = { message: string; stack?: string | undefined };
 
@@ -44,20 +45,25 @@ function levelOf(source: LogSource): 'error' | 'warn' {
 
 /**
  * Hands main a fault of the window to write in the log, which is the only place the person can
- * later find it: the console of the window is one nobody opens. Nothing waits for the answer
+ * later find it, and to the console of the window, where it reads at once. Nothing waits for the answer
  * and nothing is thrown, because the fault already is the problem; a render error also brings
  * the stack of components that led to it, when React gives one.
  */
 export function reportFault(source: LogSource, error: unknown, componentStack?: string): void {
     const fault = faultOf(error);
     const stack = [fault.stack, componentStack].filter((part) => part !== undefined).join('\n');
+    const level = levelOf(source);
+    const message = clip(fault.message, LOG_MESSAGE_MAX);
+    const clipped = stack === '' ? undefined : clip(stack, LOG_STACK_MAX);
+
+    tellWindowConsole({ tone: level, text: message, detail: clipped });
 
     bridge.log
         .write({
-            level: levelOf(source),
+            level,
             source,
-            message: clip(fault.message, LOG_MESSAGE_MAX),
-            ...(stack === '' ? {} : { stack: clip(stack, LOG_STACK_MAX) }),
+            message,
+            ...(clipped === undefined ? {} : { stack: clipped }),
         })
         .then((answer) => {
             if (!answer.ok) {

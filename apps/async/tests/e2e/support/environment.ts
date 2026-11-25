@@ -1,7 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
 /** The name the app gives an environment created from the picker, with nobody typing it. */
-const ENVIRONMENT = 'Local';
+const ENVIRONMENT = 'New environment';
 
 /**
  * The select by its part, not by name: the origin of these runs is also called «Local». It is

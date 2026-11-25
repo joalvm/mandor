@@ -172,4 +172,45 @@ describe('runChain', () => {
         expect(effects).toEqual([{ kind: 'var', name: 't', value: 's3cr3t' }]);
         expect(JSON.stringify(leaves)).not.toContain('s3cr3t');
     });
+
+    /** What the environment declares goes there, and the memory lets go of the name. */
+    it('hands the environment the names it declares and keeps the rest in memory', async () => {
+        const kept: string[] = [];
+        const deps = depsOf({
+            environment: {
+                keep: (_place, sets) => {
+                    kept.push(
+                        ...sets.filter(({ name }) => name === 'token').map(({ value }) => value),
+                    );
+
+                    return Promise.resolve(sets.filter(({ name }) => name !== 'token'));
+                },
+            },
+        });
+
+        deps.variables.apply(PLACE, deps.variables.generation(PLACE), [
+            { name: 'token', value: 'old' },
+        ]);
+        await runChain(
+            runOf([script('mandor.variables.set("token", "new"); mandor.variables.set("a", "1")')]),
+            deps,
+        );
+
+        expect(kept).toEqual(['new']);
+        expect(deps.variables.values(PLACE)).toEqual({ a: '1' });
+    });
+
+    it('keeps every value in memory when the environment cannot take them, and logs it', async () => {
+        const deps = depsOf({
+            environment: { keep: () => Promise.reject(new Error('disk full')) },
+        });
+
+        await runChain(runOf([script('mandor.variables.set("token", "new")')]), deps);
+
+        expect(deps.variables.values(PLACE)).toEqual({ token: 'new' });
+        expect(deps.lines).toContainEqual([
+            'warn',
+            'a value a script set did not reach its environment: Error: disk full',
+        ]);
+    });
 });
