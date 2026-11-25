@@ -76,6 +76,8 @@ mandor.test('status', () => {
     mandor.expect(mandor.response.json().id).to.be.a('number');
     mandor.expect(response.text()).not.to.be.undefined;
     mandor.expect([1, 2]).to.have.lengthOf(2).and.include(1);
+    mandor.response.to.be.success.and.have.header('x').and.not.have.jsonBody('a.b', 1);
+    response.to.have.status('OK').and.body(/ok/);
 });
 console.info(mandor.response.time, mandor.response.headers.get('x'), mandor.request.url);
 `,
@@ -127,6 +129,10 @@ describe('scriptTypesOf', () => {
         expect(types).toContain('text of script.api.variables.get');
         expect(types).toContain('@param name text of script.param.variables.get.name');
         expect(types).toContain('text of script.assertion.equal');
+        expect(types).toContain('text of script.responseAssertion.success');
+        expect(types).toContain(
+            '@param digit text of script.responseAssertionParam.statusCodeClass.digit',
+        );
         expect(types).toContain('declare const mandor: Mandor;');
     });
 

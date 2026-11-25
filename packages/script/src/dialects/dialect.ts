@@ -18,6 +18,8 @@ export type ForeignMatch = {
     named: AnyNode;
     /** Whether the chain goes on past that name, as `pm.test.skip` goes on past `pm.test`. */
     continued: boolean;
+    /** The names the chain goes on with, in order: `have`, `status` past `pm.response.to`. */
+    rest: readonly string[];
     /** The call the name is the callee of, when it is called. */
     call: CallExpression | undefined;
     /** Whether what the call gives is awaited or read on, as `await x` or `x.then`. */
@@ -59,6 +61,15 @@ export function calledAs(text: string): DialectRule {
 
         return [edit(call, text)];
     };
+}
+
+/**
+ * A chain of assertions that `mandor` words the same: it has a match while every name it goes on
+ * with is one `mandor` has. Any other, `jsonSchema` or `responseTime`, keeps the whole use marked.
+ */
+export function assertedAs(text: string, words: ReadonlySet<string>): DialectRule {
+    return ({ named, rest }) =>
+        rest.every((word) => words.has(word)) ? [edit(named, text)] : undefined;
 }
 
 function isField(

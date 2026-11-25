@@ -34,6 +34,7 @@ export {
     type StandardName,
 } from './api/script-api.js';
 export { ASSERTION_API, type AssertionWord } from './api/assertion-api.js';
+export { RESPONSE_ASSERTION_API } from './api/response-assertion-api.js';
 export { scriptTypesOf, type DescribeApi } from './api/script-types-of.js';
 export {
     EMPTY_SCRIPT_CONTEXT,

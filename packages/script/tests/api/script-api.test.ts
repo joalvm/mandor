@@ -16,13 +16,14 @@ beforeAll(async () => {
     wasm = await newWasmModule();
 });
 
-// Walks every name the script has in scope and logs the paths of what it finds: a function or a
-// value is a leaf, an object is walked by its own enumerable keys.
+// Walks every name the script has in scope and logs the paths of what it finds: a function, a
+// value or an object with nothing enumerable (the words of response.to) is a leaf, any other object
+// is walked by its own enumerable keys.
 const WALK = `
 const roots = { console, atob, btoa, URLSearchParams, mandor };
 const found = [];
 function walk(path, value) {
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) {
         Object.keys(value).forEach((key) => walk(path + '.' + key, value[key]));
     } else {
         found.push(path);

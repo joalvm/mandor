@@ -1,4 +1,7 @@
+import { RESPONSE_ASSERTION_API } from '../api/response-assertion-api.js';
+
 import {
+    assertedAs,
     headerAdded,
     readAs,
     renamed,
@@ -24,6 +27,9 @@ function variablesOf(root: string, scopes: readonly string[]): Entry[] {
     );
 }
 
+/** The words `mandor.response.to` has: a chain of Postman made of them alone runs as it is. */
+const RESPONSE_WORDS: ReadonlySet<string> = new Set(RESPONSE_ASSERTION_API.map(({ name }) => name));
+
 /** The names under `request` and `response` that `mandor` has, by their path below the root. */
 const MESSAGE_RULES: readonly Entry[] = [
     ['variables.replaceIn', renamed('mandor.variables.replaceIn')],
@@ -39,6 +45,7 @@ const MESSAGE_RULES: readonly Entry[] = [
     ['response.text', renamed('mandor.response.text')],
     ['response.headers.get', renamed('mandor.response.headers.get')],
     ['response.headers.has', renamed('mandor.response.headers.has')],
+    ['response.to', assertedAs('mandor.response.to', RESPONSE_WORDS)],
     ['test', renamed('mandor.test')],
     ['expect', renamed('mandor.expect')],
     ['sendRequest', sentAndAwaited('mandor.sendRequest')],

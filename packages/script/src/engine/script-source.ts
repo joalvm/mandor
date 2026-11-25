@@ -18,6 +18,8 @@ import { INTRINSICS_GUEST } from './guest/intrinsics-guest.js';
 import { LINES_GUEST } from './guest/lines-guest.js';
 import { LISTS_GUEST } from './guest/lists-guest.js';
 import { REQUEST_GUEST } from './guest/request-guest.js';
+import { RESPONSE_ASSERTION_GUEST } from './guest/response-assertion-guest.js';
+import { RESPONSE_BODY_GUEST } from './guest/response-body-guest.js';
 import { RESPONSE_GUEST } from './guest/response-guest.js';
 import { SEND_GUEST } from './guest/send-guest.js';
 import { SOCKET_GUEST } from './guest/socket-guest.js';
@@ -89,6 +91,8 @@ function guestOf(input: ScriptRunInput): string {
         TEST_GUEST,
         DEEP_EQUAL_GUEST,
         EXPECT_GUEST,
+        RESPONSE_ASSERTION_GUEST,
+        RESPONSE_BODY_GUEST,
         mandorOf(members),
         `const ARGS = [${STANDARD_NAMES.map((name) => STANDARD_GUEST[name]).join(', ')}, mandorApi];`,
         FRAME_GUEST,

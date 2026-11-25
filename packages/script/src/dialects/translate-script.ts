@@ -125,11 +125,16 @@ function readsOn(call: CallExpression, outer: AnyNode | undefined): boolean {
     );
 }
 
-function matchAt(
-    ancestors: readonly AnyNode[],
-    { at, node: named }: Link,
-    continued: boolean,
-): ForeignMatch {
+/** The names a chain goes on with past `link`, in order. */
+function restOf(link: Link, end: Link): string[] {
+    return end.path
+        .slice(link.path.length)
+        .split('.')
+        .filter((name) => name !== '');
+}
+
+function matchAt(ancestors: readonly AnyNode[], link: Link, end: Link): ForeignMatch {
+    const { at, node: named } = link;
     const call = callOf(named, ancestors[at - 1]);
     const inner = ancestors.slice(0, at).findLast(isFunction);
 
@@ -137,8 +142,9 @@ function matchAt(
         awaitable: inner === undefined || inner.async,
         awaited: call !== undefined && readsOn(call, ancestors[at - 2]),
         call,
-        continued,
+        continued: link !== end,
         named,
+        rest: restOf(link, end),
     };
 }
 
@@ -162,7 +168,7 @@ function knownIn(
 function foundAt(table: DialectTable, root: Identifier, ancestors: readonly AnyNode[]): Found {
     const { end, links } = chainOf(ancestors, root);
     const known = isKeyToo(ancestors) ? undefined : knownIn(table, links);
-    const edits = known?.rule(matchAt(ancestors, known.link, known.link !== end));
+    const edits = known?.rule(matchAt(ancestors, known.link, end));
 
     return {
         dialect: table.dialect,

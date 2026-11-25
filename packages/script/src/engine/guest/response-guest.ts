@@ -3,7 +3,8 @@
  * one that is not text, is not in the snapshot: `text()` and `json()` give `undefined` and say so
  * once. `newResponse` builds one from the parts of an answer (`status`, `headers`, `text`,
  * `timeMs`, shown as `time`), for `mandor.response` and for what `mandor.sendRequest` gives back.
- * Needs `I`, `SNAPSHOT`, `warnLine` and `newLines`.
+ * `to` asserts about it in the words of Postman (`RESPONSE_ASSERTION_GUEST`). Needs `I`,
+ * `SNAPSHOT`, `warnLine`, `newLines` and `responseAssertion`.
  */
 export const RESPONSE_GUEST = String.raw`
 function newResponse(source) {
@@ -28,6 +29,7 @@ function newResponse(source) {
 
     I.define(api, 'status', { enumerable: true, get: () => source.status });
     I.define(api, 'time', { enumerable: true, get: () => source.timeMs });
+    I.define(api, 'to', { enumerable: true, get: () => responseAssertion(api, false) });
 
     return api;
 }

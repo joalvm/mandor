@@ -1,5 +1,10 @@
 import { createPlainI18n } from '@mandor/i18n';
-import { ASSERTION_API, EMPTY_SCRIPT_CONTEXT, SCRIPT_API } from '@mandor/script';
+import {
+    ASSERTION_API,
+    EMPTY_SCRIPT_CONTEXT,
+    RESPONSE_ASSERTION_API,
+    SCRIPT_API,
+} from '@mandor/script';
 import { editorAt } from '@mandor/ui/testing/editors-in';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -73,10 +78,12 @@ describe('the editor of a script', () => {
 
     /** The help of a name is said in the language of the window, whichever it is. */
     it('has the help of every name of the API, its parameters and its words in Spanish and in English', () => {
-        const keys = [...SCRIPT_API, ...ASSERTION_API].flatMap(({ docKey, parameters }) => [
-            docKey,
-            ...parameters.map((parameter) => parameter.docKey),
-        ]);
+        const keys = [...SCRIPT_API, ...ASSERTION_API, ...RESPONSE_ASSERTION_API].flatMap(
+            ({ docKey, parameters }) => [
+                docKey,
+                ...parameters.map((parameter) => parameter.docKey),
+            ],
+        );
         const missing = (['es', 'en'] as const).flatMap((language) => {
             const texts = createPlainI18n(language);
 

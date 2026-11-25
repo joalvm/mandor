@@ -35,6 +35,12 @@ describe('INSOMNIA_DIALECT', () => {
         );
     });
 
+    it('follows it for the assertions of the response too', () => {
+        expect(translated('insomnia.response.to.have.header("a");')).toBe(
+            'mandor.response.to.have.header("a");',
+        );
+    });
+
     it('says the use is of Insomnia', () => {
         expect(translateScript('insomnia.environment.unset("a");').untranslated).toEqual([
             { dialect: 'insomnia', from: 0, to: 26, translatable: false },
