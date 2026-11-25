@@ -39,7 +39,7 @@ describe('PREFERENCE_DEFINITIONS', () => {
         expect(themed).toHaveLength(3);
 
         for (const definition of themed) {
-            expect(definition.values).toBe(THEME_IDS);
+            expect('values' in definition && definition.values).toBe(THEME_IDS);
         }
     });
 
