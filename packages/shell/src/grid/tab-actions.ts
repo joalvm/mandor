@@ -15,6 +15,7 @@ import { isPreviewTab } from './leaf-preview.js';
 import { withActiveTab } from './leaf-tabs.js';
 import { releaseReplacedPreview, releaseTab } from '../tab/release-tab.js';
 import type { Tab } from '../tab/tab.js';
+import { tabPreferences } from '../tab/tab-preferences.js';
 
 /** What can be done to the tabs of a window, as opposed to the groups that hold them. */
 export type TabActions = {
@@ -55,8 +56,16 @@ export function tabActionsFor({ grid, opened, pruneSections, relaid }: TabAction
         moveTab: (tabId, toGroupId) => {
             relaid((layout) => tabMoved(layout, tabId, toGroupId));
         },
-        /** A look that replaces another one closes it, so the one replaced goes as a closed tab. */
-        openTab: (groupId, tab, options = { preview: false }) => {
+        /**
+         * A look that replaces another one closes it, so the one replaced goes as a closed tab.
+         * Whoever always wants a new tab gets one that stays where a look would have opened.
+         */
+        openTab: (groupId, tab, asked = { preview: false }) => {
+            const options = {
+                ...asked,
+                preview: asked.preview && !tabPreferences.getState().alwaysNew,
+            };
+
             if (groupOfTab(grid(), tab.id) === undefined) {
                 opened(tab.id);
             }

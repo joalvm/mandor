@@ -103,3 +103,4 @@ export { EmptyGroup } from './components/group-grid/EmptyGroup.js';
 export { TabStripAction } from './components/tab-strip/TabStripAction.js';
 export { useTabStrip } from './hooks/useTabStrip.js';
 export type { Tab } from './tab/tab.js';
+export { tabPreferences, type TabPreferences } from './tab/tab-preferences.js';

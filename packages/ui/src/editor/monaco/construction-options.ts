@@ -3,7 +3,7 @@ import type { editor } from 'monaco-editor/editor/editor.api.js';
 import { zoomedTextSize } from '../../lib/text-zoom.js';
 import { tokenValues } from '../../styles/token-values.js';
 import { CODE_FONT_SIZE } from '../code-font-size.js';
-import { CODE_INDENT } from '../code-indent.js';
+import { codePreferences } from '../code-preferences.js';
 import type { EditorLanguage } from '../editor-language.js';
 import { isReadOnly, type EditorOptions } from '../editor-options.js';
 
@@ -28,10 +28,8 @@ export const CODE_TYPE = `${String(CODE_FONT_SIZE)}px ${CODE_FAMILY}`;
 
 /**
  * What every editor of the app changes of the editor Monaco ships. Everything it draws is
- * Monaco's own but the minimap and the type, which is the mono type of the product at the size
- * of the editors the user already reads payloads in. It indents by the measure a payload is laid
- * out with, whatever the text it opens was indented by: text typed in and text formatted by a
- * button end up in one document. The rest is how it sits in the window: it fills a box the user
+ * Monaco's own but the minimap. The type, the indent and what it closes are the person's
+ * (`codeWriting`). The rest is how it sits in the window: it fills a box the user
  * resizes, a text that fits the box does not scroll, what floats over it is not cut by the panel
  * that holds it, and a wheel that reaches the end of the text scrolls the panel under it.
  *
@@ -44,8 +42,6 @@ const SHARED: CodeOptions = {
     detectIndentation: false,
     editContext: false,
     fixedOverflowWidgets: true,
-    fontFamily: CODE_FAMILY,
-    insertSpaces: true,
     minimap: { enabled: false },
     scrollBeyondLastLine: false,
     // Four pixels, as every box of the window that scrolls draws its bar (`base.css`).
@@ -54,7 +50,6 @@ const SHARED: CodeOptions = {
         horizontalScrollbarSize: 4,
         verticalScrollbarSize: 4,
     },
-    tabSize: CODE_INDENT,
     unicodeHighlight: {
         ambiguousCharacters: false,
         invisibleCharacters: false,
@@ -76,11 +71,31 @@ const TRICKS: editor.IUnicodeHighlightOptions = {
     nonBasicASCII: false,
 };
 
-/** How large the text is: the code size of the app, at the step the reader put the window's text. */
+/** How large the text is: the size the person set, at the step the reader put the window's text. */
 export function codeSize(): CodeOptions {
-    const fontSize = zoomedTextSize(CODE_FONT_SIZE);
+    const fontSize = zoomedTextSize(codePreferences().fontSize);
 
     return { fontSize, lineHeight: Math.round(fontSize * CODE_LEADING) };
+}
+
+/**
+ * How every editor writes, as the person set it: in the type they named, falling back to the mono
+ * type of the product for a family the system lacks, or in the product's alone. It indents by the
+ * measure a payload is laid out with, whatever the text it opens was indented by: text typed in
+ * and text formatted by a button end up in one document.
+ */
+export function codeWriting(): CodeOptions {
+    const { autoClose, fontFamily, indentSize, indentWithTabs } = codePreferences();
+    const named = fontFamily.trim();
+    const closing = autoClose ? 'languageDefined' : 'never';
+
+    return {
+        autoClosingBrackets: closing,
+        autoClosingQuotes: closing,
+        fontFamily: named === '' ? CODE_FAMILY : `${named}, ${CODE_FAMILY}`,
+        insertSpaces: !indentWithTabs,
+        tabSize: indentSize,
+    };
 }
 
 /** The languages a service of their own completes. */
@@ -103,14 +118,19 @@ function suggesting(setup: EditorSetup): CodeOptions {
 }
 
 /**
- * The options one editor is built with, and changed with when its caller asks otherwise. A
- * wrapped dump breaks its columns, so bytes never wrap.
+ * The options one editor is built with, and changed with when its caller or the settings ask
+ * otherwise. An editor its caller lets wrap wraps while the person lets lines wrap; a wrapped dump
+ * breaks its columns, so bytes never wrap.
  */
 export function constructionOptions(setup: EditorSetup): CodeOptions {
-    const wraps = setup.language !== 'binary' && setup.options.wordWrap === 'on';
+    const wraps =
+        setup.language !== 'binary' &&
+        setup.options.wordWrap === 'on' &&
+        codePreferences().wordWrap;
 
     return {
         ...SHARED,
+        ...codeWriting(),
         ...codeSize(),
         ...access(isReadOnly(setup.language, setup.options)),
         ...suggesting(setup),

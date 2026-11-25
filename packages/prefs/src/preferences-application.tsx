@@ -4,6 +4,8 @@ import { bridge, fireAndForget } from '@mandor/shell';
 import { setTextZoom, watchTextZoom } from '@mandor/ui';
 import { useEffect, useLayoutEffect, type PropsWithChildren } from 'react';
 
+import { useAppliedCodePreferences } from './hooks/useAppliedCodePreferences.js';
+import { useAppliedTabPreferences } from './hooks/useAppliedTabPreferences.js';
 import { usePreferences } from './preferences-context.js';
 import { readTextZoom, writeTextZoom } from './text-zoom-storage.js';
 import { useAppliedTheme } from './theme/useAppliedTheme.js';
@@ -18,6 +20,9 @@ export function PreferencesApplication({ children }: PreferencesApplicationProps
     const { source, theme } = useAppliedTheme();
     const mode = values['updates.mode'];
     const channel = values['updates.channel'];
+
+    useAppliedTabPreferences(values);
+    useAppliedCodePreferences(values);
 
     // The size the reader left the text at comes back with the window, before its first paint, and
     // is kept at every change. It belongs to the window for as long as it is open: deps stay empty.

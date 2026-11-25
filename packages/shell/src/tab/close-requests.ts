@@ -3,6 +3,7 @@ import { leavesOf, type GridNode } from '@mandor/ipc';
 import { leafOf } from '../grid/grid-leaf.js';
 import { tabKind } from './tab-kind-registry.js';
 import type { Tab } from './tab.js';
+import { tabPreferences } from './tab-preferences.js';
 import { unsavedQuestion } from './unsaved-question.js';
 
 /** What the window offers to close something while giving its kind the chance to say no. */
@@ -37,8 +38,8 @@ function shownElsewhere(grid: GridNode, tab: Tab, leaving: readonly Tab[]): bool
 
 /**
  * The question a tab asks before it goes, or none. Unsaved work asks the window's own question
- * —save, let go, or stay—, unless another view that stays open still holds it; any other kind
- * may ask one of its own.
+ * —save, let go, or stay—, unless another view that stays open still holds it, or the person
+ * chose to close without asking, which lets the work go; any other kind may ask one of its own.
  */
 function questionOf(
     grid: GridNode,
@@ -46,8 +47,13 @@ function questionOf(
     leaving: readonly Tab[],
 ): (() => Promise<boolean>) | undefined {
     const kind = tabKind(tab.kind);
+    const asks = tabPreferences.getState().askUnsaved;
 
-    if (kind?.dirty?.(tab.id, tab.resource) === true && !shownElsewhere(grid, tab, leaving)) {
+    if (
+        asks &&
+        kind?.dirty?.(tab.id, tab.resource) === true &&
+        !shownElsewhere(grid, tab, leaving)
+    ) {
         return () => unsavedQuestion.getState().ask(tab);
     }
 

@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createShellStore, type ShellStoreApi } from '../../src/shell-store.js';
 import type { TabActions } from '../../src/grid/tab-actions.js';
+import { tabPreferences } from '../../src/tab/tab-preferences.js';
 import { declareTabKindSpec } from '../../src/testing/tab-kind.js';
 
 const ITEMS = 'mandor://demo/payments/collection';
@@ -35,6 +36,8 @@ afterEach(() => {
     for (const unregister of UNREGISTER.splice(0)) {
         unregister();
     }
+
+    tabPreferences.setState(tabPreferences.getInitialState());
 });
 
 describe('looking at things one click at a time', () => {
@@ -47,6 +50,16 @@ describe('looking at things one click at a time', () => {
         look(api, 'c');
 
         expect(strip(api)).toEqual(['kept', 'c*']);
+    });
+
+    it('opens a tab that stays for every look, for whoever always wants a new tab', () => {
+        const api = store();
+
+        tabPreferences.setState({ alwaysNew: true });
+        look(api, 'a');
+        look(api, 'b');
+
+        expect(strip(api)).toEqual(['a', 'b']);
     });
 
     it('lets go of what the replaced look was holding', () => {

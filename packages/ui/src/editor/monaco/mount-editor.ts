@@ -10,6 +10,7 @@ import { constructionOptions, type EditorSetup } from './construction-options.js
 import { fixModel } from './editor-fixes.js';
 import { lintModel } from './editor-markers.js';
 import { suggestModel } from './editor-suggestions.js';
+import { followCodePreferences } from './follow-code-preferences.js';
 import { followTextZoom } from './follow-text-zoom.js';
 import { ghostModel } from './ghost-text.js';
 import { overwriteText, replaceText } from './model-text.js';
@@ -83,11 +84,9 @@ function extrasOf(
 
 /** Options written inline arrive as a new object on every render: what they say is what counts. */
 function sameOptions(applied: EditorOptions, next: EditorOptions): boolean {
-    const keys = new Set([...Object.keys(applied), ...Object.keys(next)]) as Set<
-        keyof EditorOptions
-    >;
+    const keys = [...Object.keys(applied), ...Object.keys(next)] as (keyof EditorOptions)[];
 
-    return [...keys].every((key) => applied[key] === next[key]);
+    return keys.every((key) => applied[key] === next[key]);
 }
 
 function sameSetup(applied: EditorTarget, next: EditorTarget): boolean {
@@ -200,6 +199,7 @@ export function mountEditor(
     const listeners = [
         routeNativeEdits(shown),
         followTextZoom(shown, element),
+        followCodePreferences(shown, () => constructionOptions(mounted.applied)),
         shown.onDidChangeModelContent(() => {
             onChange(shown.getValue());
         }),

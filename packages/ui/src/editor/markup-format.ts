@@ -1,4 +1,4 @@
-import { CODE_INDENT } from './code-indent.js';
+import { codePreferences } from './code-preferences.js';
 import { xmlDiagnostics } from './xml-diagnostics.js';
 
 /** The markup the layout knows: HTML by its own rules, XML with no element treated specially. */
@@ -9,7 +9,6 @@ const LAYOUT = {
     end_with_newline: false,
     extra_liners: [],
     indent_inner_html: true,
-    indent_size: CODE_INDENT,
     max_preserve_newlines: 1,
     preserve_newlines: true,
     wrap_line_length: 0,
@@ -42,5 +41,12 @@ export async function formattedMarkup(text: string, markup: Markup): Promise<str
 
     const { beautifyMarkup } = await import('./beautify-markup.js');
 
-    return beautifyMarkup(text, LAYOUT_OF_MARKUP[markup]);
+    // A level steps in as the editors type it.
+    const { indentSize, indentWithTabs } = codePreferences();
+
+    return beautifyMarkup(text, {
+        ...LAYOUT_OF_MARKUP[markup],
+        indent_size: indentSize,
+        indent_with_tabs: indentWithTabs,
+    });
 }

@@ -3,6 +3,7 @@ import { leavesOf, ROOT_GROUP_ID } from '@mandor/ipc';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createShellStore, type ShellStoreApi } from '../../src/shell-store.js';
+import { tabPreferences } from '../../src/tab/tab-preferences.js';
 import { unsavedQuestion } from '../../src/tab/unsaved-question.js';
 import { declareTabKindSpec } from '../../src/testing/tab-kind.js';
 
@@ -53,6 +54,21 @@ describe('closing tabs with unsaved work (close-requests)', () => {
     afterEach(() => {
         unsaved.clear();
         unsavedQuestion.setState({ asking: null });
+        tabPreferences.setState(tabPreferences.getInitialState());
+    });
+
+    /** Closing then lets the work go, as the answer that does not save would. */
+    it('closes unsaved work without asking once the person turned the question off', async () => {
+        const api = store();
+
+        tabPreferences.setState({ askUnsaved: false });
+        registerUnsavedKind();
+        openDraft(api, 'one');
+        unsaved.add('one');
+
+        await expect(api.getState().requestCloseTab(ROOT_GROUP_ID, 'one')).resolves.toBe(true);
+        expect(tabIds(api)).toEqual([]);
+        expect(unsavedQuestion.getState().asking).toBeNull();
     });
 
     it('closes the saved at once and asks about each unsaved one in turn, in front', async () => {
