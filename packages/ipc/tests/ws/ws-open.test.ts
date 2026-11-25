@@ -71,6 +71,19 @@ describe('ws:open payload', () => {
         expect(result.success).toBe(true);
     });
 
+    /** The url built whole from the environment, scheme included, as Postman builds one. */
+    it('accepts a template whose scheme comes from a variable', () => {
+        const result = wsOpenRequestSchema.safeParse({
+            connectionId: 'gateway',
+            workspaceId: 'payments',
+            environmentId: 'local',
+            transport: 'websocket',
+            template: { url: '{{protocol}}://{{base_url}}:{{port}}' },
+        });
+
+        expect(result.success).toBe(true);
+    });
+
     it('accepts the options the connection dials with', () => {
         const parsed = wsOpenRequestSchema.parse({
             connectionId: 'gateway',
