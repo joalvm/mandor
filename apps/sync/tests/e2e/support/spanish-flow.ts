@@ -31,7 +31,7 @@ export async function createWorkspaceIn(page: Page, from: string, name: string):
 
     const field = page.getByRole('textbox', { name: 'Nombre del workspace' });
 
-    await field.click();
+    await expect(field).toBeFocused();
     await field.pressSequentially(name);
     await page.getByRole('button', { exact: true, name: 'Crear' }).click();
     await expect(page.getByRole('dialog')).toBeHidden();

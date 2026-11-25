@@ -145,7 +145,7 @@ test('a variable of the folder overrides the environment for what the folder hol
     await declare('level', 'carpeta');
     await expect.poll(() => settingsFile('api/carpeta/folder.yaml')).toContain('value: carpeta');
     await expect(
-        page.locator('[data-part="folder-variable-notes"]').getByText('Overrides Local'),
+        page.locator('[data-part="folder-variable-notes"]').getByText('Overrides New environment'),
     ).toBeVisible();
     await page.getByRole('treeitem', { exact: true, name: 'Carpeta' }).click();
     await page.keyboard.press('ArrowRight');
@@ -159,7 +159,9 @@ test('a variable of the collection gives way to the environment', async () => {
     await declare('level', 'coleccion');
     await expect.poll(() => settingsFile('api/collection.yaml')).toContain('value: coleccion');
     await expect(
-        page.locator('[data-part="folder-variable-notes"]').getByText('Overridden by Local'),
+        page
+            .locator('[data-part="folder-variable-notes"]')
+            .getByText('Overridden by New environment'),
     ).toBeVisible();
 
     await send('Raiz');
