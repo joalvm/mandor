@@ -7,11 +7,14 @@ export function defaultApp(): AppArea {
         about: () =>
             Promise.resolve(
                 success({
+                    arch: 'x64',
                     chrome: '0.0.0',
                     electron: '0.0.0',
+                    icon: '',
                     name: 'Mandor',
                     node: '0.0.0',
                     platform: 'linux',
+                    system: '0.0.0',
                     version: '0.0.0',
                 }),
             ),

@@ -8,6 +8,6 @@ export function aboutReport(about: AppAbout): string {
     return [
         `${about.name} ${about.version}`,
         `Electron ${about.electron} · Chromium ${about.chrome} · Node ${about.node}`,
-        `Platform ${about.platform}`,
+        `Platform ${about.platform} ${about.system} ${about.arch}`,
     ].join('\n');
 }

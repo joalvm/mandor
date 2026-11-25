@@ -18,11 +18,14 @@ function depsWith(handlers: readonly AppHandlers[]) {
         userDataDir: 'user-data',
         about: {
             about: () => ({
+                arch: 'x64',
                 chrome: '1',
                 electron: '1',
+                icon: '',
                 name: 'Mandor',
                 node: '1',
                 platform: 'linux',
+                system: '6.8.0',
                 version: '0.1.0',
             }),
             showLicenses: () => Promise.resolve(''),
