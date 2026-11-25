@@ -48,7 +48,12 @@ const SHARED: CodeOptions = {
     insertSpaces: true,
     minimap: { enabled: false },
     scrollBeyondLastLine: false,
-    scrollbar: { alwaysConsumeMouseWheel: false },
+    // Four pixels, as every box of the window that scrolls draws its bar (`base.css`).
+    scrollbar: {
+        alwaysConsumeMouseWheel: false,
+        horizontalScrollbarSize: 4,
+        verticalScrollbarSize: 4,
+    },
     tabSize: CODE_INDENT,
     unicodeHighlight: {
         ambiguousCharacters: false,

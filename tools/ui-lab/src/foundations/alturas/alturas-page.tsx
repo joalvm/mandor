@@ -39,14 +39,14 @@ export function AlturasPage() {
 
             <DocSection
                 heading="Las barras de desplazamiento"
-                intent="Heredadas desde la raíz: thin y del color del borde al pasar. Ningún panel declara la suya."
+                intent="Una sola barra de 4 px para todo: aparece al pasar o con el foco dentro. Ningún panel declara la suya."
             >
                 <ul className="flex list-disc flex-col gap-gap-tight pl-4 text-sm text-text-secondary">
                     <li>
-                        <code className="font-mono text-xs">scrollbar-width: thin</code> y{' '}
-                        <code className="font-mono text-xs">scrollbar-color</code> se declaran una
-                        vez en <code className="font-mono text-xs">base.css</code> y heredan a toda
-                        caja que desborde.
+                        Las partes <code className="font-mono text-xs">::-webkit-scrollbar</code> se
+                        declaran una vez en <code className="font-mono text-xs">base.css</code>, sin{' '}
+                        <code className="font-mono text-xs">scrollbar-width</code>, y el editor pide
+                        el mismo ancho.
                     </li>
                     <li>
                         Esta página ya las lleva: el lateral y el contenido usan la misma barra.
