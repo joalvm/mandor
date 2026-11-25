@@ -12,8 +12,13 @@ export type ConsoleRecord = ConsoleEntry & {
     network?: boolean | undefined;
 };
 
-/** What every entry of the console may weigh together, in bytes of the window's strings. */
-export const CONSOLE_BYTES = 4 * 1024 * 1024;
+/**
+ * What every entry of the console may weigh together, in bytes of the window's strings. The heap
+ * holds about twice that once the objects, keys and section trees around the text are counted:
+ * two thousand sends filled 4 MiB of text and grew the window by 9 MB. Two of text keep the
+ * console near 4 MB of memory.
+ */
+export const CONSOLE_BYTES = 2 * 1024 * 1024;
 
 /** How a line of a log reads as an entry of the console, by its tone. */
 const TONE_LEVELS: Readonly<Record<LogTone, ConsoleLevel>> = {
