@@ -131,12 +131,21 @@ function nestedInterfacesOf(path: readonly string[], node: ApiNode, printing: Pr
         ]);
 }
 
+/** How a word of an assertion prints: by its kind, with the type the assertion has. */
+const ASSERTION_MEMBER: Record<
+    AssertionWord['kind'],
+    (word: AssertionWord, type: string) => string
+> = {
+    chain: ({ name }, type) => `readonly ${name}: ${type};`,
+    flag: ({ name }, type) => `readonly ${name}: ${type};`,
+    verb: ({ name, signature = '' }) => `${name}${signature};`,
+    measure: ({ name, signature = '' }) => `readonly ${name}: ${signature};`,
+};
+
 function assertionMember(word: AssertionWord, type: string, describe: DescribeApi): string {
     const doc = docOf(describe, word.docKey, word.parameters, INDENT);
 
-    return word.signature === undefined
-        ? `${doc}${INDENT}readonly ${word.name}: ${type};`
-        : `${doc}${INDENT}${word.name}${word.signature};`;
+    return `${doc}${INDENT}${ASSERTION_MEMBER[word.kind](word, type)}`;
 }
 
 /** The interface of an assertion: each word reads or calls back to the same type. */

@@ -26,10 +26,12 @@ describe('RESPONSE_ASSERTION_API', () => {
         expect(found.sort()).toEqual(RESPONSE_ASSERTION_API.map(({ name }) => name).sort());
     });
 
-    it('gives a verb a signature and its parameters, and a word read as a property neither', () => {
+    it('gives a word that is called a signature and its parameters, and the rest neither', () => {
         for (const word of RESPONSE_ASSERTION_API) {
-            expect(word.signature === undefined).toBe(word.kind !== 'verb');
-            expect(word.parameters.length > 0).toBe(word.kind === 'verb');
+            const called = word.kind === 'verb' || word.kind === 'measure';
+
+            expect(word.signature === undefined).toBe(!called);
+            expect(word.parameters.length > 0).toBe(called);
         }
     });
 

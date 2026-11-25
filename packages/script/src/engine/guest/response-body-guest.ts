@@ -1,9 +1,33 @@
 /**
  * The words of `mandor.response.to` that read the body: as text, as a pattern and as JSON, with a
- * path into it. Needs `I`, `typeOf`, `deepEqual`, `repr` and the `claim` of
- * `RESPONSE_ASSERTION_GUEST`.
+ * path into it, and against a JSON Schema the worker checks. Needs `I`, `SCHEMA_NAME`, `typeOf`,
+ * `deepEqual`, `repr` and the `claim` of `RESPONSE_ASSERTION_GUEST`.
  */
 export const RESPONSE_BODY_GUEST = String.raw`
+// The check of a JSON Schema, done by the worker: held here, gone from the global before the
+// script runs.
+const HOST_SCHEMA = globalThis[SCHEMA_NAME];
+
+delete globalThis[SCHEMA_NAME];
+
+function claimSchema(response, negated, args) {
+    if (typeOf(args[0]) !== 'object') {
+        throw new I.TypeError('jsonSchema expects a schema object');
+    }
+
+    const json = claimJson(response, false);
+    const answer = I.parse(HOST_SCHEMA(I.stringify(args[0]), I.stringify(json)));
+
+    if (answer.unreadable !== undefined) {
+        throw new I.TypeError('jsonSchema cannot read the schema: ' + answer.unreadable);
+    }
+
+    claim(answer.issues.length === 0, negated, {
+        is: 'expected data to satisfy schema but found following errors: \n' + I.join(answer.issues, ', '),
+        not: 'expected data to not satisfy schema',
+    });
+}
+
 function bodyOf(response) {
     const text = response.text();
 

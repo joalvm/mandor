@@ -108,12 +108,28 @@ describe('POSTMAN_DIALECT', () => {
     });
 
     it('leaves an assertion of the response with a word mandor has not, and marks it', () => {
-        expect(translateScript('pm.response.to.have.jsonSchema(schema);')).toEqual({
+        expect(translateScript('pm.response.to.have.cookie("a");')).toEqual({
             edits: [],
             parsed: true,
-            text: 'pm.response.to.have.jsonSchema(schema);',
-            untranslated: [{ dialect: 'postman', from: 0, to: 30, translatable: false }],
+            text: 'pm.response.to.have.cookie("a");',
+            untranslated: [{ dialect: 'postman', from: 0, to: 26, translatable: false }],
         });
+    });
+
+    it('leaves a measure that goes on with a word no assertion of a number has', () => {
+        expect(translated('pm.response.to.have.responseSize.cookie(1);')).toBe(
+            'pm.response.to.have.responseSize.cookie(1);',
+        );
+    });
+
+    it('writes the schema, the time and the size of the response on mandor.response.to', () => {
+        expect(
+            translated(
+                'pm.response.to.have.jsonSchema(schema);\npm.response.to.have.responseTime.below(500);',
+            ),
+        ).toBe(
+            'mandor.response.to.have.jsonSchema(schema);\nmandor.response.to.have.responseTime.below(500);',
+        );
     });
 
     it('awaits a request sent with its options alone', () => {

@@ -64,12 +64,31 @@ export function calledAs(text: string): DialectRule {
 }
 
 /**
- * A chain of assertions that `mandor` words the same: it has a match while every name it goes on
- * with is one `mandor` has. Any other, `jsonSchema` or `responseTime`, keeps the whole use marked.
+ * The words of a chain of assertions: its own, the measures among them (`responseTime`), and the
+ * words a measure goes on with, those of an assertion of a number (`below`).
  */
-export function assertedAs(text: string, words: ReadonlySet<string>): DialectRule {
-    return ({ named, rest }) =>
-        rest.every((word) => words.has(word)) ? [edit(named, text)] : undefined;
+export type AssertionWords = {
+    own: ReadonlySet<string>;
+    measures: ReadonlySet<string>;
+    ofNumber: ReadonlySet<string>;
+};
+
+function isKnownChain(rest: readonly string[], words: AssertionWords): boolean {
+    const at = rest.findIndex((word) => words.measures.has(word));
+    const head = at < 0 ? rest : rest.slice(0, at);
+    const tail = at < 0 ? [] : rest.slice(at + 1);
+
+    return (
+        head.every((word) => words.own.has(word)) && tail.every((word) => words.ofNumber.has(word))
+    );
+}
+
+/**
+ * A chain of assertions that `mandor` words the same: it has a match while every name it goes on
+ * with is one `mandor` has. Any other, such as `cookie`, keeps the whole use marked.
+ */
+export function assertedAs(text: string, words: AssertionWords): DialectRule {
+    return ({ named, rest }) => (isKnownChain(rest, words) ? [edit(named, text)] : undefined);
 }
 
 function isField(

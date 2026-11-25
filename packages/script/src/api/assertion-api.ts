@@ -2,13 +2,16 @@ import type { ApiParameter } from './script-api.js';
 
 /**
  * A word of what an assertion gives back (`mandor.expect(value)` or `mandor.response.to`): a word
- * of the chain, a verb or a flag.
+ * of the chain, a verb, a flag or a measure.
  */
 export type AssertionWord = {
     name: string;
-    /** A chain word and a flag are read as a property; a verb is called. */
-    kind: 'chain' | 'flag' | 'verb';
-    /** For a verb, its call signature; for the rest, nothing. */
+    /**
+     * A chain word and a flag are read as a property; a verb is called. A measure is both: read,
+     * the assertion goes on about a number of the response; called, it asserts that number.
+     */
+    kind: 'chain' | 'flag' | 'verb' | 'measure';
+    /** For a verb, its call signature; for a measure, its type; for the rest, nothing. */
     signature?: string;
     docKey: string;
     parameters: readonly ApiParameter[];

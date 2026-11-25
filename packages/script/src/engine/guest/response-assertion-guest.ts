@@ -2,8 +2,8 @@
  * `mandor.response.to`: assertions about a response, worded as the chai of Postman words them, so
  * a test brought from there reads and fails the same. The chain words say nothing; `not` flips
  * what comes after; a flag asserts when it is read, a verb when it is called. A word that fails
- * throws an `AssertionError` with the message Postman gives. Needs `I`, `repr`, the `CHAIN` of
- * `EXPECT_GUEST` and the words of the body, `RESPONSE_BODY_GUEST`.
+ * throws an `AssertionError` with the message Postman gives. Needs `I`, `repr`, the `CHAIN` and
+ * the `assertion` of `EXPECT_GUEST`, and the words of the body, `RESPONSE_BODY_GUEST`.
  */
 export const RESPONSE_ASSERTION_GUEST = String.raw`
 // The reason phrase of each standard status, as the status line of HTTP/1.1 says it.
@@ -108,6 +108,40 @@ function claimHeader(response, negated, args) {
     });
 }
 
+// responseTime and responseSize: read, the assertion goes on about the number, as in chai-postman
+// (responseTime.below(500)); called, they assert the number is that one.
+function numberWord(actual, negated, said) {
+    const call = (...args) => {
+        claim(typeof actual === 'number' && (args.length === 0 || actual === args[0]), negated, said(args));
+
+        return call;
+    };
+
+    return assertion(actual, negated, call);
+}
+
+function timeWord(response, negated) {
+    const actual = response.time;
+
+    return numberWord(actual, negated, () => ({
+        is: 'expected response to have a valid response time but got ' + repr(actual),
+        not: 'expected response to not have a valid response time but got ' + repr(actual),
+    }));
+}
+
+function sizeWord(size, negated) {
+    const actual = size();
+
+    return numberWord(actual, negated, (args) => ({
+        is: args.length === 0
+            ? 'expected response to have a valid response size but got ' + repr(actual)
+            : 'expected response size to equal ' + repr(args[0]) + ' but got ' + repr(actual),
+        not: args.length === 0
+            ? 'expected response to not have a valid response size but got ' + repr(actual)
+            : 'expected response size to not equal ' + repr(args[0]),
+    }));
+}
+
 // Each verb, by the name a script calls it with.
 const RESPONSE_VERBS = {
     status: claimStatus,
@@ -117,6 +151,7 @@ const RESPONSE_VERBS = {
     header: claimHeader,
     body: claimBody,
     jsonBody: claimJsonBody,
+    jsonSchema: claimSchema,
 };
 
 // Each flag that is not a status: what it asserts when it is read.
@@ -143,13 +178,15 @@ function defineStatusFlags(self, response, negated) {
     }
 }
 
-function responseAssertion(response, negated) {
+function responseAssertion(response, negated, size) {
     const self = {};
     const same = { get: () => self };
     const flags = I.keys(RESPONSE_FLAGS);
     const verbs = I.keys(RESPONSE_VERBS);
 
-    I.define(self, 'not', { get: () => responseAssertion(response, !negated) });
+    I.define(self, 'not', { get: () => responseAssertion(response, !negated, size) });
+    I.define(self, 'responseTime', { get: () => timeWord(response, negated) });
+    I.define(self, 'responseSize', { get: () => sizeWord(size, negated) });
 
     for (let index = 0; index < CHAIN.length; index += 1) {
         I.define(self, CHAIN[index], same);

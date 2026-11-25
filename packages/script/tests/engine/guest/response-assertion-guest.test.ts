@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { RESPONSE_ASSERTION_GUEST } from '../../../src/engine/guest/response-assertion-guest.js';
 import { RESPONSE_BODY_GUEST } from '../../../src/engine/guest/response-body-guest.js';
 import { newWasmModule, type WasmModule } from '../../../src/engine/wasm-module.js';
-import { textOf } from '../../support/line-of.js';
+import { answerTo, JSON_ANSWER } from './response-to-support.js';
 import { fails, HOLDS, outputAt } from './support.js';
 
 let wasm: WasmModule;
@@ -11,23 +11,6 @@ let wasm: WasmModule;
 beforeAll(async () => {
     wasm = await newWasmModule();
 });
-
-type Answer = { status: number; headers: { name: string; value: string }[]; text?: string };
-
-const JSON_ANSWER: Answer = {
-    status: 200,
-    headers: [{ name: 'Content-Type', value: 'application/json' }],
-    text: '{"id":7,"items":[{"name":"a"}]}',
-};
-
-/** `name: message` of what the statement throws at a response, or `no` when it does not. */
-async function answerTo(statement: string, answer: Partial<Answer> = {}): Promise<string> {
-    const source = `try { ${statement}; console.log("no"); } catch (e) { console.log(e.name + ": " + e.message); }`;
-    const response = { ...JSON_ANSWER, bodyBytes: 0, timeMs: 5, ...answer };
-    const output = await outputAt(wasm, 'onResponse', source, { response });
-
-    return textOf(output.logs.at(-1));
-}
 
 /** Each row: a statement of Postman's chai, the answer the guest gives, and the response it reads. */
 describe('mandor.response.to', () => {
@@ -93,7 +76,7 @@ describe('mandor.response.to', () => {
                 {},
             ],
         ])('%s', async (_name, statement, answer, response) => {
-            expect(await answerTo(statement, response)).toBe(answer);
+            expect(await answerTo(wasm, statement, response)).toBe(answer);
         });
     });
 
@@ -124,7 +107,7 @@ describe('mandor.response.to', () => {
                 fails('expected \'Content-Type\' response header to not be "application/json"'),
             ],
         ])('%s', async (_name, statement, answer) => {
-            expect(await answerTo(statement)).toBe(answer);
+            expect(await answerTo(wasm, statement)).toBe(answer);
         });
     });
 
@@ -213,7 +196,7 @@ describe('mandor.response.to', () => {
                 { text: 'pong' },
             ],
         ])('%s', async (_name, statement, answer, response) => {
-            expect(await answerTo(statement, response)).toBe(answer);
+            expect(await answerTo(wasm, statement, response)).toBe(answer);
         });
     });
 

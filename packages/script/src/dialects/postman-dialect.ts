@@ -1,3 +1,4 @@
+import { ASSERTION_API } from '../api/assertion-api.js';
 import { RESPONSE_ASSERTION_API } from '../api/response-assertion-api.js';
 
 import {
@@ -6,6 +7,7 @@ import {
     readAs,
     renamed,
     sentAndAwaited,
+    type AssertionWords,
     type DialectRule,
     type DialectTable,
 } from './dialect.js';
@@ -28,7 +30,13 @@ function variablesOf(root: string, scopes: readonly string[]): Entry[] {
 }
 
 /** The words `mandor.response.to` has: a chain of Postman made of them alone runs as it is. */
-const RESPONSE_WORDS: ReadonlySet<string> = new Set(RESPONSE_ASSERTION_API.map(({ name }) => name));
+const RESPONSE_WORDS: AssertionWords = {
+    own: new Set(RESPONSE_ASSERTION_API.map(({ name }) => name)),
+    measures: new Set(
+        RESPONSE_ASSERTION_API.filter(({ kind }) => kind === 'measure').map(({ name }) => name),
+    ),
+    ofNumber: new Set(ASSERTION_API.map(({ name }) => name)),
+};
 
 /** The names under `request` and `response` that `mandor` has, by their path below the root. */
 const MESSAGE_RULES: readonly Entry[] = [

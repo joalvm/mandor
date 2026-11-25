@@ -25,6 +25,13 @@ function verb(name: string, signature: string, parameters: readonly string[]): A
     return assertionVerb('responseAssertion', name, signature, parameters);
 }
 
+/** Read, an assertion about the number; called, the number is the one given. */
+function measure(name: string): AssertionWord {
+    const type = '((expected?: number) => Assertion) & Assertion';
+
+    return { ...assertionVerb('responseAssertion', name, type, ['expected']), kind: 'measure' };
+}
+
 /**
  * What `mandor.response.to` gives, word by word: the assertions of a response in the words of
  * Postman, so a test brought from there runs as it was. The types and the docs read it.
@@ -41,5 +48,8 @@ export const RESPONSE_ASSERTION_API: readonly AssertionWord[] = [
         'path',
         'value',
     ]),
+    verb('jsonSchema', '(schema: object): ResponseAssertion', ['schema']),
+    measure('responseTime'),
+    measure('responseSize'),
     ...[...STATUS_FLAGS, ...BODY_FLAGS].map((name) => assertionFlag('responseAssertion', name)),
 ];

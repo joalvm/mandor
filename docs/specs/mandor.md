@@ -137,9 +137,11 @@ Diseño público en `SCRIPTS.md` y `SECURITY.md`. Lo esencial:
 - API `mandor.`: `variables`, `request`, `response`, `test`, `expect`, `sendRequest`; en Realtime,
   `socket` y `message`. Lo que un momento no muestra no existe en sus tipos.
 - `mandor.response.to`: las aserciones de respuesta del chai de Postman, con sus mismos mensajes
-  (`status`, `header`, `body`, `jsonBody`, `be.success`, `be.notFound`, `be.json`…). La bombilla
-  escribe `pm.response.to…` en `mandor.` si cada palabra existe; `jsonSchema`, `responseTime` y
-  `responseSize` no existen y quedan marcadas.
+  (`status`, `header`, `body`, `jsonBody`, `jsonSchema`, `be.success`, `be.notFound`, `be.json`…).
+  `responseTime` y `responseSize` (bytes de cada línea de header más los del body) afirman el
+  número si se llaman, y leídas siguen sobre él: `responseTime.below(500)`. `jsonSchema` lo
+  comprueba el worker con `@mandor/validate`, que solo se carga si el script nombra `jsonSchema`.
+  La bombilla escribe `pm.response.to…` en `mandor.` si cada palabra existe; otra queda marcada.
 - Editor: los tipos de su momento con la ayuda en el idioma de la ventana, más su contexto
   (variables, headers y una muestra de la respuesta) en la completación y el texto gris.
 - Importar de Postman, Insomnia o Bruno deja cada script en su momento, tal como vino, sin

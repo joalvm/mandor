@@ -7,6 +7,7 @@ import { SCRIPT_LIMITS } from '../limits/script-limits.js';
 import { DESCRIBE_THROWN } from './guest/frame-guest.js';
 import { newGuestClock, type GuestClock } from './guest-clock.js';
 import { parseThrown, SCRIPT_FILE, UNREADABLE, type LineWindow } from './parse-thrown.js';
+import { addSchemaCheck } from './schema-bridge.js';
 import { newSendBridge, type SendBridge } from './send-bridge.js';
 import type { WasmModule } from './wasm-module.js';
 
@@ -229,6 +230,8 @@ export function newSession(wasm: WasmModule, runMs: number, options: RunOptions)
     const context = runtime.newContext();
     const describe = context.unwrapResult(context.evalCode(DESCRIBE_THROWN, 'describe.js'));
     const bridge = options.link === undefined ? undefined : newSendBridge(context, options.link);
+
+    addSchemaCheck(context);
 
     return {
         runtime,

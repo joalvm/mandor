@@ -261,7 +261,10 @@
             "notAcceptable": "Its status is 406.",
             "rateLimited": "Its status is 429.",
             "json": "The body is valid JSON.",
-            "withBody": "The body is not empty."
+            "withBody": "The body is not empty.",
+            "jsonSchema": "The JSON of the body meets the JSON Schema.",
+            "responseTime": "Took that many milliseconds; read, asserts on the time: responseTime.below(500).",
+            "responseSize": "Weighs that many bytes, headers and body; read, asserts on the size: responseSize.below(1024)."
         },
         "responseAssertionParam": {
             "status": {
@@ -286,6 +289,15 @@
             "jsonBody": {
                 "path": "Path in the JSON, such as items[0].id, or the whole JSON; optional.",
                 "value": "Value at the path; optional."
+            },
+            "jsonSchema": {
+                "schema": "JSON Schema the body must meet."
+            },
+            "responseTime": {
+                "expected": "Milliseconds it must have taken; optional."
+            },
+            "responseSize": {
+                "expected": "Bytes it must weigh; optional."
             }
         },
         "completion": {
