@@ -7,7 +7,7 @@ import { UpdatesStatus } from '@mandor/updates';
 import { adoptOrigin, WorkspacesTabKind } from '@mandor/workspace';
 import { useLayoutEffect } from 'react';
 
-import { HistoryTabKinds } from '../features/history/index.js';
+import { HistorySettings, HistoryTabKinds } from '../features/history/index.js';
 import {
     LooseRequestTabKind,
     RequestDefaultsSettings,
@@ -49,6 +49,7 @@ export function SyncTabKinds() {
             />
             <WorkspacesTabKind />
             <RequestDefaultsSettings />
+            <HistorySettings />
             <UpdatesStatus />
             <EmptyGroup>
                 <NoTabOpen />

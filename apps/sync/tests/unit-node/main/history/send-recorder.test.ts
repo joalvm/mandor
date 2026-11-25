@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { historyEntryOf } from '../../../../src/main/history/history-entry-of.js';
 import { HISTORY_MAX_AGE_DAYS } from '../../../../src/main/history/history-limits.js';
+import { createHistoryRetention } from '../../../../src/main/history/history-retention.js';
 import { recordHistory } from '../../../../src/main/history/history-writer.js';
 import { createSendRecorder } from '../../../../src/main/history/send-recorder.js';
 import type { SendEvent } from '../../../../src/main/request/send-event.js';
@@ -46,7 +47,7 @@ function recorder() {
         notices: silentNotices(),
     };
 
-    return createSendRecorder(context);
+    return createSendRecorder(context, createHistoryRetention());
 }
 
 /** The send as if it had just left: an old one would be pruned by age the moment it is filed. */

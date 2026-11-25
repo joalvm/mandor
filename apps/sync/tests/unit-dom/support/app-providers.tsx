@@ -1,4 +1,5 @@
 import { MessagesProvider } from '@mandor/i18n';
+import { PreferencesProvider } from '@mandor/prefs';
 import { ToastProvider, TooltipProvider, type ToastRequest } from '@mandor/ui';
 import type { PropsWithChildren } from 'react';
 
@@ -16,7 +17,7 @@ export function AppProviders({ children, onNotify }: AppProvidersProps) {
                     messages={{ close: 'Close', more: (count) => `${String(count)} more` }}
                     onNotify={onNotify}
                 >
-                    {children}
+                    <PreferencesProvider>{children}</PreferencesProvider>
                 </ToastProvider>
             </TooltipProvider>
         </MessagesProvider>

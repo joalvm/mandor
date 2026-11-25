@@ -44,6 +44,7 @@ import { FormatIcon } from './format.js';
 import { GlobeIcon } from './globe.js';
 import { GripVerticalIcon } from './grip-vertical.js';
 import { HeadersIcon } from './headers.js';
+import { HistoryIcon } from './history.js';
 import { HttpIcon } from './http.js';
 import { ImportIcon } from './import.js';
 import { InfoIcon } from './info.js';
@@ -68,6 +69,7 @@ import { PanelMaximizeIcon } from './panel-maximize.js';
 import { PinIcon } from './pin.js';
 import { PinnedIcon } from './pinned.js';
 import { PreviewIcon } from './preview.js';
+import { PulseIcon } from './pulse.js';
 import { RecordIcon } from './record.js';
 import { RefreshIcon } from './refresh.js';
 import { RenameIcon } from './rename.js';
@@ -138,6 +140,7 @@ export const ICONS = {
     globe: GlobeIcon,
     'grip-vertical': GripVerticalIcon,
     headers: HeadersIcon,
+    history: HistoryIcon,
     http: HttpIcon,
     import: ImportIcon,
     info: InfoIcon,
@@ -162,6 +165,7 @@ export const ICONS = {
     pin: PinIcon,
     pinned: PinnedIcon,
     preview: PreviewIcon,
+    pulse: PulseIcon,
     record: RecordIcon,
     refresh: RefreshIcon,
     rename: RenameIcon,

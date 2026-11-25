@@ -1,7 +1,11 @@
-import { ACTIVITY_WINDOW_BYTES, ACTIVITY_WINDOW_ENTRIES } from '@mandor/ipc';
-import { describe, expect, it } from 'vitest';
+import { ACTIVITY_WINDOW_BYTES } from '@mandor/ipc';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import type { NewActivityEntry } from '../../../src/renderer/activity/activity-entry.js';
+import {
+    ACTIVITY_KEPT_AT_FIRST,
+    activityKept,
+} from '../../../src/renderer/activity/activity-kept.js';
 import { createActivityStore } from '../../../src/renderer/activity/activity-store.js';
 import { selectNarrowingFor } from '../../../src/renderer/activity/select-narrowing-for.js';
 import { selectActivityFor } from '../../../src/renderer/activity/select-activity-for.js';
@@ -16,6 +20,10 @@ function entry(index: number, bytes = 8): NewActivityEntry {
 function batch(size: number, from = 0, bytes = 8): NewActivityEntry[] {
     return Array.from({ length: size }, (_, offset) => entry(from + offset, bytes));
 }
+
+afterEach(() => {
+    activityKept.setState(activityKept.getInitialState());
+});
 
 describe('the activity buffer', () => {
     /** Two resources are two timelines: what one socket says never shows up under another. */
@@ -57,12 +65,38 @@ describe('the activity buffer', () => {
     it('drops the oldest entries when a batch overflows the entry cap', () => {
         const store = createActivityStore();
 
-        store.getState().appendActivity(ALPHA, batch(ACTIVITY_WINDOW_ENTRIES + 10));
+        store.getState().appendActivity(ALPHA, batch(ACTIVITY_KEPT_AT_FIRST + 10));
 
         const entries = selectActivityFor(ALPHA)(store.getState());
 
-        expect(entries).toHaveLength(ACTIVITY_WINDOW_ENTRIES);
+        expect(entries).toHaveLength(ACTIVITY_KEPT_AT_FIRST);
         expect(entries[0]).toMatchObject({ at: 10 });
+    });
+
+    it('keeps as many entries as the person chose to keep', () => {
+        const store = createActivityStore();
+
+        activityKept.setState({ entries: 1000 });
+        store.getState().appendActivity(ALPHA, batch(1010));
+
+        expect(selectActivityFor(ALPHA)(store.getState())).toHaveLength(1000);
+    });
+
+    /** A lower setting is felt at once, not at the next frame of each connection. */
+    it('drops at once what is past a lower count, and leaves a timeline within it as it was', () => {
+        const store = createActivityStore();
+
+        store.getState().appendActivity(ALPHA, batch(300));
+        store.getState().appendActivity(BETA, batch(100, 1000));
+
+        const beta = selectActivityFor(BETA)(store.getState());
+
+        activityKept.setState({ entries: 200 });
+        store.getState().trimActivity();
+
+        expect(selectActivityFor(ALPHA)(store.getState())).toHaveLength(200);
+        expect(selectActivityFor(ALPHA)(store.getState())[0]).toMatchObject({ at: 100 });
+        expect(selectActivityFor(BETA)(store.getState())).toBe(beta);
     });
 
     /** A talkative server sends few frames and many bytes: the second cap is what holds it. */

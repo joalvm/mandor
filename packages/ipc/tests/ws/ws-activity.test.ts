@@ -1,6 +1,7 @@
+import { PREFERENCE_DEFINITIONS } from '@mandor/schema';
 import { describe, expect, it } from 'vitest';
 
-import { wsActivityPushSchema } from '../../src/index.js';
+import { ACTIVITY_WINDOW_ENTRIES, wsActivityPushSchema } from '../../src/index.js';
 
 describe('ws:activity push', () => {
     it('accepts a batch of records in both directions', () => {
@@ -75,5 +76,13 @@ describe('ws:activity push', () => {
         });
 
         expect(result.success).toBe(false);
+    });
+
+    /** A batch past the cap crosses with only its tail: a window set to keep more would lose it. */
+    it('lets main send as many entries as the most a window can be set to keep', () => {
+        const kept = PREFERENCE_DEFINITIONS.find(({ key }) => key === 'activity.maxEntries');
+        const offered = kept !== undefined && 'values' in kept ? kept.values.map(Number) : [];
+
+        expect(ACTIVITY_WINDOW_ENTRIES).toBe(Math.max(...offered));
     });
 });

@@ -6,6 +6,7 @@ import { bodiesDir, listHistory } from '@mandor/store-fs';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { historyEntryOf } from '../../../../src/main/history/history-entry-of.js';
+import { DEFAULT_PRUNE_LIMITS } from '../../../../src/main/history/history-limits.js';
 import { recordHistory } from '../../../../src/main/history/history-writer.js';
 import { pruneHistory } from '../../../../src/main/history/prune-history.js';
 import { diskBodySpill } from '../../../../src/main/request/disk-body-spill.js';
@@ -13,8 +14,8 @@ import { idOf, responseOf, sendOf } from './history-fixture.js';
 
 const NOW = new Date(Date.UTC(2026, 8, 1, 12));
 const BODY_BYTES = 1000;
-/** Two bodies of the test fit; a third does not. */
-const BUDGET = 2500;
+/** The usual limits, with a budget two bodies of the test fit and a third does not. */
+const TIGHT = { ...DEFAULT_PRUNE_LIMITS, maxBodyBytes: 2500 };
 
 let root: string;
 
@@ -57,7 +58,7 @@ describe('pruning the history by the bytes of its bodies', () => {
 
         const kept = [await heavySend(3), await heavySend(4)];
 
-        const removed = await pruneHistory(root, 'pagos', NOW, BUDGET);
+        const removed = await pruneHistory(root, 'pagos', NOW, TIGHT);
 
         expect(removed).toEqual([idOf(2), idOf(1)]);
         expect((await listHistory(root, 'pagos')).entries.map((entry) => entry.id)).toEqual([
@@ -71,6 +72,6 @@ describe('pruning the history by the bytes of its bodies', () => {
         await heavySend(1);
         await heavySend(2);
 
-        expect(await pruneHistory(root, 'pagos', NOW, BUDGET)).toEqual([]);
+        expect(await pruneHistory(root, 'pagos', NOW, TIGHT)).toEqual([]);
     });
 });

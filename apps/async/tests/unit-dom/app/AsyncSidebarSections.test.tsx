@@ -1,4 +1,5 @@
 import { MessagesProvider } from '@mandor/i18n';
+import { PreferencesProvider } from '@mandor/prefs';
 import type * as Repos from '@mandor/repos';
 import { shellStore } from '@mandor/shell';
 import { allByPart } from '@mandor/ui/testing';
@@ -26,9 +27,11 @@ function sectionTitles(): (string | undefined)[] {
 /** The window loads its data as it opens; the flush lets those loads land inside act. */
 async function renderApp() {
     const view = render(
-        <MessagesProvider preferences={{ language: 'es' }}>
-            <AsyncApp />
-        </MessagesProvider>,
+        <PreferencesProvider>
+            <MessagesProvider preferences={{ language: 'es' }}>
+                <AsyncApp />
+            </MessagesProvider>
+        </PreferencesProvider>,
     );
 
     await act(() => Promise.resolve());

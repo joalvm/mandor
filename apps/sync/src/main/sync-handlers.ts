@@ -12,6 +12,7 @@ import { registerCodegenHandlers } from './codegen/codegen.handlers.js';
 import { createCookieJarStore } from './cookies/cookie-jar-store.js';
 import { registerCookiesHandlers } from './cookies/cookies.handlers.js';
 import { registerGraphqlHandlers } from './graphql/graphql.handlers.js';
+import { createHistoryRetention } from './history/history-retention.js';
 import { registerHistoryHandlers } from './history/history.handlers.js';
 import { createSendRecorder } from './history/send-recorder.js';
 import { registerRequestHandlers } from './request/request.handlers.js';
@@ -20,6 +21,9 @@ import { tellingSendLog } from './request/send-log.js';
 
 /** The jars of the app: one in memory per file, so every send and the window see the same cookies. */
 const cookieJars = createCookieJarStore();
+
+/** How much of the past the history keeps: the window says, every prune after a send reads it. */
+const historyRetention = createHistoryRetention();
 
 /** What every request that leaves Sync asks of the app, whoever made it: a send or a question. */
 function dialing(context: AppHandlerContext): SendDeps {
@@ -37,9 +41,12 @@ const requestHandlers: AppHandlers = (ipc, context) => [
         // A body is saved with whatever extension its name carries: no filter narrows the dialog.
         chooseSavePath: systemSaveDialog(() => []),
         // The console hears every send, the history keeps those that left.
-        afterSend: tellingSendLog((log) => {
-            pushToWindow(context.window, CHANNELS.requestSendLog, log);
-        }, createSendRecorder(context)),
+        afterSend: tellingSendLog(
+            (log) => {
+                pushToWindow(context.window, CHANNELS.requestSendLog, log);
+            },
+            createSendRecorder(context, historyRetention),
+        ),
         scripts: context.scripts,
         scriptVariables: context.scriptVariables,
         logger: context.logger,
@@ -53,7 +60,7 @@ const requestHandlers: AppHandlers = (ipc, context) => [
 ];
 
 /** What was sent and what came back, listed, read and deleted. */
-const historyHandlers: AppHandlers = (ipc) => [registerHistoryHandlers(ipc)];
+const historyHandlers: AppHandlers = (ipc) => [registerHistoryHandlers(ipc, historyRetention)];
 
 /** The schema of the server a GraphQL request points at, kept and asked for. */
 const graphqlHandlers: AppHandlers = (ipc, context) => [

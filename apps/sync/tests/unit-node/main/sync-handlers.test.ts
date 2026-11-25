@@ -47,6 +47,7 @@ describe('the handlers only Sync has', () => {
             CHANNELS.historyList,
             CHANNELS.historyRead,
             CHANNELS.historyDelete,
+            CHANNELS.historyConfigure,
             CHANNELS.graphqlSchemaRead,
             CHANNELS.graphqlIntrospect,
             CHANNELS.cookiesList,

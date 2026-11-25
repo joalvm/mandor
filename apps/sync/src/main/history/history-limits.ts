@@ -1,7 +1,7 @@
-/** Sends kept per workspace; past it the oldest go when the next one is written. */
+/** Sends kept per workspace until the window says otherwise; the settings start at the same. */
 export const HISTORY_MAX_ENTRIES = 500;
 
-/** Days a send is kept; the spec says «configurable», and today it is a constant. */
+/** Days a send is kept until the window says otherwise; the settings start at the same. */
 export const HISTORY_MAX_AGE_DAYS = 30;
 
 /**
@@ -16,3 +16,12 @@ export const HISTORY_MAX_BODY_BYTES = 1024 * 1024 * 1024;
  * it, so listing 500 entries reads 32 MiB at most and never the 1 GiB a response may have been.
  */
 export const HISTORY_INLINE_BYTES = 64 * 1024;
+
+/** What a prune holds one workspace to: how many sends, how old, and what their bodies weigh. */
+export type PruneLimits = { maxEntries: number; maxAgeDays: number; maxBodyBytes: number };
+
+export const DEFAULT_PRUNE_LIMITS: PruneLimits = {
+    maxEntries: HISTORY_MAX_ENTRIES,
+    maxAgeDays: HISTORY_MAX_AGE_DAYS,
+    maxBodyBytes: HISTORY_MAX_BODY_BYTES,
+};

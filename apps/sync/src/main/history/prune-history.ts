@@ -12,13 +12,7 @@ import {
 
 import { removeUnheldBodies } from '../request/body-holds.js';
 import { historyElsewhere } from './history-elsewhere.js';
-import {
-    HISTORY_MAX_AGE_DAYS,
-    HISTORY_MAX_BODY_BYTES,
-    HISTORY_MAX_ENTRIES,
-} from './history-limits.js';
-
-const LIMITS = { maxEntries: HISTORY_MAX_ENTRIES, maxAgeDays: HISTORY_MAX_AGE_DAYS };
+import { DEFAULT_PRUNE_LIMITS, type PruneLimits } from './history-limits.js';
 
 /**
  * The entries that may still name a body of what goes: the kept ones of this workspace and every
@@ -110,11 +104,11 @@ export async function pruneHistory(
     root: string,
     workspaceId: string,
     now: Date,
-    budget = HISTORY_MAX_BODY_BYTES,
+    limits: PruneLimits = DEFAULT_PRUNE_LIMITS,
 ): Promise<string[]> {
-    const split = historyToPrune(await historyFileNames(root, workspaceId), now, LIMITS);
+    const split = historyToPrune(await historyFileNames(root, workspaceId), now, limits);
     const byNames = await pruneByNames(root, workspaceId, split);
-    const byBytes = await pruneByBytes(root, workspaceId, split.keep, budget);
+    const byBytes = await pruneByBytes(root, workspaceId, split.keep, limits.maxBodyBytes);
 
     return [...byNames, ...byBytes];
 }

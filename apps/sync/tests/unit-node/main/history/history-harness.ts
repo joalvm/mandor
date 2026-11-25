@@ -21,6 +21,7 @@ import { CHANNELS } from '@mandor/ipc';
 import { createEnvironment, createRequestItem } from '@mandor/schema';
 import { createWorkspace, writeRepoTree, writeEnvironment } from '@mandor/store-fs';
 
+import { createHistoryRetention } from '../../../../src/main/history/history-retention.js';
 import { registerHistoryHandlers } from '../../../../src/main/history/history.handlers.js';
 import { createSendRecorder } from '../../../../src/main/history/send-recorder.js';
 import { registerRequestHandlers } from '../../../../src/main/request/request.handlers.js';
@@ -109,6 +110,8 @@ export async function startHarness(): Promise<Harness> {
         notices: silentNotices(),
     };
 
+    const retention = createHistoryRetention();
+
     await seedOrigin(root, origin);
     openRepo(root);
 
@@ -116,12 +119,12 @@ export async function startHarness(): Promise<Harness> {
         readSecret: () => Promise.resolve(SECRET),
         networkFor: () => Promise.resolve({ tls: {} }),
         chooseSavePath: () => Promise.resolve(null),
-        afterSend: createSendRecorder(context),
+        afterSend: createSendRecorder(context, retention),
         scripts: context.scripts,
         scriptVariables: context.scriptVariables,
         logger: context.logger,
     });
-    const stopHistory = registerHistoryHandlers(redactingIpc(ipc));
+    const stopHistory = registerHistoryHandlers(redactingIpc(ipc), retention);
 
     return {
         root,

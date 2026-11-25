@@ -816,6 +816,24 @@
                 "sha256": "b6fe79c75b9e3c61090678444cbf6ef1b2041ce22d5f0a537e2b4229c16ec094",
                 "license": "CC-BY-4.0"
             }
+        },
+        "history": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "history",
+                "sha256": "88b0e95617ccd12cecdaef8d1e00236a576af4c9c13132422e135c088f130628",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "pulse": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "pulse",
+                "sha256": "4dbbed03afb37f2db4f08928a7cef2ff2fac8015d91092a19035cbdd262c6d9d",
+                "license": "CC-BY-4.0"
+            }
         }
     }
 }

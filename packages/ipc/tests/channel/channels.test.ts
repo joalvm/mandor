@@ -119,6 +119,7 @@ const BRIDGE_METHODS: Record<ChannelKey, (bridge: WholeBridge) => unknown> = {
     historyList: (bridge) => bridge.history.list,
     historyRead: (bridge) => bridge.history.read,
     historyDelete: (bridge) => bridge.history.remove,
+    historyConfigure: (bridge) => bridge.history.configure,
     historyAppended: (bridge) => bridge.history.onAppended,
     graphqlSchemaRead: (bridge) => bridge.graphql.readSchema,
     graphqlIntrospect: (bridge) => bridge.graphql.introspect,

@@ -1,23 +1,27 @@
-import { ACTIVITY_WINDOW_BYTES, ACTIVITY_WINDOW_ENTRIES } from '@mandor/ipc';
+import { ACTIVITY_WINDOW_BYTES } from '@mandor/ipc';
 import type { ResourceUri } from '@mandor/schema';
 import { scopeToOrigin } from '@mandor/shell';
 import { createStore, type StoreApi } from 'zustand/vanilla';
 
 import type { ActivityEntry, NewActivityEntry } from './activity-entry.js';
+import { activityKept } from './activity-kept.js';
 import { initialActivitySlice, type ActivitySlice } from './activity.slice.js';
 import type { TimelineNarrowing } from './lib/timeline-narrowing.js';
 
 /**
  * Entries arrive from main in batches and the panel renders virtualized over this buffer. Two
- * caps hold it: one on how many entries it keeps, one on what they weigh. A resource that talks
- * without pause trips the first, one that says little but enormous trips the second, and either
- * way the oldest entries are dropped instead of the renderer growing without bound. The caps
- * are in the contract: main reads them to send a heavy batch with only the tail kept here.
+ * caps hold it: one on how many entries it keeps, as many as the person chose, one on what they
+ * weigh. A resource that talks without pause trips the first, one that says little but enormous
+ * trips the second, and either way the oldest entries are dropped instead of the renderer growing
+ * without bound. The most of both is in the contract: main reads it to send a heavy batch with
+ * only the tail kept here.
  */
 
 type ActivityActions = {
     appendActivity: (resource: ResourceUri, entries: readonly NewActivityEntry[]) => void;
     clearActivity: (resource: ResourceUri) => void;
+    /** Drops from every resource what is past the count kept now, as a lower setting asks. */
+    trimActivity: () => void;
     setNarrowing: (resource: ResourceUri, narrowing: TimelineNarrowing) => void;
     reset: () => void;
 };
@@ -39,12 +43,13 @@ function weightOf(buffer: readonly ActivityEntry[]): number {
  * losing the very thing the panel is for.
  */
 function trimmed(buffer: readonly ActivityEntry[]): ActivityEntry[] {
+    const kept = activityKept.getState().entries;
     let held = weightOf(buffer);
     let start = 0;
 
     while (
         start < buffer.length - 1 &&
-        (buffer.length - start > ACTIVITY_WINDOW_ENTRIES || held > ACTIVITY_WINDOW_BYTES)
+        (buffer.length - start > kept || held > ACTIVITY_WINDOW_BYTES)
     ) {
         held -= buffer[start]?.bytes ?? 0;
         start += 1;
@@ -82,6 +87,18 @@ function actionsFor(set: ActivityStoreApi['setState']): ActivityActions {
         /** What arrived while the view was open goes with the view. Nothing on disk moves. */
         clearActivity: (resource) => {
             set((state) => ({ entries: without(state.entries, resource) }));
+        },
+        trimActivity: () => {
+            const kept = activityKept.getState().entries;
+
+            set((state) => ({
+                entries: Object.fromEntries(
+                    Object.entries(state.entries).map(([resource, buffer]) => [
+                        resource,
+                        buffer.length > kept ? trimmed(buffer) : buffer,
+                    ]),
+                ),
+            }));
         },
         setNarrowing: (resource, narrowing) => {
             set((state) => ({
