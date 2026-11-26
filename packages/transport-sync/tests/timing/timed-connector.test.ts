@@ -30,16 +30,35 @@ function phases(): ConnectionPhases {
     };
 }
 
+/**
+ * What undici hands the connector: the parts of the url as written, the port a text that is
+ * empty when the url leaves it to its scheme.
+ */
+function targetOf(url: URL): Pick<OpenTarget, 'hostname' | 'protocol'> & { port: string } {
+    return { hostname: url.hostname, port: url.port, protocol: url.protocol };
+}
+
+/** Where the connector dialed: the peer it reached, or the address its failure names. */
+function dialed(origin: string): Promise<string> {
+    const connector = timedConnector({ verify: false }, 2_000, phases());
+
+    return new Promise((resolve) => {
+        connector(targetOf(new URL(origin)), (error, socket) => {
+            socket?.destroy();
+            resolve(
+                socket
+                    ? `${String(socket.remoteAddress)}:${String(socket.remotePort)}`
+                    : error.message,
+            );
+        });
+    });
+}
+
 function connect(origin: string, connectMs = 2_000) {
     const url = new URL(origin);
     const measured = phases();
     const connector = timedConnector({ verify: false }, connectMs, measured);
-
-    const target: Pick<OpenTarget, 'hostname' | 'port' | 'protocol'> = {
-        hostname: url.hostname,
-        port: Number(url.port),
-        protocol: url.protocol,
-    };
+    const target = targetOf(url);
 
     return new Promise<{ socket: net.Socket | tls.TLSSocket; measured: ConnectionPhases }>(
         (resolve, reject) => {
@@ -104,6 +123,14 @@ describe('timedConnector', () => {
         expect(measured.tlsMs).toBe(0);
         expect(measured.alpnProtocol).toBeNull();
         socket.destroy();
+    });
+
+    /** A url with no port is most of the web: dialing port 0 instead failed every such send. */
+    it.each([
+        ['http://127.0.0.1/', '127.0.0.1:80'],
+        ['https://127.0.0.1/', '127.0.0.1:443'],
+    ])('dials the port of the scheme when %s names none', async (origin, address) => {
+        expect(await dialed(origin)).toContain(address);
     });
 
     it('fails with the connect timeout when the server never completes the connection', async () => {
