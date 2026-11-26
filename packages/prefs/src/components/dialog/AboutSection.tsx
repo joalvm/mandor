@@ -1,14 +1,11 @@
 import { useTranslator } from '@mandor/i18n';
 import { CopyIcon, ExternalLinkIcon } from '@mandor/icons';
 import type { AppAbout } from '@mandor/ipc';
-import { bridge, fireAndForget } from '@mandor/shell';
+import { bridge, fireAndForget, useMarkedCopy } from '@mandor/shell';
 import { Button } from '@mandor/ui';
 import { useEffect, useId, useState } from 'react';
 
 import { aboutReport } from '../../lib/about-report.js';
-
-/** How long the button says it copied: long enough to be read, not so long it is in the way. */
-const COPIED_MS = 1500;
 
 /** The names the systems go by; one this table does not know is shown as Node names it. */
 const PLATFORM_NAME: Readonly<Partial<Record<string, string>>> = {
@@ -67,30 +64,12 @@ function AboutFacts({ about }: AboutPartProps) {
 /** Puts the whole report on the clipboard, and says it did for as long as it takes to read. */
 function CopyAboutButton({ about }: AboutPartProps) {
     const translate = useTranslator();
-    const [copied, setCopied] = useState(false);
-
-    useEffect(() => {
-        if (!copied) {
-            return undefined;
-        }
-
-        const timer = setTimeout(() => {
-            setCopied(false);
-        }, COPIED_MS);
-
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [copied]);
+    const { copied, copy } = useMarkedCopy();
 
     return (
         <Button
             onClick={() => {
-                fireAndForget(
-                    navigator.clipboard.writeText(aboutReport(about)).then(() => {
-                        setCopied(true);
-                    }),
-                );
+                copy(aboutReport(about));
             }}
             size="sm"
         >
