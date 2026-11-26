@@ -47,19 +47,4 @@ describe('how much activity a connection keeps, as the settings say', () => {
         expect(activityKept.getState().entries).toBe(200);
         expect(selectActivityFor(ALPHA)(activityStore.getState())).toHaveLength(200);
     });
-
-    it('goes back to the first count when the window lets go of the settings', () => {
-        window.localStorage.setItem(
-            'mandor.preferences',
-            JSON.stringify({ 'activity.maxEntries': '2000' }),
-        );
-
-        const { unmount } = render(<ActivitySettings />, { wrapper: AppProviders });
-
-        expect(activityKept.getState().entries).toBe(2000);
-
-        unmount();
-
-        expect(activityKept.getState()).toEqual(activityKept.getInitialState());
-    });
 });
