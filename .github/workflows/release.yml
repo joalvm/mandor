@@ -1,0 +1,160 @@
+name: release
+
+# A tag `<async|sync>-v<x.y.z>[-beta.<n>]` publishes that version of that app: each system builds
+# its installers, then one job attests them, writes their checksums, opens the release of the
+# version and refreshes the feed the installed app follows.
+#
+# Nothing is signed by a certificate yet: Windows is unsigned and macOS is signed ad-hoc. What a
+# person can check instead is the provenance: `gh attestation verify <file> --repo joalvm/mandor`
+# says the file came out of this workflow, at this tag.
+#
+# The feed is a fixed release per app, `<app>-feed`, that holds only the update files. They name
+# the installers in full, on the release of their version, since the two apps share the
+# repository and its latest release can be either of them.
+on:
+    push:
+        tags:
+            - 'async-v*'
+            - 'sync-v*'
+
+permissions:
+    contents: read
+
+jobs:
+    tag:
+        name: tag
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        outputs:
+            app: ${{ steps.read.outputs.app }}
+            product: ${{ steps.read.outputs.product }}
+            version: ${{ steps.read.outputs.version }}
+            prerelease: ${{ steps.read.outputs.prerelease }}
+            feed: ${{ steps.read.outputs.feed }}
+            previous: ${{ steps.read.outputs.previous }}
+        steps:
+            # Every tag, for the release the notes start from.
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+            # A tag that names no app or no version stops here, before a single build is paid for.
+            - id: read
+              run: node tools/publish/release-tag.mjs "$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+
+    build:
+        name: build (${{ matrix.os }})
+        needs: tag
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 30
+        strategy:
+            fail-fast: true
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+        env:
+            TURBO_TELEMETRY_DISABLED: 1
+            # No certificates: the mac app is signed ad-hoc, which needs no identity to find.
+            CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+            APP: ${{ needs.tag.outputs.app }}
+            VERSION: ${{ needs.tag.outputs.version }}
+        steps:
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/unscanned-workspace
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            # Both workspaces install the same Electron dist; serialize their lifecycle scripts.
+            - run: npm ci --foreground-scripts
+            # The tag is the version: no commit bumps the manifest before a release.
+            - shell: bash
+              run: npm run dist -w "apps/$APP" -- --publish never "-c.extraMetadata.version=$VERSION"
+            # An app with no valid signature is the one a download on Apple silicon calls damaged.
+            - if: runner.os == 'macOS'
+              shell: bash
+              run: |
+                  for app in apps/"$APP"/dist/mac*/*.app; do
+                      codesign --verify --deep --strict --verbose=2 "$app"
+                  done
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: release-${{ matrix.os }}
+                  if-no-files-found: error
+                  retention-days: 1
+                  path: |
+                      apps/${{ needs.tag.outputs.app }}/dist/*.exe
+                      apps/${{ needs.tag.outputs.app }}/dist/*.dmg
+                      apps/${{ needs.tag.outputs.app }}/dist/*.zip
+                      apps/${{ needs.tag.outputs.app }}/dist/*.AppImage
+                      apps/${{ needs.tag.outputs.app }}/dist/*.deb
+                      apps/${{ needs.tag.outputs.app }}/dist/*.blockmap
+                      apps/${{ needs.tag.outputs.app }}/dist/latest*.yml
+                      apps/${{ needs.tag.outputs.app }}/dist/beta*.yml
+                      apps/${{ needs.tag.outputs.app }}/dist/alpha*.yml
+
+    publish:
+        name: publish
+        needs: [tag, build]
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        # Two tags of one app write the same feed: the second waits for the first to finish.
+        concurrency:
+            group: release-${{ needs.tag.outputs.app }}
+            cancel-in-progress: false
+        permissions:
+            contents: write
+            id-token: write
+            attestations: write
+        env:
+            GH_TOKEN: ${{ github.token }}
+            TAG: ${{ github.ref_name }}
+            PRODUCT: ${{ needs.tag.outputs.product }}
+            VERSION: ${{ needs.tag.outputs.version }}
+            PRERELEASE: ${{ needs.tag.outputs.prerelease }}
+            FEED: ${{ needs.tag.outputs.feed }}
+            PREVIOUS: ${{ needs.tag.outputs.previous }}
+            BASE: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+            - uses: actions/download-artifact@v8
+              with:
+                  pattern: release-*
+                  merge-multiple: true
+                  path: release
+            # Each glob has to match: a system that built nothing fails the release here.
+            - working-directory: release
+              shell: bash
+              run: sha256sum *.exe *.dmg *.zip *.AppImage *.deb > SHA256SUMS
+            - uses: actions/attest-build-provenance@v4
+              with:
+                  subject-checksums: release/SHA256SUMS
+            - run: node tools/publish/feed-files.mjs release "$BASE"
+            # A rerun of a failed publish finds the release open and replaces its files.
+            - shell: bash
+              run: |
+                  files=(release/*.exe release/*.dmg release/*.zip release/*.AppImage release/*.deb)
+                  files+=(release/*.blockmap release/SHA256SUMS)
+                  if gh release view "$TAG" > /dev/null 2>&1; then
+                      gh release upload "$TAG" "${files[@]}" --clobber
+                      exit 0
+                  fi
+                  flags=(--verify-tag --generate-notes --title "$PRODUCT $VERSION")
+                  if [ "$PRERELEASE" = 'true' ]; then flags+=(--prerelease); fi
+                  if [ -n "$PREVIOUS" ]; then flags+=(--notes-start-tag "$PREVIOUS"); fi
+                  gh release create "$TAG" "${flags[@]}" "${files[@]}"
+            # The feed opens once per app. A prerelease never becomes the latest of the
+            # repository, so the page of the repository shows a version and not the feed.
+            - shell: bash
+              run: |
+                  if ! gh release view "$FEED" > /dev/null 2>&1; then
+                      gh release create "$FEED" --prerelease --latest=false --target main \
+                          --title "$FEED" --notes 'The update files the installed app reads. Installers are on the release of each version.'
+                  fi
+                  shopt -s nullglob
+                  files=(release/latest*.yml release/beta*.yml release/alpha*.yml)
+                  gh release upload "$FEED" "${files[@]}" --clobber

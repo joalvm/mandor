@@ -19,9 +19,11 @@ type BuilderConfig = {
     extraResources: { from: string; to: string }[];
     files: string[];
     linux: { icon: string; maintainer: string; syncDesktopName: boolean; target: Target[] };
-    mac: { icon: string; target: Target[] };
+    generateUpdatesFilesForAllChannels: boolean;
+    mac: { icon: string; identity: string; hardenedRuntime: boolean; target: Target[] };
     nsis: { installerIcon: string; uninstallerIcon: string };
     productName: string;
+    publish: { provider: string; url: string };
     win: { icon: string; target: Target[] };
 };
 
@@ -49,11 +51,35 @@ describe('Mandor Realtime packaging', () => {
         expect(value.linux.maintainer).toMatch(/^.+ <.+@.+>$/u);
         expect(metadata.homepage).toMatch(/^https:\/\//u);
         expect(value.win.target).toEqual([{ target: 'nsis', arch: ['x64', 'arm64'] }]);
-        expect(value.mac.target).toEqual([{ target: 'dmg', arch: ['x64', 'arm64'] }]);
+        expect(value.mac.target).toEqual([
+            { target: 'dmg', arch: ['x64', 'arm64'] },
+            { target: 'zip', arch: ['x64', 'arm64'] },
+        ]);
         expect(value.linux.target).toEqual([
             { target: 'AppImage', arch: ['x64', 'arm64'] },
             { target: 'deb', arch: ['x64', 'arm64'] },
         ]);
+    });
+
+    /**
+     * The two apps share the repository, and its latest release can be either of them: each app
+     * follows a fixed release of its own, and a stable writes the beta files too.
+     */
+    it('follows the feed of its own app on every channel', async () => {
+        const value = await config();
+
+        expect(value.publish).toEqual({
+            provider: 'generic',
+            url: 'https://github.com/joalvm/mandor/releases/download/async-feed',
+        });
+        expect(value.generateUpdatesFilesForAllChannels).toBe(true);
+    });
+
+    /** Unsigned, a download on Apple silicon says the app is damaged; ad-hoc, it can be allowed. */
+    it('signs the mac app ad-hoc, without the runtime only notarizing needs', async () => {
+        const value = await config();
+
+        expect(value.mac).toMatchObject({ identity: '-', hardenedRuntime: false });
     });
 
     it('locks production code to an integrity-checked ASAR', async () => {

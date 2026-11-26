@@ -54,13 +54,19 @@ describe('the installers workflow', () => {
         expect(job.env.CSC_IDENTITY_AUTO_DISCOVERY).toBe('false');
     });
 
+    /** electron-builder skips signing in a pull request; the ad-hoc one needs no secret. */
+    it('signs the mac app ad-hoc in the pull request and checks the signature', () => {
+        expect(job.env.CSC_FOR_PULL_REQUEST).toBe('true');
+        expect(runs.some((run) => run.includes('codesign --verify --deep --strict'))).toBe(true);
+    });
+
     it('fails when an installer is missing', () => {
         const listed = steps
             .filter((step) => step.run?.startsWith('ls -l'))
             .map((step) => step.run)
             .join('\n');
 
-        for (const pattern of ['*.AppImage', '*.deb', '*.exe', '*.dmg']) {
+        for (const pattern of ['*.AppImage', '*.deb', '*.exe', '*.dmg', '*.zip']) {
             expect(listed).toContain(pattern);
         }
     });
