@@ -30,6 +30,28 @@ describe('RawResponseHandler', () => {
         });
     });
 
+    /** Over h2 undici hands the head on as the record node:http2 built, not as a flat list. */
+    it('reads the header record of an h2 answer, one pair per value', () => {
+        const handler = new RawResponseHandler();
+
+        handler.onResponseStart(
+            controllerWith({
+                'content-encoding': 'gzip',
+                'set-cookie': ['a=1', 'b=2'],
+                'x-absent': undefined,
+            }),
+            200,
+            {},
+            '',
+        );
+
+        expect(handler.head.headers).toEqual([
+            ['content-encoding', 'gzip'],
+            ['set-cookie', 'a=1'],
+            ['set-cookie', 'b=2'],
+        ]);
+    });
+
     it('answers with no headers when the controller carries none', () => {
         const handler = new RawResponseHandler();
 
