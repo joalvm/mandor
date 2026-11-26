@@ -57,6 +57,11 @@ describe('what Mandor Request asks of the host', () => {
         expect(SYNC_HOST_OPTIONS.title).toBe(messages.t('sync:windowTitle'));
     });
 
+    /** An install that cannot update by itself lands where the installers are, not on the code. */
+    it('sends an install that cannot update by itself to the releases', () => {
+        expect(SYNC_HOST_OPTIONS.homepage).toBe('https://github.com/joalvm/mandor/releases');
+    });
+
     it('takes the icon from the resources next to the main directory', () => {
         expect(basename(SYNC_HOST_OPTIONS.icon)).toBe('icon.png');
         expect(SYNC_HOST_OPTIONS.mainDir).toBeTruthy();

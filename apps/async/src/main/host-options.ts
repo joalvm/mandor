@@ -18,7 +18,7 @@ export const ASYNC_HOST_OPTIONS = {
     stores: ['message', 'connection'],
     // A connection sends no request: an auth or a header on a folder would mean nothing here.
     folderSettings: ['description', 'variables'],
-    homepage: 'https://github.com/joalvm/mandor',
+    homepage: 'https://github.com/joalvm/mandor/releases',
     icon: join(mainDir, '../../resources/icon.png'),
     kind: 'async',
     mainDir,

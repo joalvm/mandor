@@ -20,7 +20,7 @@ export const SYNC_HOST_OPTIONS = {
     // Requests carry their own destination: connections and their messages have no place here.
     stores: ['request'],
     folderSettings: ['description', 'variables', 'auth', 'headers'],
-    homepage: 'https://github.com/joalvm/mandor',
+    homepage: 'https://github.com/joalvm/mandor/releases',
     icon: join(mainDir, '../../resources/icon.png'),
     kind: 'sync',
     mainDir,
