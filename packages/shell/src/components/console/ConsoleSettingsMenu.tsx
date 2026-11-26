@@ -26,7 +26,7 @@ export function ConsoleSettingsMenu() {
             </PopoverTrigger>
             <PopoverPanel label={messages('consoleSettings')}>
                 <div
-                    className="flex w-80 flex-col gap-gap-control py-pad-control"
+                    className="flex flex-col gap-gap-control py-pad-control"
                     data-part="console-settings"
                 >
                     <SettingRow label={messages('consoleShowTimestamps')}>

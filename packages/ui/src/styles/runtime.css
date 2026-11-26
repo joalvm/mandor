@@ -774,6 +774,23 @@ textarea,
     border-block-start: 1px solid var(--border-subtle);
 }
 
+/**
+ * Settings in a popover are a few switches: the control column is as wide as the control, each
+ * name keeps to one line, and the panel grows to the longest of them instead of breaking it.
+ */
+[data-part='popover-panel']:has([data-part='setting-row']) {
+    width: max-content;
+}
+
+[data-part='popover-panel'] [data-part='setting-row'] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+}
+
+[data-part='popover-panel'] [data-part='setting-text'] > label {
+    white-space: nowrap;
+}
+
 [data-part='dialog']:has([data-part='code-editor']) {
     width: var(--mandor-width-dialog-code);
     height: var(--mandor-height-dialog-code);
