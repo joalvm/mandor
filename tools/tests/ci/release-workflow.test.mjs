@@ -17,7 +17,7 @@ function runsOf(job) {
 describe('the release workflow', () => {
     it('starts only from the tag of a version of one app', () => {
         expect(Object.keys(workflow.on)).toEqual(['push']);
-        expect(workflow.on.push).toEqual({ tags: ['async-v*', 'sync-v*'] });
+        expect(workflow.on.push).toEqual({ tags: ['realtime-v*', 'request-v*'] });
     });
 
     it('reads the tag before a single build is paid for', () => {

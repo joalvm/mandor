@@ -1,21 +1,21 @@
 name: release
 
-# A tag `<async|sync>-v<x.y.z>[-beta.<n>]` publishes that version of that app: each system builds
-# its installers, then one job attests them, writes their checksums, opens the release of the
-# version and refreshes the feed the installed app follows.
+# A tag `<realtime|request>-v<x.y.z>[-beta.<n>]` publishes that version of that app: each system
+# builds its installers, then one job attests them, writes their checksums, opens the release of
+# the version and refreshes the feed the installed app follows.
 #
 # Nothing is signed by a certificate yet: Windows is unsigned and macOS is signed ad-hoc. What a
 # person can check instead is the provenance: `gh attestation verify <file> --repo joalvm/mandor`
 # says the file came out of this workflow, at this tag.
 #
-# The feed is a fixed release per app, `<app>-feed`, that holds only the update files. They name
-# the installers in full, on the release of their version, since the two apps share the
-# repository and its latest release can be either of them.
+# The feed is a fixed release per app, `realtime-feed` or `request-feed`, that holds only the
+# update files. They name the installers in full, on the release of their version, since the two
+# apps share the repository and its latest release can be either of them.
 on:
     push:
         tags:
-            - 'async-v*'
-            - 'sync-v*'
+            - 'realtime-v*'
+            - 'request-v*'
 
 permissions:
     contents: read

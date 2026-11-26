@@ -9,7 +9,7 @@ npmRebuild: false
 # the whole repository, which the two apps share, and skips every tag that is not a bare version.
 publish:
     provider: generic
-    url: https://github.com/joalvm/mandor/releases/download/sync-feed
+    url: https://github.com/joalvm/mandor/releases/download/request-feed
 # A stable writes the beta files too, so an install on the beta moves to it once it is newer.
 generateUpdatesFilesForAllChannels: true
 

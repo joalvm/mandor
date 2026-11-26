@@ -1,36 +1,41 @@
 import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
-/** The apps a tag can name, by the folder each one lives in, and the name a person sees. */
-const PRODUCTS = { async: 'Mandor Realtime', sync: 'Mandor Request' };
+/**
+ * The apps a tag can name, by the name a person sees: each one with the folder it lives in, which
+ * keeps the name it has inside the code.
+ */
+const APPS = {
+    realtime: { app: 'async', product: 'Mandor Realtime' },
+    request: { app: 'sync', product: 'Mandor Request' },
+};
 
 /** A number of a version, which semver writes with no leading zero. */
 const NUMBER = '(?:0|[1-9]\\d*)';
 
 /**
- * `sync-v1.2.3` or `sync-v1.2.3-beta.4`. The beta is the only prerelease: it is the one channel
+ * `request-v1.2.3` or `request-v1.2.3-beta.4`. The beta is the only prerelease: it is the one channel
  * the updater follows besides the stable, and any other name would write files nobody reads.
  */
 const TAG = new RegExp(
-    `^(?<app>[a-z]+)-v(?<version>${NUMBER}\\.${NUMBER}\\.${NUMBER}(?:-beta\\.(?<beta>${NUMBER}))?)$`,
+    `^(?<name>[a-z]+)-v(?<version>${NUMBER}\\.${NUMBER}\\.${NUMBER}(?:-beta\\.(?<beta>${NUMBER}))?)$`,
     'u',
 );
 
 function readTag(tag) {
     const match = TAG.exec(tag);
 
-    if (match === null || !Object.hasOwn(PRODUCTS, match.groups.app)) {
+    if (match === null || !Object.hasOwn(APPS, match.groups.name)) {
         return undefined;
     }
 
-    const { app, version, beta } = match.groups;
+    const { name, version, beta } = match.groups;
 
     return {
-        app,
-        product: PRODUCTS[app],
+        ...APPS[name],
         version,
         prerelease: beta !== undefined,
-        feed: `${app}-feed`,
+        feed: `${name}-feed`,
     };
 }
 
@@ -39,7 +44,9 @@ export function parseReleaseTag(tag) {
     const release = readTag(tag);
 
     if (release === undefined) {
-        throw new Error(`"${tag}" is no release tag: it reads <async|sync>-v<x.y.z>[-beta.<n>].`);
+        throw new Error(
+            `"${tag}" is no release tag: it reads <realtime|request>-v<x.y.z>[-beta.<n>].`,
+        );
     }
 
     return release;

@@ -118,7 +118,7 @@ describe('Mandor Request packaging', () => {
 
         expect(value.publish).toEqual({
             provider: 'generic',
-            url: 'https://github.com/joalvm/mandor/releases/download/sync-feed',
+            url: 'https://github.com/joalvm/mandor/releases/download/request-feed',
         });
         expect(value.generateUpdatesFilesForAllChannels).toBe(true);
     });

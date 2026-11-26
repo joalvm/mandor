@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { feedFiles, pointAtRelease } from '../../publish/feed-files.mjs';
 
-const BASE = 'https://github.com/joalvm/mandor/releases/download/sync-v0.1.0-beta.1/';
+const BASE = 'https://github.com/joalvm/mandor/releases/download/request-v0.1.0-beta.1/';
 
 /** The shape electron-builder writes beside an installer of Windows. */
 const WINDOWS = [
