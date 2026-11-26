@@ -180,6 +180,29 @@ describe('preferences application', () => {
         expect(configure).toHaveBeenCalledOnce();
     });
 
+    it('tells main to follow the betas on a beta the person never chose a channel for', async () => {
+        vi.spyOn(windowBridge().update, 'state').mockResolvedValue({
+            ok: true,
+            value: { phase: 'idle', support: 'full', current: '0.1.0-beta.1' },
+        });
+        const configure = vi.spyOn(windowBridge().update, 'configure').mockResolvedValue({
+            ok: true,
+            value: {},
+        });
+
+        render(
+            <PreferencesProvider>
+                <PreferencesApplication>
+                    <PreferenceMessage />
+                </PreferencesApplication>
+            </PreferencesProvider>,
+        );
+
+        await waitFor(() => {
+            expect(configure).toHaveBeenLastCalledWith({ mode: 'auto', channel: 'beta' });
+        });
+    });
+
     it('names the theme of the system on the window too, so the stylesheets never guess', () => {
         render(
             <PreferencesProvider>

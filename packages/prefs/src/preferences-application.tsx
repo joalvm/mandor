@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, type PropsWithChildren } from 'react';
 
 import { useAppliedCodePreferences } from './hooks/useAppliedCodePreferences.js';
 import { useAppliedTabPreferences } from './hooks/useAppliedTabPreferences.js';
+import { useInstallChannel } from './hooks/useInstallChannel.js';
 import { usePreferences } from './preferences-context.js';
 import { readTextZoom, writeTextZoom } from './text-zoom-storage.js';
 import { useAppliedTheme } from './theme/useAppliedTheme.js';
@@ -13,7 +14,7 @@ import { useAppliedTheme } from './theme/useAppliedTheme.js';
 type PreferencesApplicationProps = PropsWithChildren;
 
 export function PreferencesApplication({ children }: PreferencesApplicationProps) {
-    const { values } = usePreferences();
+    const { values, writePreference } = usePreferences();
     const language = values['appearance.language'];
     const density = values['appearance.density'];
     const motion = values['appearance.motion'];
@@ -23,6 +24,7 @@ export function PreferencesApplication({ children }: PreferencesApplicationProps
 
     useAppliedTabPreferences(values);
     useAppliedCodePreferences(values);
+    useInstallChannel(writePreference);
 
     // The size the reader left the text at comes back with the window, before its first paint, and
     // is kept at every change. It belongs to the window for as long as it is open: deps stay empty.
