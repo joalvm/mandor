@@ -9,15 +9,38 @@ function setAfterSend(value: string): string {
 }
 
 describe('runChain over time', () => {
-    it('keeps nothing of a run past the time of the chain, and cuts its send', async () => {
-        const { send, held } = heldSend();
+    /** Wherever the script is when the time runs out, even still waiting for its worker. */
+    it('keeps nothing of a run past the time of the chain', async () => {
+        const { send } = heldSend();
         const deps = depsOf({ limits: { chainMs: 300 } });
         const result = await runChain(runOf([script(setAfterSend('late'))], { send }), deps);
 
-        expect(result.error).toMatchObject({
-            errorName: 'Timeout',
-            limit: 300,
+        expect(result.error).toMatchObject({ errorName: 'Timeout', limit: 300 });
+        expect(deps.variables.values(PLACE)).toEqual({});
+    });
+
+    /** The clock is stopped by the test once the send is in flight: a busy machine moves nothing. */
+    it('cuts the send in flight when the time of the chain runs out', async () => {
+        const { send, held, asked } = heldSend();
+        const clock = new AbortController();
+        const started: number[] = [];
+        const deps = depsOf({
+            limits: { chainMs: 300 },
+            clock: (ms) => {
+                started.push(ms);
+
+                return clock.signal;
+            },
         });
+        const running = runChain(runOf([script(setAfterSend('late'))], { send }), deps);
+
+        await asked;
+        clock.abort();
+
+        const result = await running;
+
+        expect(started).toEqual([300]);
+        expect(result.error).toMatchObject({ errorName: 'Timeout', limit: 300 });
         expect(held.signal?.aborted).toBe(true);
         expect(deps.variables.values(PLACE)).toEqual({});
     });

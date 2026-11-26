@@ -45,6 +45,8 @@ export type ChainDeps = {
     startChain: (options: ScriptChainOptions) => ScriptChain;
     logger: Pick<Logger, 'log'>;
     limits?: Partial<Record<'chainMs' | 'chainScripts', number>>;
+    /** Starts the clock of the chain with its time; without it, the clock of the runtime. */
+    clock?: ((ms: number) => AbortSignal) | undefined;
 };
 
 type Ran = Pick<ChainResult, 'effects' | 'logs' | 'tests' | 'error'>;
@@ -65,6 +67,13 @@ function isVar(effect: ScriptEffect): effect is Extract<ScriptEffect, { kind: 'v
 
 function chainMsOf(deps: ChainDeps): number {
     return deps.limits?.chainMs ?? SCRIPT_LIMITS.chainMs;
+}
+
+/** The signal that ends the chain once its time is up. */
+function clockOf(deps: ChainDeps): AbortSignal {
+    const ms = chainMsOf(deps);
+
+    return deps.clock === undefined ? AbortSignal.timeout(ms) : deps.clock(ms);
 }
 
 /** Why a run ended with nothing to keep: its own error, the clock of the chain, or a cancel. */
@@ -166,7 +175,7 @@ async function runEach(step: Step, runnable: readonly ChainEntry[]): Promise<Ran
 
 /** One clock and one chain of workers for every script; the chain lets its workers go at the end. */
 async function runAll(run: ChainRun, deps: ChainDeps, runnable: ChainEntry[]): Promise<Ran> {
-    const timeout = AbortSignal.timeout(chainMsOf(deps));
+    const timeout = clockOf(deps);
     const signal = AbortSignal.any([run.signal, timeout]);
     const chain = deps.startChain({ onSend: run.send });
 
