@@ -23,5 +23,7 @@ export const ASYNC_HOST_OPTIONS = {
     kind: 'async',
     mainDir,
     productName: messages.t('menu:appAsync'),
+    // The folder a person finds on disk carries the name of the app, not the one of the code.
+    repoFolder: 'realtime',
     title: messages.t('async:windowTitle'),
 } satisfies StartHostConfig;

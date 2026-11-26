@@ -28,6 +28,11 @@ describe('what Mandor Request asks of the host', () => {
         expect(SYNC_HOST_OPTIONS.appId).toBe('com.mandor.sync');
     });
 
+    /** The folder on disk carries the name the person installed, never the one of the code. */
+    it('keeps its repos in a folder named after the app', () => {
+        expect(SYNC_HOST_OPTIONS.repoFolder).toBe('request');
+    });
+
     it('serves requests, and no connection', () => {
         expect(SYNC_HOST_OPTIONS.stores).toEqual(['request']);
     });

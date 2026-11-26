@@ -80,8 +80,8 @@ aunque sea unary.
 
 ## Disco
 
-Un repo por app (`Mandor/async/local/`, `Mandor/sync/local/`). Un item, un archivo YAML; docs en
-Markdown con `title` en front matter.
+Un repo por app (`Mandor/realtime/local/`, `Mandor/request/local/`). Un item, un archivo YAML;
+docs en Markdown con `title` en front matter.
 
 ```
 mandor.yaml

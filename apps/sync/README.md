@@ -1,7 +1,7 @@
 # Mandor Request
 
 La aplicación de escritorio síncrona. Su código, `apps/sync`, solo compone paquetes
-compartidos. Abre su repo local en `Mandor/sync/local/` y trabaja requests HTTP
+compartidos. Abre su repo local en `Mandor/request/local/` y trabaja requests HTTP
 y GraphQL con respuesta, historial y auth heredada; importa OpenAPI, Swagger,
 Postman y HAR, exporta OpenAPI 3.1, pega curl y genera snippets.
 

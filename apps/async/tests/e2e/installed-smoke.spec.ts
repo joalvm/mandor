@@ -108,7 +108,7 @@ test.beforeAll(async () => {
     // The work goes to the sandbox and not to the documents folder of the machine running this.
     const container = join(sandbox, 'repo');
 
-    repoRoot = join(container, 'async', 'local');
+    repoRoot = join(container, 'realtime', 'local');
 
     const installer = INSTALLER === '' ? await installerIn(join(PAIR, 'from')) : INSTALLER;
 

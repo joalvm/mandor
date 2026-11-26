@@ -17,7 +17,7 @@ export const PERSONAL = 'Personal';
 
 /** The repo of the local origin of a run whose sandbox is `root`. */
 export function localRepo(root: string): string {
-    return join(root, 'origins', 'sync', 'local');
+    return join(root, 'origins', 'request', 'local');
 }
 
 /**

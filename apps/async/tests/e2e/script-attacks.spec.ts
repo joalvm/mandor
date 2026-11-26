@@ -257,7 +257,7 @@ test('switched off, nothing runs and the timeline says so', async () => {
 
 /** The file of one hostile connection in the clone of the origin: the repo the run never made. */
 async function hostileConnectionFile(name: string): Promise<string> {
-    const repos = join(sandbox.defaultRepoRoot, 'async');
+    const repos = join(sandbox.defaultRepoRoot, 'realtime');
     const clone = (await readdir(repos)).find((entry) => entry !== 'local') ?? 'none';
 
     return join(repos, clone, 'workspaces', 'payments', 'connections', `${name}.yaml`);

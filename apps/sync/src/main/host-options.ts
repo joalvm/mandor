@@ -25,5 +25,7 @@ export const SYNC_HOST_OPTIONS = {
     kind: 'sync',
     mainDir,
     productName: messages.t('menu:appSync'),
+    // The folder a person finds on disk carries the name of the app, not the one of the code.
+    repoFolder: 'request',
     title: messages.t('sync:windowTitle'),
 } satisfies StartHostConfig;

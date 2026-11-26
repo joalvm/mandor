@@ -134,6 +134,7 @@ const CONFIG: StartHostConfig = {
     kind: 'sync',
     mainDir: '/app/out/main',
     productName: 'Mandor Request',
+    repoFolder: 'request',
     stores: [],
     title: 'Mandor Request',
 };
@@ -172,7 +173,12 @@ describe('bringing an app up', () => {
         await startHost(CONFIG);
 
         expect(doubles.calls.slice(3)).toEqual(['ready', 'origin', 'window']);
-        expect(openLocalOrigin).toHaveBeenCalledWith('sync', '/data', doubles.logger, 'en');
+        expect(openLocalOrigin).toHaveBeenCalledWith(
+            expect.objectContaining({ kind: 'sync', repoFolder: 'request' }),
+            '/data',
+            doubles.logger,
+            'en',
+        );
         expect(createWindow).toHaveBeenCalledWith(
             expect.objectContaining({
                 appId: 'com.mandor.sync',

@@ -27,6 +27,11 @@ describe('what Mandor Realtime asks of the host', () => {
         expect(ASYNC_HOST_OPTIONS.appId).toBe('com.mandor.async');
     });
 
+    /** The folder on disk carries the name the person installed, never the one of the code. */
+    it('keeps its repos in a folder named after the app', () => {
+        expect(ASYNC_HOST_OPTIONS.repoFolder).toBe('realtime');
+    });
+
     it('serves connections and messages, and no request', () => {
         expect(ASYNC_HOST_OPTIONS.stores).toEqual(['message', 'connection']);
     });

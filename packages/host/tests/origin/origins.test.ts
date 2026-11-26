@@ -13,7 +13,7 @@ const LOCAL: StoredOrigin = {
     id: 'local',
     name: 'Local',
     kind: 'local',
-    root: 'C:/Mandor/async/local',
+    root: 'C:/Mandor/realtime/local',
 };
 
 function remote(id: string): StoredOrigin {
@@ -22,7 +22,7 @@ function remote(id: string): StoredOrigin {
         name: id,
         kind: 'remote',
         url: `https://github.com/team/${id}.git`,
-        root: `C:/Mandor/async/${id}`,
+        root: `C:/Mandor/realtime/${id}`,
     };
 }
 

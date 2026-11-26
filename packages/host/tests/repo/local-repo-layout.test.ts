@@ -40,23 +40,23 @@ function exists(path: string): Promise<boolean> {
 
 describe('one repo per app on disk', () => {
     it('lays out the repo of the app under the container and touches nothing else', async () => {
-        const root = defaultRepoRoot('async');
+        const root = defaultRepoRoot('realtime');
         const local = await ensureLocalRepo({ ...REQUEST, kind: 'async', root });
 
-        expect(root).toBe(join(container, 'async', 'local'));
+        expect(root).toBe(join(container, 'realtime', 'local'));
         expect(local.workspace.kind).toBe('async');
         await expect(exists(join(root, 'mandor.yaml'))).resolves.toBe(true);
         await expect(exists(join(root, '.git'))).resolves.toBe(true);
-        await expect(exists(join(container, 'sync'))).resolves.toBe(false);
+        await expect(exists(join(container, 'request'))).resolves.toBe(false);
     });
 
     /** The container holds repos; it is never a repo itself. Two git inits plus two commits; the Windows CI runner needs more than the default 5s. */
     it('leaves the two apps as sibling repos and the container without version control', async () => {
-        await ensureLocalRepo({ ...REQUEST, kind: 'async', root: defaultRepoRoot('async') });
-        await ensureLocalRepo({ ...REQUEST, kind: 'sync', root: defaultRepoRoot('sync') });
+        await ensureLocalRepo({ ...REQUEST, kind: 'async', root: defaultRepoRoot('realtime') });
+        await ensureLocalRepo({ ...REQUEST, kind: 'sync', root: defaultRepoRoot('request') });
 
-        await expect(exists(join(container, 'async', 'local', '.git'))).resolves.toBe(true);
-        await expect(exists(join(container, 'sync', 'local', '.git'))).resolves.toBe(true);
+        await expect(exists(join(container, 'realtime', 'local', '.git'))).resolves.toBe(true);
+        await expect(exists(join(container, 'request', 'local', '.git'))).resolves.toBe(true);
         await expect(exists(join(container, '.git'))).resolves.toBe(false);
     }, 30_000);
 });

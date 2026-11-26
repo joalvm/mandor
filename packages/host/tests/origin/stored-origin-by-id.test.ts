@@ -14,7 +14,7 @@ const LOCAL: StoredOrigin = {
     id: 'local',
     name: 'Local',
     kind: 'local',
-    root: 'C:/Mandor/async/local',
+    root: 'C:/Mandor/realtime/local',
 };
 
 beforeEach(async () => {

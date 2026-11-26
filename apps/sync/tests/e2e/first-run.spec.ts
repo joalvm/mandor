@@ -54,7 +54,7 @@ test('creates the Sync origin and restores a document written through its render
         await expect(
             second.getByRole('heading', { name: 'Persisted by Mandor Request' }),
         ).toBeVisible();
-        await expect(access(join(defaultRepoRoot, 'async'))).rejects.toThrow();
+        await expect(access(join(defaultRepoRoot, 'realtime'))).rejects.toThrow();
     } finally {
         await running?.close();
         await rm(root, { force: true, maxRetries: 10, recursive: true });

@@ -2,8 +2,6 @@ import { join } from 'node:path';
 
 import { app } from 'electron';
 
-import type { WorkspaceKind } from '@mandor/schema';
-
 /** The container of the work of both apps. Each app holds its own repo one level further down. */
 const FOLDER = 'Mandor';
 
@@ -20,11 +18,11 @@ const OVERRIDE = 'MANDOR_DEFAULT_REPO_ROOT';
 
 /**
  * Where the repo of one app lives. Under the documents folder because a repo is the user's
- * work and not application state. Each app gets its own: a repo never mixes workspace kinds,
- * and the container level stays free for the origins that are not `local`.
+ * work and not application state. Each app gets its own folder, named by the app: a repo never
+ * mixes workspace kinds, and the folder stays free for the origins that are not `local`.
  */
-export function defaultRepoRoot(kind: WorkspaceKind): string {
-    return join(container(), kind, LOCAL);
+export function defaultRepoRoot(repoFolder: string): string {
+    return join(container(), repoFolder, LOCAL);
 }
 
 function container(): string {
