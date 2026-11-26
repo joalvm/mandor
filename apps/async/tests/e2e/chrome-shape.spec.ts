@@ -160,6 +160,28 @@ async function centreDrift(page: Page): Promise<Drift> {
     });
 }
 
+/** How wide the bar of a box that scrolls stands, measured on a box made to scroll and taken away. */
+async function scrollbarWidth(page: Page): Promise<number> {
+    return page.evaluate(() => {
+        const probe = document.createElement('div');
+
+        Object.assign(probe.style, {
+            height: '40px',
+            overflow: 'scroll',
+            position: 'absolute',
+            visibility: 'hidden',
+            width: '40px',
+        });
+        document.body.append(probe);
+
+        const width = probe.offsetWidth - probe.clientWidth;
+
+        probe.remove();
+
+        return width;
+    });
+}
+
 /**
  * The centre where the window opens and again at the narrowest the window goes, where a half can
  * need more than its share: both times it drifts by what the halves allow and by nothing more.
@@ -211,11 +233,8 @@ test('rounds its tabs by a step, draws its bands on the frame and centres the co
         // The command centre stands on the middle of the window, not on the middle of the room
         // the two ends leave between them.
         await expectCentred(app, page);
-        await expect
-            .poll(() =>
-                page.evaluate(() => getComputedStyle(document.documentElement).scrollbarWidth),
-            )
-            .toBe('thin');
+        // Every box that scrolls takes four pixels for its bar, the width being the requirement.
+        expect(await scrollbarWidth(page)).toBe(4);
     } finally {
         await app.close();
         await rm(sandbox.root, { force: true, maxRetries: 10, recursive: true });

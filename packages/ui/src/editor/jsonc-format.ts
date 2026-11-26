@@ -1,10 +1,15 @@
-import { format, type Edit } from 'jsonc-parser';
+import { format, type Edit, type FormattingOptions } from 'jsonc-parser';
 
-import { CODE_INDENT } from './code-indent.js';
+import { codePreferences } from './code-preferences.js';
 import { jsoncSyntaxErrors } from './jsonc-diagnostics.js';
 import { maskedTemplates } from './template-mask.js';
 
-const OPTIONS = { eol: '\n', insertSpaces: true, tabSize: CODE_INDENT };
+/** The layout steps in by the indent the editors type with, so a laid out payload reads as one. */
+function layoutOptions(): FormattingOptions {
+    const { indentSize, indentWithTabs } = codePreferences();
+
+    return { eol: '\n', insertSpaces: !indentWithTabs, tabSize: indentSize };
+}
 
 /**
  * The edits of a layout applied in one pass. A layout is one edit per gap between tokens, and
@@ -37,5 +42,5 @@ export function formattedJsonc(text: string): string | null {
         return null;
     }
 
-    return appliedEdits(text, format(maskedTemplates(text), undefined, OPTIONS));
+    return appliedEdits(text, format(maskedTemplates(text), undefined, layoutOptions()));
 }

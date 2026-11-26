@@ -72,6 +72,7 @@ sola app cita su fila en el PR. Fila nueva = decisión nueva, con motivo.
 | Ajustes de carpeta        | docs y variables; auth y cabeceras viven en la conexión             | docs, variables, auth y cabeceras, heredadas por los requests                   |
 | Scripts                   | a nivel conexión, tres eventos; salen como línea de la actividad    | colección, carpeta y request, dos eventos; salen en Tests y Consola             |
 | Snippets de código        | no hay                                                              | `@mandor/codegen`                                                               |
+| Retención en ajustes      | entradas de actividad por conexión, aplicadas al momento            | envíos y días del historial; main poda en el próximo envío                      |
 
 Tres trampas que no se unifican: el ack de Socket.IO es un par enlazado en la actividad, no un
 request; la suscripción GraphQL es transporte de Realtime; gRPC, cuando entre, entra en Realtime
@@ -164,9 +165,9 @@ Decididos por el usuario. No se reabren; lo que choque con uno se pregunta.
 | Respuesta de Request por defecto        | 50 MiB                                                                                                             |
 | Formatear y colorear un body o un marco | hasta 5 MiB                                                                                                        |
 | Volcado hex                             | primer 1 MiB, con aviso                                                                                            |
-| Historial de Request                    | 500 entradas, 30 días, 1 GiB de bodies por workspace; inline hasta 64 KiB                                          |
+| Historial de Request                    | 500 entradas y 30 días por defecto (ajustes: 100–5000, 7–365), 1 GiB de bodies por workspace; inline hasta 64 KiB  |
 | Cookies                                 | 180 por dominio, 3300 por jar, 4096 B por cookie                                                                   |
-| Actividad de Realtime en ventana        | 500 entradas, 2 MiB                                                                                                |
+| Actividad de Realtime en ventana        | 500 entradas por defecto (ajustes: 200–2000), 2 MiB; main entrega hasta 2000                                       |
 | Grabación de Realtime                   | cola de 64 MiB; pasado, descarta y escribe una línea de hueco                                                      |
 | Socket.IO por polling                   | 16 MiB                                                                                                             |
 | Reconexión                              | 500 ms a 8 s, 5 intentos, cuenta a cero tras 5 s abierta                                                           |
@@ -222,4 +223,12 @@ design` comprueba marcado y tokens. Estándar de interfaz e iconos: skills `ui-d
   fundido.
 - Lo que flota es sólido: diálogos de una superficie con radio 12, menús y capas con radio 10, y
   avisos como tarjetas de 380 px apiladas de a tres. Ajustes es una lista, sin cajas.
+- Ajustes iguales en las dos apps: General (interfaz: preguntar antes de cerrar sin guardar,
+  abrir siempre en pestaña nueva, pestañas cerradas que se recuerdan; editor: fuente, tamaño,
+  sangría, cierre de llaves y ajuste de línea), Temas, lo propio de cada app (defaults y
+  retención), Scripts, Proxy, Certificados, Actualizaciones, Atajos y Acerca de. Acerca de no
+  lleva título: la marca y el nombre de la app lo encabezan, debajo versión, runtimes, sistema y
+  arquitectura, copiar informe, sitio y licencias.
+- La línea de estado alterna el diseño de paneles vertical u horizontal (también en la paleta).
+  Consola y campana marcan su cuenta de 1 a 9+ en la esquina del icono. Barras de 4 px.
 - El ui-lab se dibuja como las apps y lee el valor de cada token de la página.

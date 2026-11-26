@@ -5,6 +5,7 @@ type MarkupLayout = {
     extra_liners?: string[];
     indent_inner_html?: boolean;
     indent_size?: number;
+    indent_with_tabs?: boolean;
     inline?: string[];
     max_preserve_newlines?: number;
     preserve_newlines?: boolean;

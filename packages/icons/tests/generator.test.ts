@@ -124,7 +124,7 @@ describe('read-icon-sources', () => {
         const { provider: pinned, intentions } = await readIconSources();
 
         expect(pinned).toEqual(provider);
-        expect(Object.keys(intentions)).toHaveLength(89);
+        expect(Object.keys(intentions)).toHaveLength(92);
         expect(intentions['add']?.svg).toContain('<path');
         expect(intentions['origin-bitbucket']?.svg).toContain('<path');
     });

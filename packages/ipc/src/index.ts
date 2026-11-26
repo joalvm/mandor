@@ -402,6 +402,10 @@ export {
 export { cookiesSetRequestSchema } from './cookies/cookies-set.js';
 export { historyAppendedPushSchema, type HistoryAppendedPush } from './history/history-appended.js';
 export type { HistoryArea } from './history/history-area.js';
+export {
+    historyConfigureRequestSchema,
+    type HistoryConfigureRequest,
+} from './history/history-configure.js';
 export { historyDeleteRequestSchema, type HistoryDeleteRequest } from './history/history-delete.js';
 export { historyListRequestSchema, historyListResultSchema } from './history/history-list.js';
 export { historyReadRequestSchema, historyReadResultSchema } from './history/history-read.js';

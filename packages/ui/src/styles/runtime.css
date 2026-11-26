@@ -558,31 +558,6 @@ textarea,
     opacity: 1;
 }
 
-/* The scrollbar of the lateral follows the same rule: a narrow thumb that comes out only while
-   the pointer or the keyboard is in the box that scrolls, so a long tree is not a bar beside every
-   section. Chromium draws the `::-webkit-scrollbar` parts only while neither standard property
-   is set, and both inherit from the root, so they go back to `auto` here. The track keeps its
-   width while the thumb is hidden, so nothing moves when it comes out. */
-[data-part='sidebar-content'] * {
-    scrollbar-width: auto;
-    scrollbar-color: auto;
-}
-
-[data-part='sidebar-content'] *::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background: transparent;
-}
-
-[data-part='sidebar-content'] *::-webkit-scrollbar-thumb {
-    border-radius: var(--mandor-radius-full);
-    background: transparent;
-}
-
-[data-part='sidebar-content'] *:is(:hover, :focus-within)::-webkit-scrollbar-thumb {
-    background: var(--border-hover);
-}
-
 /* A menu hung from a trigger that names the current choice is as wide as that trigger at least;
    the width is the library's measure of it, so it can only be said here. */
 [data-part='menu-content'][data-fit-trigger] {

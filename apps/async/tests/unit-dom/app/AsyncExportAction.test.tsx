@@ -1,5 +1,6 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { success } from '@mandor/ipc';
+import { PreferencesProvider } from '@mandor/prefs';
 import type * as Repos from '@mandor/repos';
 import { bridge, shellStore } from '@mandor/shell';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -18,9 +19,11 @@ vi.mock('@mandor/repos', async () => {
 /** The window loads its data as it opens; the flush lets those loads land inside act. */
 async function renderApp(): Promise<void> {
     render(
-        <MessagesProvider preferences={{ language: 'en' }}>
-            <AsyncApp />
-        </MessagesProvider>,
+        <PreferencesProvider>
+            <MessagesProvider preferences={{ language: 'en' }}>
+                <AsyncApp />
+            </MessagesProvider>
+        </PreferencesProvider>,
     );
 
     await act(() => Promise.resolve());

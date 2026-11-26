@@ -1,7 +1,7 @@
 import { envStore } from '@mandor/env';
 import { useMessages } from '@mandor/i18n';
 import type { ResourceUri } from '@mandor/schema';
-import { useFailureToast, useResourceSection, useSplit } from '@mandor/shell';
+import { useFailureToast, usePaneDirection, useResourceSection, useSplit } from '@mandor/shell';
 import { Card, SplitHalf, SplitPane, useToast } from '@mandor/ui';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { useStore } from 'zustand';
@@ -160,8 +160,8 @@ type ComposerAreaProps = PropsWithChildren<
 >;
 
 /**
- * What sits under the card of the connection: the event beside the activity, or over it when the
- * group is too narrow for both, each on a card of its own with the gutter of the frame between
+ * What sits under the card of the connection: the event beside the activity, or over it under the
+ * horizontal layout or when the group is too narrow for both, each on a card of its own with the gutter of the frame between
  * them. The activity belongs to the connection, so it stays whether an event is open or not; only
  * the half of the event changes.
  */
@@ -176,11 +176,12 @@ function ComposerArea({
     ...strip
 }: ComposerAreaProps) {
     const messages = useMessages('connections');
+    const direction = usePaneDirection();
 
     return (
         <SplitPane
             className="min-h-0 flex-1"
-            direction="fit"
+            direction={direction}
             gap="gutter"
             initial={MESSAGE_SHARE}
             label={messages('resizeSplit')}

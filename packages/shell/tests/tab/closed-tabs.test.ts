@@ -1,14 +1,14 @@
 import type { GridLeaf, GridNode } from '@mandor/ipc';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import {
-    CLOSED_TABS_KEPT,
     closedAfter,
     closedMoved,
     closedWithout,
     type ClosedTab,
 } from '../../src/tab/closed-tabs.js';
 import { declareTabKind } from '../../src/tab/tab-kind-registry.js';
+import { tabPreferences } from '../../src/tab/tab-preferences.js';
 import type { Tab } from '../../src/tab/tab.js';
 
 const DOCS = 'mandor://demo/payments/doc';
@@ -26,6 +26,21 @@ function leaf(id: string, ...tabs: Tab[]): GridLeaf {
 function names(closed: readonly ClosedTab[]): string[] {
     return closed.map((each) => `${each.groupId}:${String(each.index)}:${each.tab.id}`);
 }
+
+/** Closes one tab after another, `count` of them, and hands back what the window remembers. */
+function closeMany(count: number): readonly ClosedTab[] {
+    let closed: readonly ClosedTab[] = [];
+
+    for (let round = 0; round < count; round += 1) {
+        closed = closedAfter(closed, leaf('root', tab(`t${String(round)}`)), {}, leaf('root'));
+    }
+
+    return closed;
+}
+
+afterEach(() => {
+    tabPreferences.setState(tabPreferences.getInitialState());
+});
 
 describe('what the window remembers of the tabs that left it', () => {
     it('remembers each tab gone, with its group and its place, the latest on top', () => {
@@ -78,17 +93,23 @@ describe('what the window remembers of the tabs that left it', () => {
         expect(closed[0]?.tab).toEqual(tab('a'));
     });
 
-    it('keeps one entry per tab and only the latest ones', () => {
-        let closed: readonly ClosedTab[] = [];
-
-        for (let round = 0; round < CLOSED_TABS_KEPT + 5; round += 1) {
-            closed = closedAfter(closed, leaf('root', tab(`t${String(round)}`)), {}, leaf('root'));
-        }
+    it('keeps one entry per tab and only the latest twenty, unless told otherwise', () => {
+        let closed = closeMany(25);
 
         closed = closedAfter(closed, leaf('root', tab('t30')), {}, leaf('root'));
 
-        expect(closed).toHaveLength(CLOSED_TABS_KEPT);
+        expect(closed).toHaveLength(20);
         expect(names(closed).slice(0, 2)).toEqual(['root:0:t30', 'root:0:t24']);
+    });
+
+    it('reaches only as far back as the person set', () => {
+        tabPreferences.setState({ closedKept: 10 });
+
+        const closed = closeMany(15);
+
+        expect(closed).toHaveLength(10);
+        expect(names(closed)[0]).toBe('root:0:t14');
+        expect(names(closed).at(-1)).toBe('root:0:t5');
     });
 });
 

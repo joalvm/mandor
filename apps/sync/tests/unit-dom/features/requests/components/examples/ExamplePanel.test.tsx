@@ -1,7 +1,8 @@
 import { exampleResource } from '@mandor/collections';
 import { success } from '@mandor/ipc';
-import { shellStore, TabProvider } from '@mandor/shell';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { paneLayoutStore, shellStore, TabProvider, togglePaneLayout } from '@mandor/shell';
+import { byPart } from '@mandor/ui/testing';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { syncBridge } from '../../../../../../src/renderer/app/sync-bridge.js';
@@ -59,6 +60,7 @@ describe('the panel of an example', () => {
         cleanup();
         requestsStore.getState().reset();
         shellStore.getState().reset();
+        paneLayoutStore.setState(paneLayoutStore.getInitialState());
     });
 
     it('shows the method and the url of its request, which it does not edit', async () => {
@@ -82,6 +84,21 @@ describe('the panel of an example', () => {
             await screen.findByRole('tab', { name: 'Params' }),
         );
         expect(screen.getByRole('region', { name: 'Response' })).toBeInTheDocument();
+    });
+
+    /** An example stands its halves as the request it belongs to does. */
+    it('stands the request beside its response, and over it once the layout turns', async () => {
+        draw();
+
+        await screen.findByRole('region', { name: 'Request' });
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'row');
+
+        act(() => {
+            togglePaneLayout();
+        });
+
+        expect(byPart('split-pane')).toHaveAttribute('data-direction', 'column');
     });
 
     it('names the example at the end of the breadcrumb, under its request', async () => {

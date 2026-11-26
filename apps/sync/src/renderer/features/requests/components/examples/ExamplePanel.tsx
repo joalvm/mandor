@@ -6,9 +6,15 @@ import {
     type RequestItem,
     type Variable,
 } from '@mandor/schema';
-import { fireAndForget, useFailureToast, useKeepTab, useTab } from '@mandor/shell';
+import {
+    fireAndForget,
+    useFailureToast,
+    useKeepTab,
+    usePaneDirection,
+    useTab,
+} from '@mandor/shell';
 import { Card, SplitHalf, SplitPane } from '@mandor/ui';
-import { useState, type KeyboardEvent } from 'react';
+import { useState, type KeyboardEvent, type PropsWithChildren } from 'react';
 
 import { useExample } from '../../hooks/useExample.js';
 import { useExampleSections } from '../../hooks/useExampleSections.js';
@@ -35,8 +41,6 @@ export function ExamplePanel() {
     const notifyFailure = useFailureToast();
     const keep = useKeepTab();
     const { cancel, comparison, entry, send, sending } = useExampleSend(resource, view);
-    /** The request/response split is view state: it never persists. */
-    const [split, setSplit] = useState(50);
     const { review, schema, section, setSection } = useExampleSections(resource, view, entry);
 
     if (view === undefined) {
@@ -104,13 +108,7 @@ export function ExamplePanel() {
                     url={composeUrlOf(parent.url, request.query)}
                 />
             </Card>
-            <SplitPane
-                className="min-h-0 flex-1"
-                gap="gutter"
-                label={labels('resizeSplit')}
-                onValueChange={setSplit}
-                value={split}
-            >
+            <ExampleSplit label={labels('resizeSplit')}>
                 <SplitHalf>
                     <Card aria-label={labels('panelLabel')}>
                         <RequestSections
@@ -137,7 +135,27 @@ export function ExamplePanel() {
                         />
                     </Card>
                 </SplitHalf>
-            </SplitPane>
+            </ExampleSplit>
         </div>
+    );
+}
+
+/** The request over or beside its response, split as the layout of the window stands them. */
+function ExampleSplit({ children, label }: PropsWithChildren<{ label: string }>) {
+    /** The request/response split is view state: it never persists. */
+    const [split, setSplit] = useState(50);
+    const direction = usePaneDirection();
+
+    return (
+        <SplitPane
+            className="min-h-0 flex-1"
+            direction={direction}
+            gap="gutter"
+            label={label}
+            onValueChange={setSplit}
+            value={split}
+        >
+            {children}
+        </SplitPane>
     );
 }

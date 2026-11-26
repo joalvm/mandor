@@ -7,6 +7,7 @@ export { Breadcrumbs } from './components/panel/Breadcrumbs.js';
 export { Button, type ButtonVariant } from './components/button/Button.js';
 export { Card } from './components/layout/Card.js';
 export { Collapsible } from './components/collapsible/Collapsible.js';
+export { CornerCount } from './components/indicator/CornerCount.js';
 export { CollapsibleBody } from './components/collapsible/CollapsibleBody.js';
 export { CollapsibleHeader } from './components/collapsible/CollapsibleHeader.js';
 export { Disclosure } from './components/collapsible/Disclosure.js';
@@ -137,6 +138,11 @@ export type { EditorFix, FixesOf } from './editor/editor-fix.js';
 export { withUncheckedPatternMarks } from './editor/unchecked-pattern-marks.js';
 export type { EditorVariableHover, EditorVariables } from './editor/editor-variable.js';
 export { formattedJsonc } from './editor/jsonc-format.js';
+export {
+    DEFAULT_CODE_PREFERENCES,
+    setCodePreferences,
+    type CodePreferences,
+} from './editor/code-preferences.js';
 export { withEscapesShown } from './editor/json-escapes.js';
 export { schemaLintOf } from './editor/schema-lint-of.js';
 export { warmEditorWhenIdle } from './editor/warm-editor.js';

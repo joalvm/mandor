@@ -1,7 +1,7 @@
 import { useMessages } from '@mandor/i18n';
 import {
-    Badge,
     Button,
+    CornerCount,
     EmptyState,
     IconButton,
     Popover,
@@ -49,33 +49,24 @@ export function NoticeCenter() {
             }}
             open={open}
         >
-            <PopoverTrigger>
-                <IconButton
-                    icon="bell"
-                    iconSize="sm"
-                    label={
-                        unread === 0 ? messages('bell') : messages('bellUnread', { count: unread })
-                    }
-                    size="xs"
-                />
-            </PopoverTrigger>
-            <UnreadCount unread={unread} />
+            <CornerCount count={unread} tone="accent">
+                <PopoverTrigger>
+                    <IconButton
+                        icon="bell"
+                        iconSize="sm"
+                        label={
+                            unread === 0
+                                ? messages('bell')
+                                : messages('bellUnread', { count: unread })
+                        }
+                        size="xs"
+                    />
+                </PopoverTrigger>
+            </CornerCount>
             <PopoverPanel label={messages('title')}>
                 <NoticeList notices={notices} onClear={clear} onDismiss={dismiss} />
             </PopoverPanel>
         </Popover>
-    );
-}
-
-function UnreadCount({ unread }: { unread: number }) {
-    if (unread === 0) {
-        return null;
-    }
-
-    return (
-        <Badge count tone="accent">
-            {unread}
-        </Badge>
     );
 }
 

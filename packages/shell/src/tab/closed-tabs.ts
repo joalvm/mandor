@@ -6,18 +6,19 @@ import type { ResourceIndex } from '../resource/resource-index.js';
 import { movedResource } from '../resource/resource-move.js';
 import type { Tab } from './tab.js';
 import { tabKind } from './tab-kind-registry.js';
+import { tabPreferences } from './tab-preferences.js';
 
 /** A tab that left the window: what it was, the group that held it and its place in the strip. */
 export type ClosedTab = { groupId: string; index: number; tab: Tab };
 
-/** How far back reopening reaches: closing one more forgets the oldest. */
-export const CLOSED_TABS_KEPT = 20;
-
-/** The last one closed goes on top; a tab closed again replaces its older self. */
+/**
+ * The last one closed goes on top; a tab closed again replaces its older self. Past the reach the
+ * person set, closing one more forgets the oldest.
+ */
 function withClosed(closed: readonly ClosedTab[], entry: ClosedTab): readonly ClosedTab[] {
     const older = closed.filter((each) => each.tab.id !== entry.tab.id);
 
-    return [entry, ...older].slice(0, CLOSED_TABS_KEPT);
+    return [entry, ...older].slice(0, tabPreferences.getState().closedKept);
 }
 
 /** Whether a tab that left has something to come back to. */

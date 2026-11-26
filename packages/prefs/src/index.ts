@@ -1,4 +1,6 @@
+export { PreferenceRows } from './components/dialog/PreferenceRows.js';
 export { SettingsDialog } from './components/dialog/SettingsDialog.js';
+export { usePreferenceValue } from './hooks/usePreferenceValue.js';
 export { useSettingsInheritance } from './hooks/useSettingsInheritance.js';
 export { PreferencesApplication } from './preferences-application.js';
 export { PreferencesProvider } from './preferences-context.js';

@@ -7,6 +7,7 @@ import { UpdatesStatus } from '@mandor/updates';
 import { WorkspacesTabKind } from '@mandor/workspace';
 import { useLayoutEffect } from 'react';
 
+import { ActivitySettings } from '../activity/ActivitySettings.js';
 import { ConnectionDefaultsSettings, ConnectionTabKind } from '../features/connections/index.js';
 import { MessageItemKind, registerMessageSchemas } from '../features/messages/index.js';
 import { switchAsyncOriginTo } from './switch-origin.js';
@@ -44,6 +45,7 @@ export function AsyncTabKinds() {
             />
             <WorkspacesTabKind />
             <ConnectionDefaultsSettings />
+            <ActivitySettings />
             <UpdatesStatus />
         </>
     );

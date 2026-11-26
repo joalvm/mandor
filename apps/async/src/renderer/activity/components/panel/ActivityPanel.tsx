@@ -1,4 +1,5 @@
 import { useMessages } from '@mandor/i18n';
+import { usePaneLayout, type PaneLayout } from '@mandor/shell';
 import type { ResourceUri } from '@mandor/schema';
 import { Card, SplitHalf, SplitPane } from '@mandor/ui';
 import { useMemo, useState, type PropsWithChildren } from 'react';
@@ -21,6 +22,15 @@ import { ActivityLog } from './ActivityLog.js';
  * rest of it to begin with.
  */
 const TIMELINE_SHARE = 65;
+
+/**
+ * The dock stands across the way the message and the activity stand: under the activity while
+ * they are side by side, beside it once they are one over the other, so each keeps its room.
+ */
+const DOCK_DIRECTION = {
+    horizontal: 'row',
+    vertical: 'column',
+} as const satisfies Record<PaneLayout, 'column' | 'row'>;
 
 /**
  * The share the user last set, for as long as the window lives: closing the dock keeps it,
@@ -59,6 +69,7 @@ export function ActivityPanel({
 }: ActivityPanelProps) {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [split, setSplit] = useState(dockShare);
+    const layout = usePaneLayout();
     const narrowing = useActivityStore(selectNarrowingFor(resource));
     const offenders = useSchemaOffenders(entries, narrowing.schemaOnly);
     const selected = entries.find((entry) => entry.id === selectedId);
@@ -91,7 +102,7 @@ export function ActivityPanel({
             <SplitPane
                 className="min-h-0 flex-1"
                 collapsed={selected === undefined}
-                direction="column"
+                direction={DOCK_DIRECTION[layout]}
                 gap="gutter"
                 label={resizeLabel}
                 onValueChange={onSplitChange}

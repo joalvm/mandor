@@ -83,6 +83,14 @@ describe('what an editor is built with', () => {
         expect(optionsFor({}).scrollBeyondLastLine).toBe(false);
     });
 
+    /** The bar of the editor is the one every box of the window draws, four pixels wide. */
+    it('scrolls with a bar as narrow as the rest of the window', () => {
+        expect(optionsFor({}).scrollbar).toMatchObject({
+            horizontalScrollbarSize: 4,
+            verticalScrollbarSize: 4,
+        });
+    });
+
     /**
      * Words are never suggested out of the document, and a language with no source of its own
      * suggests only what its caller hands it: a popup over every word typed in a payload would

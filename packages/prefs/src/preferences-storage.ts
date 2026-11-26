@@ -1,4 +1,8 @@
-import { PREFERENCE_DEFINITIONS, type PreferenceValues } from '@mandor/schema';
+import {
+    acceptsPreferenceValue,
+    PREFERENCE_DEFINITIONS,
+    type PreferenceValues,
+} from '@mandor/schema';
 
 export const PREFERENCE_STORAGE_KEY = 'mandor.preferences';
 
@@ -43,17 +47,12 @@ function preferenceValuesOf(value: unknown): PreferenceValues {
     for (const definition of PREFERENCE_DEFINITIONS) {
         const stored = value[definition.key];
 
-        if (typeof stored === 'string' && isOptionOf(definition.values, stored)) {
+        if (acceptsPreferenceValue(definition, stored)) {
             values[definition.key] = stored;
         }
     }
 
     return withLegacyTheme(values, value['appearance.theme']);
-}
-
-/** Whether a stored value is one the preference offers; any other falls back to its default. */
-function isOptionOf(options: readonly string[], stored: string): boolean {
-    return options.includes(stored);
 }
 
 /** A theme chosen before the themes had a mode carries over, unless a mode was chosen since. */

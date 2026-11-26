@@ -5,11 +5,14 @@ import { registerAboutHandlers } from '../../src/about/about.handlers.js';
 import { spyIpc } from '../../src/testing/handler-harness.js';
 
 const ABOUT: AppAbout = {
+    arch: 'x64',
     chrome: '140.0.0.0',
     electron: '40.0.0',
+    icon: '',
     name: 'Mandor Realtime',
     node: '24.0.0',
     platform: 'win32',
+    system: '10.0.26100',
     version: '0.1.0',
 };
 

@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type { HistoryArea } from '../../src/index.js';
+import type { HistoryConfigureRequest } from '../../src/history/history-configure.js';
 import type { HistoryDeleteRequest } from '../../src/history/history-delete.js';
 import type { HistoryListRequest } from '../../src/history/history-list.js';
 import type { HistoryReadRequest } from '../../src/history/history-read.js';
@@ -16,5 +17,11 @@ describe('the history area of the bridge contract', () => {
 
     it('removes by the request its channel validates', () => {
         expectTypeOf<HistoryArea['remove']>().parameter(0).toEqualTypeOf<HistoryDeleteRequest>();
+    });
+
+    it('configures by the request its channel validates', () => {
+        expectTypeOf<HistoryArea['configure']>()
+            .parameter(0)
+            .toEqualTypeOf<HistoryConfigureRequest>();
     });
 });

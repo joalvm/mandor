@@ -114,6 +114,7 @@ export const CHANNELS = {
     historyList: 'history:list',
     historyRead: 'history:read',
     historyDelete: 'history:delete',
+    historyConfigure: 'history:configure',
     historyAppended: 'history:appended',
     graphqlSchemaRead: 'graphql:schema-read',
     graphqlIntrospect: 'graphql:introspect',

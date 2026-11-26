@@ -9,7 +9,8 @@ import {
 } from '@mandor/ipc';
 
 /**
- * The history of the sends: rows, one send in full, deleting, and the push of a new one. Every
+ * The history of the sends: rows, one send in full, deleting, how much to keep, and the push of a
+ * new one. Every
  * answer and push is validated at this edge; one out of contract is a bug in main, louder thrown.
  */
 export function createHistoryBridge({ call, subscribe }: BridgeKit): HistoryArea {
@@ -17,6 +18,7 @@ export function createHistoryBridge({ call, subscribe }: BridgeKit): HistoryArea
         list: (input) => call(CHANNELS.historyList, historyListResultSchema, input),
         read: (input) => call(CHANNELS.historyRead, historyReadResultSchema, input),
         remove: (input) => call(CHANNELS.historyDelete, emptyResultSchema, input),
+        configure: (input) => call(CHANNELS.historyConfigure, emptyResultSchema, input),
         onAppended: (handler) =>
             subscribe(CHANNELS.historyAppended, (push) => {
                 handler(historyAppendedPushSchema.parse(push));

@@ -1,6 +1,5 @@
 import { useMessages } from '@mandor/i18n';
-import { ErrorIcon, WarningIcon } from '@mandor/icons';
-import { Badge, IconButton } from '@mandor/ui';
+import { CornerCount, IconButton } from '@mandor/ui';
 import { useMemo } from 'react';
 import { useStore } from 'zustand';
 
@@ -13,29 +12,37 @@ import { shortcutTable } from '../../shortcut/shortcut-table.js';
 
 const TOGGLE_COMMAND = 'shell.toggleConsole';
 
+/** What a click does, and the faults waiting in the console when there are any. */
+const LABEL = {
+    closed: { clean: 'consoleShow', faulty: 'consoleShowErrors' },
+    open: { clean: 'consoleHide', faulty: 'consoleHideErrors' },
+} as const;
+
 /**
- * The switch of the console on the status line, with how many faults and warnings it holds, so
- * a script that broke is noticed with the console put away, as an editor counts its problems.
- * Its tooltip says the keys that do the same, so the hand learns them from the button.
+ * The switch of the console on the status line, with how many faults it holds marked on its
+ * corner, so a script that broke is noticed with the console put away. Warnings leave no mark:
+ * they wait in the console, and a mark for each would cry wolf. Its tooltip says the keys that
+ * do the same, so the hand learns them from the button.
  */
 export function ConsoleToggle() {
     const messages = useMessages('shell');
     const open = useStore(consoleStore, (state) => state.open);
     const toggle = useStore(consoleStore, (state) => state.toggle);
     const errors = useStore(consoleStore, (state) => consoleCounts(state.entries).errors);
-    const warnings = useStore(consoleStore, (state) => consoleCounts(state.entries).warnings);
     const combination = useMemo(
         () => shortcutTable(DEFAULT_SHORTCUTS).get(TOGGLE_COMMAND)?.combination,
         [],
     );
+    const label = LABEL[open ? 'open' : 'closed'][errors > 0 ? 'faulty' : 'clean'];
 
     return (
-        <div className="flex items-center gap-gap-tight" data-part="console-toggle">
+        <CornerCount count={errors} tone="error">
             <IconButton
                 active={open}
+                data-part="console-toggle"
                 icon="console"
                 iconSize="sm"
-                label={messages(open ? 'consoleHide' : 'consoleShow')}
+                label={messages(label, { count: errors })}
                 onClick={toggle}
                 shortcut={
                     combination === undefined
@@ -44,41 +51,6 @@ export function ConsoleToggle() {
                 }
                 size="xs"
             />
-            <ErrorCount count={errors} label={messages('consoleErrors', { count: errors })} />
-            <WarningCount
-                count={warnings}
-                label={messages('consoleWarnings', { count: warnings })}
-            />
-        </div>
-    );
-}
-
-type CountProps = { count: number; label: string };
-
-/** The faults the console holds, with the glyph a fault carries in it; nothing while there are none. */
-function ErrorCount({ count, label }: CountProps) {
-    if (count === 0) {
-        return null;
-    }
-
-    return (
-        <Badge aria-label={label} count tone="error">
-            <ErrorIcon size="sm" />
-            {count}
-        </Badge>
-    );
-}
-
-/** The warnings the console holds, with the glyph a warning carries in it; nothing while there are none. */
-function WarningCount({ count, label }: CountProps) {
-    if (count === 0) {
-        return null;
-    }
-
-    return (
-        <Badge aria-label={label} count tone="warning">
-            <WarningIcon size="sm" />
-            {count}
-        </Badge>
+        </CornerCount>
     );
 }

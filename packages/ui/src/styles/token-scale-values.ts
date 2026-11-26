@@ -90,6 +90,7 @@ export const scaleTokenValues = {
     'mandor-icon-sm': '14px',
     'mandor-icon-md': '16px',
     'mandor-icon-lg': '24px',
+    'mandor-icon-app': '64px',
     'mandor-shadow-none': 'none',
     'mandor-shadow-popover':
         '0 2px 4px -1px var(--primitive-neutral-a-5), 0 6px 14px -3px var(--primitive-neutral-a-7)',

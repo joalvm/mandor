@@ -142,9 +142,10 @@
         "console": {
             "state": "approved",
             "source": {
-                "origin": "codicons",
-                "id": "layout-panel",
-                "sha256": "05bc28dc8f47e4d56266e10bc0befcd8675cb2d89b79308850632021db320cb7",
+                "origin": "derived",
+                "file": "authoring/console.svg",
+                "base": "codicons:terminal",
+                "sha256": "8ce89b684fe7818b31e87b97002009ead3abeeef2f84fbfa167305f638f9d248",
                 "license": "CC-BY-4.0"
             }
         },
@@ -374,6 +375,24 @@
                 "license": "CC-BY-4.0"
             }
         },
+        "layout-horizontal": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "layout-panel",
+                "sha256": "05bc28dc8f47e4d56266e10bc0befcd8675cb2d89b79308850632021db320cb7",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "layout-vertical": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "layout-sidebar-right",
+                "sha256": "a947adb61491c547bf9831cd2a63ef0b0f9da3fa895f30e59a2b3ebf30248c45",
+                "license": "CC-BY-4.0"
+            }
+        },
         "loading": {
             "state": "approved",
             "source": {
@@ -551,15 +570,6 @@
                 "origin": "codicons",
                 "id": "layout-sidebar-left",
                 "sha256": "534df9174d0e50e6b4b7c3a96d991dea39391d6b7ba288144c7da6cadc0d3dad",
-                "license": "CC-BY-4.0"
-            }
-        },
-        "sidebar-right": {
-            "state": "approved",
-            "source": {
-                "origin": "codicons",
-                "id": "layout-sidebar-right",
-                "sha256": "a947adb61491c547bf9831cd2a63ef0b0f9da3fa895f30e59a2b3ebf30248c45",
                 "license": "CC-BY-4.0"
             }
         },
@@ -804,6 +814,24 @@
                 "origin": "codicons",
                 "id": "markdown",
                 "sha256": "b6fe79c75b9e3c61090678444cbf6ef1b2041ce22d5f0a537e2b4229c16ec094",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "history": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "history",
+                "sha256": "88b0e95617ccd12cecdaef8d1e00236a576af4c9c13132422e135c088f130628",
+                "license": "CC-BY-4.0"
+            }
+        },
+        "pulse": {
+            "state": "approved",
+            "source": {
+                "origin": "codicons",
+                "id": "pulse",
+                "sha256": "4dbbed03afb37f2db4f08928a7cef2ff2fac8015d91092a19035cbdd262c6d9d",
                 "license": "CC-BY-4.0"
             }
         }

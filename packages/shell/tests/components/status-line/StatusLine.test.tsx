@@ -77,10 +77,19 @@ describe('the line of status', () => {
     /** Hiding is a width of zero, and the width it had comes back with the lateral. */
     it('says what the switch would bring back, and hides the lateral on click', () => {
         draw();
+
+        expect(screen.getByRole('button', { name: 'Ocultar barra lateral' })).toHaveAttribute(
+            'aria-pressed',
+            'true',
+        );
+
         fireEvent.click(screen.getByRole('button', { name: 'Ocultar barra lateral' }));
 
         expect(shellStore.getState().panels.sidebarWidth).toBe(0);
-        expect(screen.getByRole('button', { name: 'Mostrar barra lateral' })).toBeVisible();
+        expect(screen.getByRole('button', { name: 'Mostrar barra lateral' })).toHaveAttribute(
+            'aria-pressed',
+            'false',
+        );
 
         fireEvent.click(screen.getByRole('button', { name: 'Mostrar barra lateral' }));
 
@@ -110,6 +119,29 @@ describe('the line of status', () => {
         ).toBeTruthy();
         expect(
             first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
+
+    /** The console and the layout are the last things on the line, after what features declare. */
+    it('ends with the switch of the console and then the one of the layout', () => {
+        render(
+            <StatusItem id="declared" order={10}>
+                <i>declarado</i>
+            </StatusItem>,
+        );
+        draw();
+
+        const declared = screen.getByText('declarado');
+        const consoleSwitch = screen.getByRole('button', { name: 'Mostrar la consola' });
+        const layoutSwitch = screen.getByRole('button', {
+            name: 'Diseño vertical · pasar a horizontal',
+        });
+
+        expect(
+            declared.compareDocumentPosition(consoleSwitch) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+        expect(
+            consoleSwitch.compareDocumentPosition(layoutSwitch) & Node.DOCUMENT_POSITION_FOLLOWING,
         ).toBeTruthy();
     });
 });

@@ -15,6 +15,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { deleteHistory } from '../../../../src/main/history/delete-history.js';
 import { historyEntryOf } from '../../../../src/main/history/history-entry-of.js';
 import {
+    DEFAULT_PRUNE_LIMITS,
     HISTORY_MAX_AGE_DAYS,
     HISTORY_MAX_ENTRIES,
 } from '../../../../src/main/history/history-limits.js';
@@ -105,6 +106,19 @@ describe('pruning the history', () => {
 
         expect(await ids()).toEqual([idOf(2)]);
         expect(removed).toEqual([idOf(1)]);
+    });
+
+    it('keeps as many sends and as many days as it is told', async () => {
+        await entryAt(1, 8 * DAY);
+        await entryAt(2, 3000);
+        await entryAt(3, 2000);
+        await entryAt(4, 1000);
+
+        const limits = { ...DEFAULT_PRUNE_LIMITS, maxEntries: 2, maxAgeDays: 7 };
+        const removed = await pruneHistory(root, 'pagos', NOW, limits);
+
+        expect(await ids()).toEqual([idOf(4), idOf(3)]);
+        expect(removed.toSorted()).toEqual([idOf(1), idOf(2)].toSorted());
     });
 
     it('names no send when the history is within its limits', async () => {

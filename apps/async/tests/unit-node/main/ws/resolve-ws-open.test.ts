@@ -153,6 +153,40 @@ describe('resolveWsOpen', () => {
         expect(socketio.request.url).toBe('http://localhost:81/socket');
     });
 
+    /** The address built whole from the environment: the gate judges the scheme it resolved to. */
+    it('dials a url whose scheme a variable carries, and gates the scheme it resolved to', async () => {
+        await writeEnvironment(
+            root,
+            'payments',
+            createEnvironment({
+                id: 'local',
+                name: 'Local',
+                variables: [
+                    { name: 'protocol', value: 'ws', enabled: true, secret: false },
+                    { name: 'base_url', value: 'echo.example', enabled: true, secret: false },
+                    { name: 'port', value: '8080', enabled: true, secret: false },
+                ],
+            }),
+        );
+
+        const gated: string[] = [];
+        const { request } = await resolveWsOpen(
+            place(),
+            input({ template: { url: '{{protocol}}://{{base_url}}:{{port}}' } }),
+            {
+                assertUrl: (_transport, value) => {
+                    gated.push(value);
+
+                    return new URL(value);
+                },
+                networkFor: DIRECT_NETWORK,
+            },
+        );
+
+        expect(request.url).toBe('ws://echo.example:8080');
+        expect(gated).toEqual(['ws://echo.example:8080']);
+    });
+
     it('sends a header value pasted with its line break without the break', async () => {
         const { request } = await open({
             template: { url: 'wss://{{host}}/', headers: { 'user-agent': 'Mozilla/5.0\r\n' } },

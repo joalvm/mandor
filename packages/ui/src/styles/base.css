@@ -33,16 +33,37 @@ body {
     font-size: var(--mandor-text-sm-size);
 }
 
-/**
- * Both scrollbar properties inherit, so the root says once what every box that overflows will
- * draw, the ones a library brings with it included: a thin thumb over an empty track. A wide bar
- * with a track of its own is a second surface inside the surface, and takes width from the list.
- */
 :root {
     color: var(--text-primary);
     background: var(--surface-app);
     font-family: var(--mandor-font-ui);
     font-optical-sizing: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-hover) transparent;
+}
+
+/**
+ * Every box that overflows draws the same bar, the ones a library brings with it included: a
+ * thumb four pixels wide over an empty track, that comes out only while the pointer or the
+ * keyboard is in the box that scrolls, so a long list is not a bar beside every panel. A wide bar
+ * with a track of its own is a second surface inside the surface, and takes width from the list.
+ * Chromium draws the `::-webkit-scrollbar` parts only while neither `scrollbar-width` nor
+ * `scrollbar-color` is set, so neither is. The track keeps its width while the thumb is hidden,
+ * so nothing moves when it comes out.
+ */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: var(--mandor-radius-full);
+    background: transparent;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+:is(:hover, :focus-within)::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
 }

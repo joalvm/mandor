@@ -190,6 +190,7 @@
     --spacing-icon-sm: var(--mandor-icon-sm);
     --spacing-icon-md: var(--mandor-icon-md);
     --spacing-icon-lg: var(--mandor-icon-lg);
+    --spacing-icon-app: var(--mandor-icon-app);
     --radius-none: var(--mandor-radius-none);
     --radius-sm: var(--mandor-radius-sm);
     --radius-md: var(--mandor-radius-md);

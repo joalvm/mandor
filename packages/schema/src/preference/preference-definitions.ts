@@ -1,4 +1,7 @@
+import { EDITOR_PREFERENCES } from './editor-preferences.js';
+import { INTERFACE_PREFERENCES } from './interface-preferences.js';
 import type { PreferenceDefinition } from './preference-definition.js';
+import { RETENTION_PREFERENCES } from './retention-preferences.js';
 import { THEME_IDS } from './theme-id.js';
 
 export const PREFERENCE_DEFINITIONS = [
@@ -12,6 +15,8 @@ export const PREFERENCE_DEFINITIONS = [
         type: 'select',
         values: ['en', 'es'],
     },
+    ...INTERFACE_PREFERENCES,
+    ...EDITOR_PREFERENCES,
     {
         defaultValue: 'system',
         helpKey: 'preferences:themeModeHelp',
@@ -92,4 +97,5 @@ export const PREFERENCE_DEFINITIONS = [
         type: 'select',
         values: ['stable', 'beta'],
     },
+    ...RETENTION_PREFERENCES,
 ] as const satisfies readonly PreferenceDefinition[];

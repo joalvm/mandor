@@ -2,9 +2,9 @@ import { itemPartsOf, useItem } from '@mandor/collections';
 import { ItemPlaceContext } from '@mandor/env';
 import { useMessages } from '@mandor/i18n';
 import { itemParentOf, type Variable } from '@mandor/schema';
-import { fireAndForget, useSplit } from '@mandor/shell';
+import { fireAndForget, usePaneDirection, useSplit } from '@mandor/shell';
 import { Card, SplitHalf, SplitPane } from '@mandor/ui';
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, PropsWithChildren } from 'react';
 import { useStore } from 'zustand';
 
 import { useAnswerSchema } from '../../hooks/useAnswerSchema.js';
@@ -40,7 +40,6 @@ export function RequestPanel() {
     const request = useRequest(resource);
     const environment = useRequestEnvironment(resource);
     const entry = useStore(requestsStore, (state) => state.sends[resource] ?? IDLE_SEND);
-    const [split, setSplit] = useSplit('request', REQUEST_SHARE);
     const pasteCurl = useCurlPaste(resource);
     const code = useRequestCode(resource);
     const place = useRequestPlace(resource);
@@ -114,15 +113,7 @@ export function RequestPanel() {
                         url={composeUrlOf(current.url, current.query)}
                     />
                 </Card>
-                <SplitPane
-                    className="min-h-0 flex-1"
-                    direction="fit"
-                    gap="gutter"
-                    initial={REQUEST_SHARE}
-                    label={labels('resizeSplit')}
-                    onValueChange={setSplit}
-                    value={split}
-                >
+                <RequestSplit label={labels('resizeSplit')}>
                     <SplitHalf>
                         <Card aria-label={labels('panelLabel')}>
                             <RequestSections
@@ -146,9 +137,32 @@ export function RequestPanel() {
                             />
                         </Card>
                     </SplitHalf>
-                </SplitPane>
+                </RequestSplit>
                 <RequestCodeDialog {...code.dialog} />
             </div>
         </ItemPlaceContext>
+    );
+}
+
+/**
+ * The request beside its response or over it, as the switch of the status line stands them, at
+ * the share the person last left between the two.
+ */
+function RequestSplit({ children, label }: PropsWithChildren<{ label: string }>) {
+    const [split, setSplit] = useSplit('request', REQUEST_SHARE);
+    const direction = usePaneDirection();
+
+    return (
+        <SplitPane
+            className="min-h-0 flex-1"
+            direction={direction}
+            gap="gutter"
+            initial={REQUEST_SHARE}
+            label={label}
+            onValueChange={setSplit}
+            value={split}
+        >
+            {children}
+        </SplitPane>
     );
 }

@@ -21,6 +21,7 @@
     "splitRight": "Split group right",
     "switchWorkspace": "Change workspace",
     "toggleConsole": "Show or hide the console",
+    "togglePaneLayout": "Switch between vertical and horizontal layout",
     "searchWorkspace": "Search workspace",
     "toggleMaximized": "Toggle maximised group",
     "openHistory": "Open history",

@@ -38,6 +38,17 @@ describe('the history bridge', () => {
         ]);
     });
 
+    it('hands main how much of the history to keep', async () => {
+        const ipc = spyBridgeIpc({ [CHANNELS.historyConfigure]: { ok: true, value: {} } });
+        const choice = { maxEntries: 1000, maxAgeDays: 90 };
+
+        expect(await createHistoryBridge(bridgeKitOf(ipc)).configure(choice)).toEqual({
+            ok: true,
+            value: {},
+        });
+        expect(ipc.calls).toEqual([[CHANNELS.historyConfigure, choice]]);
+    });
+
     it('reads one send by its id, and answers a refusal as it is', async () => {
         const ipc = spyBridgeIpc();
 

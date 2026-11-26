@@ -18,7 +18,7 @@ const SHEETS: readonly { role: string; sheet: string }[] = [
         sheet: 'scales.css',
         role: 'La escala cerrada: tipografía, alturas, espaciado, radios, sombras, capas y movimiento.',
     },
-    { sheet: 'base.css', role: 'El contrato del documento: fondo, texto, scrollbars heredadas.' },
+    { sheet: 'base.css', role: 'El contrato del documento: fondo, texto, scrollbars de 4 px.' },
     {
         sheet: 'runtime.css',
         role: 'Comportamiento escrito una vez: el foco, la barra de título, el plegado, el token de variable.',

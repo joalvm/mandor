@@ -5,7 +5,17 @@ import {
     resolvePreferenceValues,
     type PreferenceValues,
 } from '../../src/index.js';
+import { EDITOR_PREFERENCES } from '../../src/preference/editor-preferences.js';
+import { INTERFACE_PREFERENCES } from '../../src/preference/interface-preferences.js';
+import { RETENTION_PREFERENCES } from '../../src/preference/retention-preferences.js';
 import { THEME_IDS } from '../../src/preference/theme-id.js';
+
+/** The defaults of the groups that each have a test of their own, as resolving leaves them. */
+const GROUP_DEFAULTS = Object.fromEntries(
+    [...INTERFACE_PREFERENCES, ...EDITOR_PREFERENCES, ...RETENTION_PREFERENCES].map(
+        (definition) => [definition.key, definition.defaultValue],
+    ),
+);
 
 describe('the preference schema', () => {
     it('declares only sections backed by existing preferences', () => {
@@ -20,6 +30,8 @@ describe('the preference schema', () => {
                 type: 'select',
                 values: ['en', 'es'],
             },
+            ...INTERFACE_PREFERENCES,
+            ...EDITOR_PREFERENCES,
             {
                 defaultValue: 'system',
                 helpKey: 'preferences:themeModeHelp',
@@ -100,6 +112,7 @@ describe('the preference schema', () => {
                 type: 'select',
                 values: ['stable', 'beta'],
             },
+            ...RETENTION_PREFERENCES,
         ]);
     });
 
@@ -124,6 +137,7 @@ describe('the preference schema', () => {
             'appearance.motion': 'system',
             'updates.mode': 'auto',
             'updates.channel': 'stable',
+            ...GROUP_DEFAULTS,
         });
     });
 
@@ -142,6 +156,7 @@ describe('the preference schema', () => {
             'appearance.motion': 'system',
             'updates.mode': 'auto',
             'updates.channel': 'stable',
+            ...GROUP_DEFAULTS,
         });
     });
 

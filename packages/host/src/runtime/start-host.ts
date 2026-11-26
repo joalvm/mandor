@@ -119,7 +119,7 @@ async function run(
     // One updater for the whole run: its port listens to the library and its timers survive a
     // window closing on macOS, so a window that comes back does not count them twice.
     const update = electronUpdateDeps(logger, config.homepage);
-    const about = electronAboutDeps(config.productName);
+    const about = electronAboutDeps(config.productName, config.icon);
     const appearance = electronAppearanceDeps();
     // The workers of scripts outlive a window, like the approvals: they close when the run ends.
     const scripts = await openScripts(userDataDir, layout.scriptWorker);

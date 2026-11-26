@@ -53,6 +53,7 @@ const SCALE_NAMES = [
     'icon-sm',
     'icon-md',
     'icon-lg',
+    'icon-app',
     'z-base',
     'z-sticky',
     'z-splitter',

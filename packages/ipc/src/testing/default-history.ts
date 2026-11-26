@@ -12,6 +12,7 @@ export function defaultHistory(): HistoryArea {
         list: () => Promise.resolve(success({ entries: [] })),
         read: () => Promise.resolve(success(emptyEntry())),
         remove: () => Promise.resolve(success({})),
+        configure: () => Promise.resolve(success({})),
         onAppended: () => () => undefined,
     };
 }

@@ -7,7 +7,7 @@ paquete no conoce pantallas ni productos concretos.
 ## Arquitectura
 
 La fuente de verdad es [`icon-sources.json`](icon-sources.json): una entrada por intención con su
-fuente (de `@vscode/codicons` 0.0.45, propia o derivada), su hash y su estado. Las fuentes
+fuente (de `@vscode/codicons` 0.0.46-24, propia o derivada), su hash y su estado. Las fuentes
 propias viven en [`authoring/`](authoring/). [`tools/build-icons.mjs`](tools/build-icons.mjs)
 lee el manifiesto con [`tools/read-icon-sources.mjs`](tools/read-icon-sources.mjs), normaliza
 cada SVG con [`tools/normalize-icon-svg.mjs`](tools/normalize-icon-svg.mjs) y genera los

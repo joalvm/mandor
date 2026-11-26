@@ -19,12 +19,13 @@ function send(path: string, options: { itemPath?: string; sendId?: string } = {}
 }
 
 describe('the channels of the history', () => {
-    it('answers its three channels, and removes them all', () => {
+    it('answers its four channels, and removes them all', () => {
         expect(h.ipc.registered()).toEqual(
             expect.arrayContaining([
                 CHANNELS.historyList,
                 CHANNELS.historyRead,
                 CHANNELS.historyDelete,
+                CHANNELS.historyConfigure,
             ]),
         );
 
@@ -89,11 +90,29 @@ describe('the channels of the history', () => {
         expect(await listedBy(h)).toEqual([]);
     });
 
+    /** The settings live in the window: the prune after the next send keeps what it says. */
+    it('keeps as many sends as the window chose, from the next send on', async () => {
+        const first = crypto.randomUUID();
+
+        await send('a', { sendId: first });
+        await send('b');
+
+        expect(
+            await h.ipc.call(CHANNELS.historyConfigure, { maxEntries: 1, maxAgeDays: 30 }),
+        ).toEqual({ ok: true, value: {} });
+        expect(await listedBy(h)).toHaveLength(2);
+
+        await send('c');
+
+        expect(await listedBy(h)).toHaveLength(1);
+    });
+
     it('refuses what the contract does not describe, on every channel', async () => {
         for (const channel of [
             CHANNELS.historyList,
             CHANNELS.historyRead,
             CHANNELS.historyDelete,
+            CHANNELS.historyConfigure,
         ]) {
             expect(await h.ipc.call(channel, { nonsense: true })).toMatchObject({
                 ok: false,

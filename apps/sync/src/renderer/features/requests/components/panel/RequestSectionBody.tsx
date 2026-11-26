@@ -5,12 +5,13 @@ type RequestSectionBodyProps = PropsWithChildren;
 /**
  * The air of one section of the request: nothing stands against the edges of the panel, and
  * the blocks inside stand apart from each other. It fills the panel, so an editor that wants
- * the whole section keeps getting it.
+ * the whole section keeps getting it; a form taller than the panel scrolls inside it instead
+ * of running under the edge of the card.
  */
 export function RequestSectionBody({ children }: RequestSectionBodyProps): ReactNode {
     return (
         <div
-            className="flex h-full min-h-0 flex-col gap-gap-control px-pad-panel py-pad-control"
+            className="flex h-full min-h-0 flex-col gap-gap-control overflow-y-auto px-pad-panel py-pad-control"
             data-part="request-section-body"
         >
             {children}

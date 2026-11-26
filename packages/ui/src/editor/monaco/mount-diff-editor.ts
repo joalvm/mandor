@@ -5,6 +5,7 @@ import { editor } from 'monaco-editor/editor/editor.api.js';
 import type { EditorLanguage } from '../editor-language.js';
 import { measureCodeTypeOnArrival } from './code-type-arrival.js';
 import { constructionOptions } from './construction-options.js';
+import { followCodePreferences } from './follow-code-preferences.js';
 import { followTextZoom } from './follow-text-zoom.js';
 import { overwriteText, replaceText } from './model-text.js';
 
@@ -94,6 +95,8 @@ export function mountDiffEditor(
         onChange(modified.getValue());
     });
     const zoom = followTextZoom(shown, element);
+    const applied = { target };
+    const writing = followCodePreferences(shown, () => diffOptionsOf(applied.target));
 
     shown.setModel({ modified, original });
     nameThePanes(shown, target);
@@ -102,6 +105,7 @@ export function mountDiffEditor(
         dispose: () => {
             heard.dispose();
             zoom.dispose();
+            writing.dispose();
             shown.setModel(null);
             shown.dispose();
             original.dispose();
@@ -109,6 +113,7 @@ export function mountDiffEditor(
         },
         getModified: () => modified.getValue(),
         update: (next) => {
+            applied.target = next;
             editor.setModelLanguage(original, next.language);
             editor.setModelLanguage(modified, next.language);
             shown.updateOptions(diffOptionsOf(next));

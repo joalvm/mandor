@@ -44,11 +44,14 @@ import { FormatIcon } from './format.js';
 import { GlobeIcon } from './globe.js';
 import { GripVerticalIcon } from './grip-vertical.js';
 import { HeadersIcon } from './headers.js';
+import { HistoryIcon } from './history.js';
 import { HttpIcon } from './http.js';
 import { ImportIcon } from './import.js';
 import { InfoIcon } from './info.js';
 import { KeepaliveIcon } from './keepalive.js';
 import { KeyIcon } from './key.js';
+import { LayoutHorizontalIcon } from './layout-horizontal.js';
+import { LayoutVerticalIcon } from './layout-vertical.js';
 import { LinkIcon } from './link.js';
 import { LoadingIcon } from './loading.js';
 import { MarkdownIcon } from './markdown.js';
@@ -66,6 +69,7 @@ import { PanelMaximizeIcon } from './panel-maximize.js';
 import { PinIcon } from './pin.js';
 import { PinnedIcon } from './pinned.js';
 import { PreviewIcon } from './preview.js';
+import { PulseIcon } from './pulse.js';
 import { RecordIcon } from './record.js';
 import { RefreshIcon } from './refresh.js';
 import { RenameIcon } from './rename.js';
@@ -75,7 +79,6 @@ import { SearchIcon } from './search.js';
 import { SendIcon } from './send.js';
 import { SettingsIcon } from './settings.js';
 import { SidebarLeftIcon } from './sidebar-left.js';
-import { SidebarRightIcon } from './sidebar-right.js';
 import { SlidersIcon } from './sliders.js';
 import { SplitHorizontalIcon } from './split-horizontal.js';
 import { SplitVerticalIcon } from './split-vertical.js';
@@ -137,11 +140,14 @@ export const ICONS = {
     globe: GlobeIcon,
     'grip-vertical': GripVerticalIcon,
     headers: HeadersIcon,
+    history: HistoryIcon,
     http: HttpIcon,
     import: ImportIcon,
     info: InfoIcon,
     keepalive: KeepaliveIcon,
     key: KeyIcon,
+    'layout-horizontal': LayoutHorizontalIcon,
+    'layout-vertical': LayoutVerticalIcon,
     link: LinkIcon,
     loading: LoadingIcon,
     markdown: MarkdownIcon,
@@ -159,6 +165,7 @@ export const ICONS = {
     pin: PinIcon,
     pinned: PinnedIcon,
     preview: PreviewIcon,
+    pulse: PulseIcon,
     record: RecordIcon,
     refresh: RefreshIcon,
     rename: RenameIcon,
@@ -168,7 +175,6 @@ export const ICONS = {
     send: SendIcon,
     settings: SettingsIcon,
     'sidebar-left': SidebarLeftIcon,
-    'sidebar-right': SidebarRightIcon,
     sliders: SlidersIcon,
     'split-horizontal': SplitHorizontalIcon,
     'split-vertical': SplitVerticalIcon,

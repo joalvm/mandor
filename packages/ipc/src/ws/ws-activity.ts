@@ -48,11 +48,12 @@ const activityRecordSchema = z.object({
 }) satisfies z.ZodType<ActivityRecord>;
 
 /**
- * What the window keeps of the activity of one connection: this many entries, and what they
- * weigh in bytes. Main reads them too, so a batch past them crosses with only its tail: the
- * front would be dropped on arrival.
+ * The most the window keeps of the activity of one connection: this many entries, the largest
+ * count the settings offer, and what they weigh in bytes. Main reads them too, so a batch past
+ * them crosses with only its tail: the front would be dropped on arrival. The window keeps as
+ * many as the person chose, never more than these.
  */
-export const ACTIVITY_WINDOW_ENTRIES = 500;
+export const ACTIVITY_WINDOW_ENTRIES = 2000;
 export const ACTIVITY_WINDOW_BYTES = 2 * 1024 * 1024;
 
 /** Activity travels in batches: a busy socket must not become one IPC per frame. */
