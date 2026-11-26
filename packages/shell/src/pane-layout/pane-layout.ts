@@ -1,7 +1,7 @@
 import { createStore } from 'zustand/vanilla';
 
 /** The ways the halves of a request or a connection stand: side by side, or one over the other. */
-export const PANE_LAYOUTS = ['vertical', 'horizontal'] as const;
+const PANE_LAYOUTS = ['vertical', 'horizontal'] as const;
 
 export type PaneLayout = (typeof PANE_LAYOUTS)[number];
 

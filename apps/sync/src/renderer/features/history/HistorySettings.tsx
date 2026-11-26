@@ -3,7 +3,7 @@ import { PreferenceRows, SettingsSection } from '@mandor/prefs';
 import { useHistoryRetention } from './hooks/useHistoryRetention.js';
 
 /** The section of the settings of the app that holds how much of the history is kept. */
-export const HISTORY_SETTINGS_SECTION = 'history';
+const HISTORY_SETTINGS_SECTION = 'history';
 
 /**
  * Hands main what the settings keep. Apart from the section, so a change of the setting does

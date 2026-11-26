@@ -84,7 +84,7 @@ export function codeSize(): CodeOptions {
  * measure a payload is laid out with, whatever the text it opens was indented by: text typed in
  * and text formatted by a button end up in one document.
  */
-export function codeWriting(): CodeOptions {
+function codeWriting(): CodeOptions {
     const { autoClose, fontFamily, indentSize, indentWithTabs } = codePreferences();
     const named = fontFamily.trim();
     const closing = autoClose ? 'languageDefined' : 'never';

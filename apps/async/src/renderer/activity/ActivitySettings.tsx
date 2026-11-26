@@ -3,7 +3,7 @@ import { PreferenceRows, SettingsSection } from '@mandor/prefs';
 import { useAppliedActivityKept } from './hooks/useAppliedActivityKept.js';
 
 /** The section of the settings of the app that holds how much activity a connection keeps. */
-export const ACTIVITY_SETTINGS_SECTION = 'activity';
+const ACTIVITY_SETTINGS_SECTION = 'activity';
 
 /**
  * Applies the chosen count to the timelines. Apart from the section, so a change of the setting

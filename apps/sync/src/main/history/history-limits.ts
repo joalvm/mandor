@@ -9,7 +9,7 @@ export const HISTORY_MAX_AGE_DAYS = 30;
  * body go, so a download repeated with other bytes each time cannot fill the disk; the sends whose
  * bodies stayed in their file are kept.
  */
-export const HISTORY_MAX_BODY_BYTES = 1024 * 1024 * 1024;
+const HISTORY_MAX_BODY_BYTES = 1024 * 1024 * 1024;
 
 /**
  * A body of a send stays inside its file up to this size and goes to the store of bodies past
