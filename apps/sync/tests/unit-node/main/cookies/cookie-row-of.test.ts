@@ -43,6 +43,25 @@ describe('a cookie as the window sees it', () => {
         expect(cookieRowOf(parsed('sid=abc')).sameSite).toBeNull();
     });
 
+    it('writes the cookie as a line a server could send again', () => {
+        const cookie = parsed(
+            'sid=abc; Path=/api; Expires=Wed, 21 Oct 2037 07:28:00 GMT; Secure; HttpOnly; SameSite=lax',
+        );
+
+        expect(cookieRowOf(cookie).line).toBe(
+            'sid=abc; Domain=api.example.com; Path=/api; Expires=Wed, 21 Oct 2037 07:28:00 GMT; Secure; HttpOnly; SameSite=Lax',
+        );
+    });
+
+    /** A line that named the domain of a cookie set without one would widen it to the subdomains. */
+    it('leaves the domain out of the line of a cookie that stays on its host', () => {
+        const cookie = parsed('sid=abc');
+
+        cookie.hostOnly = true;
+
+        expect(cookieRowOf(cookie).line).toBe('sid=abc; Path=/');
+    });
+
     it('carries the flags and the identity', () => {
         expect(cookieRowOf(parsed('sid=abc; Path=/api; Secure; HttpOnly'))).toMatchObject({
             domain: 'api.example.com',

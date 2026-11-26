@@ -61,6 +61,7 @@ describe('listing the jar', () => {
             value: {
                 cookies: expect.arrayContaining([
                     {
+                        line: 'sid=abc; Path=/; Secure; HttpOnly; SameSite=Lax',
                         domain: 'api.example.com',
                         path: '/',
                         name: 'sid',
@@ -100,8 +101,15 @@ describe('listing the jar', () => {
 });
 
 describe('changing the jar', () => {
-    it('changes the value of a cookie and keeps the rest of it', async () => {
-        await expect(ipc.call(CHANNELS.cookiesSet, { ...SID, value: 'new' })).resolves.toEqual({
+    const EDITED = {
+        ...PLACE,
+        domain: 'api.example.com',
+        line: 'sid=new; Path=/; Secure; HttpOnly',
+        replaces: { domain: 'api.example.com', path: '/', name: 'sid' },
+    };
+
+    it('writes over a cookie from the line its editor hands back', async () => {
+        await expect(ipc.call(CHANNELS.cookiesSet, EDITED)).resolves.toEqual({
             ok: true,
             value: {},
         });
@@ -113,7 +121,7 @@ describe('changing the jar', () => {
     });
 
     it('keeps the change on disk', async () => {
-        await ipc.call(CHANNELS.cookiesSet, { ...SID, value: 'new' });
+        await ipc.call(CHANNELS.cookiesSet, EDITED);
 
         const reread = createCookieJarStore();
         const jar = await reread.jarOf({ root, ...PLACE });
@@ -123,21 +131,20 @@ describe('changing the jar', () => {
         ]);
     });
 
-    it('refuses to set a cookie the jar does not hold', async () => {
-        await expect(
-            ipc.call(CHANNELS.cookiesSet, { ...SID, name: 'ghost', value: 'x' }),
-        ).resolves.toMatchObject({ ok: false, error: { code: 'bad-request' } });
+    it('adds a cookie to a domain the jar did not know', async () => {
+        await ipc.call(CHANNELS.cookiesSet, { ...PLACE, domain: 'new.test', line: 'a=1' });
+
+        const jar = await jars.jarOf({ root, ...PLACE });
+
+        expect((await jar.getCookies('https://new.test/')).map((c) => c.key)).toEqual(['a']);
     });
 
-    it.each(['a;b', 'line\nbreak'])(
-        'refuses a value that could split the header: %j',
-        async (value) => {
-            await expect(ipc.call(CHANNELS.cookiesSet, { ...SID, value })).resolves.toMatchObject({
-                ok: false,
-                error: { code: 'bad-request' },
-            });
-        },
-    );
+    it('refuses a line that is no cookie, and leaves the jar as it was', async () => {
+        await expect(
+            ipc.call(CHANNELS.cookiesSet, { ...EDITED, line: '=broken' }),
+        ).resolves.toMatchObject({ ok: false, error: { code: 'bad-request' } });
+        expect(await names()).toEqual(['sid', 'theme']);
+    });
 
     it('deletes one cookie and leaves the others', async () => {
         await expect(ipc.call(CHANNELS.cookiesDelete, SID)).resolves.toEqual({
@@ -155,6 +162,17 @@ describe('changing the jar', () => {
         });
 
         expect(await names()).toEqual([]);
+    });
+
+    it('takes out the cookies of one domain and leaves the others', async () => {
+        const jar = await jars.jarOf({ root, ...PLACE });
+
+        await jar.setCookie('other=1; Path=/', 'https://other.test/');
+
+        await expect(
+            ipc.call(CHANNELS.cookiesClear, { ...PLACE, domain: 'api.example.com' }),
+        ).resolves.toEqual({ ok: true, value: {} });
+        expect(await names()).toEqual(['other']);
     });
 
     it('does not touch the jar of another environment', async () => {

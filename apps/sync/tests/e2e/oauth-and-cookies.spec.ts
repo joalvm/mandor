@@ -148,7 +148,10 @@ test('a login sets a cookie, and the hop it redirects to carries it back', async
 test('the jar of the environment lists that cookie', async () => {
     const dialog = await openJar();
 
-    await expect(dialog.getByRole('row', { name: /sid/u })).toContainText('e2e-session');
+    await dialog.getByRole('button', { exact: true, name: 'sid' }).click();
+    await expect(dialog.getByRole('textbox', { name: /^Cookie of /u })).toHaveValue(
+        /^sid=e2e-session; /u,
+    );
     await dialog.getByRole('button', { exact: true, name: 'Close' }).click();
     await expect(dialog).toHaveCount(0);
 });
@@ -156,8 +159,8 @@ test('the jar of the environment lists that cookie', async () => {
 test('emptying the jar sends the next request with no cookie', async () => {
     const dialog = await openJar();
 
-    await dialog.getByRole('button', { name: 'Empty jar…' }).click();
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Empty jar' }).click();
+    await dialog.getByRole('button', { name: 'Clear all…' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Clear all' }).click();
     await expect(dialog.getByText('No cookies')).toBeVisible();
     await dialog.getByRole('button', { exact: true, name: 'Close' }).click();
     await expect(dialog).toHaveCount(0);

@@ -5,7 +5,6 @@ import {
     cookiesDeleteRequestSchema,
     cookiesListRequestSchema,
     cookiesSetRequestSchema,
-    failure,
     success,
     type Channel,
     type Result,
@@ -15,6 +14,7 @@ import type { z } from 'zod';
 
 import type { CookieJarStore } from './cookie-jar-store.js';
 import { cookieRowOf } from './cookie-row-of.js';
+import { putCookieLine } from './put-cookie-line.js';
 
 const CHANNEL_LIST: Channel[] = [
     CHANNELS.cookiesList,
@@ -25,11 +25,6 @@ const CHANNEL_LIST: Channel[] = [
 
 /** What the four requests share: whose jar it is. */
 type JarRequest = { workspaceId: string; environmentId: string | null };
-
-/** A value the `Cookie` header could not carry: it would split the cookie, or the header. */
-function isUnsafe(value: string): boolean {
-    return /[;\p{Cc}]/u.test(value);
-}
 
 /**
  * A channel of the jar: the jar of the environment is opened over the active origin, and what
@@ -61,7 +56,10 @@ function answer<Input extends JarRequest, T>(
     };
 }
 
-/** The four channels of the jar: list its cookies, change the value of one, delete one, empty it. */
+/**
+ * The four channels of the jar: list its cookies, write one from its line, delete one, empty it
+ * or take a domain out of it.
+ */
 export function registerCookiesHandlers(ipc: HandlerIpc, jars: CookieJarStore): () => void {
     ipc.handle(
         CHANNELS.cookiesList,
@@ -79,34 +77,7 @@ export function registerCookiesHandlers(ipc: HandlerIpc, jars: CookieJarStore): 
             false,
         ),
     );
-    ipc.handle(
-        CHANNELS.cookiesSet,
-        answer(
-            cookiesSetRequestSchema,
-            jars,
-            async (jar, input) => {
-                const found = await jar.store.findCookie(input.domain, input.path, input.name);
-                const next = found?.clone();
-
-                if (found === undefined || next === undefined) {
-                    return failure('bad-request', 'The jar holds no such cookie');
-                }
-
-                if (isUnsafe(input.value)) {
-                    return failure(
-                        'bad-request',
-                        'A cookie value cannot hold `;` or control characters',
-                    );
-                }
-
-                next.value = input.value;
-                await jar.store.updateCookie(found, next);
-
-                return success({});
-            },
-            true,
-        ),
-    );
+    ipc.handle(CHANNELS.cookiesSet, answer(cookiesSetRequestSchema, jars, putCookieLine, true));
     ipc.handle(
         CHANNELS.cookiesDelete,
         answer(
@@ -125,8 +96,12 @@ export function registerCookiesHandlers(ipc: HandlerIpc, jars: CookieJarStore): 
         answer(
             cookiesClearRequestSchema,
             jars,
-            async (jar) => {
-                await jar.removeAllCookies();
+            async (jar, input) => {
+                if (input.domain === undefined) {
+                    await jar.removeAllCookies();
+                } else {
+                    await jar.store.removeCookies(input.domain, null);
+                }
 
                 return success({});
             },

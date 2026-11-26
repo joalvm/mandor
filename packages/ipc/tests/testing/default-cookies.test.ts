@@ -17,9 +17,9 @@ describe('the cookies area a test gets when it says nothing about the jar', () =
     it('sets, deletes and clears with nothing to say', async () => {
         const area = defaultCookies();
 
-        expect(emptyResultSchema.safeParse(await area.set({ ...named, value: 'x' })).success).toBe(
-            true,
-        );
+        const set = await area.set({ ...place, domain: 'a.test', line: 'sid=x' });
+
+        expect(emptyResultSchema.safeParse(set).success).toBe(true);
         expect(emptyResultSchema.safeParse(await area.delete(named)).success).toBe(true);
         expect(emptyResultSchema.safeParse(await area.clear(place)).success).toBe(true);
     });
@@ -33,6 +33,7 @@ describe('the cookies area a test gets when it says nothing about the jar', () =
                         value: {
                             cookies: [
                                 {
+                                    line: 'sid=abc; Path=/',
                                     domain: 'a.test',
                                     path: '/',
                                     name: 'sid',
