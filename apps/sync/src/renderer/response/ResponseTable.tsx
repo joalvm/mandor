@@ -15,7 +15,6 @@ type ResponseTableProps = {
     label: string;
     onCopy: (text: string) => void;
     rows: readonly ResponseRowData[];
-    showAttributes?: boolean;
 };
 
 const PAIRS: readonly TableColumn[] = [
@@ -23,24 +22,18 @@ const PAIRS: readonly TableColumn[] = [
     { id: 'value', kind: 'fluid', min: 'md', weight: 2 },
 ];
 
-const WITH_ATTRIBUTES: readonly TableColumn[] = [
-    ...PAIRS,
-    { id: 'attributes', kind: 'fluid', min: 'md', weight: 1.5 },
-];
-
 /**
  * Names and values in the order they arrived, repeats included, on the table every list of
  * pairs lays on: read only, the head copies all of them and each line copies itself.
  */
-export function ResponseTable({ label, onCopy, rows, showAttributes = false }: ResponseTableProps) {
+export function ResponseTable({ label, onCopy, rows }: ResponseTableProps) {
     const labels = useMessages('requests');
 
     return (
-        <Table columns={showAttributes ? WITH_ATTRIBUTES : PAIRS} label={label}>
+        <Table columns={PAIRS} label={label}>
             <TableHead>
                 <TableHeaderCell column="name">{labels('columnName')}</TableHeaderCell>
                 <TableHeaderCell column="value">{labels('columnValue')}</TableHeaderCell>
-                <AttributesHead show={showAttributes} />
                 <TableTools label={labels('columnActions')}>
                     <IconButton
                         icon="copy"
@@ -58,20 +51,9 @@ export function ResponseTable({ label, onCopy, rows, showAttributes = false }: R
                         key={`${row.name}:${String(index)}`}
                         onCopy={onCopy}
                         row={row}
-                        showAttributes={showAttributes}
                     />
                 ))}
             </tbody>
         </Table>
     );
-}
-
-function AttributesHead({ show }: { show: boolean }) {
-    const labels = useMessages('requests');
-
-    if (!show) {
-        return null;
-    }
-
-    return <TableHeaderCell column="attributes">{labels('columnAttributes')}</TableHeaderCell>;
 }

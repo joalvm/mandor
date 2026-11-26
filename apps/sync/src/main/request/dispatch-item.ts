@@ -47,7 +47,8 @@ export type DispatchOverrides = {
 };
 
 /** What came back, and the type of the body that was sent for it. */
-export type Dispatched = { bodyType: RequestBodyType; response: SyncResponse };
+/** The answer, the kind of body that asked for it, and the URL it was asked of, variables resolved. */
+export type Dispatched = { bodyType: RequestBodyType; response: SyncResponse; url: string };
 
 /** The request of a window: what a send carries, without the id of the send. */
 export type DispatchInput = Omit<RequestSendRequest, 'sendId'>;
@@ -164,5 +165,5 @@ export async function dispatchItem(
         signal,
     );
 
-    return success({ bodyType: body.type, response });
+    return success({ bodyType: body.type, response, url: rest.url });
 }

@@ -26,6 +26,7 @@ afterEach(async () => {
     await rm(root, { recursive: true, force: true });
 });
 
+const URL_ASKED = 'https://api.test/v1/users';
 const NOW = new Date('2026-09-30T10:00:00.000Z');
 
 function answer(text: string): SyncResponse {
@@ -146,18 +147,20 @@ describe('the errors of a graphql answer', () => {
     const FAILED = JSON.stringify({ data: null, errors: [{ message: 'no such user' }] });
 
     it('are read from a 200 that carries them, and the response still passes its schema', () => {
-        const response = httpResponseOf(answer(FAILED), NOW, 'graphql');
+        const response = httpResponseOf(answer(FAILED), NOW, 'graphql', URL_ASKED);
 
         expect(response.graphqlErrors).toEqual({ count: 1, messages: ['no such user'] });
         expect(httpResponseSchema.safeParse(response).success).toBe(true);
     });
 
     it('are not looked for in a body the request did not send as graphql', () => {
-        expect(httpResponseOf(answer(FAILED), NOW, 'json').graphqlErrors).toBeUndefined();
+        expect(
+            httpResponseOf(answer(FAILED), NOW, 'json', URL_ASKED).graphqlErrors,
+        ).toBeUndefined();
     });
 
     it('are absent from an answer that went well', () => {
-        const response = httpResponseOf(answer('{"data":{"a":1}}'), NOW, 'graphql');
+        const response = httpResponseOf(answer('{"data":{"a":1}}'), NOW, 'graphql', URL_ASKED);
 
         expect(response.graphqlErrors).toBeUndefined();
     });
@@ -167,8 +170,12 @@ describe('the errors of a graphql answer', () => {
         const binary = { ...answer(''), body: { kind: 'inline' as const, bytes } };
 
         expect(
-            httpResponseOf({ ...binary, sizes: { ...binary.sizes, bodyBytes: 3 } }, NOW, 'graphql')
-                .graphqlErrors,
+            httpResponseOf(
+                { ...binary, sizes: { ...binary.sizes, bodyBytes: 3 } },
+                NOW,
+                'graphql',
+                URL_ASKED,
+            ).graphqlErrors,
         ).toBeUndefined();
     });
 });

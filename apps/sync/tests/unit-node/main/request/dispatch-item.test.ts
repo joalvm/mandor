@@ -53,7 +53,11 @@ describe('taking a request from its variables to the wire', () => {
 
         expect(answer).toMatchObject({
             ok: true,
-            value: { bodyType: 'json', response: { status: 200 } },
+            value: {
+                bodyType: 'json',
+                response: { status: 200 },
+                url: expect.stringMatching(/^http:\/\/[^{}]+\/echo$/),
+            },
         });
         expect(fixture.received[0]).toMatchObject({ method: 'POST', body: '{"a":1}' });
     });

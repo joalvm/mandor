@@ -85,9 +85,9 @@ async function dispatch(
 
         trace.heldAt = dispatched.value.response.heldAt;
 
-        return success(
-            httpResponseOf(dispatched.value.response, new Date(), dispatched.value.bodyType),
-        );
+        const { bodyType, response, url } = dispatched.value;
+
+        return success(httpResponseOf(response, new Date(), bodyType, url));
     } finally {
         // What a 3xx or a failed send set before it died is the jar's all the same. A jar that
         // cannot be kept costs the next send its cookies, never this one the answer that came.
