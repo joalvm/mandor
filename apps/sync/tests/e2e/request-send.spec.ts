@@ -72,7 +72,18 @@ test('a POST to the echo comes back as 200 with its body laid out, its headers a
     await expect(response.getByRole('row', { name: /x-echo/i })).toContainText('POST');
 
     await openSection(response, 'Cookies');
-    await expect(response.getByRole('row', { name: /sid/ })).toContainText('HttpOnly');
+    // A column for each attribute: name, value, domain, path, expires, HttpOnly, Secure, SameSite.
+    await expect(response.getByRole('row', { name: /^sid /u }).getByRole('cell')).toHaveText([
+        'sid',
+        'abc123',
+        /^[\w.:-]+$/u,
+        '/',
+        'Session',
+        'true',
+        'false',
+        '',
+        '',
+    ]);
 
     await response.locator('[data-part="response-time"]').hover();
     // "10 ms" is a time too: only a lone zero means nothing was measured.
