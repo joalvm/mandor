@@ -18,4 +18,10 @@ export type SyncSendReason =
     | 'proxy-scheme'
     /** The body grew past the largest the request allows. */
     | 'too-large'
+    /** No route reaches the address, or the system gave up on the connection. */
+    | 'unreachable'
+    /** The other side ended the connection before the answer came whole. */
+    | 'closed'
+    /** The request carries something HTTP does not let through, a header or a method. */
+    | 'invalid'
     | 'unknown';

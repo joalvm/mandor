@@ -39,5 +39,7 @@
     "ws-send-failed": "The message could not be sent because the socket is not open.",
     "network-file": "A certificate file of the network settings could not be read. Pick it again.",
     "network-proxy": "Mandor cannot go through this proxy. Requests speak HTTP, HTTPS and SOCKS5; connections also SOCKS4.",
-    "request-too-large": "The response is larger than the limit this request allows."
+    "request-too-large": "The response is larger than the limit this request allows.",
+    "request-closed": "The server closed the connection before it answered.",
+    "request-invalid": "The request carries something HTTP does not allow. The detail says what."
 }

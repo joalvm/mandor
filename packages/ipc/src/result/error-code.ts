@@ -30,6 +30,8 @@ export const errorCodeSchema = z.enum([
     'request-redirect',
     'request-file',
     'request-too-large',
+    'request-closed',
+    'request-invalid',
     'network-file',
     'network-proxy',
     'graphql-introspection',

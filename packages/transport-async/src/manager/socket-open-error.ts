@@ -14,6 +14,16 @@ export class SocketOpenError extends Error {
     }
 }
 
+/**
+ * What the libraries raised, in words, and never none: Node fails a name with several addresses
+ * with an aggregate that has no message, so the words are those of each attempt, each once.
+ */
 function wordsOf(cause: unknown, reason: SocketFailureReason): string {
-    return cause instanceof Error ? cause.message : reason;
+    const attempts: readonly unknown[] = cause instanceof AggregateError ? cause.errors : [];
+    const said = [cause, ...attempts].flatMap((one) =>
+        one instanceof Error ? [one.message.trim()] : [],
+    );
+    const words = [...new Set(said.filter((line) => line !== ''))];
+
+    return words.length > 0 ? words.join('; ') : reason;
 }

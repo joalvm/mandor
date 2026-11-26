@@ -37,8 +37,29 @@ describe('errorReasonOf', () => {
         ['EAI_AGAIN', 'dns'],
         ['ECONNREFUSED', 'refused'],
         ['UND_ERR_ABORTED', 'aborted'],
+        ['UND_ERR_HEADERS_TIMEOUT', 'timeout-total'],
+        ['UND_ERR_BODY_TIMEOUT', 'timeout-total'],
+        ['EHOSTUNREACH', 'unreachable'],
+        ['ENETUNREACH', 'unreachable'],
+        ['ENETDOWN', 'unreachable'],
+        ['ETIMEDOUT', 'unreachable'],
+        ['EADDRNOTAVAIL', 'unreachable'],
+        ['ECONNRESET', 'closed'],
+        ['ECONNABORTED', 'closed'],
+        ['EPIPE', 'closed'],
+        ['UND_ERR_SOCKET', 'closed'],
+        ['UND_ERR_CLOSED', 'closed'],
+        ['UND_ERR_INVALID_ARG', 'invalid'],
+        ['UND_ERR_NOT_SUPPORTED', 'invalid'],
     ])('maps the code %s to %s', (code, reason) => {
         expect(errorReasonOf(withCode(code), 'none')).toBe(reason);
+    });
+
+    /** Node gives the aggregate of a name with several addresses no code when it has no attempt. */
+    it('reads the code from the first attempt when the aggregate carries none', () => {
+        const error = new AggregateError([withCode('EHOSTUNREACH'), withCode('ECONNREFUSED')]);
+
+        expect(errorReasonOf(error, 'none')).toBe('unreachable');
     });
 
     it('reads the code from the cause when undici wrapped it', () => {

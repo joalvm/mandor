@@ -9,6 +9,7 @@ import type { SyncRequest } from '../request/sync-request.js';
 import type { SyncResponse } from '../response/sync-response.js';
 import { assertHttpUrl } from '../url/assert-http-url.js';
 import { watchAborts } from './abort-watch.js';
+import { errorMessageOf } from './error-message-of.js';
 import { type AbortSource, errorReasonOf } from './error-reason-of.js';
 import { dispatchOptionsOf, encodingsOf } from './hop-response.js';
 import { RawResponseHandler } from './response-handler.js';
@@ -21,9 +22,7 @@ function failure(error: unknown, source: () => AbortSource): SyncSendError {
         return error;
     }
 
-    const message = error instanceof Error ? error.message : String(error);
-
-    return new SyncSendError(errorReasonOf(error, source()), message);
+    return new SyncSendError(errorReasonOf(error, source()), errorMessageOf(error));
 }
 
 /**
