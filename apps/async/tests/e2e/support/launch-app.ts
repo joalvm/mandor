@@ -57,7 +57,7 @@ export async function makeSandbox(): Promise<Sandbox> {
 
     return {
         defaultRepoRoot,
-        repoRoot: join(defaultRepoRoot, 'async', 'local'),
+        repoRoot: join(defaultRepoRoot, 'realtime', 'local'),
         root,
         userDataDir: join(root, 'user-data'),
     };

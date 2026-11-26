@@ -14,12 +14,12 @@ export const SCRIPT_FAILED = 'A script failed, so nothing went out';
 
 /** The clone of the hostile origin: the one repo beside `local` the run never made itself. */
 export async function hostileRepoRoot(sandbox: Sandbox): Promise<string> {
-    const siblings = await readdir(join(sandbox.root, 'origins', 'sync'));
+    const siblings = await readdir(join(sandbox.root, 'origins', 'request'));
 
     return join(
         sandbox.root,
         'origins',
-        'sync',
+        'request',
         siblings.find((name) => name !== 'local') ?? 'none',
     );
 }

@@ -59,7 +59,7 @@ export async function setupOriginHandlers(localRepo: RepoCopy): Promise<OriginHa
 
     const ipc = spyIpc();
     const dispose = registerOriginHandlers(ipc, {
-        kind: 'async',
+        repoFolder: 'realtime',
         userDataDir: userData,
         ...silentReporting(),
     });

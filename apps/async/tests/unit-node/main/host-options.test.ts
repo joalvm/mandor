@@ -27,6 +27,11 @@ describe('what Mandor Realtime asks of the host', () => {
         expect(ASYNC_HOST_OPTIONS.appId).toBe('com.mandor.async');
     });
 
+    /** The folder on disk carries the name the person installed, never the one of the code. */
+    it('keeps its repos in a folder named after the app', () => {
+        expect(ASYNC_HOST_OPTIONS.repoFolder).toBe('realtime');
+    });
+
     it('serves connections and messages, and no request', () => {
         expect(ASYNC_HOST_OPTIONS.stores).toEqual(['message', 'connection']);
     });
@@ -45,6 +50,11 @@ describe('what Mandor Realtime asks of the host', () => {
 
         expect(ASYNC_HOST_OPTIONS.productName).toBe(messages.t('menu:appAsync'));
         expect(ASYNC_HOST_OPTIONS.title).toBe(messages.t('async:windowTitle'));
+    });
+
+    /** An install that cannot update by itself lands where the installers are, not on the code. */
+    it('sends an install that cannot update by itself to the releases', () => {
+        expect(ASYNC_HOST_OPTIONS.homepage).toBe('https://github.com/joalvm/mandor/releases');
     });
 
     it('takes the icon from the resources next to the main directory', () => {

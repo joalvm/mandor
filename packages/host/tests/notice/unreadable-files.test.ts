@@ -12,7 +12,7 @@ import {
     type WindowSpy,
 } from '../../src/testing/handler-harness.js';
 
-const ROOT = join('home', 'ana', 'Mandor', 'async', 'local');
+const ROOT = join('home', 'ana', 'Mandor', 'realtime', 'local');
 const REASON = 'YAMLParseError: Nested mappings are not allowed';
 
 /** A file nobody could read: where it lives, and the name it carries when the text still has one. */

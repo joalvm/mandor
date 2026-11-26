@@ -16,8 +16,9 @@ Your requests, sockets and secrets stay on your machine, in files you can read.
 ---
 
 > [!NOTE]
-> **First release on the way.** Mandor is feature-complete and in final hardening; signed
-> installers for Windows, macOS and Linux are next. To hear about it once:
+> **Beta.** The first installers are out, without a code-signing certificate yet: Windows and
+> macOS ask once before they open them. [Install the beta](#install-the-beta) says how, and how to
+> check that a file is the one this repository built. To hear of each release:
 > **Watch → Custom → Releases**.
 
 ## Why Mandor
@@ -97,7 +98,30 @@ open in any text editor.
 ## Platforms
 
 Windows (installer), macOS (dmg) and Linux (AppImage, deb). Updates arrive through stable and
-beta channels, and you pick which.
+beta channels, and you pick which; an install of a beta follows the betas until you pick stable.
+On Windows and from the AppImage the app updates itself. On macOS and from the deb it tells you
+of a new version and opens the page to download it.
+
+## Install the beta
+
+Each app has its own releases: on [Releases](https://github.com/joalvm/mandor/releases), take the
+latest **Mandor Request** or **Mandor Realtime**. Until the apps carry a certificate, the system
+asks before the first launch:
+
+- **Windows.** SmartScreen says it protected your PC: choose **More info → Run anyway**. With
+  Smart App Control on, Windows does not run an unsigned app at all.
+- **macOS.** The first launch is refused. Open **System Settings → Privacy & Security** and
+  choose **Open Anyway** next to the name of the app. It asks once.
+- **Linux.** Make the AppImage executable and run it, or install the deb with
+  `sudo apt install ./<file>.deb`.
+
+Every release carries `SHA256SUMS` and a provenance attestation: GitHub signs that each file came
+out of this repository's release workflow, at that tag. With the
+[GitHub CLI](https://cli.github.com):
+
+```sh
+gh attestation verify <file> --repo joalvm/mandor
+```
 
 ## Contributing
 

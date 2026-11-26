@@ -18,7 +18,7 @@ Lo que no cambia nunca:
   hoy funciona en local pasa a exigir remoto.
 - El usuario nunca ve git: ni la palabra, ni una ruta, ni un botón de push. Ve **orígenes**.
 - Sin cuenta, sin backend propio, sin telemetría (ni anónima, ni de errores, ni opt-out).
-- Dos instaladores con versiones independientes: `async-vX.Y.Z`, `sync-vX.Y.Z`.
+- Dos instaladores con versiones independientes: `realtime-vX.Y.Z`, `request-vX.Y.Z`.
 - Solo `apps/*` elige app.
 - Dos responsabilidades y nada más: un valor que el usuario marcó secreto en una variable de
   entorno nunca llega al remoto, y ninguna ejecución maliciosa ocurre por culpa de Mandor. Lo
@@ -80,8 +80,8 @@ aunque sea unary.
 
 ## Disco
 
-Un repo por app (`Mandor/async/local/`, `Mandor/sync/local/`). Un item, un archivo YAML; docs en
-Markdown con `title` en front matter.
+Un repo por app (`Mandor/realtime/local/`, `Mandor/request/local/`). Un item, un archivo YAML;
+docs en Markdown con `title` en front matter.
 
 ```
 mandor.yaml
@@ -198,6 +198,24 @@ nuevo en el aviso pide una fila aquí o un nombre distinto.
 | lectores `xOf` (`authOf`, `schemaOf`, `rowsOf`, `textOf`…)                          | formatos, `interop-core`, `codegen`, `graphql`, `validate`, features | Internos a su archivo: cada uno lee su propia forma                                                 |
 | `collectionSchema`, `environmentSchema`, `variableSchema`, `FOLDER_FILE`            | `interop-formats` (Bruno), `schema`, `store-fs`                      | El esquema de Bruno es interno a su formato                                                         |
 | `FormRow`, `ClientCredentialsFields`, `ProxySettings`, `ResponseBody`, `BodyWindow` | `ui`, features, `schema`, `ipc`                                      | El componente se llama como el dato que muestra                                                     |
+
+## Publicación
+
+- Un tag `<realtime|request>-v<x.y.z>[-beta.<n>]` publica esa versión de esa app (workflow
+  `release`). La versión sale del tag: ningún commit la sube. Los tres sistemas construyen; un job
+  sin build escribe `SHA256SUMS`, la atestación de procedencia y el release, con notas generadas
+  desde el tag anterior de la misma app.
+- Feed fijo por app, `realtime-feed` o `request-feed`: un prerelease que nunca es el último del
+  repo y solo guarda los `latest*`, `beta*` y `alpha*.yml`, con la dirección completa de los
+  instaladores en el release de su versión. Proveedor `generic`: el `github` lee el último release
+  del repo entero, que las dos apps comparten.
+- Una estable escribe también los archivos de beta: una instalación en beta pasa a ella cuando es
+  la más nueva. Una instalación de una beta que nunca eligió canal queda en beta, escrito como si
+  lo hubiera elegido.
+- Sin certificado todavía. Windows sin firmar. macOS firmado ad hoc (`identity: '-'`, sin hardened
+  runtime): en Apple silicon se abre con «Abrir igualmente» en vez de decir que está dañada.
+  Squirrel.Mac solo instala apps con Developer ID, así que en macOS el updater avisa y abre los
+  releases (`manual-only`), como desde el deb. `installers` comprueba la firma ad hoc en el PR.
 
 ## Licencia y marca
 

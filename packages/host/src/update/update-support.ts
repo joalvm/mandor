@@ -46,10 +46,14 @@ function linuxSupport(input: UpdateSupportInput): UpdateSupport {
     return 'unsupported';
 }
 
-/** The systems an install can update on. macOS has to wait for the app to be signed. */
+/**
+ * The systems an install can update on. Squirrel.Mac installs only an app signed by a Developer ID:
+ * signed ad-hoc, macOS hears of a version and the person downloads it.
+ */
 const SUPPORT_OF_PLATFORM: Readonly<
     Partial<Record<NodeJS.Platform, (input: UpdateSupportInput) => UpdateSupport>>
 > = {
+    darwin: () => 'manual-only',
     linux: linuxSupport,
     win32: () => 'full',
 };

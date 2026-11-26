@@ -32,7 +32,7 @@ afterEach(async () => {
 describe('adding an origin', () => {
     it('records the origin with a clean url and a root sibling of the local one', async () => {
         const stored = await addOrigin(
-            { kind: 'async', userDataDir: userData },
+            { repoFolder: 'realtime', userDataDir: userData },
             { name: 'Team API', url: 'https://github.com/team/api.git' },
         );
 
@@ -41,7 +41,7 @@ describe('adding an origin', () => {
             name: 'Team API',
             kind: 'remote',
             url: 'https://github.com/team/api.git',
-            root: join(base, 'container', 'async', stored.id),
+            root: join(base, 'container', 'realtime', stored.id),
         });
         await expect(listOrigins(userData)).resolves.toEqual([stored]);
     });
@@ -53,7 +53,7 @@ describe('adding an origin', () => {
      */
     it('lifts the embedded token out of the url and into the secrets file', async () => {
         const stored = await addOrigin(
-            { kind: 'async', userDataDir: userData },
+            { repoFolder: 'realtime', userDataDir: userData },
             { name: 'Team API', url: 'https://user:tok_secret@github.com/team/api.git' },
         );
 
@@ -71,7 +71,7 @@ describe('adding an origin', () => {
     /** The scp form is not a URL and carries no token: it is stored as it came. */
     it('accepts the scp form of an ssh url', async () => {
         const stored = await addOrigin(
-            { kind: 'async', userDataDir: userData },
+            { repoFolder: 'realtime', userDataDir: userData },
             { name: 'Team API', url: 'git@gitlab.com:team/api.git' },
         );
 
@@ -79,7 +79,7 @@ describe('adding an origin', () => {
     });
 
     it('gives two origins of the same name two ids and two roots', async () => {
-        const context = { kind: 'async', userDataDir: userData } as const;
+        const context = { repoFolder: 'realtime', userDataDir: userData } as const;
         const first = await addOrigin(context, {
             name: 'Team API',
             url: 'git@gitlab.com:team/a.git',
@@ -95,7 +95,10 @@ describe('adding an origin', () => {
 
     it('refuses a url that cannot name an origin', async () => {
         await expect(
-            addOrigin({ kind: 'async', userDataDir: userData }, { name: 'Team', url: 'not a url' }),
+            addOrigin(
+                { repoFolder: 'realtime', userDataDir: userData },
+                { name: 'Team', url: 'not a url' },
+            ),
         ).rejects.toThrow(OriginUrlError);
         await expect(listOrigins(userData)).resolves.toEqual([]);
     });

@@ -56,6 +56,8 @@ import { logWindowReady, type StartupTimeline } from './startup-timeline.js';
 /** Everything the handlers of main need that the app decides or the runtime found out. */
 export type HandlerDeps = {
     kind: WorkspaceKind;
+    /** The folder of the app on disk: the copies of its origins sit in it. */
+    repoFolder: string;
     userDataDir: string;
     logger: Logger;
     /**
@@ -131,7 +133,7 @@ export function registerHandlers(bare: HandlerIpc, deps: HandlerDeps): (() => vo
 
     return [
         registerOriginHandlers(ipc, {
-            kind: deps.kind,
+            repoFolder: deps.repoFolder,
             userDataDir: deps.userDataDir,
             notices,
             logger: deps.logger,

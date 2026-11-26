@@ -37,6 +37,9 @@ jobs:
             TURBO_TELEMETRY_DISABLED: 1
             # No certificates in CI: without this, electron-builder searches the macOS keychain.
             CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+            # electron-builder signs nothing in a pull request unless told to, for fear of the
+            # secrets of a fork. The mac app is signed ad-hoc, with no secret, and this proves it.
+            CSC_FOR_PULL_REQUEST: 'true'
         steps:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/unscanned-workspace
@@ -57,4 +60,11 @@ jobs:
               run: ls -l apps/${{ matrix.app }}/dist/*.exe
             - if: runner.os == 'macOS'
               shell: bash
-              run: ls -l apps/${{ matrix.app }}/dist/*.dmg
+              run: ls -l apps/${{ matrix.app }}/dist/*.dmg apps/${{ matrix.app }}/dist/*.zip
+            # An app with no valid signature is the one a download on Apple silicon calls damaged.
+            - if: runner.os == 'macOS'
+              shell: bash
+              run: |
+                  for app in apps/${{ matrix.app }}/dist/mac*/*.app; do
+                      codesign --verify --deep --strict --verbose=2 "$app"
+                  done

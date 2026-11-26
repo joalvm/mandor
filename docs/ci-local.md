@@ -53,3 +53,5 @@ por job: Linux ×1, Windows ×2, macOS ×10.
   workflow. `update-e2e` (beta → estable sobre instalación real, Linux y Windows, ~42 minutos
   facturados) solo si toca el updater, su prueba o su workflow, y a mano.
 - `tools/tests/ci/ci-workflow.test.mjs` fija todo lo anterior.
+- `release` arranca solo con un tag `realtime-v*` o `request-v*`, nunca en un PR, y no tiene ensayo
+  local: `tools/tests/ci/release-workflow.test.mjs` fija su forma.

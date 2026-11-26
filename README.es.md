@@ -16,9 +16,10 @@ Tus requests, sockets y secretos se quedan en tu máquina, en archivos que puede
 ---
 
 > [!NOTE]
-> **Primer release en camino.** Mandor está completo en funciones y en su endurecimiento final;
-> lo siguiente son los instaladores firmados para Windows, macOS y Linux. Para enterarte una sola
-> vez: **Watch → Custom → Releases**.
+> **Beta.** Ya salieron los primeros instaladores, todavía sin certificado de firma de código:
+> Windows y macOS preguntan una vez antes de abrirlos. [Instalar la beta](#instalar-la-beta) dice
+> cómo, y cómo comprobar que un archivo es el que construyó este repositorio. Para enterarte de
+> cada release: **Watch → Custom → Releases**.
 
 ## Por qué Mandor
 
@@ -100,7 +101,31 @@ seguiría abriendo en cualquier editor de texto.
 ## Plataformas
 
 Windows (instalador), macOS (dmg) y Linux (AppImage, deb). Las actualizaciones llegan por canales
-estable y beta, y tú eliges cuál.
+estable y beta, y tú eliges cuál; una instalación de una beta sigue las betas hasta que eliges
+estable. En Windows y desde el AppImage la app se actualiza sola. En macOS y desde el deb te avisa
+de la versión nueva y abre la página para descargarla.
+
+## Instalar la beta
+
+Cada app tiene sus propios releases: en [Releases](https://github.com/joalvm/mandor/releases),
+toma el último de **Mandor Request** o de **Mandor Realtime**. Mientras las apps no lleven
+certificado, el sistema pregunta antes del primer arranque:
+
+- **Windows.** SmartScreen dice que protegió tu PC: elige **Más información → Ejecutar de todas
+  formas**. Con Control inteligente de aplicaciones activado, Windows no ejecuta ninguna app sin
+  firma.
+- **macOS.** El primer arranque se rechaza. Abre **Ajustes del Sistema → Privacidad y seguridad**
+  y elige **Abrir igualmente** junto al nombre de la app. Pregunta una sola vez.
+- **Linux.** Haz ejecutable el AppImage y ábrelo, o instala el deb con
+  `sudo apt install ./<archivo>.deb`.
+
+Cada release lleva `SHA256SUMS` y una atestación de procedencia: GitHub firma que cada archivo
+salió del workflow de release de este repositorio, en ese tag. Con la
+[CLI de GitHub](https://cli.github.com):
+
+```sh
+gh attestation verify <archivo> --repo joalvm/mandor
+```
 
 ## Contribuir
 

@@ -34,8 +34,9 @@ describe('how far an install can follow the updates', () => {
         expect(install({ files: {} })).toBe('unsupported');
     });
 
-    it('waits on macOS until the app is signed', () => {
-        expect(install({ platform: 'darwin' })).toBe('unsupported');
+    /** Squirrel.Mac installs only a signed app: until then, macOS hears of a version and stops. */
+    it('only tells of a new version on macOS, where the app is signed ad-hoc', () => {
+        expect(install({ platform: 'darwin' })).toBe('manual-only');
     });
 
     it('replaces the file of an AppImage by itself', () => {

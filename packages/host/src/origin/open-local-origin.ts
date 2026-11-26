@@ -14,6 +14,9 @@ import { rememberOrigin } from './origins.js';
  */
 const LOCAL_ORIGIN_NAME = 'Local';
 
+/** What the app decides about its local origin: the workspaces it holds and its folder on disk. */
+type LocalOriginApp = { kind: WorkspaceKind; repoFolder: string };
+
 /**
  * The origin the window opens into, ready before the window exists: the renderer asks for it
  * as soon as it mounts, and an origin that arrives afterwards shows as an app with nothing in
@@ -25,12 +28,12 @@ const LOCAL_ORIGIN_NAME = 'Local';
  * time are in the language main speaks then, the one the menu speaks.
  */
 export async function openLocalOrigin(
-    kind: WorkspaceKind,
+    { kind, repoFolder }: LocalOriginApp,
     userDataDir: string,
     logger: Logger,
     language: Language,
 ): Promise<void> {
-    const root = defaultRepoRoot(kind);
+    const root = defaultRepoRoot(repoFolder);
     const messages = createPlainI18n(language);
 
     try {

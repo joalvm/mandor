@@ -6,22 +6,19 @@ pasa a `mandor.md`.
 
 ## 1. Publicación
 
-Objetivo: que instalarlo no dé miedo. Hoy no hay release: versiones `0.1.0`, README dice «Coming
-soon», `electron-builder.yml` sin `publish` ni firma.
+Objetivo: que instalarlo no dé miedo. La beta sale por tag, sin certificado: Windows sin firmar y
+macOS firmado ad hoc. Lo que se puede comprobar es la procedencia (`gh attestation verify`).
 
-| Falta                         | Nota                                                                                                                      |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Firma de Windows              | Azure Trusted Signing; `publisherName`                                                                                    |
-| Firma y notarización de macOS | Puerta externa: cuenta de desarrollador de pago. Sin ella sale sin notarizar y la descarga lo dice; no bloquea el resto   |
-| Feed por app y canal          | `publish` en cada `electron-builder.yml`; el updater por canales ya existe y lo prueba `update-e2e`                       |
-| Workflow de release           | Por tag `async-vX.Y.Z` / `sync-vX.Y.Z`: construye, firma, publica. Hoy `installers.yml` construye sin publicar            |
-| Notas de versión              | No hay CHANGELOG. El squash guarda título y commits: generarlas de ahí                                                    |
-| Documentación de usuario      | Solo existen `SCRIPTS.md` y `SECURITY.md`                                                                                 |
-| Checklist de release          | Incluye e2e completo en las tres plataformas: un cambio de flags de V8 en main tumbó la app y solo el e2e completo lo vio |
-| Comprobar a mano una vez      | Worker de import dentro del asar de un instalador real; vigía del repo en Windows y macOS                                 |
+| Falta                         | Nota                                                                                                                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Firma de Windows              | SignPath Foundation, gratis para código abierto: la solicitud la hace el dueño del repo. Alternativas: Microsoft Store (firma la tienda, pide el target `appx`), Azure de pago |
+| Firma y notarización de macOS | Puerta externa: cuenta de desarrollador de pago. Hasta entonces macOS avisa de la versión nueva y no la instala (`manual-only`)                                                |
+| Documentación de usuario      | Solo existen `SCRIPTS.md`, `SECURITY.md` y la instalación de la beta en el README                                                                                              |
+| Checklist de release          | Incluye e2e completo en las tres plataformas: un cambio de flags de V8 en main tumbó la app y solo el e2e completo lo vio                                                      |
+| Comprobar a mano una vez      | El primer tag de cada app de punta a punta: release, feed y actualización desde él; worker de import dentro del asar de un instalador real; vigía del repo en Windows y macOS  |
 
-Terminado: instaladores firmados en las tres plataformas, `verify` y e2e verdes en CI, una
-actualización beta → estable sobre instalación real.
+Terminado: instaladores de Windows firmados y de macOS notarizados, `verify` y e2e verdes en CI,
+una actualización beta → estable sobre instalación real.
 
 ## 2. Tests que fallan a veces solo en Windows
 
@@ -63,7 +60,6 @@ Acotados, ninguno crece sin tope. Los **decidir** se preguntan antes de tocar.
 - `packages/README.md`: nombra `collection` (es `collections`) y le faltan `codegen`, `exchange`,
   `graphql`, `transport-sync`, `updates`. Sus tablas de dependencias se escribieron a mano: o se
   generan de los manifiestos o se quitan.
-- `README.es.md` y `README.md` dicen «Coming soon»: cambian con el primer release.
 
 ## 5. Huecos de producto
 

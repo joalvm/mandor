@@ -13,12 +13,12 @@ afterEach(() => {
 });
 
 describe('where the repo the app opens by itself lives', () => {
-    it('sits under the documents folder, one repo per app', () => {
-        expect(defaultRepoRoot('async')).toBe(
-            join('C:', 'Users', 'someone', 'Documents', 'Mandor', 'async', 'local'),
+    it('sits under the documents folder, one repo per app, in the folder it is given', () => {
+        expect(defaultRepoRoot('realtime')).toBe(
+            join('C:', 'Users', 'someone', 'Documents', 'Mandor', 'realtime', 'local'),
         );
-        expect(defaultRepoRoot('sync')).toBe(
-            join('C:', 'Users', 'someone', 'Documents', 'Mandor', 'sync', 'local'),
+        expect(defaultRepoRoot('request')).toBe(
+            join('C:', 'Users', 'someone', 'Documents', 'Mandor', 'request', 'local'),
         );
     });
 
@@ -30,15 +30,17 @@ describe('where the repo the app opens by itself lives', () => {
     it('moves the container to the folder the environment names', () => {
         process.env['MANDOR_DEFAULT_REPO_ROOT'] = join('C:', 'sandbox', 'Mandor');
 
-        expect(defaultRepoRoot('async')).toBe(join('C:', 'sandbox', 'Mandor', 'async', 'local'));
+        expect(defaultRepoRoot('realtime')).toBe(
+            join('C:', 'sandbox', 'Mandor', 'realtime', 'local'),
+        );
     });
 
     /** A shell that exports the name with no value must not send the repo to the disk root. */
     it('ignores the name exported with no value', () => {
         process.env['MANDOR_DEFAULT_REPO_ROOT'] = '';
 
-        expect(defaultRepoRoot('async')).toBe(
-            join('C:', 'Users', 'someone', 'Documents', 'Mandor', 'async', 'local'),
+        expect(defaultRepoRoot('realtime')).toBe(
+            join('C:', 'Users', 'someone', 'Documents', 'Mandor', 'realtime', 'local'),
         );
     });
 });

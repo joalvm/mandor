@@ -59,6 +59,11 @@ export type StartHostConfig = Pick<CreateWindowOptions, 'appId' | 'title' | 'ico
         homepage: string;
         /** What the menu calls the app: the host never works it out from `kind`. */
         productName: string;
+        /**
+         * The folder of the app under the documents folder, which a person reads on disk: named
+         * after the app they installed, never worked out from `kind`.
+         */
+        repoFolder: string;
         /** The directory the main bundle of the app runs in: the renderer and preload sit beside it. */
         mainDir: string;
     };
@@ -188,7 +193,7 @@ function followTheApp(session: OneSession<CreatedWindow>, deps: RunDeps): void {
 
 /** The local origin and then the window: a window that comes back finds its origin open again. */
 async function openSession(config: OpenConfig, deps: OpenDeps): Promise<CreatedWindow> {
-    await openLocalOrigin(config.kind, deps.userDataDir, deps.logger, deps.holder.language());
+    await openLocalOrigin(config, deps.userDataDir, deps.logger, deps.holder.language());
     deps.timeline.mark('origin-open');
 
     return open(config, deps);

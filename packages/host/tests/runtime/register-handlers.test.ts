@@ -15,6 +15,7 @@ const ready = vi.fn();
 function depsWith(handlers: readonly AppHandlers[]) {
     return {
         kind: 'async' as const,
+        repoFolder: 'realtime',
         userDataDir: 'user-data',
         about: {
             about: () => ({

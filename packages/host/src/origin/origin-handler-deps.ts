@@ -1,9 +1,7 @@
-import type { WorkspaceKind } from '@mandor/schema';
-
 import type { UnreadableDeps } from '../notice/unreadable-files.js';
 
-/** Where the app keeps what belongs to no origin, and which kind of workspace this app hosts. */
+/** Where the app keeps what belongs to no origin, and the folder its origins are copied into. */
 export type OriginHandlerDeps = UnreadableDeps & {
-    kind: WorkspaceKind;
+    repoFolder: string;
     userDataDir: string;
 };
