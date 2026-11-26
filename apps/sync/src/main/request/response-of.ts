@@ -64,6 +64,17 @@ function answeredAtOf(response: SyncResponse, url: string): AnsweredAt | null {
         : { host: answered.hostname, path: defaultPath(answered.pathname) };
 }
 
+/** When a cookie stops being sent, as a date; none for one that lasts the session. */
+function expiresOf(cookie: Cookie, now: Date): { expires?: string } {
+    const expiry = cookie.expiryTime(now);
+
+    if (expiry === undefined || !Number.isFinite(expiry)) {
+        return {};
+    }
+
+    return { expires: new Date(expiry).toISOString() };
+}
+
 /**
  * One `Set-Cookie` line as the jar keeps it: a line that names no `Domain` belongs to the host
  * that answered, and one with no `Path` to the directory of the path asked, as the cookie
@@ -76,7 +87,6 @@ function cookieOf(line: string, now: Date, at: AnsweredAt | null): ResponseCooki
         return null;
     }
 
-    const expiry = cookie.expiryTime(now);
     const sameSite = sameSiteOf(cookie);
     const domain = cookie.domain ?? at?.host;
     const path = cookie.path ?? at?.path;
@@ -86,9 +96,7 @@ function cookieOf(line: string, now: Date, at: AnsweredAt | null): ResponseCooki
         value: cookie.value,
         ...(domain === undefined ? {} : { domain }),
         ...(path === undefined ? {} : { path }),
-        ...(expiry !== undefined && Number.isFinite(expiry)
-            ? { expires: new Date(expiry).toISOString() }
-            : {}),
+        ...expiresOf(cookie, now),
         httpOnly: cookie.httpOnly,
         secure: cookie.secure,
         ...(sameSite === undefined ? {} : { sameSite }),
