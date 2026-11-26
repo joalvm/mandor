@@ -140,7 +140,7 @@ describe('sendRequest', () => {
         expect((error as SyncSendError).reason).toBe('dns');
     });
 
-    it('maps a socket that dies mid-response to unknown', async () => {
+    it('maps a socket that dies mid-response to closed, and says what undici saw', async () => {
         server = await startEchoServer();
         const error = await sendRequest(
             request(`${server.origin}/reset`),
@@ -148,7 +148,8 @@ describe('sendRequest', () => {
         ).catch((caught: unknown) => caught);
 
         expect(error).toBeInstanceOf(SyncSendError);
-        expect((error as SyncSendError).reason).toBe('unknown');
+        expect((error as SyncSendError).reason).toBe('closed');
+        expect((error as SyncSendError).message).not.toBe('');
     });
 
     it('decodes gzip on the way in and reports both sizes', async () => {

@@ -1,10 +1,13 @@
 import { useMessages } from '@mandor/i18n';
-import { fireAndForget, useCopyText } from '@mandor/shell';
+import { fireAndForget } from '@mandor/shell';
 import { Button, Dialog, DialogBody, DialogFooter } from '@mandor/ui';
 import { useState } from 'react';
 
 import { useCookieJar } from '../../hooks/useCookieJar.js';
-import { CookieJarTable } from '../table/CookieJarTable.js';
+import { CookieJarScopeContext, type CookieDraft } from '../../hooks/useCookieJarScope.js';
+import { cookieDomainsOf, domainsMatching } from '../../lib/cookie-domains.js';
+import { CookieDomainForm } from '../domain/CookieDomainForm.js';
+import { CookieDomainList } from '../domain/CookieDomainList.js';
 import { CookieClearDialog } from './CookieClearDialog.js';
 
 type CookieJarDialogProps = {
@@ -14,14 +17,26 @@ type CookieJarDialogProps = {
 };
 
 /**
- * The jar of one environment: what the servers set, as a table. A value can be copied or changed
- * in place, a cookie deleted, the whole jar emptied after a question.
+ * The jar of one environment, the way Postman lays it out: a field that narrows the domains or
+ * adds one, each domain with its cookies, and a cookie opened as the `Set-Cookie` line a server
+ * would send. A domain added here lives only in the dialog until a cookie is written to it.
  */
 export function CookieJarDialog({ environmentId, onClose, workspaceId }: CookieJarDialogProps) {
     const labels = useMessages('cookies');
     const jar = useCookieJar({ environmentId, workspaceId });
+    const [added, setAdded] = useState<readonly string[]>([]);
+    const [draft, setDraft] = useState<CookieDraft | null>(null);
+    const [text, setText] = useState('');
     const [clearing, setClearing] = useState(false);
-    const cookies = jar.cookies ?? [];
+    const domains = cookieDomainsOf(jar.cookies ?? [], added);
+    const scope = {
+        draft,
+        jar,
+        onDraft: setDraft,
+        onForget: (domain: string) => {
+            setAdded((known) => known.filter((each) => each !== domain));
+        },
+    };
 
     return (
         <div data-part="cookie-jar-dialog">
@@ -36,12 +51,25 @@ export function CookieJarDialog({ environmentId, onClose, workspaceId }: CookieJ
                 open
                 title={labels('title')}
             >
-                <DialogBody>
-                    <JarBody jar={jar} />
-                </DialogBody>
+                <CookieJarScopeContext value={scope}>
+                    <DialogBody>
+                        <CookieDomainForm
+                            onAdd={(domain) => {
+                                setAdded((known) => [...new Set([...known, domain])]);
+                            }}
+                            onTextChange={setText}
+                            text={text}
+                        />
+                        <CookieDomainList
+                            domains={domainsMatching(domains, text)}
+                            loaded={jar.cookies !== null}
+                            narrowed={text.trim() !== ''}
+                        />
+                    </DialogBody>
+                </CookieJarScopeContext>
                 <DialogFooter>
                     <Button
-                        disabled={cookies.length === 0}
+                        disabled={(jar.cookies ?? []).length === 0}
                         onClick={() => {
                             setClearing(true);
                         }}
@@ -58,41 +86,11 @@ export function CookieJarDialog({ environmentId, onClose, workspaceId }: CookieJ
                 }}
                 onConfirm={() => {
                     setClearing(false);
+                    setDraft(null);
                     fireAndForget(jar.clear());
                 }}
                 open={clearing}
             />
         </div>
-    );
-}
-
-function JarBody({ jar }: { jar: ReturnType<typeof useCookieJar> }) {
-    const labels = useMessages('cookies');
-    const copy = useCopyText();
-
-    if (jar.cookies === null) {
-        return null;
-    }
-
-    if (jar.cookies.length === 0) {
-        return (
-            <p className="text-text-secondary" data-part="cookie-jar-empty">
-                <span className="text-text-primary">{labels('emptyTitle')}</span>
-                <span> · {labels('emptyBody')}</span>
-            </p>
-        );
-    }
-
-    return (
-        <CookieJarTable
-            cookies={jar.cookies}
-            onCopy={copy}
-            onDelete={(row) => {
-                fireAndForget(jar.remove(row));
-            }}
-            onSave={(row, value) => {
-                fireAndForget(jar.save(row, value));
-            }}
-        />
     );
 }

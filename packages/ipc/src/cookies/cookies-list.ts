@@ -6,10 +6,12 @@ import { resultSchema } from '../result/result-schema.js';
 /**
  * One cookie of the jar as the window sees it. `domain`, `path` and `name` are what identify it:
  * two jars of two environments never share a row. `expires` is ISO 8601, or `null` for a cookie
- * of the session.
+ * of the session. `line` is the whole cookie as a `Set-Cookie` line, the text its editor opens
+ * with and hands back to `cookies:set`.
  */
 export const cookieRowSchema = z
     .object({
+        line: z.string(),
         domain: z.string(),
         path: z.string(),
         name: z.string(),

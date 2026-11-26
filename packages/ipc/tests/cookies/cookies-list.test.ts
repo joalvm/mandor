@@ -4,6 +4,7 @@ import { cookiesListRequestSchema, cookiesListResultSchema } from '../../src/ind
 import { cookieRowSchema } from '../../src/cookies/cookies-list.js';
 
 const row = {
+    line: 'sid=abc; Path=/; Expires=Thu, 01 Oct 2026 14:32:00 GMT; Secure; HttpOnly; SameSite=Lax',
     domain: 'api.example.com',
     path: '/',
     name: 'sid',

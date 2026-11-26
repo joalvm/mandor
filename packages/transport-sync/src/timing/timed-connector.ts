@@ -9,11 +9,35 @@ import { tlsOptionsOf } from '../tls/tls-options-of.js';
 import type { ConnectionPhases } from './connection-phases.js';
 import { openSocket, type SocketRuntime } from './timed-socket.js';
 
+/** What undici asks the connector to reach, as the url wrote it. */
+type DialTarget = {
+    hostname: string;
+    port: number | string;
+    protocol: string;
+    servername?: string;
+};
+
 export type TimedConnector = (
-    options: { hostname: string; port: number | string; protocol: string; servername?: string },
+    options: DialTarget,
     // Undici's connector contract, verbatim: (null, socket) on success, (error, null) on failure.
     callback: (...args: [null, net.Socket | tls.TLSSocket] | [Error, null]) => void,
 ) => void;
+
+/** The port each scheme answers on when its url names none. A map: the key is the url's. */
+const DEFAULT_PORT_OF_PROTOCOL: ReadonlyMap<string, number> = new Map([
+    ['http:', 80],
+    ['https:', 443],
+]);
+
+/**
+ * The port to dial. Undici hands over the port of the url as written: a text, empty when the url
+ * leaves it to its scheme. Read as a number that is port 0, and a socket to port 0 never connects.
+ */
+function portOf({ port, protocol }: Pick<DialTarget, 'port' | 'protocol'>): number {
+    const written = Number(port);
+
+    return written > 0 ? written : (DEFAULT_PORT_OF_PROTOCOL.get(protocol) ?? written);
+}
 
 /**
  * A connector with the same contract undici expects, that writes the three phases into the
@@ -34,9 +58,10 @@ export function timedConnector(
         let settled = false;
         let connecting: net.Socket | tls.TLSSocket | undefined;
         const startedAt = performance.now();
+        const port = portOf(options);
         const timer = setTimeout(() => {
             const error: NodeJS.ErrnoException = new Error(
-                `connect timed out after ${String(connectMs)}ms`,
+                `connect to ${options.hostname}:${String(port)} timed out after ${String(connectMs)}ms`,
             );
 
             error.code = 'UND_ERR_CONNECT_TIMEOUT';
@@ -94,7 +119,7 @@ export function timedConnector(
             openSocket(
                 {
                     hostname: options.hostname,
-                    port: Number(options.port),
+                    port,
                     protocol: options.protocol,
                     tlsOptions,
                 },
@@ -119,7 +144,7 @@ export function timedConnector(
             openSocket(
                 {
                     hostname,
-                    port: Number(options.port),
+                    port,
                     protocol: options.protocol,
                     tlsOptions,
                     addresses,

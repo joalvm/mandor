@@ -88,22 +88,19 @@ describe('the headers of a response', () => {
 });
 
 describe('the table of a response', () => {
-    it('names its columns and holds the attributes one only when asked', () => {
-        const rows = [{ attributes: 'Secure', copy: 'a=1', name: 'a', value: '1' }];
-
-        const { rerender } = render(
-            <ResponseTable label="Cookies" onCopy={vi.fn()} rows={rows} />,
-            {
-                wrapper: AppProviders,
-            },
+    it('names its two columns, the name and the value', () => {
+        render(
+            <ResponseTable
+                label="Headers"
+                onCopy={vi.fn()}
+                rows={[{ copy: 'a: 1', name: 'a', value: '1' }]}
+            />,
+            { wrapper: AppProviders },
         );
 
-        expect(screen.queryByRole('columnheader', { name: 'Attributes' })).toBeNull();
-
-        rerender(<ResponseTable label="Cookies" onCopy={vi.fn()} rows={rows} showAttributes />);
-
-        expect(screen.getByRole('columnheader', { name: 'Attributes' })).toBeVisible();
-        expect(screen.getByText('Secure')).toBeVisible();
+        expect(screen.getByRole('columnheader', { name: 'Name' })).toBeVisible();
+        expect(screen.getByRole('columnheader', { name: 'Value' })).toBeVisible();
+        expect(screen.getByText('1')).toBeVisible();
     });
 
     it('hands the text of a line to whoever copies', () => {
@@ -115,7 +112,6 @@ describe('the table of a response', () => {
                     <ResponseTableRow
                         onCopy={onCopy}
                         row={{ copy: 'x=1', name: 'x', value: '1' }}
-                        showAttributes={false}
                     />
                 </tbody>
             </table>,
@@ -128,16 +124,19 @@ describe('the table of a response', () => {
 });
 
 describe('the cookies of a response', () => {
-    it('shows each one with the attributes its line carried, and copies it as a pair', async () => {
+    /** Postman lays a cookie out a column per attribute; Mandor reads the same. */
+    it('shows each attribute of a cookie in a column of its own, and copies it as a pair', async () => {
         render(
             <ResponseCookies
                 cookies={[
                     {
                         domain: 'api.test',
+                        expires: '2027-11-26T06:13:48.000Z',
                         httpOnly: true,
                         name: 'sid',
-                        path: '/',
-                        secure: true,
+                        path: '/v1',
+                        sameSite: 'none',
+                        secure: false,
                         value: 'abc',
                     },
                 ]}
@@ -145,11 +144,61 @@ describe('the cookies of a response', () => {
             { wrapper: AppProviders },
         );
 
-        expect(screen.getByText('Domain=api.test; Path=/; Secure; HttpOnly')).toBeVisible();
+        const headers = screen.getAllByRole('columnheader').map((cell) => cell.textContent);
+        const cells = bodyRows()[0]?.querySelectorAll('td') ?? [];
+
+        expect(headers.slice(0, 8)).toEqual([
+            'Name',
+            'Value',
+            'Domain',
+            'Path',
+            'Expires',
+            'HttpOnly',
+            'Secure',
+            'SameSite',
+        ]);
+        expect([...cells].slice(0, 8).map((cell) => cell.textContent)).toEqual([
+            'sid',
+            'abc',
+            'api.test',
+            '/v1',
+            expect.stringContaining('2027'),
+            'true',
+            'false',
+            'None',
+        ]);
 
         fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
 
         expect(writeText).toHaveBeenCalledWith('sid=abc');
+        expect(await screen.findByText('Copied')).toBeVisible();
+    });
+
+    it('calls a cookie that names no end a cookie of the session', () => {
+        render(
+            <ResponseCookies
+                cookies={[{ httpOnly: false, name: 'a', secure: false, value: '1' }]}
+            />,
+            { wrapper: AppProviders },
+        );
+
+        expect(screen.getByText('Session')).toBeVisible();
+    });
+
+    it('copies every cookie as a pair, one to a line', async () => {
+        render(
+            <ResponseCookies
+                cookies={[
+                    { httpOnly: false, name: 'a', secure: false, value: '1' },
+                    { httpOnly: false, name: 'b', secure: false, value: '2' },
+                ]}
+            />,
+            { wrapper: AppProviders },
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: 'Copy all' }));
+
+        expect(writeText).toHaveBeenCalledWith('a=1\nb=2');
         expect(await screen.findByText('Copied')).toBeVisible();
     });
 

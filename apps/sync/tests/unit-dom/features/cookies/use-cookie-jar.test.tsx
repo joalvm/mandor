@@ -8,6 +8,7 @@ import { AppProviders } from '../../support/app-providers.js';
 
 const PLACE = { environmentId: null, workspaceId: 'demo' };
 const SID: CookieRow = {
+    line: 'sid=abc; Path=/',
     domain: 'api.example.com',
     path: '/',
     name: 'sid',
@@ -40,9 +41,10 @@ describe('the hook of the jar', () => {
         });
     });
 
-    it('changes a value through main and reads the jar again', async () => {
+    it('writes a line over the cookie it replaces through main and reads the jar again', async () => {
         const set = vi.spyOn(syncBridge.cookies, 'set').mockResolvedValue(success({}));
         const { result } = openJar();
+        const replaces = { domain: 'api.example.com', name: 'sid', path: '/' };
 
         await waitFor(() => {
             expect(result.current.cookies).not.toBeNull();
@@ -50,19 +52,22 @@ describe('the hook of the jar', () => {
         vi.spyOn(syncBridge.cookies, 'list').mockResolvedValue(
             success({ cookies: [{ ...SID, value: 'new' }] }),
         );
-        await act(() => result.current.save(SID, 'new'));
 
+        const kept = await act(() =>
+            result.current.put('api.example.com', 'sid=new; Path=/', replaces),
+        );
+
+        expect(kept).toBe(true);
         expect(set).toHaveBeenCalledWith({
             ...PLACE,
             domain: 'api.example.com',
-            name: 'sid',
-            path: '/',
-            value: 'new',
+            line: 'sid=new; Path=/',
+            replaces,
         });
         expect(result.current.cookies?.[0]?.value).toBe('new');
     });
 
-    it('keeps the list as it was when main refuses a write', async () => {
+    it('answers that a refused line was not kept, and keeps the list as it was', async () => {
         vi.spyOn(syncBridge.cookies, 'set').mockResolvedValue(failure('bad-request', 'no'));
 
         const { result } = openJar();
@@ -70,8 +75,35 @@ describe('the hook of the jar', () => {
         await waitFor(() => {
             expect(result.current.cookies).toEqual([SID]);
         });
-        await act(() => result.current.save(SID, 'a;b'));
+
+        expect(await act(() => result.current.put('api.example.com', 'a b'))).toBe(false);
 
         expect(result.current.cookies).toEqual([SID]);
+    });
+
+    it('answers that a write failed when main cannot keep it', async () => {
+        vi.spyOn(syncBridge.cookies, 'set').mockResolvedValue(failure('fs-write', 'locked'));
+
+        const { result } = openJar();
+
+        await waitFor(() => {
+            expect(result.current.cookies).toEqual([SID]);
+        });
+
+        expect(await act(() => result.current.put('api.example.com', 'sid=x'))).toBe(false);
+    });
+
+    it('takes the cookies of one domain out through main', async () => {
+        const clear = vi.spyOn(syncBridge.cookies, 'clear').mockResolvedValue(success({}));
+        const { result } = openJar();
+
+        await waitFor(() => {
+            expect(result.current.cookies).toEqual([SID]);
+        });
+        vi.spyOn(syncBridge.cookies, 'list').mockResolvedValue(success({ cookies: [] }));
+        await act(() => result.current.clearDomain('api.example.com'));
+
+        expect(clear).toHaveBeenCalledWith({ ...PLACE, domain: 'api.example.com' });
+        expect(result.current.cookies).toEqual([]);
     });
 });

@@ -55,6 +55,7 @@ describe('taking a request from its variables to the wire', () => {
             ok: true,
             value: { bodyType: 'json', response: { status: 200 } },
         });
+        expect(answer.ok && answer.value.url).toMatch(/^http:\/\/[^{}]+\/echo$/u);
         expect(fixture.received[0]).toMatchObject({ method: 'POST', body: '{"a":1}' });
     });
 

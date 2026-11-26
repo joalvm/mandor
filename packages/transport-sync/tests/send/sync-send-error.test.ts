@@ -15,6 +15,9 @@ describe('SyncSendError', () => {
             'tls',
             'redirect-scheme',
             'redirect-limit',
+            'unreachable',
+            'closed',
+            'invalid',
             'unknown',
         ];
 

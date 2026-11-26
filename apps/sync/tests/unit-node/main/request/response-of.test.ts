@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { httpResponseOf } from '../../../../src/main/request/response-of.js';
 
+const URL_ASKED = 'https://api.test/v1/users';
 const NOW = new Date('2026-09-30T10:00:00.000Z');
 
 /** The sizes of a body that came as it is, with heads too light to count. */
@@ -34,7 +35,7 @@ function syncResponse(overrides: Partial<SyncResponse> = {}): SyncResponse {
 
 describe('the response that crosses the bridge', () => {
     it('keeps what the transport measured and sent, and passes the schema', () => {
-        const response = httpResponseOf(syncResponse(), NOW, 'none');
+        const response = httpResponseOf(syncResponse(), NOW, 'none', URL_ASKED);
 
         expect(httpResponseSchema.safeParse(response).success).toBe(true);
         expect(response).toMatchObject({ status: 200, statusText: 'OK', httpVersion: '1.1' });
@@ -44,12 +45,14 @@ describe('the response that crosses the bridge', () => {
     it('keeps the connection the transport saw only when it saw one', () => {
         const network = { localAddress: '::1', localPort: 1, remoteAddress: '::1', remotePort: 2 };
 
-        expect(httpResponseOf(syncResponse(), NOW, 'none').network).toBeUndefined();
-        expect(httpResponseOf(syncResponse({ network }), NOW, 'none').network).toEqual(network);
+        expect(httpResponseOf(syncResponse(), NOW, 'none', URL_ASKED).network).toBeUndefined();
+        expect(httpResponseOf(syncResponse({ network }), NOW, 'none', URL_ASKED).network).toEqual(
+            network,
+        );
     });
 
     it('carries a body that is text as text', () => {
-        expect(httpResponseOf(syncResponse(), NOW, 'none').body).toEqual({
+        expect(httpResponseOf(syncResponse(), NOW, 'none', URL_ASKED).body).toEqual({
             kind: 'inline',
             encoding: 'utf8',
             text: '{"ok":true}',
@@ -66,6 +69,7 @@ describe('the response that crosses the bridge', () => {
             }),
             NOW,
             'none',
+            URL_ASKED,
         );
 
         expect(response.body).toEqual({
@@ -83,6 +87,7 @@ describe('the response that crosses the bridge', () => {
             }),
             NOW,
             'none',
+            URL_ASKED,
         );
 
         expect(response.body).toBeNull();
@@ -97,6 +102,7 @@ describe('the response that crosses the bridge', () => {
             }),
             NOW,
             'none',
+            URL_ASKED,
         );
 
         expect(response.body).toEqual({
@@ -117,6 +123,7 @@ describe('the response that crosses the bridge', () => {
             }),
             NOW,
             'none',
+            URL_ASKED,
         );
 
         expect(response.body).toMatchObject({ contentType: 'application/octet-stream' });
@@ -136,6 +143,7 @@ describe('the response that crosses the bridge', () => {
             }),
             NOW,
             'none',
+            URL_ASKED,
         );
 
         expect(response.cookies).toEqual([
@@ -149,7 +157,58 @@ describe('the response that crosses the bridge', () => {
                 secure: true,
                 sameSite: 'lax',
             },
-            { name: 'theme', value: 'dark', httpOnly: false, secure: false },
+            {
+                name: 'theme',
+                value: 'dark',
+                domain: 'api.test',
+                path: '/v1',
+                httpOnly: false,
+                secure: false,
+            },
+        ]);
+    });
+
+    /** Postman shows, and the jar keeps, a cookie with no Domain under the host that answered. */
+    it('places a cookie that names no domain under the host the last redirect reached', () => {
+        const response = httpResponseOf(
+            syncResponse({
+                headers: [['set-cookie', 'sid=1']],
+                redirects: [
+                    {
+                        status: 302,
+                        from: URL_ASKED,
+                        to: 'https://login.test/account/session',
+                        strippedHeaders: [],
+                    },
+                ],
+            }),
+            NOW,
+            'none',
+            URL_ASKED,
+        );
+
+        expect(response.cookies).toEqual([
+            {
+                name: 'sid',
+                value: '1',
+                domain: 'login.test',
+                path: '/account',
+                httpOnly: false,
+                secure: false,
+            },
+        ]);
+    });
+
+    it('leaves the place of a cookie out when the URL asked cannot be read', () => {
+        const response = httpResponseOf(
+            syncResponse({ headers: [['set-cookie', 'sid=1']] }),
+            NOW,
+            'none',
+            'not a url',
+        );
+
+        expect(response.cookies).toEqual([
+            { name: 'sid', value: '1', httpOnly: false, secure: false },
         ]);
     });
 });

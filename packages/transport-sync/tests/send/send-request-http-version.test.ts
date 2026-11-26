@@ -60,6 +60,26 @@ describe('sendRequest held to one HTTP version', () => {
         expect(response.httpVersion).toBe('2');
     });
 
+    /** Servers that speak h2 compress whatever a client copied from a browser lets them. */
+    it('keeps the headers of an h2 answer and undoes its content-encoding', async () => {
+        const server = await startH2Server();
+
+        close = () => server.close();
+        const response = await sendRequest(
+            request(`${server.origin}/gzipped`, 'auto'),
+            new AbortController().signal,
+        );
+
+        expect(response.httpVersion).toBe('2');
+        expect(response.headers).toContainEqual(['x-served-by', 'h2']);
+        expect(response.sizes.decoded).toBe(true);
+        expect(
+            new TextDecoder().decode(
+                (response.body as { kind: 'inline'; bytes: Uint8Array }).bytes,
+            ),
+        ).toBe('gzipped over h2');
+    });
+
     it('dies with http-version on a TLS server that does not answer h2', async () => {
         const server = await startEchoServer({ https: true });
 

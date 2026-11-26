@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import http2 from 'node:http2';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gzipSync } from 'node:zlib';
 
 /** The local `node:http2` server the tests negotiate `h2` against: no HTTP/1.1 fallback. */
 export type H2Server = {
@@ -17,7 +18,14 @@ function pem(name: string): string {
 export async function startH2Server({ allowHTTP1 = false } = {}): Promise<H2Server> {
     const server = http2.createSecureServer(
         { key: pem('key.pem'), cert: pem('cert.pem'), allowHTTP1 },
-        (_request, response) => {
+        (request, response) => {
+            if (request.url === '/gzipped') {
+                response.writeHead(200, { 'content-encoding': 'gzip', 'x-served-by': 'h2' });
+                response.end(gzipSync('gzipped over h2'));
+
+                return;
+            }
+
             response.end('ok');
         },
     );

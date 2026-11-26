@@ -1,7 +1,7 @@
 import { graphqlErrorsOf } from '@mandor/graphql';
 import type { HttpResponse, RequestBodyType, ResponseBody, ResponseCookie } from '@mandor/schema';
 import type { SyncBody, SyncResponse } from '@mandor/transport-sync';
-import { Cookie } from 'tough-cookie';
+import { Cookie, defaultPath } from 'tough-cookie';
 
 import { sameSiteOf } from '../cookies/same-site-of.js';
 
@@ -52,24 +52,51 @@ function bodyOf(
     return { kind: 'inline', ...encodingOf(body.bytes) };
 }
 
-function cookieOf(line: string, now: Date): ResponseCookie | null {
+/** Where the answer came from: what a cookie that names no `Domain` or `Path` is kept under. */
+type AnsweredAt = { host: string; path: string };
+
+/** The last hop of a followed redirect answered; without one, the URL that was asked. */
+function answeredAtOf(response: SyncResponse, url: string): AnsweredAt | null {
+    const answered = URL.parse(response.redirects.at(-1)?.to ?? url);
+
+    return answered === null
+        ? null
+        : { host: answered.hostname, path: defaultPath(answered.pathname) };
+}
+
+/** When a cookie stops being sent, as a date; none for one that lasts the session. */
+function expiresOf(cookie: Cookie, now: Date): { expires?: string } {
+    const expiry = cookie.expiryTime(now);
+
+    if (expiry === undefined || !Number.isFinite(expiry)) {
+        return {};
+    }
+
+    return { expires: new Date(expiry).toISOString() };
+}
+
+/**
+ * One `Set-Cookie` line as the jar keeps it: a line that names no `Domain` belongs to the host
+ * that answered, and one with no `Path` to the directory of the path asked, as the cookie
+ * standard has it and as Postman shows it.
+ */
+function cookieOf(line: string, now: Date, at: AnsweredAt | null): ResponseCookie | null {
     const cookie = Cookie.parse(line);
 
     if (cookie === undefined) {
         return null;
     }
 
-    const expiry = cookie.expiryTime(now);
     const sameSite = sameSiteOf(cookie);
+    const domain = cookie.domain ?? at?.host;
+    const path = cookie.path ?? at?.path;
 
     return {
         name: cookie.key,
         value: cookie.value,
-        ...(cookie.domain === null ? {} : { domain: cookie.domain }),
-        ...(cookie.path === null ? {} : { path: cookie.path }),
-        ...(expiry !== undefined && Number.isFinite(expiry)
-            ? { expires: new Date(expiry).toISOString() }
-            : {}),
+        ...(domain === undefined ? {} : { domain }),
+        ...(path === undefined ? {} : { path }),
+        ...expiresOf(cookie, now),
         httpOnly: cookie.httpOnly,
         secure: cookie.secure,
         ...(sameSite === undefined ? {} : { sameSite }),
@@ -94,16 +121,19 @@ function graphqlErrorsOfBody(
 /**
  * The response of the transport as it crosses the bridge: bytes never travel raw, because the
  * bridge redacts an answer by walking it. `now` anchors a cookie that expires in so many seconds;
- * `sent` is the kind of body the request carried, which says what the answer is read as.
+ * `sent` is the kind of body the request carried, which says what the answer is read as; `url`
+ * is the one asked, which places a cookie that does not say where it belongs.
  */
 export function httpResponseOf(
     response: SyncResponse,
     now: Date,
     sent: RequestBodyType,
+    url: string,
 ): HttpResponse {
+    const at = answeredAtOf(response, url);
     const cookies = response.headers
         .filter(([name]) => name.toLowerCase() === 'set-cookie')
-        .map(([, line]) => cookieOf(line, now))
+        .map(([, line]) => cookieOf(line, now, at))
         .filter((cookie): cookie is ResponseCookie => cookie !== null);
 
     const body = bodyOf(response.body, response.headers, response.sizes.bodyBytes);

@@ -22,6 +22,23 @@ const REASON_OF_CODE: ReadonlyMap<string, SyncSendReason> = new Map<string, Sync
     ['EAI_AGAIN', 'dns'],
     ['ECONNREFUSED', 'refused'],
     ['UND_ERR_ABORTED', 'aborted'],
+    ['UND_ERR_HEADERS_TIMEOUT', 'timeout-total'],
+    ['UND_ERR_BODY_TIMEOUT', 'timeout-total'],
+    // The route to the address is missing, or the system gave up on the handshake.
+    ['EHOSTUNREACH', 'unreachable'],
+    ['ENETUNREACH', 'unreachable'],
+    ['ENETDOWN', 'unreachable'],
+    ['ETIMEDOUT', 'unreachable'],
+    ['EADDRNOTAVAIL', 'unreachable'],
+    // The connection was up and the other side ended it before the answer came whole.
+    ['ECONNRESET', 'closed'],
+    ['ECONNABORTED', 'closed'],
+    ['EPIPE', 'closed'],
+    ['UND_ERR_SOCKET', 'closed'],
+    ['UND_ERR_CLOSED', 'closed'],
+    // Undici refuses to write the request: a header or a method HTTP does not let through.
+    ['UND_ERR_INVALID_ARG', 'invalid'],
+    ['UND_ERR_NOT_SUPPORTED', 'invalid'],
     ['ERR_HTTP_VERSION_REFUSED', 'http-version'],
     // A server that speaks ALPN and shares no protocol with the offer ends the handshake so.
     ['ERR_SSL_TLSV1_ALERT_NO_APPLICATION_PROTOCOL', 'http-version'],
@@ -34,9 +51,18 @@ function codeIn(value: unknown): string | undefined {
     return typeof code === 'string' ? code : undefined;
 }
 
-/** The system or undici code, following undici's habit of wrapping the real error in `cause`. */
+/**
+ * The system or undici code, following undici's habit of wrapping the real error in `cause`
+ * and Node's of failing a name with several addresses with one aggregate of every attempt.
+ */
 function codeOf(error: unknown): string | undefined {
-    return codeIn(error) ?? codeIn(error instanceof Error ? error.cause : undefined);
+    const firstAttempt: unknown = error instanceof AggregateError ? error.errors[0] : undefined;
+
+    return (
+        codeIn(error) ??
+        codeIn(error instanceof Error ? error.cause : undefined) ??
+        codeIn(firstAttempt)
+    );
 }
 
 function namesTls(code: string | undefined, message: string): boolean {
