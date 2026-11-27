@@ -29,7 +29,7 @@ export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
             <span className="min-w-0 flex-1 truncate font-semibold" data-part="activity-event">
                 {record.event === undefined
                     ? messages('ackUnanswered')
-                    : `${record.event} — ${messages('ackUnanswered')}`}
+                    : messages('ackUnansweredFor', { event: record.event })}
             </span>
             <time
                 className="w-16 shrink-0 text-text-secondary"

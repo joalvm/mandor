@@ -134,7 +134,10 @@ function ConnectionStatePill({
     const said =
         openedAt === undefined
             ? messages(pill.label)
-            : `${messages(pill.label)} · ${formatElapsed(elapsed)}`;
+            : messages('stateSince', {
+                  elapsed: formatElapsed(elapsed),
+                  state: messages(pill.label),
+              });
 
     return (
         <Badge className="h-5 gap-gap-icon-text px-1.5 font-semibold tabular-nums" tone={pill.tone}>

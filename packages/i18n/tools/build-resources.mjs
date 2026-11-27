@@ -54,15 +54,38 @@ function resourceSource(language, namespaces) {
     }
 
     if (!language.includes('-')) {
-        return `const ${identifier} = {\n${entries}\n} satisfies typeof EN_RESOURCE;`;
+        return `const ${identifier} = {\n${entries}\n} satisfies LocaleMessages<typeof EN_RESOURCE>;`;
     }
 
     return `const ${identifier} = {\n${entries}\n} satisfies DeepPartial<typeof EN_RESOURCE>;`;
 }
 
+/**
+ * What the compiler holds a translation to: every key of English but its plural forms, which
+ * follow the rules of each language and are checked by `validateResources` instead.
+ */
+const LOCALE_MESSAGES_TYPE = [
+    "type PluralCategory = 'few' | 'many' | 'one' | 'other' | 'two' | 'zero';",
+    '',
+    "/** Every English key; the plural forms are each language's own, checked when generating. */",
+    'type LocaleMessages<Value> = Value extends string',
+    '    ? string',
+    '    : {',
+    '          [Key in keyof Value as Key extends `${string}_${PluralCategory}`',
+    '              ? never',
+    '              : Key]: LocaleMessages<Value[Key]>;',
+    '      };',
+    '',
+    '',
+].join('\n');
+
 function registrySource(locales, namespaces) {
     const languages = [...locales.keys()];
     const hasVariants = languages.some((language) => language.includes('-'));
+    const hasTranslations = languages.some(
+        (language) => language !== 'en' && !language.includes('-'),
+    );
+    const localeType = hasTranslations ? LOCALE_MESSAGES_TYPE : '';
     const resources = languages
         .map((language) => `    '${language}': ${identifierOf(language)},`)
         .join('\n');
@@ -75,7 +98,7 @@ function registrySource(locales, namespaces) {
         ? `type DeepPartial<Value> = Value extends string\n    ? Value\n    : { [Key in keyof Value]?: DeepPartial<Value[Key]> };\n\n`
         : '';
 
-    return `import type { ErrorCode } from '@mandor/ipc';\n\n${importsSource(locales)}\n\n${partialType}const EN_ERRORS = enErrors satisfies Record<ErrorCode, string>;\n\n${resourceDeclarations.replace('errors: enErrors', 'errors: EN_ERRORS')}\n\nexport const DEFAULT_LANGUAGE = 'en';\nexport const DEFAULT_NAMESPACE = 'shell';\nexport const LANGUAGE_CODES = [${languageValues}] as const;\nexport const NAMESPACES = [${namespaceValues}] as const;\nexport const RESOURCES = {\n${resources}\n};\n\nexport type Language = (typeof LANGUAGE_CODES)[number];\nexport type MessageNamespace = (typeof NAMESPACES)[number];\n`;
+    return `import type { ErrorCode } from '@mandor/ipc';\n\n${importsSource(locales)}\n\n${partialType}${localeType}const EN_ERRORS = enErrors satisfies Record<ErrorCode, string>;\n\n${resourceDeclarations.replace('errors: enErrors', 'errors: EN_ERRORS')}\n\nexport const DEFAULT_LANGUAGE = 'en';\nexport const DEFAULT_NAMESPACE = 'shell';\nexport const LANGUAGE_CODES = [${languageValues}] as const;\nexport const NAMESPACES = [${namespaceValues}] as const;\nexport const RESOURCES = {\n${resources}\n};\n\nexport type Language = (typeof LANGUAGE_CODES)[number];\nexport type MessageNamespace = (typeof NAMESPACES)[number];\n`;
 }
 
 async function syncFile(path, source, check) {
@@ -105,5 +128,5 @@ async function syncFile(path, source, check) {
 const { locales, namespaces } = await readLocales(LANGUAGE_ROOT);
 const check = process.argv.includes('--check');
 
-validateResources(locales, namespaces);
+validateResources(locales);
 await syncFile(join(GENERATED_ROOT, 'resources.ts'), registrySource(locales, namespaces), check);

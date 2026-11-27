@@ -17,7 +17,7 @@ export function RecordButton({ onToggle, recording }: RecordButtonProps) {
             icon="record"
             label={
                 recording.active
-                    ? `${messages('recording')} · ${String(recording.entries)}`
+                    ? messages('recordingEntries', { count: recording.entries })
                     : messages('record')
             }
             onClick={onToggle}

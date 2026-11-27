@@ -50,8 +50,8 @@
     "textResult": "Result",
     "theirs": "Incoming",
     "unnamedFile": "Unnamed file",
-    "unresolved_one": "{{count}} unresolved",
-    "unresolved_other": "{{count}} unresolved",
+    "unresolved_one": "{{count, number}} unresolved",
+    "unresolved_other": "{{count, number}} unresolved",
     "useOurs": "Use mine",
     "useResult": "Use this result",
     "useTheirs": "Use the incoming"

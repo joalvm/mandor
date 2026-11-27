@@ -19,6 +19,6 @@ describe('the toolbar of a table', () => {
     it('carries the toggle of the rows the app adds', () => {
         mountInTable(<KeyValueToolbar title="t" />, { autoLines: AUTO });
 
-        expect(screen.getByRole('button', { name: '1 ocultas' })).toBeVisible();
+        expect(screen.getByRole('button', { name: '1 oculta' })).toBeVisible();
     });
 });

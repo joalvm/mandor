@@ -50,8 +50,8 @@
     "textResult": "Resultado",
     "theirs": "Lo entrante",
     "unnamedFile": "Archivo sin nombre",
-    "unresolved_one": "{{count}} sin resolver",
-    "unresolved_other": "{{count}} sin resolver",
+    "unresolved_one": "{{count, number}} sin resolver",
+    "unresolved_other": "{{count, number}} sin resolver",
     "useOurs": "Usar lo mío",
     "useResult": "Usar este resultado",
     "useTheirs": "Usar lo entrante"
