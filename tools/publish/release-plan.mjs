@@ -92,10 +92,25 @@ function planBeta({ app, releases, forced, head, changesBetween }) {
 }
 
 /**
+ * GitHub refuses the token of a run a release on a commit whose workflow files no branch holds as
+ * they are, since that token can never edit workflows. `main` is the only branch: a beta whose
+ * workflows `main` changed since cannot be promoted, and a new beta carries them.
+ */
+function refuseMovedWorkflows({ app, beta, head, workflowsBetween }) {
+    const moved = workflowsBetween(beta.sha, head);
+
+    if (moved.length > 0) {
+        throw new Error(
+            `${beta.tag} runs workflows main changed since (${moved.join(', ')}): GitHub publishes no release on it. Cut a new beta of ${app.name} first.`,
+        );
+    }
+}
+
+/**
  * A stable is never cut from `main`: it is the last beta, built again from the same commit
  * with the version that beta was aiming at, so what reaches everyone is what the beta ran.
  */
-function planStable({ app, releases, forced, changesBetween }) {
+function planStable({ app, releases, forced, head, changesBetween, workflowsBetween }) {
     if (forced !== '') {
         throw new Error('A stable takes the version of the beta it promotes: force it on a beta.');
     }
@@ -108,6 +123,8 @@ function planStable({ app, releases, forced, changesBetween }) {
     if (beta === undefined) {
         throw new Error(`No beta of ${app.name} after ${stable?.tag ?? 'its start'} to promote.`);
     }
+
+    refuseMovedWorkflows({ app, beta, head, workflowsBetween });
 
     const version = beta.version.split('-beta.')[0] ?? '';
     const tag = `${app.name}-v${version}`;
@@ -126,7 +143,7 @@ const PLANS = { beta: planBeta, stable: planStable };
  * What a release of an app on a channel will be: its tag, the commit it builds and the changes
  * its notes list. `releases` are the ones the app has, each with the commit of its tag;
  * `changesBetween(from, to)` lists the changes of the app in that range, from the start when
- * `from` is none.
+ * `from` is none; `workflowsBetween(from, to)`, the workflow files that differ between the two.
  */
 export function planRelease({ channel, ...input }) {
     if (!Object.hasOwn(PLANS, channel)) {
@@ -167,6 +184,10 @@ function gitChanges(paths) {
     };
 }
 
+function gitWorkflowsBetween(from, to) {
+    return git(['diff', '--name-only', from, to, '--', '.github/workflows']);
+}
+
 /** The lines the workflow appends to `$GITHUB_OUTPUT`, one `key=value` each. */
 export function planOutputs(plan, app) {
     const { tag, version, prerelease, sha, previous = '' } = plan;
@@ -183,7 +204,15 @@ function main([name = '', channel = '', forced = '', notesFile = 'release-notes.
     const [head = ''] = git(['rev-parse', 'HEAD']);
     const changesBetween = gitChanges(appPaths('.', app.app));
     const releases = releasesOf(app);
-    const plan = planRelease({ channel, app, releases, forced, head, changesBetween });
+    const plan = planRelease({
+        channel,
+        app,
+        releases,
+        forced,
+        head,
+        changesBetween,
+        workflowsBetween: gitWorkflowsBetween,
+    });
     const repository = process.env['GITHUB_REPOSITORY'] ?? 'joalvm/mandor';
     const server = process.env['GITHUB_SERVER_URL'] ?? 'https://github.com';
     const compare =
