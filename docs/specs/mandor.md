@@ -208,7 +208,9 @@ Una release sale del botón del workflow `release` (o `gh workflow run release -
    patch; lo demás no es noticia, y una beta sin noticias se rechaza. Una beta sale de la cabeza de
    `main` (`-beta.<n>` de la estable a la que lleva) o de la versión que se fuerce (`x.y.z`). Una
    estable promueve la última beta: su versión sin sufijo, construida del mismo commit, con las
-   notas desde la estable anterior. Ningún commit sube la versión del manifiesto.
+   notas desde la estable anterior. Si `main` cambió algún workflow desde esa beta, el plan la
+   rechaza y pide otra beta: GitHub no deja al token de la corrida publicar sobre un commit cuyos
+   workflows ninguna rama guarda tal cual. Ningún commit sube la versión del manifiesto.
 2. **build**: los tres sistemas construyen ese commit. Windows, un instalador por arquitectura.
 3. **smoke**: Linux y Windows instalan su instalador, lo abren como esa versión y lo cierran, con
    los tests de `main` (`release-smoke.spec.ts` de cada app).

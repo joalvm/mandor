@@ -7,12 +7,14 @@ import { appNamed, parseReleaseTag } from '../../publish/release-tag.mjs';
 const app = appNamed('request');
 
 /**
- * A line of history, oldest first: each commit with the title the squash left, and the tags on it.
- * The changes between two commits are the ones after the first, up to the second, as git lists
- * them.
+ * A line of history, oldest first: each commit with the title the squash left, the tags on it and
+ * the workflow files it edits. The changes between two commits are the ones after the first, up
+ * to the second, as git lists them; so are the workflows that differ between them.
  */
 function historyOf(commits) {
     const index = (sha) => commits.findIndex((commit) => commit.sha === sha);
+    const between = (from, to) =>
+        commits.slice(from === undefined ? 0 : index(from) + 1, index(to) + 1);
 
     return {
         head: commits.at(-1)?.sha ?? '',
@@ -21,11 +23,13 @@ function historyOf(commits) {
         ),
         changesBetween: (from, to) =>
             changesOf(
-                commits
-                    .slice(from === undefined ? 0 : index(from) + 1, index(to) + 1)
+                between(from, to)
                     .map((commit) => commit.subject)
                     .reverse(),
             ),
+        workflowsBetween: (from, to) => [
+            ...new Set(between(from, to).flatMap(({ workflows = [] }) => workflows)),
+        ],
     };
 }
 
@@ -150,6 +154,26 @@ describe('a stable', () => {
                 },
             ]),
         ).toThrow('No beta of request after request-v0.1.0 to promote.');
+    });
+
+    /**
+     * GitHub refuses the token of a run a release on a commit whose workflows no branch holds
+     * any more, so the plan says so before a single build is paid for.
+     */
+    it('refuses a beta whose workflows main changed since, and asks for a new beta', () => {
+        const history = [
+            { sha: 'a', subject: 'feat: uno', tags: ['request-v0.1.0-beta.1'] },
+            {
+                sha: 'b',
+                subject: 'build(release): el workflow',
+                workflows: ['.github/workflows/release.yml', '.github/workflows/feed-rollback.yml'],
+            },
+        ];
+
+        expect(() => plan('stable', history)).toThrow(
+            'request-v0.1.0-beta.1 runs workflows main changed since (.github/workflows/release.yml, .github/workflows/feed-rollback.yml): GitHub publishes no release on it. Cut a new beta of request first.',
+        );
+        expect(plan('stable', history.slice(0, 1)).sha).toBe('a');
     });
 
     it('refuses a forced version: that goes on a beta', () => {
