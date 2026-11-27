@@ -19,10 +19,12 @@ import {
     openInstalled,
     type Installed,
     type OpenApp,
-} from './support/installed-app.js';
+} from '../../../../tools/workspace/installed-app.mjs';
 
 const INSTALLER = process.env['MANDOR_ASYNC_INSTALLER'] ?? '';
 const PAIR = process.env['MANDOR_UPDATE_PAIR'] ?? '';
+/** The name electron-builder gives the installed program, from `executableName`. */
+const EXECUTABLE = 'mandor-realtime';
 const CONNECTION = 'Instalada';
 const SCRIPT = 'mandor.request.headers.set("X-Script", "ran"); console.log("desde el asar");';
 
@@ -112,10 +114,14 @@ test.beforeAll(async () => {
 
     const installer = INSTALLER === '' ? await installerIn(join(PAIR, 'from')) : INSTALLER;
 
-    installed = await install(installer, sandbox);
-    app = await openInstalled(await executableIn(installed.directory), join(sandbox, 'data'), {
-        MANDOR_DEFAULT_REPO_ROOT: container,
-    });
+    installed = await install(installer, sandbox, EXECUTABLE);
+    app = await openInstalled(
+        await executableIn(installed.directory, EXECUTABLE),
+        join(sandbox, 'data'),
+        {
+            MANDOR_DEFAULT_REPO_ROOT: container,
+        },
+    );
     page = app.page;
     await expectFirstRun(page);
 });

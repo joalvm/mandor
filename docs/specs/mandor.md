@@ -201,10 +201,29 @@ nuevo en el aviso pide una fila aquí o un nombre distinto.
 
 ## Publicación
 
-- Un tag `<realtime|request>-v<x.y.z>[-beta.<n>]` publica esa versión de esa app (workflow
-  `release`). La versión sale del tag: ningún commit la sube. Los tres sistemas construyen; un job
-  sin build escribe `SHA256SUMS`, la atestación de procedencia y el release, con notas generadas
-  desde el tag anterior de la misma app.
+Una release sale del botón del workflow `release` (o `gh workflow run release -f app=<request|realtime> -f channel=<beta|stable>`), siempre desde `main`, y nadie la ve hasta que una persona la aprueba.
+
+1. **plan**: la versión y las notas salen de los commits que tocan la app o un paquete que ella
+   alcanza (`tools/publish/release-plan.mjs`). `feat` sube la minor; `fix` y `build(deps*)`, el
+   patch; lo demás no es noticia, y una beta sin noticias se rechaza. Una beta sale de la cabeza de
+   `main` (`-beta.<n>` de la estable a la que lleva) o de la versión que se fuerce (`x.y.z`). Una
+   estable promueve la última beta: su versión sin sufijo, construida del mismo commit, con las
+   notas desde la estable anterior. Ningún commit sube la versión del manifiesto.
+2. **build**: los tres sistemas construyen ese commit. Windows, un instalador por arquitectura.
+3. **smoke**: Linux y Windows instalan su instalador, lo abren como esa versión y lo cierran, con
+   los tests de `main` (`release-smoke.spec.ts` de cada app).
+4. **draft**: `SHA256SUMS`, la atestación de procedencia y un borrador con los instaladores, las
+   notas y los archivos de actualización.
+5. **publish**: espera la aprobación en el environment `release` (solo `main`). Publicar crea el
+   tag `<realtime|request>-v<x.y.z>[-beta.<n>]` sobre el commit y apunta el feed a esa release.
+   Rechazarla deja el borrador; la próxima corrida lo reemplaza.
+
+- Una release de una app espera a la anterior de la misma app; `feed-rollback` también.
+- Los tags de versión y de feed no se mueven ni se borran (ruleset del repo).
+- **Rollback**: `feed-rollback` con la app y una release anterior vuelve a ofrecer sus archivos de
+  actualización, con la misma aprobación. Quien no actualizó deja de ver la mala; quien ya la
+  tiene la conserva hasta la release siguiente, porque el updater nunca baja de versión. La
+  release mala sigue en su página: se arregla con otra.
 - Feed fijo por app, `realtime-feed` o `request-feed`: un prerelease que nunca es el último del
   repo y solo guarda los `latest*`, `beta*` y `alpha*.yml`, con la dirección completa de los
   instaladores en el release de su versión. Proveedor `generic`: el `github` lee el último release

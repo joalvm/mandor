@@ -21,7 +21,7 @@ type BuilderConfig = {
     linux: { icon: string; maintainer: string; syncDesktopName: boolean; target: Target[] };
     generateUpdatesFilesForAllChannels: boolean;
     mac: { icon: string; identity: string; hardenedRuntime: boolean; target: Target[] };
-    nsis: { installerIcon: string; uninstallerIcon: string };
+    nsis: { buildUniversalInstaller: boolean; installerIcon: string; uninstallerIcon: string };
     productName: string;
     publish: { provider: string; url: string };
     win: { icon: string; target: Target[] };
@@ -51,6 +51,8 @@ describe('Mandor Realtime packaging', () => {
         expect(value.linux.maintainer).toMatch(/^.+ <.+@.+>$/u);
         expect(metadata.homepage).toMatch(/^https:\/\//u);
         expect(value.win.target).toEqual([{ target: 'nsis', arch: ['x64', 'arm64'] }]);
+        // The updater picks the installer of its architecture: one of both would only weigh.
+        expect(value.nsis.buildUniversalInstaller).toBe(false);
         expect(value.mac.target).toEqual([
             { target: 'dmg', arch: ['x64', 'arm64'] },
             { target: 'zip', arch: ['x64', 'arm64'] },

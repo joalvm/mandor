@@ -1,38 +1,20 @@
-import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { once } from 'node:events';
-import { chmod, copyFile, mkdir, readdir, readFile, rm } from 'node:fs/promises';
+import { chmod, copyFile, mkdir, mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 
-import { chromium, expect, type Browser, type Page } from '@playwright/test';
-
-/**
- * The name Windows gives the installed executable and its uninstaller. electron-builder takes it
- * from `executableName`, and the product name only when there is none.
- */
-const EXECUTABLE = 'mandor-realtime';
-
-export type Installed = {
-    /** The folder the app was installed to, which holds the executable. */
-    directory: string;
-    uninstall: () => Promise<void>;
-};
-
-export type OpenApp = {
-    page: Page;
-    /** Asks the app to quit the way a person closing its window does, and waits for it to go. */
-    quit: () => Promise<void>;
-    /** Settles when the process has gone, however it went. */
-    exited: Promise<void>;
-    /** Closes the connection and ends the process if it is still there. */
-    close: () => Promise<void>;
-};
+import { chromium, expect } from '@playwright/test';
 
 /**
  * Installs the way a person does, into a folder of the sandbox. Windows: the installer in silent
  * mode for the current user, with `/D` last and unquoted, as NSIS requires. Linux: the AppImage
  * copied there and made executable, which is all its install is.
+ *
+ * `executable` is the name Windows gives the installed program and its uninstaller:
+ * electron-builder takes it from `executableName`, and the product name only when there is none.
  */
-export async function install(installer: string, sandbox: string): Promise<Installed> {
+export async function install(installer, sandbox, executable) {
     const directory = join(sandbox, 'app');
 
     if (process.platform === 'win32') {
@@ -42,7 +24,7 @@ export async function install(installer: string, sandbox: string): Promise<Insta
             throw new Error(`the installer ended with ${String(done.status)}`);
         }
 
-        return { directory, uninstall: () => uninstallNsis(directory) };
+        return { directory, uninstall: () => uninstallNsis(directory, executable) };
     }
 
     const target = join(directory, basename(installer));
@@ -55,8 +37,8 @@ export async function install(installer: string, sandbox: string): Promise<Insta
     return { directory, uninstall: () => rm(directory, { force: true, recursive: true }) };
 }
 
-function uninstallNsis(directory: string): Promise<void> {
-    const done = spawnSync(join(directory, `Uninstall ${EXECUTABLE}.exe`), ['/S']);
+function uninstallNsis(directory, executable) {
+    const done = spawnSync(join(directory, `Uninstall ${executable}.exe`), ['/S']);
 
     return done.status === 0
         ? Promise.resolve()
@@ -67,9 +49,9 @@ function uninstallNsis(directory: string): Promise<void> {
  * The executable of an installed folder. An AppImage is found by its extension, since the updater
  * writes the new one next to the old and removes the old by its versioned name.
  */
-export async function executableIn(directory: string): Promise<string> {
+export async function executableIn(directory, executable) {
     if (process.platform === 'win32') {
-        return join(directory, `${EXECUTABLE}.exe`);
+        return join(directory, `${executable}.exe`);
     }
 
     const images = (await readdir(directory)).filter((name) => name.endsWith('.AppImage'));
@@ -82,7 +64,7 @@ export async function executableIn(directory: string): Promise<string> {
 }
 
 /** The installer a build left in a folder: the one `.exe` or `.AppImage`, and not its blockmap. */
-export async function installerIn(directory: string): Promise<string> {
+export async function installerIn(directory) {
     const extension = process.platform === 'win32' ? '.exe' : '.AppImage';
     const found = (await readdir(directory)).filter((name) => name.endsWith(extension));
 
@@ -93,7 +75,27 @@ export async function installerIn(directory: string): Promise<string> {
     return join(directory, found[0]);
 }
 
-async function readPort(path: string): Promise<string> {
+/** The end of the name of the installer a release ships for the machine running this. */
+const RELEASE_INSTALLER = { win32: '-win-x64.exe', linux: '-linux-x86_64.AppImage' };
+
+/**
+ * The installer of this system among the ones a release built: a release holds one per system
+ * and architecture, and the runners are x64.
+ */
+async function releaseInstallerIn(directory) {
+    const ending = RELEASE_INSTALLER[process.platform];
+    const found = (await readdir(directory)).filter((name) => name.endsWith(ending ?? '\0'));
+
+    if (found.length !== 1 || found[0] === undefined) {
+        throw new Error(
+            `expected one *${String(ending)} in ${directory}, found ${String(found.length)}`,
+        );
+    }
+
+    return join(directory, found[0]);
+}
+
+async function readPort(path) {
     try {
         return (await readFile(path, 'utf8')).split('\n')[0] ?? '';
     } catch {
@@ -101,26 +103,26 @@ async function readPort(path: string): Promise<string> {
     }
 }
 
-async function initialPage(browser: Browser): Promise<Page> {
+async function titledPage(context) {
+    for (const page of context.pages()) {
+        if ((await page.locator('[data-part="titlebar"]').count()) > 0) {
+            return page;
+        }
+    }
+
+    return undefined;
+}
+
+async function initialPage(browser) {
     const [context] = browser.contexts();
 
     if (context === undefined) {
         throw new Error('the installed app did not expose a browser context');
     }
 
-    const titled = async (): Promise<Page | undefined> => {
-        for (const page of context.pages()) {
-            if ((await page.locator('[data-part="titlebar"]').count()) > 0) {
-                return page;
-            }
-        }
+    await expect.poll(async () => (await titledPage(context)) !== undefined).toBe(true);
 
-        return undefined;
-    };
-
-    await expect.poll(async () => (await titled()) !== undefined).toBe(true);
-
-    const page = await titled();
+    const page = await titledPage(context);
 
     if (page === undefined) {
         throw new Error('the installed app did not reach its initial screen');
@@ -129,7 +131,7 @@ async function initialPage(browser: Browser): Promise<Page> {
     return page;
 }
 
-function stopped(app: ChildProcess): Promise<void> {
+function stopped(app) {
     if (app.exitCode !== null || app.signalCode !== null) {
         return Promise.resolve();
     }
@@ -142,11 +144,7 @@ function stopped(app: ChildProcess): Promise<void> {
  * Playwright launcher cannot drive it: it is opened with a debugging port the runtime picks, read
  * from the file it writes in the user data folder, and reached over CDP.
  */
-export async function openInstalled(
-    executable: string,
-    userDataDir: string,
-    env: Record<string, string> = {},
-): Promise<OpenApp> {
+export async function openInstalled(executable, userDataDir, env = {}) {
     const portFile = join(userDataDir, 'DevToolsActivePort');
 
     // A start before this one left its port in the folder: it is gone, or it would be read first.
@@ -184,4 +182,28 @@ export async function openInstalled(
             await exited;
         },
     };
+}
+
+/**
+ * Installs the installer a release built for this system into a sandbox, opens it on its first
+ * screen, with its data and its documents in the sandbox too, and reads the agent of its window,
+ * where Electron names the app and its version. Then quits the app the way a person does,
+ * uninstalls it and removes the sandbox.
+ */
+export async function releaseAgent({ installers, executable, name }) {
+    const sandbox = await mkdtemp(join(tmpdir(), `mandor-${name}-release-`));
+    const installed = await install(await releaseInstallerIn(installers), sandbox, executable);
+    const app = await openInstalled(
+        await executableIn(installed.directory, executable),
+        join(sandbox, 'data'),
+        { MANDOR_DEFAULT_REPO_ROOT: join(sandbox, 'repo') },
+    );
+
+    try {
+        return await app.page.evaluate(() => navigator.userAgent);
+    } finally {
+        await app.quit();
+        await installed.uninstall();
+        await rm(sandbox, { force: true, maxRetries: 10, recursive: true });
+    }
 }

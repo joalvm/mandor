@@ -11,10 +11,13 @@ import {
     installerIn,
     openInstalled,
     type OpenApp,
-} from './support/installed-app.js';
+} from '../../../../tools/workspace/installed-app.mjs';
 import { serveFeed, type FeedServer } from './support/update-feed-server.js';
 
 const PAIR = process.env['MANDOR_UPDATE_PAIR'] ?? '';
+
+/** The name electron-builder gives the installed program, from `executableName`. */
+const EXECUTABLE = 'mandor-realtime';
 
 // skip-policy: it needs the installer pair that tools/update/build-update-pair.mjs builds.
 test.skip(PAIR === '', 'MANDOR_UPDATE_PAIR does not point to the pair of installers');
@@ -116,11 +119,11 @@ test('an installed beta finds the stable, installs it on quit and keeps what the
     const userData = join(sandbox, 'data');
     const feed = await serveFeed(join(PAIR, 'feed'));
     const installer = await installerIn(join(PAIR, 'feed'));
-    const installed = await install(await installerIn(join(PAIR, 'from')), sandbox);
+    const installed = await install(await installerIn(join(PAIR, 'from')), sandbox, EXECUTABLE);
     let app: OpenApp | undefined;
 
     try {
-        app = await openInstalled(await executableIn(installed.directory), userData);
+        app = await openInstalled(await executableIn(installed.directory, EXECUTABLE), userData);
         await setUpUpdates(app.page);
         await expectDownloaded(app.page, feed, installer);
 
@@ -131,7 +134,7 @@ test('an installed beta finds the stable, installs it on quit and keeps what the
             .poll(() => installerRunning(basename(installer)), { timeout: 120_000 })
             .toBe(false);
 
-        app = await openInstalled(await executableIn(installed.directory), userData);
+        app = await openInstalled(await executableIn(installed.directory, EXECUTABLE), userData);
         await expectUpdated(app.page, userData, await versionOfFeed(PAIR));
     } finally {
         await closeAll(app);

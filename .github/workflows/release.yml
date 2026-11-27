@@ -1,52 +1,96 @@
 name: release
 
-# A tag `<realtime|request>-v<x.y.z>[-beta.<n>]` publishes that version of that app: each system
-# builds its installers, then one job attests them, writes their checksums, opens the release of
-# the version and refreshes the feed the installed app follows.
+# A person starts a release of one app from the button of this workflow, on `main`, and approves
+# it once its installers have opened on a real installation. Nothing reaches anyone before that.
+#
+# - plan: the version and the notes come from the commits that changed what the app ships. A beta
+#   is built from the head of `main`; a stable promotes the last beta, built again from its commit.
+# - build: each system builds the installers of that commit with that version.
+# - smoke: Linux and Windows install the installer of their system, open it as that version and
+#   quit, with the tests of `main`.
+# - draft: one job attests the installers, writes their checksums and opens a draft release that
+#   holds them with the notes and the update files. A draft has no tag and nobody sees it.
+# - publish: waits in the `release` environment until a person approves it, then publishes the
+#   draft, which tags the commit, and points the feed of the app at it.
 #
 # Nothing is signed by a certificate yet: Windows is unsigned and macOS is signed ad-hoc. What a
 # person can check instead is the provenance: `gh attestation verify <file> --repo joalvm/mandor`
-# says the file came out of this workflow, at this tag.
+# says the file came out of this workflow, at this commit.
 #
 # The feed is a fixed release per app, `realtime-feed` or `request-feed`, that holds only the
 # update files. They name the installers in full, on the release of their version, since the two
 # apps share the repository and its latest release can be either of them.
 on:
-    push:
-        tags:
-            - 'realtime-v*'
-            - 'request-v*'
+    workflow_dispatch:
+        inputs:
+            app:
+                description: The app to release.
+                type: choice
+                options: [request, realtime]
+            channel:
+                description: A beta from the head of main, or a stable that promotes the last beta.
+                type: choice
+                options: [beta, stable]
+                default: beta
+            version:
+                description: Only on a beta, and only to leave the version the commits ask for (x.y.z).
+                type: string
+                default: ''
 
 permissions:
     contents: read
 
+# Two releases of one app write the same feed: the second waits for the first, approved or not.
+concurrency:
+    group: release-${{ inputs.app }}
+    cancel-in-progress: false
+
 jobs:
-    tag:
-        name: tag
+    plan:
+        name: plan
         runs-on: ubuntu-latest
         timeout-minutes: 5
         outputs:
-            app: ${{ steps.read.outputs.app }}
-            product: ${{ steps.read.outputs.product }}
-            version: ${{ steps.read.outputs.version }}
-            prerelease: ${{ steps.read.outputs.prerelease }}
-            feed: ${{ steps.read.outputs.feed }}
-            previous: ${{ steps.read.outputs.previous }}
+            tag: ${{ steps.plan.outputs.tag }}
+            version: ${{ steps.plan.outputs.version }}
+            prerelease: ${{ steps.plan.outputs.prerelease }}
+            sha: ${{ steps.plan.outputs.sha }}
+            app: ${{ steps.plan.outputs.app }}
+            product: ${{ steps.plan.outputs.product }}
+            feed: ${{ steps.plan.outputs.feed }}
         steps:
-            # Every tag, for the release the notes start from.
+            # Every commit of `main` passed the checks of its pull request: a release starts only
+            # there, before a single build is paid for.
+            - shell: bash
+              run: |
+                  if [ "$GITHUB_REF" != 'refs/heads/main' ]; then
+                      echo "::error::A release starts from main, not from $GITHUB_REF."
+                      exit 1
+                  fi
+            # Every commit and every tag: the version and the notes are read from them.
             - uses: actions/checkout@v7
               with:
                   fetch-depth: 0
             - uses: actions/setup-node@v7
               with:
                   node-version: 26
-            # A tag that names no app or no version stops here, before a single build is paid for.
-            - id: read
-              run: node tools/publish/release-tag.mjs "$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+            - id: plan
+              env:
+                  APP: ${{ inputs.app }}
+                  CHANNEL: ${{ inputs.channel }}
+                  VERSION: ${{ inputs.version }}
+              run: node tools/publish/release-plan.mjs "$APP" "$CHANNEL" "$VERSION" release-notes.md >> "$GITHUB_OUTPUT"
+            # Named apart from the installers, which the draft gathers as `release-*`.
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: notes
+                  if-no-files-found: error
+                  retention-days: 1
+                  path: release-notes.md
 
     build:
         name: build (${{ matrix.os }})
-        needs: tag
+        needs: plan
         runs-on: ${{ matrix.os }}
         timeout-minutes: 30
         strategy:
@@ -57,10 +101,14 @@ jobs:
             TURBO_TELEMETRY_DISABLED: 1
             # No certificates: the mac app is signed ad-hoc, which needs no identity to find.
             CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-            APP: ${{ needs.tag.outputs.app }}
-            VERSION: ${{ needs.tag.outputs.version }}
+            APP: ${{ needs.plan.outputs.app }}
+            VERSION: ${{ needs.plan.outputs.version }}
         steps:
+            # The commit of the plan: the head of `main` for a beta, the commit of the beta for a
+            # stable, so a stable ships the code its beta shipped.
             - uses: actions/checkout@v7
+              with:
+                  ref: ${{ needs.plan.outputs.sha }}
             - uses: ./.github/actions/unscanned-workspace
             - uses: actions/setup-node@v7
               with:
@@ -68,7 +116,7 @@ jobs:
                   cache: npm
             # Both workspaces install the same Electron dist; serialize their lifecycle scripts.
             - run: npm ci --foreground-scripts
-            # The tag is the version: no commit bumps the manifest before a release.
+            # The plan is the version: no commit bumps the manifest before a release.
             - shell: bash
               run: npm run dist -w "apps/$APP" -- --publish never "-c.extraMetadata.version=$VERSION"
             # An app with no valid signature is the one a download on Apple silicon calls damaged.
@@ -84,38 +132,75 @@ jobs:
                   if-no-files-found: error
                   retention-days: 1
                   path: |
-                      apps/${{ needs.tag.outputs.app }}/dist/*.exe
-                      apps/${{ needs.tag.outputs.app }}/dist/*.dmg
-                      apps/${{ needs.tag.outputs.app }}/dist/*.zip
-                      apps/${{ needs.tag.outputs.app }}/dist/*.AppImage
-                      apps/${{ needs.tag.outputs.app }}/dist/*.deb
-                      apps/${{ needs.tag.outputs.app }}/dist/*.blockmap
-                      apps/${{ needs.tag.outputs.app }}/dist/latest*.yml
-                      apps/${{ needs.tag.outputs.app }}/dist/beta*.yml
-                      apps/${{ needs.tag.outputs.app }}/dist/alpha*.yml
+                      apps/${{ needs.plan.outputs.app }}/dist/*.exe
+                      apps/${{ needs.plan.outputs.app }}/dist/*.dmg
+                      apps/${{ needs.plan.outputs.app }}/dist/*.zip
+                      apps/${{ needs.plan.outputs.app }}/dist/*.AppImage
+                      apps/${{ needs.plan.outputs.app }}/dist/*.deb
+                      apps/${{ needs.plan.outputs.app }}/dist/*.blockmap
+                      apps/${{ needs.plan.outputs.app }}/dist/latest*.yml
+                      apps/${{ needs.plan.outputs.app }}/dist/beta*.yml
+                      apps/${{ needs.plan.outputs.app }}/dist/alpha*.yml
 
-    publish:
-        name: publish
-        needs: [tag, build]
+    smoke:
+        name: smoke (${{ matrix.os }})
+        needs: [plan, build]
+        runs-on: ${{ matrix.os }}
+        timeout-minutes: 20
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+        env:
+            APP: ${{ needs.plan.outputs.app }}
+            MANDOR_RELEASE_INSTALLERS: ${{ github.workspace }}/release
+            MANDOR_RELEASE_VERSION: ${{ needs.plan.outputs.version }}
+        steps:
+            # The tests of `main`, which a stable promoted from an older commit may not have had.
+            - uses: actions/checkout@v7
+            - uses: ./.github/actions/unscanned-workspace
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+                  cache: npm
+            - run: npm ci --foreground-scripts
+            # Ubuntu 24.04 no longer ships the FUSE 2 library an AppImage needs to run.
+            - if: runner.os == 'Linux'
+              run: sudo apt-get update && sudo apt-get install -y libfuse2t64
+            - uses: actions/download-artifact@v8
+              with:
+                  name: release-${{ matrix.os }}
+                  path: release
+            - if: runner.os == 'Linux'
+              shell: bash
+              working-directory: apps/${{ needs.plan.outputs.app }}
+              run: xvfb-run -a npx playwright test --config playwright.config.ts release-smoke
+            - if: runner.os == 'Windows'
+              shell: bash
+              working-directory: apps/${{ needs.plan.outputs.app }}
+              run: npx playwright test --config playwright.config.ts release-smoke
+            # The page Playwright saved beside a failure goes to the log, where the failing job is.
+            - if: failure()
+              shell: bash
+              run: find "apps/$APP/test-results" -name 'error-context.md' -print -exec cat {} + 2>/dev/null || true
+
+    draft:
+        name: draft
+        needs: [plan, smoke]
         runs-on: ubuntu-latest
         timeout-minutes: 15
-        # Two tags of one app write the same feed: the second waits for the first to finish.
-        concurrency:
-            group: release-${{ needs.tag.outputs.app }}
-            cancel-in-progress: false
         permissions:
             contents: write
             id-token: write
             attestations: write
         env:
             GH_TOKEN: ${{ github.token }}
-            TAG: ${{ github.ref_name }}
-            PRODUCT: ${{ needs.tag.outputs.product }}
-            VERSION: ${{ needs.tag.outputs.version }}
-            PRERELEASE: ${{ needs.tag.outputs.prerelease }}
-            FEED: ${{ needs.tag.outputs.feed }}
-            PREVIOUS: ${{ needs.tag.outputs.previous }}
-            BASE: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/
+            TAG: ${{ needs.plan.outputs.tag }}
+            SHA: ${{ needs.plan.outputs.sha }}
+            PRODUCT: ${{ needs.plan.outputs.product }}
+            VERSION: ${{ needs.plan.outputs.version }}
+            PRERELEASE: ${{ needs.plan.outputs.prerelease }}
+            BASE: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ needs.plan.outputs.tag }}/
         steps:
             - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
@@ -126,6 +211,9 @@ jobs:
                   pattern: release-*
                   merge-multiple: true
                   path: release
+            - uses: actions/download-artifact@v8
+              with:
+                  name: notes
             # Each glob has to match: a system that built nothing fails the release here.
             - working-directory: release
               shell: bash
@@ -134,19 +222,38 @@ jobs:
               with:
                   subject-checksums: release/SHA256SUMS
             - run: node tools/publish/feed-files.mjs release "$BASE"
-            # A rerun of a failed publish finds the release open and replaces its files.
+            # A run that was turned down left its draft: the new one replaces it. The update files
+            # stay on the release of their version too, which is where a rollback reads them.
             - shell: bash
               run: |
+                  if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null)" = 'true' ]; then
+                      gh release delete "$TAG" --yes
+                  fi
+                  shopt -s nullglob
                   files=(release/*.exe release/*.dmg release/*.zip release/*.AppImage release/*.deb)
                   files+=(release/*.blockmap release/SHA256SUMS)
-                  if gh release view "$TAG" > /dev/null 2>&1; then
-                      gh release upload "$TAG" "${files[@]}" --clobber
-                      exit 0
-                  fi
-                  flags=(--verify-tag --generate-notes --title "$PRODUCT $VERSION")
+                  files+=(release/latest*.yml release/beta*.yml release/alpha*.yml)
+                  flags=(--draft --target "$SHA" --title "$PRODUCT $VERSION" --notes-file release-notes.md)
                   if [ "$PRERELEASE" = 'true' ]; then flags+=(--prerelease); fi
-                  if [ -n "$PREVIOUS" ]; then flags+=(--notes-start-tag "$PREVIOUS"); fi
                   gh release create "$TAG" "${flags[@]}" "${files[@]}"
+
+    publish:
+        name: publish
+        needs: [plan, draft]
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        # The run stops here until a person approves it. Only `main` deploys to this environment.
+        environment: release
+        permissions:
+            contents: write
+        env:
+            GH_TOKEN: ${{ github.token }}
+            GH_REPO: ${{ github.repository }}
+            TAG: ${{ needs.plan.outputs.tag }}
+            FEED: ${{ needs.plan.outputs.feed }}
+        steps:
+            # Publishing the draft creates its tag on the commit it was built from.
+            - run: gh release edit "$TAG" --draft=false
             # The feed opens once per app. A prerelease never becomes the latest of the
             # repository, so the page of the repository shows a version and not the feed.
             - shell: bash
@@ -155,6 +262,5 @@ jobs:
                       gh release create "$FEED" --prerelease --latest=false --target main \
                           --title "$FEED" --notes 'The update files the installed app reads. Installers are on the release of each version.'
                   fi
-                  shopt -s nullglob
-                  files=(release/latest*.yml release/beta*.yml release/alpha*.yml)
-                  gh release upload "$FEED" "${files[@]}" --clobber
+                  gh release download "$TAG" --dir feed --pattern 'latest*.yml' --pattern 'beta*.yml' --pattern 'alpha*.yml'
+                  gh release upload "$FEED" feed/*.yml --clobber
