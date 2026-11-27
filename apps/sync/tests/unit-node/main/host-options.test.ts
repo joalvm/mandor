@@ -63,8 +63,8 @@ describe('what Mandor Request asks of the host', () => {
     });
 
     /** An install that cannot update by itself lands where the installers are, not on the code. */
-    it('sends an install that cannot update by itself to the releases', () => {
-        expect(SYNC_HOST_OPTIONS.homepage).toBe('https://github.com/joalvm/mandor/releases');
+    it('sends an install that cannot update by itself to the downloads of its app', () => {
+        expect(SYNC_HOST_OPTIONS.homepage).toBe('https://joalvm.github.io/mandor/#request');
     });
 
     it('takes the icon from the resources next to the main directory', () => {

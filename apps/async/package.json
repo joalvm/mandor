@@ -5,7 +5,7 @@
     "description": "Local workbench for WebSocket, Socket.IO and AsyncAPI.",
     "author": "Mandor contributors",
     "license": "AGPL-3.0-only",
-    "homepage": "https://github.com/joalvm/mandor",
+    "homepage": "https://joalvm.github.io/mandor/#realtime",
     "desktopName": "mandor-realtime",
     "type": "module",
     "main": "./out/main/start-async.js",

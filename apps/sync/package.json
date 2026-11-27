@@ -5,7 +5,7 @@
     "description": "Local workbench for HTTP, GraphQL, OpenAPI, Swagger and Postman.",
     "author": "Mandor contributors",
     "license": "AGPL-3.0-only",
-    "homepage": "https://github.com/joalvm/mandor",
+    "homepage": "https://joalvm.github.io/mandor/#request",
     "desktopName": "mandor-request",
     "type": "module",
     "main": "./out/main/start-sync.js",

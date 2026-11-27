@@ -113,6 +113,25 @@ function AboutLinks() {
 }
 
 /**
+ * The notices the license of the app asks it to show where the person sees them: who holds the
+ * copyright, that it comes with no warranty, that it may be shared under that license, and that
+ * Licenses opens it.
+ */
+function AboutLegal() {
+    const translate = useTranslator();
+
+    return (
+        <div
+            className="flex max-w-form flex-col items-center gap-gap-tight text-xs text-text-secondary"
+            data-part="about-legal"
+        >
+            <p>{translate('preferences:aboutCopyright')}</p>
+            <p>{translate('preferences:aboutLicense')}</p>
+        </div>
+    );
+}
+
+/**
  * Which app this is, read down the middle: its mark and its name, then what version runs and
  * what it runs on, then the way to put all of it in a report of a fault and what lies outside.
  * The section needs no heading of its own: the name of the app is the heading.
@@ -158,6 +177,7 @@ export function AboutSection() {
                 <CopyAboutButton about={about} />
                 <AboutLinks />
             </div>
+            <AboutLegal />
         </section>
     );
 }

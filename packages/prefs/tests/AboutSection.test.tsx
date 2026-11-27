@@ -97,6 +97,21 @@ describe('the about section of the settings', () => {
         );
     });
 
+    /**
+     * The legal notices the AGPL asks the app to show: who holds the copyright, that it comes
+     * with no warranty, that it may be shared under the license, and where to read it.
+     */
+    it('says who holds the copyright, that there is no warranty and under what license', async () => {
+        await draw();
+
+        const legal = byPart('about-legal');
+
+        expect(legal).toHaveTextContent('Copyright © 2026 Alejandro Vilchez');
+        expect(legal).toHaveTextContent('GNU Affero General Public License v3.0');
+        expect(legal).toHaveTextContent('no warranty');
+        expect(legal).toHaveTextContent('Licenses');
+    });
+
     /** The window names no path or address: main knows where both are. */
     it('asks main to show the licenses and the website of the app', async () => {
         const licenses = vi.spyOn(bridge.app, 'openLicenses').mockResolvedValue(success({}));

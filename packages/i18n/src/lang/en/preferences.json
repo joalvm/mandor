@@ -107,6 +107,8 @@
     "aboutCopied": "Copied",
     "aboutWebsite": "Website",
     "aboutLicenses": "Licenses",
+    "aboutCopyright": "Copyright © 2026 Alejandro Vilchez",
+    "aboutLicense": "Free software under the GNU Affero General Public License v3.0, with no warranty. You may share and change it under that license, which Licenses opens.",
     "section-scripts": "Scripts",
     "scriptsGroup": "Scripts on this machine",
     "runScripts": "Run scripts",
