@@ -102,6 +102,7 @@ jobs:
             # No certificates: the mac app is signed ad-hoc, which needs no identity to find.
             CSC_IDENTITY_AUTO_DISCOVERY: 'false'
             APP: ${{ needs.plan.outputs.app }}
+            PRODUCT: ${{ needs.plan.outputs.product }}
             VERSION: ${{ needs.plan.outputs.version }}
         steps:
             # The commit of the plan: the head of `main` for a beta, the commit of the beta for a
@@ -126,6 +127,11 @@ jobs:
                   for app in apps/"$APP"/dist/mac*/*.app; do
                       codesign --verify --deep --strict --verbose=2 "$app"
                   done
+            # The notices of what the installers carry, named for the release. The build writes the
+            # same list on every system but for the binaries each one installs: Linux attaches it.
+            - if: runner.os == 'Linux'
+              shell: bash
+              run: cp "apps/$APP/out/licenses/THIRD-PARTY-NOTICES.txt" "apps/$APP/dist/${PRODUCT// /-}-$VERSION-THIRD-PARTY-NOTICES.txt"
             - uses: actions/upload-artifact@v7
               with:
                   name: release-${{ matrix.os }}
@@ -141,6 +147,7 @@ jobs:
                       apps/${{ needs.plan.outputs.app }}/dist/latest*.yml
                       apps/${{ needs.plan.outputs.app }}/dist/beta*.yml
                       apps/${{ needs.plan.outputs.app }}/dist/alpha*.yml
+                      apps/${{ needs.plan.outputs.app }}/dist/*-THIRD-PARTY-NOTICES.txt
 
     smoke:
         name: smoke (${{ matrix.os }})
@@ -217,7 +224,7 @@ jobs:
             # Each glob has to match: a system that built nothing fails the release here.
             - working-directory: release
               shell: bash
-              run: sha256sum *.exe *.dmg *.zip *.AppImage *.deb > SHA256SUMS
+              run: sha256sum *.exe *.dmg *.zip *.AppImage *.deb *-THIRD-PARTY-NOTICES.txt > SHA256SUMS
             - uses: actions/attest-build-provenance@v4
               with:
                   subject-checksums: release/SHA256SUMS
@@ -231,7 +238,7 @@ jobs:
                   fi
                   shopt -s nullglob
                   files=(release/*.exe release/*.dmg release/*.zip release/*.AppImage release/*.deb)
-                  files+=(release/*.blockmap release/SHA256SUMS)
+                  files+=(release/*.blockmap release/SHA256SUMS release/*-THIRD-PARTY-NOTICES.txt)
                   files+=(release/latest*.yml release/beta*.yml release/alpha*.yml)
                   flags=(--draft --target "$SHA" --title "$PRODUCT $VERSION" --notes-file release-notes.md)
                   if [ "$PRERELEASE" = 'true' ]; then flags+=(--prerelease); fi
