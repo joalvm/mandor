@@ -1,9 +1,6 @@
-import { spawnSync } from 'node:child_process';
-import { pathToFileURL } from 'node:url';
-
 /**
- * The apps a tag can name, by the name a person sees: each one with the folder it lives in, which
- * keeps the name it has inside the code.
+ * The apps a release can name, by the name a person sees: each one with the folder it lives in,
+ * which keeps the name it has inside the code.
  */
 const APPS = {
     realtime: { app: 'async', product: 'Mandor Realtime' },
@@ -22,7 +19,17 @@ const TAG = new RegExp(
     'u',
 );
 
-function readTag(tag) {
+/** The app a person names, or a refusal that lists the ones there are. */
+export function appNamed(name) {
+    if (!Object.hasOwn(APPS, name)) {
+        throw new Error(`"${name}" is no app: it is realtime or request.`);
+    }
+
+    return { name, ...APPS[name], feed: `${name}-feed` };
+}
+
+/** What a tag names, or nothing when it is not the tag of a release. */
+export function releaseOf(tag) {
     const match = TAG.exec(tag);
 
     if (match === null || !Object.hasOwn(APPS, match.groups.name)) {
@@ -31,17 +38,12 @@ function readTag(tag) {
 
     const { name, version, beta } = match.groups;
 
-    return {
-        ...APPS[name],
-        version,
-        prerelease: beta !== undefined,
-        feed: `${name}-feed`,
-    };
+    return { ...appNamed(name), version, prerelease: beta !== undefined };
 }
 
 /** What a release tag names: the app, its version, whether it is a beta and the feed it fills. */
 export function parseReleaseTag(tag) {
-    const release = readTag(tag);
+    const release = releaseOf(tag);
 
     if (release === undefined) {
         throw new Error(
@@ -59,7 +61,8 @@ function rankOf(version) {
     return [...core.split('.').map(Number), beta === undefined ? Infinity : Number(beta)];
 }
 
-function compareVersions(left, right) {
+/** Below zero when `left` comes first, above when `right` does, zero for the same version. */
+export function compareVersions(left, right) {
     const a = rankOf(left);
     const b = rankOf(right);
     const at = a.findIndex((part, index) => part !== b[index]);
@@ -74,35 +77,11 @@ function compareVersions(left, right) {
 export function previousTag(tag, tags) {
     const current = parseReleaseTag(tag);
     const earlier = tags
-        .map((name) => ({ name, release: readTag(name) }))
+        .map((name) => ({ name, release: releaseOf(name) }))
         .filter(({ release }) => release !== undefined && release.app === current.app)
         .filter(({ release }) => compareVersions(release.version, current.version) < 0)
         .filter(({ release }) => current.prerelease || !release.prerelease)
         .sort((left, right) => compareVersions(right.release.version, left.release.version));
 
     return earlier[0]?.name;
-}
-
-/** The lines the workflow appends to `$GITHUB_OUTPUT`, one `key=value` each. */
-export function releaseOutputs(tag, tags) {
-    const release = parseReleaseTag(tag);
-    const values = { ...release, previous: previousTag(tag, tags) ?? '' };
-
-    return Object.entries(values)
-        .map(([key, value]) => `${key}=${String(value)}`)
-        .join('\n');
-}
-
-function main(tag) {
-    const listed = spawnSync('git', ['tag', '--list'], { encoding: 'utf8' });
-
-    if (listed.status !== 0) {
-        throw new Error(`git tag --list failed with ${String(listed.status)}.`);
-    }
-
-    process.stdout.write(`${releaseOutputs(tag, listed.stdout.split('\n').filter(Boolean))}\n`);
-}
-
-if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
-    main(process.argv[2] ?? '');
 }

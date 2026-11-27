@@ -8,37 +8,38 @@ import { parse } from 'yaml';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../..');
 
 const workflow = parse(await readFile(join(ROOT, '.github/workflows/release.yml'), 'utf8'));
-const { tag, build, publish } = workflow.jobs;
+const { plan, build, smoke, draft, publish } = workflow.jobs;
 
 function runsOf(job) {
     return job.steps.filter((step) => step.run !== undefined).map((step) => step.run);
 }
 
+function checkoutOf(job) {
+    return job.steps.find((step) => step.uses?.startsWith('actions/checkout@'));
+}
+
 describe('the release workflow', () => {
-    it('starts only from the tag of a version of one app', () => {
-        expect(Object.keys(workflow.on)).toEqual(['push']);
-        expect(workflow.on.push).toEqual({ tags: ['realtime-v*', 'request-v*'] });
+    it('starts only from its button, for one app and one channel the updater follows', () => {
+        expect(Object.keys(workflow.on)).toEqual(['workflow_dispatch']);
+
+        const { app, channel, version } = workflow.on.workflow_dispatch.inputs;
+
+        expect(app.options).toEqual(['request', 'realtime']);
+        expect(channel).toMatchObject({ options: ['beta', 'stable'], default: 'beta' });
+        expect(version.default).toBe('');
     });
 
-    it('reads the tag before a single build is paid for', () => {
-        expect(build.needs).toBe('tag');
-        expect(runsOf(tag).join('\n')).toContain('node tools/publish/release-tag.mjs');
+    it('plans the release on main, from every commit and tag, before a single build is paid for', () => {
+        const runs = runsOf(plan).join('\n');
+
+        expect(runs).toContain(`"$GITHUB_REF" != 'refs/heads/main'`);
+        expect(checkoutOf(plan).with).toEqual({ 'fetch-depth': 0 });
+        expect(runs).toContain('node tools/publish/release-plan.mjs "$APP" "$CHANNEL" "$VERSION"');
+        expect(build.needs).toBe('plan');
     });
 
-    /** Only the job that publishes can write, and it never runs code of the build it publishes. */
-    it('writes from one job only, the one with no build in it', () => {
-        expect(workflow.permissions).toEqual({ contents: 'read' });
-        expect(tag.permissions).toBeUndefined();
-        expect(build.permissions).toBeUndefined();
-        expect(publish.permissions).toEqual({
-            contents: 'write',
-            'id-token': 'write',
-            attestations: 'write',
-        });
-        expect(runsOf(publish).join('\n')).not.toMatch(/npm (ci|install|run)/u);
-    });
-
-    it('builds the installers of every system, with the version of the tag', () => {
+    it('builds the commit of the plan, on every system, with the version of the plan', () => {
+        expect(checkoutOf(build).with).toEqual({ ref: '${{ needs.plan.outputs.sha }}' });
         expect([...build.strategy.matrix.os].sort()).toEqual([
             'macos-latest',
             'ubuntu-latest',
@@ -56,34 +57,80 @@ describe('the release workflow', () => {
         expect(runsOf(build).join('\n')).toContain('codesign --verify --deep --strict');
     });
 
-    it('publishes the checksums of the installers and an attestation of where they came from', () => {
-        const runs = runsOf(publish).join('\n');
-        const attest = publish.steps.find((step) =>
+    it('installs and opens what it built on Linux and Windows, with the tests of main', () => {
+        expect(smoke.needs).toEqual(['plan', 'build']);
+        expect([...smoke.strategy.matrix.os].sort()).toEqual(['ubuntu-latest', 'windows-latest']);
+        expect(checkoutOf(smoke).with).toBeUndefined();
+        expect(smoke.env.MANDOR_RELEASE_VERSION).toBe('${{ needs.plan.outputs.version }}');
+
+        for (const run of runsOf(smoke).filter((line) => line.includes('playwright test'))) {
+            expect(run).toMatch(/release-smoke$/u);
+        }
+    });
+
+    /** Only the jobs that publish can write, and neither runs code of the build it publishes. */
+    it('writes from the draft and the publish only, which build nothing', () => {
+        expect(workflow.permissions).toEqual({ contents: 'read' });
+
+        for (const job of [plan, build, smoke]) {
+            expect(job.permissions).toBeUndefined();
+        }
+
+        expect(draft.permissions).toEqual({
+            contents: 'write',
+            'id-token': 'write',
+            attestations: 'write',
+        });
+        expect(publish.permissions).toEqual({ contents: 'write' });
+
+        for (const job of [draft, publish]) {
+            expect(runsOf(job).join('\n')).not.toMatch(/npm (ci|install|run)/u);
+        }
+    });
+
+    it('drafts the release only once the installers opened, with their checksums and attestation', () => {
+        const runs = runsOf(draft).join('\n');
+        const attest = draft.steps.find((step) =>
             step.uses?.startsWith('actions/attest-build-provenance@'),
         );
 
+        expect(draft.needs).toEqual(['plan', 'smoke']);
         expect(runs).toContain('sha256sum *.exe *.dmg *.zip *.AppImage *.deb > SHA256SUMS');
         expect(attest.with).toEqual({ 'subject-checksums': 'release/SHA256SUMS' });
-        expect(runs).toContain('release/SHA256SUMS');
+        expect(runs).toContain('--draft --target "$SHA"');
+        expect(runs).toContain('--notes-file release-notes.md');
+        expect(runs).toContain('release/latest*.yml release/beta*.yml release/alpha*.yml');
     });
 
-    it('fills the feed of the app only once the release of its version holds the installers', () => {
-        const runs = runsOf(publish);
+    it('names the installers in full in the update files before the draft holds them', () => {
+        const runs = runsOf(draft);
         const point = runs.findIndex((run) => run.includes('tools/publish/feed-files.mjs'));
-        const release = runs.findIndex((run) => run.includes('gh release create "$TAG"'));
-        const feed = runs.findIndex((run) => run.includes('gh release upload "$FEED"'));
+        const create = runs.findIndex((run) => run.includes('gh release create "$TAG"'));
 
         expect(point).toBeGreaterThanOrEqual(0);
-        expect(release).toBeGreaterThan(point);
+        expect(create).toBeGreaterThan(point);
+    });
+
+    it('publishes only once a person approves, and points the feed of the app at it afterwards', () => {
+        const runs = runsOf(publish);
+        const release = runs.findIndex((run) =>
+            run.includes('gh release edit "$TAG" --draft=false'),
+        );
+        const feed = runs.findIndex((run) => run.includes('gh release upload "$FEED"'));
+
+        expect(publish.environment).toBe('release');
+        expect(publish.needs).toEqual(['plan', 'draft']);
+        expect(release).toBeGreaterThanOrEqual(0);
         expect(feed).toBeGreaterThan(release);
+        expect(runs[feed]).toContain('gh release download "$TAG"');
         expect(runs[feed]).toContain('--clobber');
         expect(runs[feed]).toContain('--prerelease --latest=false');
     });
 
-    /** Two tags of one app write the same feed: the second waits, and neither is cut short. */
-    it('publishes one release of an app at a time', () => {
-        expect(publish.concurrency).toEqual({
-            group: 'release-${{ needs.tag.outputs.app }}',
+    /** Two releases of one app write the same feed: the second waits, and neither is cut short. */
+    it('runs one release of an app at a time', () => {
+        expect(workflow.concurrency).toEqual({
+            group: 'release-${{ inputs.app }}',
             'cancel-in-progress': false,
         });
     });

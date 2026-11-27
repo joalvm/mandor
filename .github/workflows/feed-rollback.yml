@@ -1,0 +1,59 @@
+name: feed-rollback
+
+# Points the feed of an app back at a release out before, when the one it points at turns out
+# bad. An installed app that has not updated yet stops being offered the bad one; one that already
+# has it keeps it until a release after it ships, since the updater never goes back a version.
+#
+# The release keeps its page and its files: only what the feed offers changes. It waits in the
+# `release` environment for a person to approve it, the same as a publish.
+on:
+    workflow_dispatch:
+        inputs:
+            app:
+                description: The app whose feed goes back.
+                type: choice
+                options: [request, realtime]
+            tag:
+                description: The release the feed points at again, such as request-v0.1.0.
+                type: string
+                required: true
+
+permissions:
+    contents: read
+
+# A rollback and a release of one app write the same feed: one waits for the other.
+concurrency:
+    group: release-${{ inputs.app }}
+    cancel-in-progress: false
+
+jobs:
+    rollback:
+        name: rollback
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        environment: release
+        permissions:
+            contents: write
+        env:
+            GH_TOKEN: ${{ github.token }}
+            GH_REPO: ${{ github.repository }}
+            APP: ${{ inputs.app }}
+            TAG: ${{ inputs.tag }}
+            FEED: ${{ inputs.app }}-feed
+        steps:
+            # Only a published release of that app: a draft, the feed or the other app is refused.
+            - shell: bash
+              run: |
+                  if [[ ! "$TAG" =~ ^$APP-v[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$ ]]; then
+                      echo "::error::$TAG is no release of $APP."
+                      exit 1
+                  fi
+                  if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft)" != 'false' ]; then
+                      echo "::error::$TAG is not out: there is nothing to go back to."
+                      exit 1
+                  fi
+            # A release out before this workflow holds no update files, and the download says so.
+            - shell: bash
+              run: |
+                  gh release download "$TAG" --dir feed --pattern 'latest*.yml' --pattern 'beta*.yml' --pattern 'alpha*.yml'
+                  gh release upload "$FEED" feed/*.yml --clobber

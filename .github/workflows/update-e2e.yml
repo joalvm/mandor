@@ -16,7 +16,7 @@ on:
             - tools/update/**
             - apps/async/tests/e2e/update-install.spec.ts
             - apps/async/tests/e2e/installed-smoke.spec.ts
-            - apps/async/tests/e2e/support/installed-app.ts
+            - tools/workspace/installed-app.mjs
             - apps/async/tests/e2e/support/update-feed-server.ts
             - .github/workflows/update-e2e.yml
     workflow_dispatch:
