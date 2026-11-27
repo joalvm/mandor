@@ -10,7 +10,7 @@
     "type": "module",
     "main": "./out/main/start-sync.js",
     "scripts": {
-        "build": "electron-vite build",
+        "build": "electron-vite build && node ../../tools/notices/write-notices.mjs",
         "dev": "electron-vite dev",
         "dist": "npm run build && electron-builder --config electron-builder.yml",
         "postinstall": "install-electron",

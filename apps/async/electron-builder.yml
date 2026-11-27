@@ -22,10 +22,16 @@ files:
     - package.json
     - resources/icon.png
     - '!out/**/*.map'
+    # What the build noted for the notices, with paths of the machine that built it.
+    - '!out/licenses/**'
 
 extraResources:
     - from: ../../LICENSE
       to: licenses/LICENSE
+    - from: out/licenses/THIRD-PARTY-NOTICES.txt
+      to: licenses/THIRD-PARTY-NOTICES.txt
+    - from: ../../TRADEMARKS.md
+      to: licenses/TRADEMARKS.md
     - from: ../../packages/icons/NOTICE.md
       to: licenses/icons-NOTICE.md
     - from: ../../packages/icons/licenses

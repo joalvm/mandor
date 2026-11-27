@@ -1,5 +1,10 @@
 import tailwindcss from '@tailwindcss/vite';
-import { basename, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { bundledPackages } from '../notices/bundled-packages.mjs';
+
+const REPO = join(dirname(fileURLToPath(import.meta.url)), '../..');
 
 /**
  * What a dependency ships for other bundlers and the bundler drops on its own: `"use client"` on
@@ -25,6 +30,9 @@ function quietDependencyWarnings(warning, warn) {
  */
 export function appBuildConfig({ appDir, mainEntry }) {
     const entry = (path) => join(appDir, path);
+    // What each bundle holds, for the notices of the installer: see tools/notices.
+    const noted = (target) =>
+        bundledPackages({ outDir: entry('out/licenses'), root: REPO, target });
 
     return {
         main: {
@@ -41,6 +49,7 @@ export function appBuildConfig({ appDir, mainEntry }) {
                     onwarn: quietDependencyWarnings,
                 },
             },
+            plugins: [noted('main')],
         },
         preload: {
             build: {
@@ -51,6 +60,7 @@ export function appBuildConfig({ appDir, mainEntry }) {
                     onwarn: quietDependencyWarnings,
                 },
             },
+            plugins: [noted('preload')],
         },
         // electron-vite leaves the window unminified. The editor alone is megabytes of script that
         // the window parses and keeps in memory once it loads, so the window is minified like any
@@ -63,7 +73,7 @@ export function appBuildConfig({ appDir, mainEntry }) {
                     onwarn: quietDependencyWarnings,
                 },
             },
-            plugins: [tailwindcss()],
+            plugins: [tailwindcss(), noted('renderer')],
         },
     };
 }
