@@ -107,7 +107,10 @@ const geometry = geometryOf(intentions);
 const names = Object.keys(geometry).sort();
 
 for (const name of names) {
-    await syncSource(`src/${name}.tsx`, componentSource(name, geometry[name]));
+    await syncSource(
+        `src/${name}.tsx`,
+        componentSource(name, geometry[name], intentions[name].mirrored === true),
+    );
 }
 
 await syncSource('src/icon-name.ts', namesSource(names));

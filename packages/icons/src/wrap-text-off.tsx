@@ -5,7 +5,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the wrap text off icon. */
 export function WrapTextOffIcon(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props} mirrored>
             <path
                 d={
                     'M1.5 3L14.5 3C14.776 3 15 3.224 15 3.5C15 3.776 14.776 4 14.5 4L1.5 4C1.224 ' +

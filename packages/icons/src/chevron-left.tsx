@@ -5,7 +5,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the chevron left icon. */
 export function ChevronLeftIcon(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props} mirrored>
             <path
                 d={
                     'M9.14601 3.14623L4.64601 7.64623C4.45101 7.84123 4.45101 8.15823 4.64601 ' +

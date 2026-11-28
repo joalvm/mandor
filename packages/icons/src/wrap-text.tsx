@@ -5,7 +5,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the wrap text icon. */
 export function WrapTextIcon(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props} mirrored>
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"

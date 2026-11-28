@@ -36,7 +36,7 @@ function chunksOf(d) {
     return parts;
 }
 
-export function componentSource(name, paths) {
+export function componentSource(name, paths, mirrored = false) {
     const component = componentOf(name);
     const drawn = paths
         .map((path) => {
@@ -59,7 +59,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the ${name.replaceAll('-', ' ')} icon. */
 export function ${component}(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props}${mirrored ? ' mirrored' : ''}>
 ${drawn}
         </IconFrame>
     );

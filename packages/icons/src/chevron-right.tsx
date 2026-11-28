@@ -5,7 +5,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the chevron right icon. */
 export function ChevronRightIcon(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props} mirrored>
             <path
                 d={
                     'M6.14601 3.14579C5.95101 3.34079 5.95101 3.65779 6.14601 3.85279L10.292 ' +

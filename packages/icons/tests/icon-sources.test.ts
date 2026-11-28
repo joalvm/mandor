@@ -16,7 +16,7 @@ type OwnSource = {
     license: string;
 };
 type Source = CodiconSource | OwnSource;
-type Intention = { state: 'candidate' | 'approved'; source: Source };
+type Intention = { state: 'candidate' | 'approved'; mirrored?: true; source: Source };
 type Manifest = {
     provider: { package: string; version: string };
     intentions: Record<string, Intention>;
