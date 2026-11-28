@@ -1,0 +1,100 @@
+<!--
+title: Security — Mandor
+description: How to report a vulnerability in Mandor Realtime or Mandor Request privately, which versions receive fixes, and how the apps contain the scripts they run.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <h1>Security</h1>
+        <p class="doc-meta">Effective 26 November 2026</p>
+        <p class="doc-note">
+            A summary of the security policy. The full one is
+            <a href="https://github.com/joalvm/mandor/blob/main/SECURITY.md">SECURITY.md</a>, in the
+            repository.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#report">Report a vulnerability</a></li>
+            <li><a href="#versions">Supported versions</a></li>
+            <li><a href="#scope">What matters most</a></li>
+            <li><a href="#scripts">Scripts</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="report">
+            <h2>Report a vulnerability</h2>
+            <p>
+                Report it privately, never in a public issue:
+                <a href="https://github.com/joalvm/mandor/security/advisories/new"
+                    >open a private report</a
+                >
+                on GitHub. Only the author sees it.
+            </p>
+            <p>Useful to include:</p>
+            <ul>
+                <li>which app, its version and your operating system;</li>
+                <li>
+                    what an attacker can do, and what they need first: a crafted file, a malicious
+                    server, local access;
+                </li>
+                <li>the steps to reproduce it, or a proof of concept.</li>
+            </ul>
+            <p>
+                You get an answer within seven days. Once a fix is out, the advisory is published
+                with credit to you, unless you prefer otherwise.
+            </p>
+        </section>
+
+        <section id="versions">
+            <h2>Supported versions</h2>
+            <p>
+                The latest release of each app receives security fixes. An older one does not:
+                update to the latest to get them.
+            </p>
+        </section>
+
+        <section id="scope">
+            <h2>What matters most</h2>
+            <p>Both apps run locally, without an account or a server of their own. Above all:</p>
+            <ul>
+                <li>
+                    anything that lets a document, a collection or a server response run code or
+                    reach the filesystem;
+                </li>
+                <li>
+                    secrets leaving the secure storage of the system, or landing in your files or
+                    logs;
+                </li>
+                <li>a transport reaching a kind of address it should refuse.</li>
+            </ul>
+        </section>
+
+        <section id="scripts">
+            <h2>Scripts</h2>
+            <p>
+                Requests, folders, collections and connections can carry scripts, and their author
+                may be a stranger. Two promises hold without exception: a value marked secret never
+                reaches a script, and no malicious code runs on your machine because of Mandor.
+            </p>
+            <ul>
+                <li>
+                    A script nobody approved on your machine does not run. Opening, importing or
+                    syncing never runs one, and a text that changes asks again.
+                </li>
+                <li>
+                    Scripts run in QuickJS compiled to WebAssembly, with limits on time, memory,
+                    output and network calls, and see nothing of the app around them.
+                </li>
+                <li>
+                    <strong>Settings → Scripts → Run scripts</strong> stops every script at once,
+                    without deleting any or undoing an approval.
+                </li>
+            </ul>
+            <p>
+                What is left, and how to write scripts:
+                <a href="https://github.com/joalvm/mandor/blob/main/SECURITY.md#scripts"
+                    >SECURITY.md</a
+                >
+                and <a href="https://github.com/joalvm/mandor/blob/main/SCRIPTS.md">SCRIPTS.md</a>.
+            </p>
+        </section>
+    </div>
+</article>

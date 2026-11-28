@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="{{lang}}" dir="{{dir}}">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; script-src 'none'; base-uri 'none'; form-action 'none'"
+        />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="light dark" />
+        <title>{{title}}</title>
+        <meta name="description" content="{{description}}" />
+        <link rel="canonical" href="{{canonical}}" />
+        {{alternates}}
+        <link rel="icon" type="image/png" href="{{root}}icons/request.png" />
+        <link
+            rel="preload"
+            href="{{root}}fonts/inter.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link rel="stylesheet" href="{{root}}styles.css" />
+    </head>
+    <body>
+        <a class="skip" href="#main">{{t.skip}}</a>
+        <header class="top">
+            <a class="wordmark" href="{{index}}">Mandor</a>
+            <nav class="top-nav" aria-label="{{t.nav.label}}">
+                <a class="top-section" href="{{index}}#request">{{t.nav.request}}</a>
+                <a class="top-section" href="{{index}}#realtime">{{t.nav.realtime}}</a>
+                <a class="top-section" href="{{index}}#download">{{t.nav.download}}</a>
+                <a href="{{home}}docs.html">{{t.nav.docs}}</a>
+                <button
+                    class="top-lang"
+                    type="button"
+                    popovertarget="languages"
+                    aria-label="{{t.nav.language}}: {{t.language.name}}"
+                >
+                    {{t.language.name}}
+                </button>
+                <a
+                    class="code-link"
+                    href="https://github.com/joalvm/mandor"
+                    aria-label="{{t.code}}"
+                    title="{{t.code}}"
+                ></a>
+            </nav>
+            <nav class="languages" id="languages" popover aria-label="{{t.nav.language}}">
+                <ul>
+                    {{languages}}
+                </ul>
+            </nav>
+        </header>
+        <main id="main">{{content}}</main>
+        <footer class="tiles">
+            <div class="tile tile-statement">
+                <p class="tile-lead">{{t.footer.statement}}</p>
+                <p class="tile-legal">{{t.footer.legal}}</p>
+            </div>
+            <div class="tile tile-nav">
+                <nav aria-label="{{t.footer.legalNav}}">
+                    <ul>
+                        <li><a href="{{home}}privacy.html">{{t.footer.privacy}}</a></li>
+                        <li><a href="{{home}}terms.html">{{t.footer.terms}}</a></li>
+                        <li><a href="{{home}}licenses.html">{{t.footer.licenses}}</a></li>
+                        <li><a href="{{home}}trademarks.html">{{t.footer.trademarks}}</a></li>
+                        <li><a href="{{home}}security.html">{{t.footer.security}}</a></li>
+                    </ul>
+                </nav>
+                <a class="source-link" href="https://github.com/joalvm/mandor">{{t.code}}</a>
+            </div>
+            <div class="tile tile-mark" aria-hidden="true">Mandor</div>
+            <a class="tile tile-cta" href="{{index}}#download">
+                <span class="tile-cta-text">{{t.footer.cta}}</span>
+                <svg class="tile-arrow" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                    <path d="M10 38 38 10M16 10h22v22" />
+                </svg>
+            </a>
+        </footer>
+    </body>
+</html>

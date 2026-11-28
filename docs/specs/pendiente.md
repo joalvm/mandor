@@ -13,7 +13,6 @@ macOS firmado ad hoc. Lo que se puede comprobar es la procedencia (`gh attestati
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Firma de Windows              | SignPath Foundation, gratis para código abierto: la solicitud la hace el dueño del repo. Alternativas: Microsoft Store (firma la tienda, pide el target `appx`), Azure de pago |
 | Firma y notarización de macOS | Puerta externa: cuenta de desarrollador de pago. Hasta entonces macOS avisa de la versión nueva y no la instala (`manual-only`)                                                |
-| Documentación de usuario      | Solo existen `SCRIPTS.md`, `SECURITY.md` y la instalación de la beta en el README                                                                                              |
 | Checklist de release          | Incluye e2e completo en las tres plataformas: un cambio de flags de V8 en main tumbó la app y solo el e2e completo lo vio                                                      |
 | Comprobar a mano una vez      | El primer tag de cada app de punta a punta: release, feed y actualización desde él; worker de import dentro del asar de un instalador real; vigía del repo en Windows y macOS  |
 

@@ -46,7 +46,7 @@ por job: Linux ×1, Windows ×2, macOS ×10.
 | `e2e (macos-latest)`      | lo mismo, cada app en su runner             | la app toca el sistema, o etiqueta `e2e:macos` |
 
 - El alcance lo calcula `tools/ci/changed-scope.mjs`. Prosa (`docs/`, `skills/`, `*.md`) no abre
-  ninguna ventana.
+  ninguna ventana, ni el sitio público (`site/`, `tools/site/`, sus tests y `pages.yml`).
 - Un job saltado por su condición cuenta como superado: los checks son jobs fijos, sin matriz.
 - Todo job lleva `timeout-minutes`. En CI, Playwright reintenta una vez y para a los tres fallos.
 - `installers` arranca solo si el PR toca un `electron-builder.yml`, `tools/ci/Dockerfile` o su
@@ -56,3 +56,7 @@ por job: Linux ×1, Windows ×2, macOS ×10.
 - `release` y `feed-rollback` arrancan solo a mano, desde `main`, nunca en un PR, y no tienen
   ensayo local: `tools/tests/ci/release-workflow.test.mjs` y `feed-rollback-workflow.test.mjs`
   fijan su forma.
+- `pages` publica el sitio en GitHub Pages: arranca en un push a `main` que toca `site/`,
+  `tools/site/` o su workflow, tras un `release` que termina bien, o a mano; nunca en un PR.
+  `tools/tests/site/` prueba el build en `verify`; `tools/tests/ci/pages-workflow.test.mjs` fija su
+  forma.

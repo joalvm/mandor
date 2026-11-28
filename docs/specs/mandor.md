@@ -238,6 +238,26 @@ Una release sale del botón del workflow `release` (o `gh workflow run release -
   Squirrel.Mac solo instala apps con Developer ID, así que en macOS el updater avisa y abre los
   releases (`manual-only`), como desde el deb. `installers` comprueba la firma ad hoc en el PR.
 
+## Web
+
+Sitio público en GitHub Pages (`https://joalvm.github.io/mandor/`) hasta tener hosting propio.
+Estático y sin JavaScript: `tools/site/build-site.mjs` une `site/layout.html`, `site/i18n.json` y
+las páginas de `site/pages/<idioma>/`, y llena las descargas de cada app y sistema con los releases
+del repo. Los idiomas son las claves de `i18n.json`, en su orden: el primero (inglés) en `/`, cada
+otro en `/<código en minúsculas>/`, todos con las mismas páginas.
+
+- Landing, Docs (guía corta por app; verificar e instalar) y legales: privacidad, términos,
+  licencias y avisos de terceros, marcas y seguridad. Contacto solo por GitHub.
+- Sumar un idioma: una clave en `i18n.json` con `language.name` (en su propia lengua) y
+  `language.dir` (`ltr` o `rtl`), y `site/pages/<código>/` con las páginas del inglés. El build
+  añade el `hreflang`, la entrada del menú de idiomas y el `dir`; los cortes, flechas y campos del
+  hero se reflejan en `rtl`, y chino, japonés, coreano, hindi, árabe y afines toman su fuente, sin
+  tracking negativo.
+- `tools/tests/site/` prueba el build: mismas páginas en cada idioma, `hreflang` y menú completos,
+  un idioma `rtl` añadido, enlaces y anclas que existen, un `h1`, sin script ni `style=`.
+- `pages.yml` lo publica en un push a `main` que toca el sitio, tras un `release` que termina bien
+  (descargas nuevas) o a mano.
+
 ## Licencia y marca
 
 AGPL-3.0-only, con CLA para contribuir. Nombres y logos fuera de la licencia (`TRADEMARKS.md`).

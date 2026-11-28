@@ -1,0 +1,224 @@
+<!--
+title: Empieza con Mandor Realtime — Mandor
+description: Tu primera conexión en Mandor Realtime, y luego mensajes guardados, entornos y variables, los archivos que escribe, compartir un workspace con un origen, scripts e importaciones.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <a class="doc-up" href="{{home}}docs.html">Docs</a>
+        <h1>Empieza con Realtime</h1>
+        <p class="doc-note">
+            Mandor Realtime abre conexiones WebSocket y Socket.IO, registra cada mensaje en ambos
+            sentidos y guarda su workspace como archivos planos en tu disco. Sin cuenta y sin nada
+            que configurar antes.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#workspace">Tu workspace</a></li>
+            <li><a href="#first-connection">Tu primera conexión</a></li>
+            <li><a href="#messages">Enviar y leer</a></li>
+            <li><a href="#saved">Mensajes guardados</a></li>
+            <li><a href="#environments">Entornos y variables</a></li>
+            <li><a href="#files">Los archivos en disco</a></li>
+            <li><a href="#origins">Compártelo con un origen</a></li>
+            <li><a href="#scripts">Scripts</a></li>
+            <li><a href="#import">Trae lo que ya tienes</a></li>
+            <li><a href="#keys">Atajos</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="workspace">
+            <h2>Tu workspace</h2>
+            <p>
+                La primera vez que se abre, Realtime crea su carpeta en
+                <code>Documents/Mandor/realtime/local</code> con un workspace,
+                <strong>Personal</strong>, y lo abre. No hay nada que elegir.
+            </p>
+            <p>
+                Un workspace guarda conexiones, mensajes guardados y entornos. Para otro, abre el
+                menú del workspace en la barra de título, elige
+                <strong>Administrar workspaces</strong> y luego <strong>Nuevo workspace</strong>, y
+                ponle un nombre.
+            </p>
+        </section>
+
+        <section id="first-connection">
+            <h2>Tu primera conexión</h2>
+            <ol>
+                <li>
+                    En la barra lateral, el <strong>+</strong> de <strong>Conexiones</strong> crea
+                    una <strong>Nueva conexión</strong>, con la URL todavía vacía.
+                </li>
+                <li>
+                    Escribe la dirección en <strong>URL de la conexión</strong>. Un servidor
+                    WebSocket lleva <code>ws:</code> o <code>wss:</code>; uno Socket.IO lleva
+                    <code>http:</code> o <code>https:</code>.
+                </li>
+                <li>
+                    Para Socket.IO, abre el menú de la conexión, elige <strong>Ajustes</strong> y
+                    fija su <strong>Transporte</strong>: la versión 2, o la 3 y 4.
+                </li>
+                <li>
+                    Pulsa <strong>Conectar</strong>. <strong>Desconectar</strong> la vuelve a
+                    cerrar.
+                </li>
+            </ol>
+        </section>
+
+        <section id="messages">
+            <h2>Enviar y leer</h2>
+            <p>
+                Escribe el payload en la pestaña <strong>Mensaje</strong> del compositor y pulsa
+                <strong>Enviar</strong>, o <kbd><kbd>Ctrl</kbd>+<kbd>Enter</kbd></kbd
+                >. En Socket.IO el compositor también nombra el <strong>Evento</strong>, y
+                <strong>Esperar ack</strong> mantiene el mensaje abierto hasta que el servidor
+                responde.
+            </p>
+            <p>
+                <strong>Actividad</strong> registra lo que envías y todo lo que llega, cada evento
+                en su propia fila, sin un listener que configurar antes. Desde su barra lo buscas,
+                lo filtras, lo exportas o lo vacías.
+            </p>
+        </section>
+
+        <section id="saved">
+            <h2>Mensajes guardados</h2>
+            <p>
+                Un mensaje que envías a menudo va en una colección. El menú de una colección o una
+                carpeta añade un <strong>Nuevo mensaje</strong>. Al abrirlo se carga en el
+                compositor de la conexión abierta, listo para enviar;
+                <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd> guarda en él tu cambio.
+            </p>
+        </section>
+
+        <section id="environments">
+            <h2>Entornos y variables</h2>
+            <p>
+                El selector de entorno está en la barra de título, y la barra de dirección de una
+                conexión muestra cuál usa. <strong>Crear entorno</strong> crea el primero;
+                <strong>Administrar entornos</strong> los edita todos, con los
+                <strong>Globales</strong> que comparten todos los entornos.
+            </p>
+            <p>
+                Escribe una variable como <code>&#123;&#123;nombre&#125;&#125;</code> en la URL o en
+                un mensaje. Una que no está definida se envía como texto literal.
+            </p>
+            <p>
+                Marca una variable como <strong>Variable secreta</strong> y su valor va al llavero
+                de tu sistema, fuera de la carpeta del workspace: el archivo guarda el nombre con el
+                valor vacío, así que un secreto nunca llega a un commit. Donde el sistema no tiene
+                llavero, el valor vive en memoria hasta que la app se cierra.
+            </p>
+        </section>
+
+        <section id="files">
+            <h2>Los archivos en disco</h2>
+            <p>
+                Cada cosa es un archivo YAML con un id corto por nombre, así que renombrar cambia
+                una línea y no una ruta. Todo salvo <code>.mandor/</code> está hecho para el commit.
+            </p>
+            <pre><code>mandor.yaml
+globals.yaml
+workspaces/&lt;id&gt;/
+  workspace.yaml
+  connections/&lt;id&gt;.yaml              <span class="tree-note"># una conexión</span>
+  environments/&lt;id&gt;.yaml
+  collections/&lt;id&gt;/collection.yaml
+  collections/&lt;id&gt;/&lt;id&gt;.yaml        <span class="tree-note"># un mensaje guardado</span>
+  collections/&lt;id&gt;/&lt;id&gt;/folder.yaml
+  docs/*.md                         <span class="tree-note"># documentación</span>
+.mandor/                            <span class="tree-note"># privado de este equipo</span></code></pre>
+            <p>
+                <code>.mandor/</code> guarda lo que es solo de este equipo, como las pestañas
+                abiertas, y git lo ignora.
+            </p>
+        </section>
+
+        <section id="origins">
+            <h2>Compártelo con un origen</h2>
+            <p>
+                La carpeta del workspace es un repositorio git, y Realtime hace un commit de cada
+                cambio que guardas; nunca escribes un comando de git. Para compartir un workspace o
+                tenerlo en otro equipo, añade un origen: un repositorio vacío al que llegues, por
+                <code>https:</code> o <code>ssh:</code>.
+            </p>
+            <ol>
+                <li>
+                    Abre el menú de orígenes, elige <strong>Gestionar orígenes</strong> y luego
+                    <strong>Añadir origen</strong>.
+                </li>
+                <li>Dale un nombre y su URL.</li>
+            </ol>
+            <p>
+                Desde entonces, Realtime trae y envía cambios al abrirse, después de cada guardado,
+                cada minuto y cuando su ventana recibe el foco. Nunca fuerza un push. Cuando el
+                mismo campo cambió en ambos lados, la pestaña <strong>Conflictos</strong> muestra
+                cada diferencia para resolverla con <strong>Usar lo mío</strong> o
+                <strong>Usar lo entrante</strong>.
+            </p>
+        </section>
+
+        <section id="scripts">
+            <h2>Scripts</h2>
+            <p>
+                Una conexión corre JavaScript en tres momentos: <strong>Antes de conectar</strong>,
+                <strong>Al conectar</strong> y <strong>Con los mensajes</strong>. Se escriben en la
+                parte <strong>Scripts</strong> de los ajustes de la conexión. Un script lee y define
+                variables, envía con <code>mandor.socket.send</code> y lee lo que llegó en
+                <code>mandor.message</code>.
+            </p>
+            <p>
+                Los scripts corren en un sandbox sin archivos, red ni módulos propios. Uno que llega
+                por un origen o una importación espera hasta que lo apruebes. Para apagarlos todos:
+                <strong>Ajustes → Scripts → Correr scripts</strong>. Cada objeto y función está en
+                <a href="https://github.com/joalvm/mandor/blob/main/SCRIPTS.md">SCRIPTS.md</a>.
+            </p>
+        </section>
+
+        <section id="import">
+            <h2>Trae lo que ya tienes</h2>
+            <p>
+                <strong>Importar un documento</strong> lee un archivo AsyncAPI 2 o 3.
+                <strong>Importar un workspace</strong> trae uno exportado desde Mandor. Un workspace
+                también se puede exportar como AsyncAPI 3.
+            </p>
+        </section>
+
+        <section id="keys">
+            <h2>Atajos</h2>
+            <p>En macOS, <kbd>Cmd</kbd> ocupa el lugar de <kbd>Ctrl</kbd>.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Paleta de comandos</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Enviar</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Enter</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Guardar</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Buscar en el workspace</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ajustes</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>,</kbd></kbd>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</article>

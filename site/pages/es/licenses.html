@@ -1,0 +1,142 @@
+<!--
+title: Licencias — Mandor
+description: La licencia de Mandor, dónde vive el código fuente de cada versión, el acuerdo de contribución y los avisos del software de terceros que lleva cada instalador.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <h1>Licencias</h1>
+        <p class="doc-meta">Vigente desde el 26 de noviembre de 2026</p>
+        <p class="doc-note">
+            Un resumen claro de las licencias en juego. Informa; no es asesoría legal ni reemplaza
+            la revisión de un abogado. Lo que obliga son los textos de las licencias.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#agpl">La licencia de Mandor</a></li>
+            <li><a href="#source">El código de cada versión</a></li>
+            <li><a href="#contributing">Contribuir</a></li>
+            <li><a href="#notices">Avisos de terceros</a></li>
+            <li><a href="#electron">Electron y Chromium</a></li>
+            <li><a href="#site">Este sitio</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="agpl">
+            <h2>La licencia de Mandor</h2>
+            <p>
+                Copyright © 2026 Alejandro Vilchez. Mandor Realtime y Mandor Request son software
+                libre bajo la
+                <a href="https://github.com/joalvm/mandor/blob/main/LICENSE"
+                    >GNU Affero General Public License v3.0 only</a
+                >, sin garantía. El
+                <a href="https://www.gnu.org/licenses/agpl-3.0.html">mismo texto</a>
+                está en el sitio del proyecto GNU.
+            </p>
+            <ul>
+                <li>Puedes correr las apps para cualquier fin, sin aceptar nada.</li>
+                <li>Puedes estudiarlas y cambiarlas, y compartirlas, cambiadas o no.</li>
+                <li>
+                    Una versión que compartes, cambiada o no, va con esta licencia y su código. Una
+                    que cambias y dejas usar por red les ofrece también su código.
+                </li>
+            </ul>
+            <p>
+                Cada app muestra el mismo aviso en <strong>Ajustes → Acerca de</strong>, y
+                <strong>Licencias</strong> ahí abre la carpeta con la licencia y cada aviso.
+            </p>
+        </section>
+
+        <section id="source">
+            <h2>El código de cada versión</h2>
+            <p>
+                Cada release de cada app se construye desde un tag del repositorio, y su página
+                enlaza ese tag y el archivo de su código que genera GitHub. Un tag nunca se mueve ni
+                se borra, así que el código de cualquier versión que descargaste sigue donde dice su
+                release.
+            </p>
+            <p>
+                Las <a href="{{index}}#download">descargas</a> enlazan el tag de cada versión junto
+                a sus instaladores.
+            </p>
+        </section>
+
+        <section id="contributing">
+            <h2>Contribuir</h2>
+            <p>
+                Una contribución entra bajo el
+                <a href="https://github.com/joalvm/mandor/blob/main/CLA.md"
+                    >acuerdo de licencia de contribución</a
+                >, firmado una vez en el primer pull request. Conservas el copyright de lo que
+                contribuyes; el acuerdo deja al proyecto distribuirlo, también bajo otra licencia
+                más adelante, sin preguntar a cada contribuidor anterior.
+            </p>
+        </section>
+
+        <section id="notices">
+            <h2>Avisos de terceros</h2>
+            <p>
+                Las apps se construyen sobre otro software libre. Cada instalador lleva
+                <code>THIRD-PARTY-NOTICES.txt</code>, con el nombre, la versión, la licencia y el
+                texto de licencia de cada paquete que contiene, junto a la licencia de Mandor, los
+                avisos de los iconos y la política de marcas.
+            </p>
+            <p>
+                Cada release adjunta además el mismo archivo por separado, con el nombre de la
+                release, como
+                <code>Mandor-Request-{{latest.request}}-THIRD-PARTY-NOTICES.txt</code>, y lo lista
+                en <code>SHA256SUMS</code>.
+            </p>
+        </section>
+
+        <section id="electron">
+            <h2>Electron y Chromium</h2>
+            <p>
+                Las apps corren sobre Electron, bajo la licencia MIT, que corre sobre Chromium,
+                hecho de cientos de componentes con sus propias licencias. Cada instalador conserva
+                ambos avisos tal como los trae Electron:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Sistema</th>
+                        <th scope="col">Dónde están</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Windows y Linux</td>
+                        <td>Junto al ejecutable de la app</td>
+                    </tr>
+                    <tr>
+                        <td>macOS</td>
+                        <td>Dentro de la app, en <code>Contents/Resources</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                <code>LICENSE.electron.txt</code> tiene la licencia de Electron, y
+                <code>LICENSES.chromium.html</code> la de cada componente de Chromium.
+            </p>
+            <p>
+                Entre ellos está FFmpeg, bajo la GNU Lesser General Public License v2.1, como una
+                biblioteca aparte (<code>ffmpeg.dll</code>, <code>libffmpeg.so</code> o
+                <code>libffmpeg.dylib</code>) que las apps toman sin cambios de Electron y que se
+                puede reemplazar. Su código se publica con el de
+                <a href="https://github.com/electron/electron/releases">Electron</a>, en la versión
+                que usa cada app.
+            </p>
+        </section>
+
+        <section id="site">
+            <h2>Este sitio</h2>
+            <p>
+                El código de este sitio vive en el mismo
+                <a href="https://github.com/joalvm/mandor">repositorio</a>, bajo la misma licencia.
+                Su tipografía es Inter, de The Inter Project Authors, bajo la
+                <a href="{{root}}fonts/OFL.txt">SIL Open Font License 1.1</a>. El glifo de GitHub
+                que enlaza al repositorio viene de
+                <a href="https://github.com/microsoft/vscode-codicons">Codicons</a>, de Microsoft,
+                bajo <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
+            </p>
+        </section>
+    </div>
+</article>

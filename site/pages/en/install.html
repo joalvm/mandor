@@ -1,0 +1,181 @@
+<!--
+title: Verify and install — Mandor
+description: How to check that a Mandor installer is the one this repository built, with SHA256SUMS and a GitHub attestation, and how to open it on Windows, macOS and Linux before it carries a certificate.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <a class="doc-up" href="{{home}}docs.html">Docs</a>
+        <h1>Verify and install</h1>
+        <p class="doc-meta">Updated 26 November 2026</p>
+        <p class="doc-note">
+            The apps carry no code-signing certificate yet, so Windows and macOS ask once before the
+            first launch. Checking the file first tells you it is the one this repository built,
+            byte for byte.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#file">Pick the file</a></li>
+            <li><a href="#checksum">Check the checksum</a></li>
+            <li><a href="#attestation">Check where it was built</a></li>
+            <li><a href="#windows">Open it on Windows</a></li>
+            <li><a href="#macos">Open it on macOS</a></li>
+            <li><a href="#linux">Install it on Linux</a></li>
+            <li><a href="#updates">Updates</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="file">
+            <h2>Pick the file</h2>
+            <p>
+                Each app has its own releases, and each release holds one installer per system and
+                processor, named <code>Mandor-&lt;App&gt;-&lt;version&gt;-&lt;system&gt;</code>. The
+                <a href="{{index}}#download">downloads</a> list the latest ones; every release is on
+                <a href="https://github.com/joalvm/mandor/releases">GitHub</a>.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">System</th>
+                        <th scope="col">Processor</th>
+                        <th scope="col">The name ends in</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Windows</td>
+                        <td>x64</td>
+                        <td><code>-win-x64.exe</code></td>
+                    </tr>
+                    <tr>
+                        <td>Windows</td>
+                        <td>Arm64</td>
+                        <td><code>-win-arm64.exe</code></td>
+                    </tr>
+                    <tr>
+                        <td>macOS</td>
+                        <td>Apple silicon</td>
+                        <td><code>-mac-arm64.dmg</code></td>
+                    </tr>
+                    <tr>
+                        <td>macOS</td>
+                        <td>Intel</td>
+                        <td><code>-mac-x64.dmg</code></td>
+                    </tr>
+                    <tr>
+                        <td>Linux</td>
+                        <td>x64</td>
+                        <td>
+                            <code>-linux-x86_64.AppImage</code> or <code>-linux-amd64.deb</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Linux</td>
+                        <td>Arm64</td>
+                        <td><code>-linux-arm64.AppImage</code> or <code>-linux-arm64.deb</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Download <code>SHA256SUMS</code> from the same release too, into the same folder.</p>
+        </section>
+
+        <section id="checksum">
+            <h2>Check the checksum</h2>
+            <p>
+                <code>SHA256SUMS</code> lists the SHA-256 of every file in its release. A file whose
+                checksum matches its line is the file the release holds, unchanged on the way.
+            </p>
+            <h3>Windows, in PowerShell</h3>
+            <pre><code>(Get-FileHash .\Mandor-Request-{{latest.request}}-win-x64.exe -Algorithm SHA256).Hash</code></pre>
+            <p>
+                Compare what it prints with the line of that file in <code>SHA256SUMS</code>;
+                capitals do not matter.
+            </p>
+            <h3>macOS, in Terminal</h3>
+            <pre><code>shasum -a 256 -c SHA256SUMS --ignore-missing</code></pre>
+            <h3>Linux</h3>
+            <pre><code>sha256sum -c SHA256SUMS --ignore-missing</code></pre>
+            <p>
+                Run either in the folder that holds both files. It prints <code>OK</code> next to
+                each file it found and checked.
+            </p>
+        </section>
+
+        <section id="attestation">
+            <h2>Check where it was built</h2>
+            <p>
+                Every file of a release carries a provenance attestation: GitHub signs that it came
+                out of the release workflow of <code>joalvm/mandor</code>, at that release's tag.
+                With the <a href="https://cli.github.com">GitHub CLI</a> installed:
+            </p>
+            <pre><code>gh attestation verify Mandor-Request-{{latest.request}}-win-x64.exe --repo joalvm/mandor</code></pre>
+            <p>
+                It succeeds only for a file built by that workflow. A file changed after the build,
+                or built anywhere else, fails.
+            </p>
+        </section>
+
+        <section id="windows">
+            <h2>Open it on Windows</h2>
+            <ol>
+                <li>Run the installer.</li>
+                <li>
+                    SmartScreen says <q>Windows protected your PC</q>. Choose
+                    <strong>More info</strong>.
+                </li>
+                <li>Choose <strong>Run anyway</strong>. Windows asks once per file.</li>
+            </ol>
+            <p>
+                With Smart App Control on, Windows does not run an app without a certificate at all.
+            </p>
+        </section>
+
+        <section id="macos">
+            <h2>Open it on macOS</h2>
+            <ol>
+                <li>Open the disk image and drag the app to Applications.</li>
+                <li>Open the app. macOS refuses the first launch.</li>
+                <li>
+                    Open <strong>System Settings → Privacy &amp; Security</strong>, find the message
+                    about the app under Security and choose <strong>Open Anyway</strong>.
+                </li>
+                <li>Confirm. macOS asks once.</li>
+            </ol>
+            <p>
+                The apps are signed ad hoc, without an Apple developer certificate: the checksum and
+                the attestation are how you know where they come from.
+            </p>
+        </section>
+
+        <section id="linux">
+            <h2>Install it on Linux</h2>
+            <h3>AppImage</h3>
+            <pre><code>chmod +x Mandor-Request-{{latest.request}}-linux-x86_64.AppImage
+./Mandor-Request-{{latest.request}}-linux-x86_64.AppImage</code></pre>
+            <p>
+                An AppImage needs FUSE 2. On Ubuntu 22.04 it comes with <code>libfuse2</code>, on
+                24.04 with <code>libfuse2t64</code>.
+            </p>
+            <h3>Debian package</h3>
+            <pre><code>sudo apt install ./Mandor-Request-{{latest.request}}-linux-amd64.deb</code></pre>
+        </section>
+
+        <section id="updates">
+            <h2>Updates</h2>
+            <p>
+                <strong>Settings → Updates</strong> chooses how they arrive. Automatic, the default,
+                looks when the app opens and every six hours, and downloads what it finds. Notify
+                looks and waits for you to download. Manual only looks when you ask. None of them
+                restarts the app by itself.
+            </p>
+            <p>
+                Looking is one request to GitHub for the update files of your channel: GitHub sees
+                your IP address and the version of the app, as with any request, and nothing of your
+                work goes with it. The channel picks between stable versions and betas; an install
+                of a beta follows the betas until you pick Stable.
+            </p>
+            <p>
+                On Windows and from the AppImage, the app updates itself. On macOS and from the
+                Debian package, it tells you of the new version and opens the page to download it.
+            </p>
+        </section>
+    </div>
+</article>

@@ -112,6 +112,27 @@ describe('Mandor Request packaging', () => {
     });
 
     /**
+     * MIT, BSD and Apache-2.0 ask for their notices in every copy: the installer carries the ones
+     * of what it bundles and loads, and the build notes, with paths of its machine, stay out.
+     */
+    it('ships the notices of the third-party code and of the marks beside the license', async () => {
+        const value = await config();
+        const scripts = (await manifest())['scripts'] as Record<string, string>;
+
+        expect(scripts['build']).toContain('tools/notices/write-notices.mjs');
+        expect(value.files).toContain('!out/licenses/**');
+        expect(value.extraResources).toEqual(
+            expect.arrayContaining([
+                {
+                    from: 'out/licenses/THIRD-PARTY-NOTICES.txt',
+                    to: 'licenses/THIRD-PARTY-NOTICES.txt',
+                },
+                { from: '../../TRADEMARKS.md', to: 'licenses/TRADEMARKS.md' },
+            ]),
+        );
+    });
+
+    /**
      * The two apps share the repository, and its latest release can be either of them: each app
      * follows a fixed release of its own, and a stable writes the beta files too.
      */

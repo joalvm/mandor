@@ -95,11 +95,36 @@ describe('the release workflow', () => {
         );
 
         expect(draft.needs).toEqual(['plan', 'smoke']);
-        expect(runs).toContain('sha256sum *.exe *.dmg *.zip *.AppImage *.deb > SHA256SUMS');
+        expect(runs).toContain(
+            'sha256sum *.exe *.dmg *.zip *.AppImage *.deb *-THIRD-PARTY-NOTICES.txt > SHA256SUMS',
+        );
         expect(attest.with).toEqual({ 'subject-checksums': 'release/SHA256SUMS' });
         expect(runs).toContain('--draft --target "$SHA"');
         expect(runs).toContain('--notes-file release-notes.md');
         expect(runs).toContain('release/latest*.yml release/beta*.yml release/alpha*.yml');
+    });
+
+    /**
+     * MIT, BSD and Apache-2.0 ask for their notices beside each copy: the installers carry them,
+     * and the release holds them too, named for it, so they can be read before a download.
+     */
+    it('attaches the notices of what the installers carry, under the name of the release', () => {
+        const step = build.steps.find((each) => each.run?.includes('THIRD-PARTY-NOTICES.txt'));
+        const upload = build.steps.find((each) =>
+            each.uses?.startsWith('actions/upload-artifact@'),
+        );
+
+        expect(step.if).toBe("runner.os == 'Linux'");
+        expect(step.run).toBe(
+            'cp "apps/$APP/out/licenses/THIRD-PARTY-NOTICES.txt" "apps/$APP/dist/${PRODUCT// /-}-$VERSION-THIRD-PARTY-NOTICES.txt"',
+        );
+        expect(build.env.PRODUCT).toBe('${{ needs.plan.outputs.product }}');
+        expect(upload.with.path).toContain(
+            'apps/${{ needs.plan.outputs.app }}/dist/*-THIRD-PARTY-NOTICES.txt',
+        );
+        expect(runsOf(draft).join('\n')).toContain(
+            'files+=(release/*.blockmap release/SHA256SUMS release/*-THIRD-PARTY-NOTICES.txt)',
+        );
     });
 
     it('names the installers in full in the update files before the draft holds them', () => {

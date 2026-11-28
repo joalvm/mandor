@@ -1,0 +1,69 @@
+name: pages
+
+# Publishes the public site of Mandor on GitHub Pages: the landing, the docs and the legal pages,
+# in English and Spanish. It is a static site with no script, written by `tools/site/build-site.mjs`
+# from `site/` and the releases of the repository, which fill its downloads.
+#
+# - A change of the site on `main` publishes it again.
+# - A release that ends well publishes it again, so its downloads name the new installers.
+# - Its button publishes it at any time, from `main`.
+#
+# Nothing here runs on a pull request: `tools/tests/site` checks the build there, with the rest of
+# the tests.
+on:
+    push:
+        branches: [main]
+        paths:
+            - 'site/**'
+            - 'tools/site/**'
+            - '.github/workflows/pages.yml'
+    workflow_run:
+        workflows: [release]
+        types: [completed]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+# One publication at a time; the one waiting is the newer site, so none is cut short.
+concurrency:
+    group: pages
+    cancel-in-progress: false
+
+jobs:
+    build:
+        name: build
+        # A release that failed or was rejected changed no download.
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        env:
+            GH_TOKEN: ${{ github.token }}
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  ref: main
+                  persist-credentials: false
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 26
+            - uses: actions/configure-pages@v6
+            - run: node tools/site/build-site.mjs --out site/out
+            - uses: actions/upload-pages-artifact@v5
+              with:
+                  path: site/out
+
+    deploy:
+        name: deploy
+        needs: build
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            pages: write
+            id-token: write
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - id: deployment
+              uses: actions/deploy-pages@v5

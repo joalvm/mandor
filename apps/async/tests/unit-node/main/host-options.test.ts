@@ -53,8 +53,8 @@ describe('what Mandor Realtime asks of the host', () => {
     });
 
     /** An install that cannot update by itself lands where the installers are, not on the code. */
-    it('sends an install that cannot update by itself to the releases', () => {
-        expect(ASYNC_HOST_OPTIONS.homepage).toBe('https://github.com/joalvm/mandor/releases');
+    it('sends an install that cannot update by itself to the downloads of its app', () => {
+        expect(ASYNC_HOST_OPTIONS.homepage).toBe('https://joalvm.github.io/mandor/#realtime');
     });
 
     it('takes the icon from the resources next to the main directory', () => {

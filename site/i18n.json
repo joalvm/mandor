@@ -1,0 +1,130 @@
+{
+    "en": {
+        "language": {
+            "name": "English",
+            "dir": "ltr"
+        },
+        "skip": "Skip to content",
+        "nav": {
+            "label": "Main",
+            "request": "Request",
+            "realtime": "Realtime",
+            "download": "Download",
+            "docs": "Docs",
+            "language": "Language"
+        },
+        "code": "Source code on GitHub",
+        "footer": {
+            "statement": "Two API clients that keep your work in plain files on your own disk.",
+            "legal": "© 2026 Alejandro Vilchez. Free software under the AGPL-3.0-only, with no warranty. Mandor is not affiliated with the owners of the other names this site mentions.",
+            "legalNav": "Legal",
+            "privacy": "Privacy",
+            "terms": "Terms",
+            "licenses": "Licenses",
+            "trademarks": "Trademarks",
+            "security": "Security",
+            "cta": "Download Mandor"
+        },
+        "downloads": {
+            "systems": {
+                "windows": {
+                    "name": "Windows",
+                    "note": "x64 and Arm64"
+                },
+                "macos": {
+                    "name": "macOS",
+                    "note": "Apple silicon and Intel"
+                },
+                "linux": {
+                    "name": "Linux",
+                    "note": "AppImage and deb"
+                }
+            },
+            "arch": {
+                "windows-x64": "x64",
+                "windows-arm64": "Arm64",
+                "macos-arm64": "Apple silicon",
+                "macos-x64": "Intel",
+                "linux-x64": "x64",
+                "linux-arm64": "Arm64"
+            },
+            "kind": {
+                "exe": "Installer",
+                "dmg": "Disk image",
+                "AppImage": "AppImage",
+                "deb": "Debian package"
+            },
+            "download": "Download",
+            "sums": "SHA256SUMS",
+            "notices": "Third-party notices",
+            "source": "Source code at",
+            "page": "Release notes",
+            "none": "No release yet. Its first one will be listed on GitHub.",
+            "releases": "Releases"
+        }
+    },
+    "es": {
+        "language": {
+            "name": "Español",
+            "dir": "ltr"
+        },
+        "skip": "Saltar al contenido",
+        "nav": {
+            "label": "Principal",
+            "request": "Request",
+            "realtime": "Realtime",
+            "download": "Descargar",
+            "docs": "Docs",
+            "language": "Idioma"
+        },
+        "code": "Código fuente en GitHub",
+        "footer": {
+            "statement": "Dos clientes de API que guardan tu trabajo en archivos de texto en tu propio disco.",
+            "legal": "© 2026 Alejandro Vilchez. Software libre bajo la AGPL-3.0-only, sin garantía. Mandor no está afiliado a los titulares de los otros nombres que este sitio menciona.",
+            "legalNav": "Legal",
+            "privacy": "Privacidad",
+            "terms": "Términos",
+            "licenses": "Licencias",
+            "trademarks": "Marcas",
+            "security": "Seguridad",
+            "cta": "Descarga Mandor"
+        },
+        "downloads": {
+            "systems": {
+                "windows": {
+                    "name": "Windows",
+                    "note": "x64 y Arm64"
+                },
+                "macos": {
+                    "name": "macOS",
+                    "note": "Apple silicon e Intel"
+                },
+                "linux": {
+                    "name": "Linux",
+                    "note": "AppImage y deb"
+                }
+            },
+            "arch": {
+                "windows-x64": "x64",
+                "windows-arm64": "Arm64",
+                "macos-arm64": "Apple silicon",
+                "macos-x64": "Intel",
+                "linux-x64": "x64",
+                "linux-arm64": "Arm64"
+            },
+            "kind": {
+                "exe": "Instalador",
+                "dmg": "Imagen de disco",
+                "AppImage": "AppImage",
+                "deb": "Paquete Debian"
+            },
+            "download": "Descargar",
+            "sums": "SHA256SUMS",
+            "notices": "Avisos de terceros",
+            "source": "Código fuente en",
+            "page": "Notas de la versión",
+            "none": "Aún sin versión. La primera aparecerá en GitHub.",
+            "releases": "Versiones"
+        }
+    }
+}

@@ -63,6 +63,29 @@ describe('what a pull request runs once its earlier proof is read (checksToRun)'
 });
 
 describe('what a pull request has to run (scopeOf)', () => {
+    /** The public site is built and checked by its own tests; no window of the apps draws it. */
+    it('opens no window for a change that only touches the public site', () => {
+        expect(
+            scopeOf(
+                [
+                    'site/pages/en/index.html',
+                    'site/styles.css',
+                    'tools/site/build-site.mjs',
+                    'tools/tests/site/build-site.test.mjs',
+                    '.github/workflows/pages.yml',
+                ],
+                [],
+            ),
+        ).toEqual({ e2e: false, macos: false });
+    });
+
+    it('still opens the windows the rest of the change reaches', () => {
+        expect(scopeOf(['site/styles.css', 'apps/sync/src/main/index.ts'], [])).toEqual({
+            e2e: true,
+            macos: true,
+        });
+    });
+
     /** Prose reaches no window: the end-to-end runs would open the same app twice for nothing. */
     it('opens no window for a change that only touches prose', () => {
         expect(

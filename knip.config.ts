@@ -15,8 +15,12 @@ const config: KnipConfig = {
                 // npm-check-updates reads it by its name.
                 '.ncurc.cjs',
             ],
-            // Declarations of the `.mjs` beside them, for the files that check types over JS.
-            ignore: ['tools/workspace/*.d.mts'],
+            ignore: [
+                // Declarations of the `.mjs` beside them, for the files that check types over JS.
+                'tools/workspace/*.d.mts',
+                // The source of the website: `tools/site/build-site.mjs` copies it, never imports it.
+                'site/**',
+            ],
             // `tools/vitest/electron.ts` stands in for the binary, which the test only asks to be empty.
             ignoreDependencies: ['electron'],
         },

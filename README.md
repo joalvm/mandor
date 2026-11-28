@@ -9,17 +9,16 @@
 No account. No cloud of ours. No telemetry.<br />
 Your requests, sockets and secrets stay on your machine, in files you can read.
 
-**English** · [Español](README.es.md)
+**English** · [Español](README.es.md) · [Website](https://joalvm.github.io/mandor/)
 
 </div>
 
 ---
 
 > [!NOTE]
-> **Beta.** The first installers are out, without a code-signing certificate yet: Windows and
-> macOS ask once before they open them. [Install the beta](#install-the-beta) says how, and how to
-> check that a file is the one this repository built. To hear of each release:
-> **Watch → Custom → Releases**.
+> **Unsigned installers.** The installers carry no code-signing certificate yet: Windows and
+> macOS ask once before they open them. [Install](#install) says how, and how to check that a
+> file is the one this repository built. To hear of each release: **Watch → Custom → Releases**.
 
 ## Why Mandor
 
@@ -91,7 +90,9 @@ open in any text editor.
 - **Local first.** Everything works offline, forever. Nothing that works locally today will
   ever require a server.
 - **No account.** Not now, not as an upsell later.
-- **No telemetry.** The apps do not phone home. The only network traffic is the one you send.
+- **No telemetry.** The apps send nothing about you or your work. Besides the traffic you send,
+  they only ask GitHub whether a newer version exists, and in **Manual** mode not even that until
+  you ask.
 - **Secrets stay put.** A value you mark as secret never leaves your machine.
 - **Nothing runs behind your back.** Code you did not write does not execute until you say so.
 
@@ -102,10 +103,11 @@ beta channels, and you pick which; an install of a beta follows the betas until 
 On Windows and from the AppImage the app updates itself. On macOS and from the deb it tells you
 of a new version and opens the page to download it.
 
-## Install the beta
+## Install
 
-Each app has its own releases: on [Releases](https://github.com/joalvm/mandor/releases), take the
-latest **Mandor Request** or **Mandor Realtime**. Until the apps carry a certificate, the system
+Each app has its own releases: the [website](https://joalvm.github.io/mandor/#download) offers the
+latest of **Mandor Request** and of **Mandor Realtime**, and
+[Releases](https://github.com/joalvm/mandor/releases) lists them all. Until the apps carry a certificate, the system
 asks before the first launch:
 
 - **Windows.** SmartScreen says it protected your PC: choose **More info → Run anyway**. With
