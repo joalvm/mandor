@@ -61,12 +61,16 @@ function offerOf(release, version) {
 }
 
 /**
+ * @typedef {{ name: string; size: number; browser_download_url: string }} Asset
+ * @typedef {{ tag_name: string; draft: boolean; html_url: string; assets: Asset[] }} Release
+ */
+
+/**
  * What the page offers of each app: its newest release, stable or beta, so the page always leads
  * to the latest one; null for an app with none yet. Drafts and the feeds of the updater are no
  * release a person downloads.
  *
- * @param {readonly { tag_name: string; draft: boolean; html_url: string; assets: { name: string; size: number; browser_download_url: string }[] }[]} releases
- *   as the API of GitHub lists them
+ * @param {readonly Release[]} releases as the API of GitHub lists them
  */
 export function downloadsOf(releases) {
     const known = releases
