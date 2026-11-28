@@ -17,8 +17,8 @@ credit to you, unless you prefer otherwise.
 
 ## Supported versions
 
-No version has been released yet. Once one is, the latest release of each app receives security
-fixes.
+The latest release of each app, Mandor Request and Mandor Realtime, receives security fixes. An
+older release does not: the fix arrives as a new one.
 
 ## Scope
 

@@ -1,0 +1,101 @@
+<!--
+title: Seguridad — Mandor
+description: Cómo reportar en privado una vulnerabilidad de Mandor Realtime o Mandor Request, qué versiones reciben arreglos y cómo las apps contienen los scripts que corren.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <h1>Seguridad</h1>
+        <p class="doc-meta">Vigente desde el 26 de noviembre de 2026</p>
+        <p class="doc-note">
+            Un resumen de la política de seguridad. La completa es
+            <a href="https://github.com/joalvm/mandor/blob/main/SECURITY.md">SECURITY.md</a>, en el
+            repositorio.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#report">Reporta una vulnerabilidad</a></li>
+            <li><a href="#versions">Versiones con soporte</a></li>
+            <li><a href="#scope">Lo que más importa</a></li>
+            <li><a href="#scripts">Scripts</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="report">
+            <h2>Reporta una vulnerabilidad</h2>
+            <p>
+                Repórtala en privado, nunca en un issue público:
+                <a href="https://github.com/joalvm/mandor/security/advisories/new"
+                    >abre un reporte privado</a
+                >
+                en GitHub. Solo el autor lo ve.
+            </p>
+            <p>Conviene incluir:</p>
+            <ul>
+                <li>qué app, su versión y tu sistema operativo;</li>
+                <li>
+                    qué puede hacer un atacante, y qué necesita antes: un archivo armado, un
+                    servidor malicioso, acceso local;
+                </li>
+                <li>los pasos para reproducirla, o una prueba de concepto.</li>
+            </ul>
+            <p>
+                Recibes respuesta en siete días. Cuando sale el arreglo, el aviso se publica con
+                crédito para ti, salvo que prefieras otra cosa.
+            </p>
+        </section>
+
+        <section id="versions">
+            <h2>Versiones con soporte</h2>
+            <p>
+                La última release de cada app recibe arreglos de seguridad. Una anterior no:
+                actualiza a la última para tenerlos.
+            </p>
+        </section>
+
+        <section id="scope">
+            <h2>Lo que más importa</h2>
+            <p>Las dos apps corren en tu equipo, sin cuenta ni servidor propio. Sobre todo:</p>
+            <ul>
+                <li>
+                    lo que deje a un documento, una colección o una respuesta de servidor correr
+                    código o llegar al sistema de archivos;
+                </li>
+                <li>
+                    secretos que salgan del almacén seguro del sistema, o que acaben en tus archivos
+                    o logs;
+                </li>
+                <li>un transporte que llegue a un tipo de dirección que debería rechazar.</li>
+            </ul>
+        </section>
+
+        <section id="scripts">
+            <h2>Scripts</h2>
+            <p>
+                Requests, carpetas, colecciones y conexiones pueden llevar scripts, y su autor puede
+                ser un desconocido. Dos promesas se cumplen sin excepción: un valor marcado como
+                secreto nunca llega a un script, y ningún código malicioso corre en tu equipo por
+                culpa de Mandor.
+            </p>
+            <ul>
+                <li>
+                    Un script que nadie aprobó en tu equipo no corre. Abrir, importar o sincronizar
+                    nunca corre ninguno, y un texto que cambia vuelve a preguntar.
+                </li>
+                <li>
+                    Los scripts corren en QuickJS compilado a WebAssembly, con límites de tiempo,
+                    memoria, salida y llamadas de red, y no ven nada de la app que los rodea.
+                </li>
+                <li>
+                    <strong>Ajustes → Scripts → Correr scripts</strong> detiene todos los scripts a
+                    la vez, sin borrar ninguno ni deshacer una aprobación.
+                </li>
+            </ul>
+            <p>
+                Lo que queda, y cómo escribir scripts:
+                <a href="https://github.com/joalvm/mandor/blob/main/SECURITY.md#scripts"
+                    >SECURITY.md</a
+                >
+                y <a href="https://github.com/joalvm/mandor/blob/main/SCRIPTS.md">SCRIPTS.md</a>.
+            </p>
+        </section>
+    </div>
+</article>

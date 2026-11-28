@@ -9,17 +9,17 @@
 Sin cuenta. Sin nube nuestra. Sin telemetría.<br />
 Tus requests, sockets y secretos se quedan en tu máquina, en archivos que puedes leer.
 
-[English](README.md) · **Español**
+[English](README.md) · **Español** · [Sitio web](https://joalvm.github.io/mandor/es/)
 
 </div>
 
 ---
 
 > [!NOTE]
-> **Beta.** Ya salieron los primeros instaladores, todavía sin certificado de firma de código:
-> Windows y macOS preguntan una vez antes de abrirlos. [Instalar la beta](#instalar-la-beta) dice
-> cómo, y cómo comprobar que un archivo es el que construyó este repositorio. Para enterarte de
-> cada release: **Watch → Custom → Releases**.
+> **Instaladores sin firmar.** Los instaladores todavía no llevan certificado de firma de código:
+> Windows y macOS preguntan una vez antes de abrirlos. [Instalar](#instalar) dice cómo, y cómo
+> comprobar que un archivo es el que construyó este repositorio. Para enterarte de cada release:
+> **Watch → Custom → Releases**.
 
 ## Por qué Mandor
 
@@ -94,7 +94,9 @@ seguiría abriendo en cualquier editor de texto.
 - **Local primero.** Todo funciona sin conexión, para siempre. Nada que hoy funcione en local
   pasará a exigir un servidor.
 - **Sin cuenta.** Ni ahora, ni después como venta adicional.
-- **Sin telemetría.** Las apps no llaman a casa. El único tráfico de red es el que tú envías.
+- **Sin telemetría.** Las apps no envían nada sobre ti ni sobre tu trabajo. Además del tráfico que
+  tú envías, solo preguntan a GitHub si hay una versión nueva, y en modo **Manual** ni eso hasta
+  que lo pidas.
 - **Los secretos no se mueven.** Un valor que marcas como secreto nunca sale de tu máquina.
 - **Nada corre a tus espaldas.** El código que no escribiste no se ejecuta hasta que lo dices.
 
@@ -105,10 +107,11 @@ estable y beta, y tú eliges cuál; una instalación de una beta sigue las betas
 estable. En Windows y desde el AppImage la app se actualiza sola. En macOS y desde el deb te avisa
 de la versión nueva y abre la página para descargarla.
 
-## Instalar la beta
+## Instalar
 
-Cada app tiene sus propios releases: en [Releases](https://github.com/joalvm/mandor/releases),
-toma el último de **Mandor Request** o de **Mandor Realtime**. Mientras las apps no lleven
+Cada app tiene sus propios releases: la [web](https://joalvm.github.io/mandor/es/#download) ofrece
+el último de **Mandor Request** y de **Mandor Realtime**, y
+[Releases](https://github.com/joalvm/mandor/releases) los lista todos. Mientras las apps no lleven
 certificado, el sistema pregunta antes del primer arranque:
 
 - **Windows.** SmartScreen dice que protegió tu PC: elige **Más información → Ejecutar de todas

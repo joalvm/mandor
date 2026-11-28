@@ -1,0 +1,187 @@
+<!--
+title: Verificar e instalar — Mandor
+description: Cómo comprobar que un instalador de Mandor es el que construyó este repositorio, con SHA256SUMS y una atestación de GitHub, y cómo abrirlo en Windows, macOS y Linux mientras no lleva certificado.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <a class="doc-up" href="{{home}}docs.html">Docs</a>
+        <h1>Verificar e instalar</h1>
+        <p class="doc-meta">Actualizado el 26 de noviembre de 2026</p>
+        <p class="doc-note">
+            Las apps aún no llevan certificado de firma de código, así que Windows y macOS preguntan
+            una vez antes del primer arranque. Comprobar antes el archivo te dice que es el que
+            construyó este repositorio, byte por byte.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#file">Elige el archivo</a></li>
+            <li><a href="#checksum">Comprueba el checksum</a></li>
+            <li><a href="#attestation">Comprueba dónde se construyó</a></li>
+            <li><a href="#windows">Ábrelo en Windows</a></li>
+            <li><a href="#macos">Ábrelo en macOS</a></li>
+            <li><a href="#linux">Instálalo en Linux</a></li>
+            <li><a href="#updates">Actualizaciones</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="file">
+            <h2>Elige el archivo</h2>
+            <p>
+                Cada app tiene sus propias versiones, y cada versión trae un instalador por sistema
+                y procesador, con el nombre
+                <code>Mandor-&lt;App&gt;-&lt;versión&gt;-&lt;sistema&gt;</code>. Las
+                <a href="{{index}}#download">descargas</a> muestran las últimas; todas están en
+                <a href="https://github.com/joalvm/mandor/releases">GitHub</a>.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Sistema</th>
+                        <th scope="col">Procesador</th>
+                        <th scope="col">El nombre termina en</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Windows</td>
+                        <td>x64</td>
+                        <td><code>-win-x64.exe</code></td>
+                    </tr>
+                    <tr>
+                        <td>Windows</td>
+                        <td>Arm64</td>
+                        <td><code>-win-arm64.exe</code></td>
+                    </tr>
+                    <tr>
+                        <td>macOS</td>
+                        <td>Apple silicon</td>
+                        <td><code>-mac-arm64.dmg</code></td>
+                    </tr>
+                    <tr>
+                        <td>macOS</td>
+                        <td>Intel</td>
+                        <td><code>-mac-x64.dmg</code></td>
+                    </tr>
+                    <tr>
+                        <td>Linux</td>
+                        <td>x64</td>
+                        <td><code>-linux-x86_64.AppImage</code> o <code>-linux-amd64.deb</code></td>
+                    </tr>
+                    <tr>
+                        <td>Linux</td>
+                        <td>Arm64</td>
+                        <td><code>-linux-arm64.AppImage</code> o <code>-linux-arm64.deb</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Descarga también <code>SHA256SUMS</code> de la misma versión, en la misma carpeta.
+            </p>
+        </section>
+
+        <section id="checksum">
+            <h2>Comprueba el checksum</h2>
+            <p>
+                <code>SHA256SUMS</code> lista el SHA-256 de cada archivo de su versión. Un archivo
+                cuyo checksum coincide con su línea es el archivo que guarda la versión, sin cambios
+                en el camino.
+            </p>
+            <h3>Windows, en PowerShell</h3>
+            <pre><code>(Get-FileHash .\Mandor-Request-{{latest.request}}-win-x64.exe -Algorithm SHA256).Hash</code></pre>
+            <p>
+                Compara lo que imprime con la línea de ese archivo en <code>SHA256SUMS</code>; las
+                mayúsculas no importan.
+            </p>
+            <h3>macOS, en Terminal</h3>
+            <pre><code>shasum -a 256 -c SHA256SUMS --ignore-missing</code></pre>
+            <h3>Linux</h3>
+            <pre><code>sha256sum -c SHA256SUMS --ignore-missing</code></pre>
+            <p>
+                Córrelo en la carpeta que tiene los dos archivos. Imprime <code>OK</code> junto a
+                cada archivo que encontró y comprobó.
+            </p>
+        </section>
+
+        <section id="attestation">
+            <h2>Comprueba dónde se construyó</h2>
+            <p>
+                Cada archivo de una versión lleva una atestación de procedencia: GitHub firma que
+                salió del workflow de releases de <code>joalvm/mandor</code>, en el tag de esa
+                versión. Con la <a href="https://cli.github.com">CLI de GitHub</a> instalada:
+            </p>
+            <pre><code>gh attestation verify Mandor-Request-{{latest.request}}-win-x64.exe --repo joalvm/mandor</code></pre>
+            <p>
+                Solo pasa con un archivo construido por ese workflow. Un archivo cambiado después
+                del build, o construido en otro lugar, falla.
+            </p>
+        </section>
+
+        <section id="windows">
+            <h2>Ábrelo en Windows</h2>
+            <ol>
+                <li>Ejecuta el instalador.</li>
+                <li>
+                    SmartScreen dice <q>Windows protegió su PC</q>. Elige
+                    <strong>Más información</strong>.
+                </li>
+                <li>
+                    Elige <strong>Ejecutar de todas formas</strong>. Windows pregunta una vez por
+                    archivo.
+                </li>
+            </ol>
+            <p>
+                Con Control inteligente de aplicaciones activado, Windows no ejecuta en absoluto una
+                app sin certificado.
+            </p>
+        </section>
+
+        <section id="macos">
+            <h2>Ábrelo en macOS</h2>
+            <ol>
+                <li>Abre la imagen de disco y arrastra la app a Aplicaciones.</li>
+                <li>Abre la app. macOS rechaza el primer arranque.</li>
+                <li>
+                    Abre <strong>Configuración del Sistema → Privacidad y seguridad</strong>, busca
+                    el mensaje sobre la app en Seguridad y elige <strong>Abrir igualmente</strong>.
+                </li>
+                <li>Confirma. macOS pregunta una vez.</li>
+            </ol>
+            <p>
+                Las apps van firmadas ad hoc, sin certificado de desarrollador de Apple: el checksum
+                y la atestación son cómo sabes de dónde vienen.
+            </p>
+        </section>
+
+        <section id="linux">
+            <h2>Instálalo en Linux</h2>
+            <h3>AppImage</h3>
+            <pre><code>chmod +x Mandor-Request-{{latest.request}}-linux-x86_64.AppImage
+./Mandor-Request-{{latest.request}}-linux-x86_64.AppImage</code></pre>
+            <p>
+                Un AppImage necesita FUSE 2. En Ubuntu 22.04 viene con <code>libfuse2</code>; en
+                24.04, con <code>libfuse2t64</code>.
+            </p>
+            <h3>Paquete Debian</h3>
+            <pre><code>sudo apt install ./Mandor-Request-{{latest.request}}-linux-amd64.deb</code></pre>
+        </section>
+
+        <section id="updates">
+            <h2>Actualizaciones</h2>
+            <p>
+                <strong>Ajustes → Actualizaciones</strong> elige cómo llegan. Automático, el modo
+                por defecto, busca al abrir la app y cada seis horas, y descarga lo que encuentra.
+                Avisar busca y espera tu orden para descargar. Manual solo busca cuando lo pides.
+                Ninguno reinicia la app solo.
+            </p>
+            <p>
+                Buscar es un request a GitHub por los archivos de actualización de tu canal: GitHub
+                ve tu dirección IP y la versión de la app, como en cualquier request, y nada de tu
+                trabajo va con él. El canal elige entre versiones estables y betas; una instalación
+                de una beta sigue las betas hasta que eliges Estable.
+            </p>
+            <p>
+                En Windows y desde el AppImage, la app se actualiza sola. En macOS y desde el
+                paquete Debian, te avisa de la versión nueva y abre la página para descargarla.
+            </p>
+        </section>
+    </div>
+</article>

@@ -1,0 +1,201 @@
+<!--
+title: Get started with Mandor Request — Mandor
+description: Your first request in Mandor Request, then environments and variables, the files it writes, sharing a workspace through an origin, scripts and imports.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <a class="doc-up" href="{{home}}docs.html">Docs</a>
+        <h1>Get started with Request</h1>
+        <p class="doc-note">
+            Mandor Request sends HTTP and GraphQL requests and keeps every collection as plain files
+            on your disk. No account, nothing to set up first.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#workspace">Your workspace</a></li>
+            <li><a href="#first-request">Your first request</a></li>
+            <li><a href="#environments">Environments and variables</a></li>
+            <li><a href="#files">The files on disk</a></li>
+            <li><a href="#origins">Share it through an origin</a></li>
+            <li><a href="#scripts">Scripts</a></li>
+            <li><a href="#import">Bring what you have</a></li>
+            <li><a href="#keys">Keys</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="workspace">
+            <h2>Your workspace</h2>
+            <p>
+                The first time it opens, Request creates its folder in
+                <code>Documents/Mandor/request/local</code> with one workspace,
+                <strong>Personal</strong>, and opens it. There is nothing to pick.
+            </p>
+            <p>
+                A workspace holds collections and environments. For another one, open the workspace
+                menu in the title bar, choose <strong>Manage workspaces</strong>, then
+                <strong>New workspace</strong>, and give it a name.
+            </p>
+        </section>
+
+        <section id="first-request">
+            <h2>Your first request</h2>
+            <ol>
+                <li>
+                    In the sidebar, <strong>+</strong> makes a <strong>New collection</strong>. Its
+                    menu adds folders and a <strong>New request</strong>.
+                </li>
+                <li>Pick the method, type the URL and press <strong>Send</strong>.</li>
+                <li>
+                    The response opens below it: its status, time and size on top, then
+                    <strong>Body</strong>, <strong>Headers</strong> and <strong>Cookies</strong>.
+                </li>
+                <li>
+                    <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd> (<kbd><kbd>Cmd</kbd>+<kbd>S</kbd></kbd>
+                    on macOS) writes the request to disk. Until then, the change lives only in its
+                    tab.
+                </li>
+            </ol>
+            <p>
+                For a quick try outside any collection, the <strong>+</strong> at the end of the
+                tabs opens a loose request. Save it and <strong>Save to…</strong> asks for its
+                collection or folder; close it unsaved and it is gone.
+            </p>
+        </section>
+
+        <section id="environments">
+            <h2>Environments and variables</h2>
+            <p>
+                The environment picker sits in the title bar.
+                <strong>Create environment</strong> makes the first one;
+                <strong>Manage environments</strong> edits them all, with the
+                <strong>Globals</strong> every environment shares.
+            </p>
+            <p>
+                Write a variable as <code>&#123;&#123;name&#125;&#125;</code> in the URL, a header,
+                the body or the auth. One that is not defined is sent as the literal text, and the
+                editor says where it is missing.
+            </p>
+            <p>
+                Mark a variable as <strong>Secret variable</strong> and its value goes to the
+                keychain of your system, outside the workspace folder: the file keeps the name with
+                an empty value, so a secret never reaches a commit. Where the system has no
+                keychain, the value lives in memory until the app closes.
+            </p>
+            <p>
+                When one name is set in several places, the closest wins: the script, then the
+                folder, the active environment, the collection and the globals.
+            </p>
+        </section>
+
+        <section id="files">
+            <h2>The files on disk</h2>
+            <p>
+                Each thing is a YAML file named by a short id, so a rename changes one line and not
+                a path. Everything but <code>.mandor/</code> is meant to be committed.
+            </p>
+            <pre><code>mandor.yaml
+globals.yaml
+workspaces/&lt;id&gt;/
+  workspace.yaml
+  environments/&lt;id&gt;.yaml
+  collections/&lt;id&gt;/collection.yaml
+  collections/&lt;id&gt;/&lt;id&gt;.yaml        <span class="tree-note"># a request</span>
+  collections/&lt;id&gt;/&lt;id&gt;/folder.yaml
+  docs/*.md                         <span class="tree-note"># documentation</span>
+.mandor/                            <span class="tree-note"># private: history, cookies</span></code></pre>
+            <p>
+                <code>.mandor/</code> holds the history, the cookies and the open tabs of this
+                computer, and it is ignored by git.
+            </p>
+        </section>
+
+        <section id="origins">
+            <h2>Share it through an origin</h2>
+            <p>
+                The workspace folder is a git repository, and Request commits each change you save
+                on its own; you never type a git command. To share a workspace or keep it on another
+                computer, add an origin: an empty repository you can reach, by
+                <code>https:</code> or <code>ssh:</code>.
+            </p>
+            <ol>
+                <li>
+                    Open the origin menu, choose <strong>Manage origins</strong>, then
+                    <strong>Add origins</strong>.
+                </li>
+                <li>Give it a name and its URL.</li>
+            </ol>
+            <p>
+                From then on, Request brings in and sends changes when it opens, after each save,
+                every minute and when its window gets focus. It never forces a push. When the same
+                field changed on both sides, the <strong>Conflicts</strong> tab shows each
+                difference to settle with <strong>Use mine</strong> or
+                <strong>Use the incoming</strong>.
+            </p>
+        </section>
+
+        <section id="scripts">
+            <h2>Scripts</h2>
+            <p>
+                A script is JavaScript that runs <strong>Before the request</strong> or
+                <strong>After the response</strong>, on a collection, a folder or a request, in that
+                order. It reads and sets variables, changes what goes out and writes tests with
+                <code>mandor.test</code> and <code>mandor.expect</code>, whose results show in the
+                <strong>Tests</strong> tab of the response.
+            </p>
+            <p>
+                Scripts run in a sandbox with no files, network or modules of their own. One that
+                arrives through an origin or an import waits until you approve it. To turn them all
+                off: <strong>Settings → Scripts → Run scripts</strong>. Every object and function is
+                in <a href="https://github.com/joalvm/mandor/blob/main/SCRIPTS.md">SCRIPTS.md</a>.
+            </p>
+        </section>
+
+        <section id="import">
+            <h2>Bring what you have</h2>
+            <p>
+                <strong>Import a document</strong>, in the sidebar, reads an OpenAPI 3 or Swagger 2
+                file, a Postman v2.1 collection, an Insomnia export, a Bruno collection or a HAR
+                file. In the same dialog you can paste a curl command and
+                <strong>Open as request</strong>.
+            </p>
+        </section>
+
+        <section id="keys">
+            <h2>Keys</h2>
+            <p>On macOS, <kbd>Cmd</kbd> takes the place of <kbd>Ctrl</kbd>.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Command palette</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Send</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Enter</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Save</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Search the workspace</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Settings</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>,</kbd></kbd>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</article>

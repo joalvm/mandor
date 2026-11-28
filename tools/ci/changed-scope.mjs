@@ -25,6 +25,14 @@ const LABEL = 'e2e:macos';
 /** Text for readers, which no window draws. */
 const PROSE = [/^docs\//u, /^skills\//u, /\.md$/u];
 
+/** The public site and what builds and publishes it, which no window of the apps draws either. */
+const SITE = [
+    /^site\//u,
+    /^tools\/site\//u,
+    /^tools\/tests\/site\//u,
+    /^\.github\/workflows\/pages\.yml$/u,
+];
+
 /** Where the app meets the system it runs on: what can work on Linux and break on a Mac. */
 const SYSTEM = [
     /^apps\/[^/]+\/src\/(?:main|preload)\//u,
@@ -47,9 +55,11 @@ export function scopeOf(files, labels) {
         return { e2e: true, macos: true };
     }
 
+    const drawn = files.filter((file) => !SITE.some((site) => site.test(file)));
+
     return {
-        e2e: files.some((file) => !PROSE.some((prose) => prose.test(file))),
-        macos: files.some((file) => SYSTEM.some((system) => system.test(file))),
+        e2e: drawn.some((file) => !PROSE.some((prose) => prose.test(file))),
+        macos: drawn.some((file) => SYSTEM.some((system) => system.test(file))),
     };
 }
 

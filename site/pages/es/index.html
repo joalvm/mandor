@@ -1,0 +1,351 @@
+<!--
+title: Mandor — Clientes de API en tu disco
+description: Mandor Request (HTTP, GraphQL) y Mandor Realtime (WebSocket, Socket.IO): clientes de API de escritorio, libres, que guardan cada colección en archivos de texto. Para Windows, macOS y Linux.
+-->
+<section class="hero" aria-labelledby="hero-title">
+    <h1 id="hero-title">Clientes de API en tu disco</h1>
+    <div class="hero-side">
+        <p class="hero-lead">
+            <b class="tint-request">Mandor Request</b> envía HTTP y GraphQL.
+            <b class="tint-realtime">Mandor Realtime</b> mantiene abiertas conexiones WebSocket y
+            Socket.IO. Los dos guardan cada colección en archivos de texto que puedes leer, comparar
+            y commitear, sin cuenta y sin una nube nuestra.
+        </p>
+        <p class="hero-actions">
+            <a class="button" href="#download">Descargar</a>
+            <a class="button button-quiet" href="{{home}}docs.html">Leer las guías</a>
+        </p>
+        <p class="hero-note">Software libre · Windows, macOS y Linux</p>
+    </div>
+    <div class="stage stage-hero">
+        <picture class="window window-request" data-ui>
+            <source
+                srcset="
+                    {{root}}shots/request-dark-1280.webp 1280w,
+                    {{root}}shots/request-dark-1920.webp 1920w,
+                    {{root}}shots/request-dark-2560.webp 2560w,
+                    {{root}}shots/request-dark-3840.webp 3840w
+                "
+                sizes="(max-width: 720px) 82vw, (max-width: 860px) 66vw, 45vw"
+                media="(prefers-color-scheme: dark)"
+            />
+            <img
+                src="{{root}}shots/request-light-1920.webp"
+                srcset="
+                    {{root}}shots/request-light-1280.webp 1280w,
+                    {{root}}shots/request-light-1920.webp 1920w,
+                    {{root}}shots/request-light-2560.webp 2560w,
+                    {{root}}shots/request-light-3840.webp 3840w
+                "
+                sizes="(max-width: 720px) 82vw, (max-width: 860px) 66vw, 45vw"
+                width="1280"
+                height="800"
+                fetchpriority="high"
+                alt="Mandor Request tras enviar POST &#123;&#123;baseUrl&#125;&#125;/v1/orders: el body JSON del pedido a la izquierda y la respuesta 201 Created en 16 ms a la derecha."
+            />
+        </picture>
+        <picture class="window window-realtime" data-ui>
+            <source
+                srcset="
+                    {{root}}shots/realtime-dark-1280.webp 1280w,
+                    {{root}}shots/realtime-dark-1920.webp 1920w,
+                    {{root}}shots/realtime-dark-2560.webp 2560w,
+                    {{root}}shots/realtime-dark-3840.webp 3840w
+                "
+                sizes="(max-width: 720px) 82vw, (max-width: 860px) 66vw, 45vw"
+                media="(prefers-color-scheme: dark)"
+            />
+            <img
+                src="{{root}}shots/realtime-light-1920.webp"
+                srcset="
+                    {{root}}shots/realtime-light-1280.webp 1280w,
+                    {{root}}shots/realtime-light-1920.webp 1920w,
+                    {{root}}shots/realtime-light-2560.webp 2560w,
+                    {{root}}shots/realtime-light-3840.webp 3840w
+                "
+                sizes="(max-width: 720px) 82vw, (max-width: 860px) 66vw, 45vw"
+                width="1280"
+                height="800"
+                alt="Mandor Realtime conectado a un servidor Socket.IO: el mensaje order:update en el compositor y el registro de Actividad con cada evento enviado y su ack."
+            />
+        </picture>
+    </div>
+</section>
+
+<section class="app app-request" id="request" aria-labelledby="request-title">
+    <div class="app-head">
+        <img class="app-icon" src="{{root}}icons/request.png" width="72" height="72" alt="" />
+        <h2 id="request-title">Mandor Request</h2>
+        <p class="lead">
+            Para todo lo que responde una vez. Cada envío queda en el historial de abajo; abre una
+            fila para ver qué hace Request con él.
+        </p>
+    </div>
+    <div class="board" data-ui>
+        <div class="row row-cut" aria-hidden="true">
+            <span class="row-name"><b class="method">GET</b> /v1/health</span>
+            <span class="row-fact">200</span>
+            <span class="row-fact">4 ms</span>
+            <span class="row-fact">17 B</span>
+            <span class="row-state state-ok">OK</span>
+        </div>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">GET</b> /v1/orders?status=open</span>
+                <span class="row-fact">200</span>
+                <span class="row-fact">42 ms</span>
+                <span class="row-fact">3,1 KB</span>
+                <span class="row-state state-ok">OK</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Entornos</h3>
+                <p>
+                    <code>&#123;&#123;baseUrl&#125;&#125;</code> se resuelve con el entorno activo:
+                    cambia de Local a Staging y el mismo request va allí. Una variable que no
+                    definiste queda como texto literal y nunca bloquea un envío.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">POST</b> /oauth/token</span>
+                <span class="row-fact">200</span>
+                <span class="row-fact">118 ms</span>
+                <span class="row-fact">612 B</span>
+                <span class="row-state state-ok">OK</span>
+            </summary>
+            <div class="row-detail">
+                <h3>OAuth 2.0</h3>
+                <p>
+                    Authorization code con PKCE por un redirect de loopback, o client credentials.
+                    Lo configuras en un request, en una carpeta o en toda la colección, y todo lo
+                    que está debajo lo hereda.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">GET</b> /v1/customers/c_2041</span>
+                <span class="row-fact">304</span>
+                <span class="row-fact">9 ms</span>
+                <span class="row-fact">0 B</span>
+                <span class="row-state state-calm">Sin cambios</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Cookies</h3>
+                <p>
+                    Las cookies que pone un servidor se guardan y vuelven a él en el siguiente
+                    request, como haría un navegador. La pestaña Cookies de la respuesta muestra
+                    cada una que llegó.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history" open>
+            <summary>
+                <span class="row-name"><b class="method">POST</b> /v1/orders</span>
+                <span class="row-fact">201</span>
+                <span class="row-fact">16 ms</span>
+                <span class="row-fact">366 B</span>
+                <span class="row-state state-ok">Created</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Historial</h3>
+                <p>
+                    Cada envío se guarda con su request y su respuesta, en la carpeta privada del
+                    workspace que nunca se sincroniza, por tantos envíos y días como elijas.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">PUT</b> /v1/orders/o_8812/status</span>
+                <span class="row-fact">422</span>
+                <span class="row-fact">23 ms</span>
+                <span class="row-fact">214 B</span>
+                <span class="row-state state-warn">Inválido</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Validación de esquema</h3>
+                <p>
+                    Dale a un body un JSON Schema, o genera uno desde una respuesta, y Request marca
+                    el lugar que lo rompe mientras escribes.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">POST</b> /graphql</span>
+                <span class="row-fact">200</span>
+                <span class="row-fact">64 ms</span>
+                <span class="row-fact">1,8 KB</span>
+                <span class="row-state state-ok">OK</span>
+            </summary>
+            <div class="row-detail">
+                <h3>GraphQL</h3>
+                <p>
+                    Queries y mutations con sus variables, completadas con el esquema que Request
+                    lee del servidor.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">GET</b> /v1/orders/o_8812</span>
+                <span class="row-fact">200</span>
+                <span class="row-fact">31 ms</span>
+                <span class="row-fact">402 B</span>
+                <span class="row-state state-ok">OK</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Snippets de código</h3>
+                <p>
+                    Copia cualquier request como curl, PowerShell, fetch, axios, PHP, Python
+                    requests, Go, Java OkHttp o C# HttpClient.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">DELETE</b> /v1/sessions/current</span>
+                <span class="row-fact">204</span>
+                <span class="row-fact">15 ms</span>
+                <span class="row-fact">0 B</span>
+                <span class="row-state state-ok">Sin contenido</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Scripts</h3>
+                <p>
+                    JavaScript antes y después de un envío, para firmar, encadenar o comprobar, en
+                    un sandbox. Un script que llegó de otra persona espera a que lo apruebes aquí.
+                </p>
+            </div>
+        </details>
+        <details class="row" name="history">
+            <summary>
+                <span class="row-name"><b class="method">GET</b> /v1/products?page=2</span>
+                <span class="row-fact">503</span>
+                <span class="row-fact">2,4 s</span>
+                <span class="row-fact">0 B</span>
+                <span class="row-state state-bad">No disponible</span>
+            </summary>
+            <div class="row-detail">
+                <h3>Importaciones</h3>
+                <p>
+                    Trae una colección desde OpenAPI, Postman o HAR, un workspace entero desde
+                    Postman, Insomnia o Bruno, o pega un comando curl en una pestaña nueva.
+                </p>
+            </div>
+        </details>
+        <div class="row row-cut" aria-hidden="true">
+            <span class="row-name"><b class="method">PATCH</b> /v1/customers/c_2041</span>
+            <span class="row-fact">200</span>
+            <span class="row-fact">27 ms</span>
+            <span class="row-fact">288 B</span>
+            <span class="row-state state-ok">OK</span>
+        </div>
+    </div>
+</section>
+
+<section class="app app-realtime" id="realtime" aria-labelledby="realtime-title">
+    <div class="app-copy">
+        <img class="app-icon" src="{{root}}icons/realtime.png" width="72" height="72" alt="" />
+        <h2 id="realtime-title">Mandor Realtime</h2>
+        <p class="lead">
+            Para todo lo que sigue hablando. WebSocket y Socket.IO de la v2 a la v4, cada marco en
+            un log en vivo, cada acknowledgement junto al mensaje que responde.
+        </p>
+    </div>
+    <div class="stage stage-realtime">
+        <div class="window window-stage" data-ui>
+            <picture>
+                <source
+                    srcset="
+                        {{root}}shots/realtime-dark-1280.webp 1280w,
+                        {{root}}shots/realtime-dark-1920.webp 1920w,
+                        {{root}}shots/realtime-dark-2560.webp 2560w,
+                        {{root}}shots/realtime-dark-3840.webp 3840w
+                    "
+                    sizes="(max-width: 1024px) 193vw, 110vw"
+                    media="(prefers-color-scheme: dark)"
+                />
+                <img
+                    src="{{root}}shots/realtime-light-1920.webp"
+                    srcset="
+                        {{root}}shots/realtime-light-1280.webp 1280w,
+                        {{root}}shots/realtime-light-1920.webp 1920w,
+                        {{root}}shots/realtime-light-2560.webp 2560w,
+                        {{root}}shots/realtime-light-3840.webp 3840w
+                    "
+                    sizes="(max-width: 1024px) 193vw, 110vw"
+                    width="1280"
+                    height="800"
+                    alt="El log de actividad de una conexión Socket.IO en Mandor Realtime: cinco mensajes order:update enviados, cada uno seguido de su acknowledgement en 2 ms o menos."
+                />
+            </picture>
+        </div>
+    </div>
+    <ul class="facts-list">
+        <li>Se reconecta con backoff cuando el servidor corta la conexión.</li>
+        <li>Graba una sesión, para releerla después de que la conexión se cierre.</li>
+        <li>Le da a cada mensaje su propio esquema.</li>
+        <li>Lee y escribe documentos AsyncAPI.</li>
+        <li>
+            Corre scripts antes de conectar, al conectar y en cada mensaje, cuando los apruebas.
+        </li>
+    </ul>
+</section>
+
+<section class="files" id="files" aria-labelledby="files-title">
+    <div class="files-copy">
+        <h2 id="files-title">Tu trabajo son archivos de texto</h2>
+        <p class="lead">
+            YAML y Markdown en una carpeta tuya. Sincronízala con un repositorio git que ya tienes,
+            o borra la app y conserva cada archivo.
+        </p>
+        <ul class="principles">
+            <li><strong>Local primero.</strong> Nada necesita un servidor nuestro.</li>
+            <li><strong>Sin cuenta.</strong> Ni ahora ni después.</li>
+            <li>
+                <strong>Sin telemetría.</strong> Las apps solo preguntan a GitHub si hay una versión
+                nueva.
+            </li>
+            <li>
+                <strong>Secretos aparte.</strong> Van al almacén seguro de tu sistema, nunca a tus
+                archivos.
+            </li>
+        </ul>
+    </div>
+    <div class="files-figure" data-ui>
+        <pre class="tree"><code>mandor.yaml
+workspaces/
+  q7m2x9c4k1ta/             <span class="tree-note"># Personal</span>
+    workspace.yaml
+    environments/
+      h3v8n0r5w2pe.yaml     <span class="tree-note"># Local</span>
+    collections/
+      collections.yaml      <span class="tree-note"># su orden</span>
+      b6d1s7y3f9qz/
+        collection.yaml     <span class="tree-note"># Orders</span>
+        u4k8e2m6t0jc.yaml   <span class="tree-note"># Create order</span>
+    docs/
+      r1g5p9a3x7lw.md
+.mandor/                    <span class="tree-note"># privado</span></code></pre>
+    </div>
+</section>
+
+<section class="download" id="download" aria-labelledby="download-title">
+    <div class="download-head">
+        <h2 id="download-title">
+            <span class="soft">Elige tu sistema.</span>
+            <span>Cada instalador.</span>
+        </h2>
+    </div>
+    {{downloads}}
+    <aside class="notice" aria-label="Antes de abrirlo">
+        <p>
+            Los instaladores aún no están firmados, así que Windows y macOS preguntan una vez antes
+            de abrir uno.
+        </p>
+        <a href="{{home}}install.html">Cómo comprobarlos y abrirlos</a>
+    </aside>
+</section>

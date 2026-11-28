@@ -1,0 +1,202 @@
+<!--
+title: Empieza con Mandor Request — Mandor
+description: Tu primer request en Mandor Request, y luego entornos y variables, los archivos que escribe, compartir un workspace con un origen, scripts e importaciones.
+-->
+<article class="doc">
+    <div class="doc-side">
+        <a class="doc-up" href="{{home}}docs.html">Docs</a>
+        <h1>Empieza con Request</h1>
+        <p class="doc-note">
+            Mandor Request envía requests HTTP y GraphQL y guarda cada colección como archivos
+            planos en tu disco. Sin cuenta y sin nada que configurar antes.
+        </p>
+        <ul class="doc-toc">
+            <li><a href="#workspace">Tu workspace</a></li>
+            <li><a href="#first-request">Tu primer request</a></li>
+            <li><a href="#environments">Entornos y variables</a></li>
+            <li><a href="#files">Los archivos en disco</a></li>
+            <li><a href="#origins">Compártelo con un origen</a></li>
+            <li><a href="#scripts">Scripts</a></li>
+            <li><a href="#import">Trae lo que ya tienes</a></li>
+            <li><a href="#keys">Atajos</a></li>
+        </ul>
+    </div>
+    <div class="doc-body">
+        <section id="workspace">
+            <h2>Tu workspace</h2>
+            <p>
+                La primera vez que se abre, Request crea su carpeta en
+                <code>Documents/Mandor/request/local</code> con un workspace,
+                <strong>Personal</strong>, y lo abre. No hay nada que elegir.
+            </p>
+            <p>
+                Un workspace guarda colecciones y entornos. Para otro, abre el menú del workspace en
+                la barra de título, elige <strong>Administrar workspaces</strong> y luego
+                <strong>Nuevo workspace</strong>, y ponle un nombre.
+            </p>
+        </section>
+
+        <section id="first-request">
+            <h2>Tu primer request</h2>
+            <ol>
+                <li>
+                    En la barra lateral, <strong>+</strong> crea una
+                    <strong>Nueva colección</strong>. Su menú añade carpetas y un
+                    <strong>Nuevo request</strong>.
+                </li>
+                <li>Elige el método, escribe la URL y pulsa <strong>Enviar</strong>.</li>
+                <li>
+                    La response se abre debajo: arriba su estado, tiempo y tamaño, y luego
+                    <strong>Body</strong>, <strong>Headers</strong> y <strong>Cookies</strong>.
+                </li>
+                <li>
+                    <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd> (<kbd><kbd>Cmd</kbd>+<kbd>S</kbd></kbd>
+                    en macOS) escribe el request en disco. Hasta entonces, el cambio vive solo en su
+                    pestaña.
+                </li>
+            </ol>
+            <p>
+                Para una prueba rápida fuera de cualquier colección, el <strong>+</strong> al final
+                de las pestañas abre un request suelto. Guárdalo y <strong>Guardar en…</strong> te
+                pide su colección o carpeta; ciérralo sin guardar y desaparece.
+            </p>
+        </section>
+
+        <section id="environments">
+            <h2>Entornos y variables</h2>
+            <p>
+                El selector de entorno está en la barra de título.
+                <strong>Crear entorno</strong> crea el primero;
+                <strong>Administrar entornos</strong> los edita todos, con los
+                <strong>Globales</strong> que comparten todos los entornos.
+            </p>
+            <p>
+                Escribe una variable como <code>&#123;&#123;nombre&#125;&#125;</code> en la URL, un
+                header, el body o la autenticación. Una que no está definida se envía como texto
+                literal, y el editor indica dónde falta.
+            </p>
+            <p>
+                Marca una variable como <strong>Variable secreta</strong> y su valor va al llavero
+                de tu sistema, fuera de la carpeta del workspace: el archivo guarda el nombre con el
+                valor vacío, así que un secreto nunca llega a un commit. Donde el sistema no tiene
+                llavero, el valor vive en memoria hasta que la app se cierra.
+            </p>
+            <p>
+                Cuando un nombre está definido en varios sitios, gana el más cercano: el script,
+                luego la carpeta, el entorno activo, la colección y los globales.
+            </p>
+        </section>
+
+        <section id="files">
+            <h2>Los archivos en disco</h2>
+            <p>
+                Cada cosa es un archivo YAML con un id corto por nombre, así que renombrar cambia
+                una línea y no una ruta. Todo salvo <code>.mandor/</code> está hecho para el commit.
+            </p>
+            <pre><code>mandor.yaml
+globals.yaml
+workspaces/&lt;id&gt;/
+  workspace.yaml
+  environments/&lt;id&gt;.yaml
+  collections/&lt;id&gt;/collection.yaml
+  collections/&lt;id&gt;/&lt;id&gt;.yaml        <span class="tree-note"># un request</span>
+  collections/&lt;id&gt;/&lt;id&gt;/folder.yaml
+  docs/*.md                         <span class="tree-note"># documentación</span>
+.mandor/                            <span class="tree-note"># privado: historial, cookies</span></code></pre>
+            <p>
+                <code>.mandor/</code> guarda el historial, las cookies y las pestañas abiertas de
+                este equipo, y git lo ignora.
+            </p>
+        </section>
+
+        <section id="origins">
+            <h2>Compártelo con un origen</h2>
+            <p>
+                La carpeta del workspace es un repositorio git, y Request hace un commit de cada
+                cambio que guardas; nunca escribes un comando de git. Para compartir un workspace o
+                tenerlo en otro equipo, añade un origen: un repositorio vacío al que llegues, por
+                <code>https:</code> o <code>ssh:</code>.
+            </p>
+            <ol>
+                <li>
+                    Abre el menú de orígenes, elige <strong>Gestionar orígenes</strong> y luego
+                    <strong>Añadir origen</strong>.
+                </li>
+                <li>Dale un nombre y su URL.</li>
+            </ol>
+            <p>
+                Desde entonces, Request trae y envía cambios al abrirse, después de cada guardado,
+                cada minuto y cuando su ventana recibe el foco. Nunca fuerza un push. Cuando el
+                mismo campo cambió en ambos lados, la pestaña <strong>Conflictos</strong> muestra
+                cada diferencia para resolverla con <strong>Usar lo mío</strong> o
+                <strong>Usar lo entrante</strong>.
+            </p>
+        </section>
+
+        <section id="scripts">
+            <h2>Scripts</h2>
+            <p>
+                Un script es JavaScript que corre <strong>Antes del request</strong> o
+                <strong>Tras la response</strong>, en una colección, una carpeta o un request, en
+                ese orden. Lee y define variables, cambia lo que sale y escribe tests con
+                <code>mandor.test</code> y <code>mandor.expect</code>, cuyos resultados aparecen en
+                la pestaña <strong>Tests</strong> de la response.
+            </p>
+            <p>
+                Los scripts corren en un sandbox sin archivos, red ni módulos propios. Uno que llega
+                por un origen o una importación espera hasta que lo apruebes. Para apagarlos todos:
+                <strong>Ajustes → Scripts → Correr scripts</strong>. Cada objeto y función está en
+                <a href="https://github.com/joalvm/mandor/blob/main/SCRIPTS.md">SCRIPTS.md</a>.
+            </p>
+        </section>
+
+        <section id="import">
+            <h2>Trae lo que ya tienes</h2>
+            <p>
+                <strong>Importar un documento</strong>, en la barra lateral, lee un archivo OpenAPI
+                3 o Swagger 2, una colección de Postman v2.1, una exportación de Insomnia, una
+                colección de Bruno o un archivo HAR. En el mismo diálogo puedes pegar un comando
+                curl y <strong>Abrir como request</strong>.
+            </p>
+        </section>
+
+        <section id="keys">
+            <h2>Atajos</h2>
+            <p>En macOS, <kbd>Cmd</kbd> ocupa el lugar de <kbd>Ctrl</kbd>.</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Paleta de comandos</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Enviar</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Enter</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Guardar</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Buscar en el workspace</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></kbd>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ajustes</td>
+                        <td>
+                            <kbd><kbd>Ctrl</kbd>+<kbd>,</kbd></kbd>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</article>
