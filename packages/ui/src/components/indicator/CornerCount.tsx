@@ -14,7 +14,7 @@ type CornerCountProps = PropsWithChildren<{
 const MOST = 9;
 
 const MARK = cn(
-    'pointer-events-none absolute -top-1 -right-1',
+    'pointer-events-none absolute -top-1 -end-1',
     'flex h-2.5 min-w-2.5 items-center justify-center px-0.5',
     'rounded-full',
     'text-3xs leading-none tabular',

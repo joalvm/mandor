@@ -31,7 +31,7 @@ export function CollapsibleHeader({ children, title }: CollapsibleHeaderProps) {
             data-part="collapsible-header"
         >
             <CollapsiblePrimitive.Trigger
-                className="flex min-w-0 flex-1 cursor-pointer items-center gap-gap-icon-text rounded-sm border border-transparent bg-transparent text-left text-xs font-semibold text-text-primary"
+                className="flex min-w-0 flex-1 cursor-pointer items-center gap-gap-icon-text rounded-sm border border-transparent bg-transparent text-start text-xs font-semibold text-text-primary"
                 data-focus-frame=""
             >
                 <span

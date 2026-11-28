@@ -1,0 +1,100 @@
+/**
+ * What the type of the window does in each script. The root says its language (`lang`) and the
+ * rules below read it: nothing here names a language the window does not speak yet, it waits for
+ * one. Inter stays first in every stack, so Latin letters, digits and code read the same in every
+ * language, and the font of the script fills in the letters Inter does not have.
+ *
+ * The tightening of the larger steps is a Latin habit: CJK, Indic, Thai and Arabic script set
+ * their glyphs at their own spacing, and Arabic letters joined by a stroke come apart when it is
+ * widened. Those languages zero the multiplier the tracking of every step is written with.
+ */
+:root {
+    --mandor-tracking: 1;
+}
+
+/**
+ * Which way the window runs. The layout follows the root's `dir` on its own, through the logical
+ * properties; what a stylesheet still draws towards a side — a fade at the end of a line, the
+ * travel of a switch, the guides of a tree — reads it from these three.
+ */
+:root {
+    --mandor-inline-sign: 1;
+    --mandor-side-start: left;
+    --mandor-to-inline-end: to right;
+}
+
+:root[dir='rtl'] {
+    --mandor-inline-sign: -1;
+    --mandor-side-start: right;
+    --mandor-to-inline-end: to left;
+}
+
+/** A glyph that points along the line — a chevron, the send arrow — turns round with it. */
+:root[dir='rtl'] [data-part='icon'][data-mirrored] {
+    scale: -1 1;
+}
+
+:root:is(
+    :lang(zh),
+    :lang(ja),
+    :lang(ko),
+    :lang(hi),
+    :lang(mr),
+    :lang(ne),
+    :lang(bn),
+    :lang(th),
+    :lang(ar),
+    :lang(fa),
+    :lang(ur)
+) {
+    --mandor-tracking: 0;
+    --tracking-wide: 0em;
+    --mandor-font-ui:
+        'Inter Variable', var(--mandor-font-script), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root:lang(zh) {
+    --mandor-font-script: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC';
+}
+
+:root:is(:lang(zh-Hant), :lang(zh-TW), :lang(zh-HK)) {
+    --mandor-font-script: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', 'Noto Sans TC';
+}
+
+:root:lang(ja) {
+    --mandor-font-script: 'Hiragino Sans', 'Yu Gothic UI', Meiryo, 'Noto Sans CJK JP';
+}
+
+:root:lang(ko) {
+    --mandor-font-script: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR';
+}
+
+:root:is(:lang(hi), :lang(mr), :lang(ne)) {
+    --mandor-font-script: 'Kohinoor Devanagari', 'Nirmala UI', 'Noto Sans Devanagari';
+}
+
+:root:lang(bn) {
+    --mandor-font-script: 'Kohinoor Bangla', 'Nirmala UI', 'Noto Sans Bengali';
+}
+
+:root:lang(th) {
+    --mandor-font-script: Thonburi, 'Leelawadee UI', 'Noto Sans Thai';
+}
+
+:root:is(:lang(ar), :lang(fa)) {
+    --mandor-font-script: 'Geeza Pro', 'Segoe UI', 'Noto Sans Arabic';
+}
+
+:root:lang(ur) {
+    --mandor-font-script: 'Noto Nastaliq Urdu', 'Segoe UI', 'Noto Sans Arabic';
+}
+
+/** Chinese and Japanese break a line by the strict rules, so no closing mark opens one. */
+:root:is(:lang(zh), :lang(ja)) {
+    line-break: strict;
+}
+
+/** Korean breaks between words, as it is written with spaces, and never inside one. */
+:root:lang(ko) {
+    word-break: keep-all;
+}

@@ -39,7 +39,7 @@ export function TimingRow({ bar, label, ms, startMs, totalMs }: TimingRowProps) 
                 />
                 <span data-part="timing-span" data-weight={Math.max(0, totalMs - startMs - ms)} />
             </span>
-            <span className="w-16 shrink-0 text-right tabular-nums text-text-primary">
+            <span className="w-16 shrink-0 text-end tabular-nums text-text-primary">
                 {formatPreciseDuration(ms, language)}
             </span>
         </div>

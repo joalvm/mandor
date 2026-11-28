@@ -36,7 +36,7 @@ export function ResponseSummary({ children, response }: ResponseSummaryProps) {
 
     return (
         <div
-            className="ml-auto flex min-w-0 items-center gap-gap-tight overflow-hidden text-sm"
+            className="ms-auto flex min-w-0 items-center gap-gap-tight overflow-hidden text-sm"
             data-fault={graphqlErrors !== undefined}
             data-part="response-summary"
             data-state="done"

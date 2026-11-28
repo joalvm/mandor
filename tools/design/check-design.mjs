@@ -10,6 +10,7 @@ import { inlineValueProblems } from './inline-values.mjs';
 import { markupProblems } from './markup.mjs';
 import { repeatedTokenProblems } from './repeated-token.mjs';
 import { sourceFiles } from './source-files.mjs';
+import { writingSideProblems } from './writing-sides.mjs';
 
 const files = await sourceFiles();
 const problems = [
@@ -18,6 +19,7 @@ const problems = [
     ...inlineValueProblems(files),
     ...markupProblems(files),
     ...repeatedTokenProblems(files),
+    ...writingSideProblems(files),
 ];
 
 if (problems.length === 0) {

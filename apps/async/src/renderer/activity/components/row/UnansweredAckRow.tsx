@@ -20,7 +20,7 @@ export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
 
     return (
         <div
-            className="flex h-row min-w-0 flex-1 items-center gap-gap-group pl-9 pr-pad-control text-xs tabular-nums"
+            className="flex h-row min-w-0 flex-1 items-center gap-gap-group ps-9 pe-pad-control text-xs tabular-nums"
             data-part="activity-row"
             data-reply="fault"
         >
@@ -38,9 +38,7 @@ export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
             >
                 {formatActivityTime(entry.at, language)}
             </time>
-            <span className="w-13 shrink-0 text-right">
-                {formatByteSize(entry.bytes, language)}
-            </span>
+            <span className="w-13 shrink-0 text-end">{formatByteSize(entry.bytes, language)}</span>
         </div>
     );
 }

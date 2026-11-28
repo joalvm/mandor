@@ -32,7 +32,7 @@ export function DockBand({ children, entry }: DockBandProps) {
             data-part="activity-dock-head"
         >
             <div
-                className="mr-auto flex min-w-0 items-center gap-gap-control text-xs tabular-nums"
+                className="me-auto flex min-w-0 items-center gap-gap-control text-xs tabular-nums"
                 data-part="activity-dock-summary"
             >
                 <DockDirection direction={directionOf(entry)} />

@@ -67,7 +67,7 @@ describe('the zones of the window', () => {
 
         const titlebar = byPart('titlebar');
 
-        expect(titlebar).toHaveClass('pl-pad-panel');
+        expect(titlebar).toHaveClass('ps-pad-panel');
         expect(titlebar).not.toHaveClass('px-pad-panel');
         expect(titlebar).toHaveClass('h-titlebar');
     });

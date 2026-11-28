@@ -5,13 +5,13 @@ import { StatusText } from '../../../src/index.js';
 
 describe('the words of a bar (StatusText)', () => {
     it('is read aloud when it changes, as a status and not as an alert', () => {
-        render(<StatusText className="ml-auto">Sincronizando…</StatusText>);
+        render(<StatusText className="ms-auto">Sincronizando…</StatusText>);
 
         const status = screen.getByRole('status');
 
         expect(status).toHaveTextContent('Sincronizando…');
         expect(status).toHaveAttribute('data-part', 'status-text');
-        expect(status).toHaveClass('ml-auto');
+        expect(status).toHaveClass('ms-auto');
         expect(screen.queryByRole('alert')).toBeNull();
     });
 });

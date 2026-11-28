@@ -33,5 +33,5 @@ function HeadingValue({ value }: Pick<FactHeadingProps, 'value'>) {
         return null;
     }
 
-    return <span className="ml-auto shrink-0 tabular-nums">{value}</span>;
+    return <span className="ms-auto shrink-0 tabular-nums">{value}</span>;
 }

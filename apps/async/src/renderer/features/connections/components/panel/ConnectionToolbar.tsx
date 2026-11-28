@@ -58,7 +58,7 @@ export function ConnectionToolbar({
 
     return (
         <div
-            className="flex h-toolbar shrink-0 items-center gap-gap-control pr-2.5 pl-pad-panel"
+            className="flex h-toolbar shrink-0 items-center gap-gap-control pe-2.5 ps-pad-panel"
             data-part="connection-toolbar"
         >
             <AddressBar className="flex-1">

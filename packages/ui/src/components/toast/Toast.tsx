@@ -18,7 +18,7 @@ type ToastMessages = {
 };
 
 /** Where the stack stands; how it piles up and opens is written in `runtime.css`. */
-const VIEWPORT_STYLES = 'fixed right-gap-group bottom-gap-group z-toast w-toast list-none';
+const VIEWPORT_STYLES = 'fixed end-gap-group bottom-gap-group z-toast w-toast list-none';
 
 type ToastProviderProps = PropsWithChildren<{
     messages: ToastMessages;

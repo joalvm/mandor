@@ -74,7 +74,7 @@ export function ConsolePanel() {
                     onClick={clear}
                     size="xs"
                 />
-                <div className="ml-auto flex shrink-0 items-center gap-gap-control">
+                <div className="ms-auto flex shrink-0 items-center gap-gap-control">
                     <ConsoleSettingsMenu />
                     <IconButton
                         icon="close"

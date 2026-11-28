@@ -39,7 +39,7 @@ export function TabTrailing({ action, children }: TabTrailingProps) {
 
     return (
         <span
-            className="absolute inset-y-0 right-1 grid items-center justify-items-center"
+            className="absolute inset-y-0 end-1 grid items-center justify-items-center"
             data-part="tab-trailing"
         >
             <TabStatus action={action} said={said}>

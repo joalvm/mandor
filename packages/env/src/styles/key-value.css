@@ -12,7 +12,7 @@
     --table-cell-pad-block: 0px;
 
     border: var(--focus-ring-width) solid transparent;
-    border-left-color: var(--table-cell-rule);
+    border-inline-start-color: var(--table-cell-rule);
     border-radius: var(--mandor-radius-sm);
     position: relative;
 }
@@ -44,10 +44,10 @@
     border-radius: var(--mandor-radius-sm);
     bottom: calc(-1 * var(--focus-ring-width));
     content: '';
-    left: calc(-1 * var(--focus-ring-width));
+    inset-inline: calc(-1 * var(--focus-ring-width))
+        calc(var(--table-cell-covered, 0px) - var(--focus-ring-width));
     pointer-events: none;
     position: absolute;
-    right: calc(var(--table-cell-covered, 0px) - var(--focus-ring-width));
     top: calc(-1 * var(--focus-ring-width));
 }
 

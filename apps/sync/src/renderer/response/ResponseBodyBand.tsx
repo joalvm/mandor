@@ -55,7 +55,7 @@ export function ResponseBodyBand({ actions, progress, show }: ResponseBodyBandPr
         >
             <BodyFormatMenu onChange={actions.setFormat} value={show.format} />
             <PreviewToggle onPreview={actions.setPreview} preview={show.preview} />
-            <div className="mr-auto flex min-w-0 items-center gap-gap-control text-xs text-text-secondary">
+            <div className="me-auto flex min-w-0 items-center gap-gap-control text-xs text-text-secondary">
                 <LoadedNote partial={partial} progress={progress} />
                 <TooBigNote laidOut={progress.laidOut} />
             </div>

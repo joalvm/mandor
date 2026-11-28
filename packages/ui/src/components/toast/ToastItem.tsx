@@ -93,7 +93,7 @@ function ToastCount({ count }: { count: ToastSpec['count'] }) {
     // A pill of its own beside the title, so the count never reads as part of the sentence.
     return (
         <span
-            className="ml-gap-icon-text inline-flex rounded-full bg-surface-control px-1.5 align-middle text-2xs font-semibold text-text-secondary"
+            className="ms-gap-icon-text inline-flex rounded-full bg-surface-control px-1.5 align-middle text-2xs font-semibold text-text-secondary"
             data-part="toast-count"
         >{`×${String(count)}`}</span>
     );

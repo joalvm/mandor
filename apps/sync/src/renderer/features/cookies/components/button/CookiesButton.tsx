@@ -22,7 +22,7 @@ export function CookiesButton() {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="ml-auto flex items-center" data-part="cookies-button">
+        <div className="ms-auto flex items-center" data-part="cookies-button">
             <Button
                 disabled={workspaceId === null}
                 onClick={() => {

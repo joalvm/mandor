@@ -39,7 +39,7 @@ export function ExampleDiffBar({
             <span className="tabular-nums text-text-tertiary">
                 · {formatDuration(received.timings.totalMs, language)}
             </span>
-            <div className="ml-auto flex items-center gap-gap-tight">
+            <div className="ms-auto flex items-center gap-gap-tight">
                 <IconButton
                     active={wrap}
                     icon={wrap ? 'wrap-text' : 'wrap-text-off'}

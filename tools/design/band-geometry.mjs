@@ -38,7 +38,7 @@ const INHERITED = new Set(['h-auto', 'h-full', 'h-screen']);
 
 const ANY_HEIGHT = /^h-/;
 const ALIGNMENT = /^items-/;
-const INSET = /^p[xlr]?-pad-/;
+const INSET = /^p[xlrse]?-pad-/;
 
 /** The one way out, and it costs a sentence: `// band-policy: <why>` above the tag. */
 const EXEMPT = /band-policy:\s*\S/;

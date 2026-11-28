@@ -111,11 +111,11 @@ describe('SyncTitleBar', () => {
         // Both ends grow from nothing by the same share, and the end keeps on its inner side the
         // air the row opens with, so what is left between them is the middle of the window.
         expect(byPart('title-start')).toHaveClass('flex-1', 'basis-0');
-        expect(byPart('title-end')).toHaveClass('flex-1', 'basis-0', 'pl-pad-panel');
+        expect(byPart('title-end')).toHaveClass('flex-1', 'basis-0', 'ps-pad-panel');
         // The end is as tall as the row, so the window buttons it holds reach top and bottom.
         expect(byPart('title-end')).toHaveClass('h-full');
-        expect(byPart('titlebar')).toHaveClass('pl-pad-panel');
-        expect(byPart('title-start')).not.toHaveClass('pl-pad-panel');
+        expect(byPart('titlebar')).toHaveClass('ps-pad-panel');
+        expect(byPart('title-start')).not.toHaveClass('ps-pad-panel');
     });
 
     it('opens the settings from the button of the row', () => {

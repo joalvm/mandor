@@ -2,7 +2,8 @@ import { useRef, type ComponentProps, type PropsWithChildren } from 'react';
 
 import { cn } from '../../lib/cn.js';
 import { SplitHandle } from './SplitHandle.js';
-import { clampedSplit, SPLIT_AXES } from './split-axis.js';
+import { useWritingDirection } from '../../hooks/useWritingDirection.js';
+import { clampedSplit, splitAxisOf } from './split-axis.js';
 import { useFitDirection, type SplitLayout } from './useFitDirection.js';
 
 type SplitPaneProps = PropsWithChildren<{
@@ -56,6 +57,7 @@ export function SplitPane({
     const position = `${String(clampedSplit(value, min, max))}%`;
     const box = useRef<HTMLDivElement>(null);
     const standing = useFitDirection(box, direction);
+    const writing = useWritingDirection();
 
     return (
         <div
@@ -69,7 +71,7 @@ export function SplitPane({
         >
             {children}
             <OpenHandle
-                axis={SPLIT_AXES[standing]}
+                axis={splitAxisOf(standing, writing)}
                 collapsed={collapsed}
                 initial={initial}
                 label={label}

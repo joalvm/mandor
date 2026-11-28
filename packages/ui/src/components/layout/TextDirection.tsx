@@ -1,7 +1,9 @@
 import { Direction } from 'radix-ui';
 import type { PropsWithChildren } from 'react';
 
-type TextDirectionProps = PropsWithChildren<{ dir: 'ltr' | 'rtl' }>;
+import type { WritingDirection } from '../../hooks/useWritingDirection.js';
+
+type TextDirectionProps = PropsWithChildren<{ dir: WritingDirection }>;
 
 /**
  * Which way the text of the window runs. The page says it on its root for the stylesheets; the

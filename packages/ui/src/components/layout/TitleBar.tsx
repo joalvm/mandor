@@ -22,7 +22,7 @@ type TitleBarProps = PropsWithChildren;
 export function TitleBar({ children }: TitleBarProps) {
     return (
         <header
-            className="flex h-titlebar shrink-0 items-center gap-gap-control bg-surface-frame pl-pad-panel"
+            className="flex h-titlebar shrink-0 items-center gap-gap-control bg-surface-frame ps-pad-panel"
             data-part="titlebar"
         >
             {children}

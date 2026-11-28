@@ -36,7 +36,7 @@ export function CommandCenter() {
             variant="chrome"
         >
             <SearchIcon size="sm" />
-            <span className="min-w-0 flex-1 truncate text-left">{messages('searchCommands')}</span>
+            <span className="min-w-0 flex-1 truncate text-start">{messages('searchCommands')}</span>
             <PaletteShortcut combination={keyboard.get(PALETTE_COMMAND)?.combination} />
         </Button>
     );

@@ -78,7 +78,7 @@ export const ConnectionMessageRow = memo(function ConnectionMessageRow({
         <div
             className={cn(
                 'flex h-row min-w-0 flex-1 items-center gap-gap-group px-pad-control text-xs tabular-nums',
-                record.replyTo !== undefined && 'pl-9',
+                record.replyTo !== undefined && 'ps-9',
             )}
             data-direction={record.direction}
             data-part="activity-row"
@@ -120,9 +120,7 @@ export const ConnectionMessageRow = memo(function ConnectionMessageRow({
             >
                 {formatActivityTime(entry.at, language)}
             </time>
-            <span className="w-13 shrink-0 text-right">
-                {formatByteSize(entry.bytes, language)}
-            </span>
+            <span className="w-13 shrink-0 text-end">{formatByteSize(entry.bytes, language)}</span>
         </div>
     );
 });
@@ -160,7 +158,7 @@ function FrameElapsed({ elapsedMs }: { elapsedMs: ActivityRecord['elapsedMs'] })
     }
 
     return (
-        <span className="w-13 shrink-0 text-right text-text-secondary">
+        <span className="w-13 shrink-0 text-end text-text-secondary">
             {`${String(elapsedMs)} ms`}
         </span>
     );

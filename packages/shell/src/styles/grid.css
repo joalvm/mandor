@@ -197,8 +197,16 @@
     .dv-tab
     [data-part='tab-trailing']:has(> [data-part='tab-status']:not(:empty)) {
     background:
-        linear-gradient(to right, transparent, var(--tab-veil) var(--mandor-width-tab-fade)),
-        linear-gradient(to right, transparent, var(--tab-fill) var(--mandor-width-tab-fade));
+        linear-gradient(
+            var(--mandor-to-inline-end),
+            transparent,
+            var(--tab-veil) var(--mandor-width-tab-fade)
+        ),
+        linear-gradient(
+            var(--mandor-to-inline-end),
+            transparent,
+            var(--tab-fill) var(--mandor-width-tab-fade)
+        );
 }
 
 /**
@@ -224,7 +232,7 @@
 .dockview-theme-mandor .dv-tab [data-part='method-mark'] {
     font-size: var(--mandor-text-3xs-size);
     line-height: var(--mandor-text-3xs-line);
-    letter-spacing: var(--mandor-text-3xs-tracking);
+    letter-spacing: calc(var(--mandor-text-3xs-tracking) * var(--mandor-tracking));
 }
 
 /**

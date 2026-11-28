@@ -81,7 +81,7 @@
     --table-cell-rule: var(--border-subtle);
 
     align-items: center;
-    border-left: 1px solid var(--table-cell-rule);
+    border-inline-start: 1px solid var(--table-cell-rule);
     display: flex;
     font-weight: inherit;
     min-width: 0;
@@ -128,8 +128,8 @@
 [data-part='table-resize'] {
     bottom: 0;
     cursor: col-resize;
+    inset-inline-end: calc(-1 * var(--mandor-gap-control));
     position: absolute;
-    right: calc(-1 * var(--mandor-gap-control));
     top: 0;
     width: calc(2 * var(--mandor-gap-control));
     z-index: 1;
@@ -147,13 +147,13 @@
     background:
         linear-gradient(var(--table-row-veil), var(--table-row-veil)),
         linear-gradient(var(--table-row-tint), var(--table-row-tint)), var(--table-surface);
-    border-left-color: transparent;
+    border-inline-start-color: transparent;
     bottom: 0;
     gap: var(--mandor-gap-tight);
+    inset-inline-end: 0;
     padding-block: 0;
     padding-inline: var(--mandor-gap-tight);
     position: absolute;
-    right: 0;
     top: 0;
 }
 

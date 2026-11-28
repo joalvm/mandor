@@ -54,7 +54,7 @@ export function ComposerFooter({
                 onExpectAckChange={onExpectAckChange}
                 transport={transport}
             />
-            <div className="ml-auto flex items-center gap-gap-control">
+            <div className="ms-auto flex items-center gap-gap-control">
                 <Select
                     className="shrink-0"
                     label={messages('composerLanguage')}

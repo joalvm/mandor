@@ -92,7 +92,7 @@ export function ExampleSchema({
                     {labels('exampleSchemaOwner', { status })}
                 </span>
                 <IconButton
-                    className="ml-auto"
+                    className="ms-auto"
                     data-part="example-schema-regenerate"
                     icon="format"
                     label={labels('exampleRegenerateSchema')}
