@@ -50,6 +50,10 @@ const config: KnipConfig = {
                 'undici',
             ],
         },
+        'packages/i18n': {
+            // Same as the declarations of `tools/workspace`: the tests check types over the JS.
+            ignore: ['tools/*.d.mts'],
+        },
         'packages/icons': {
             // The generator reads the glyph sources from the package by the path in
             // `icon-sources.json`, never by an import.

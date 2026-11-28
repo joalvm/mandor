@@ -1,11 +1,11 @@
 /** Which way a language writes its lines: from the left, or from the right. */
-export type TextDirection = 'ltr' | 'rtl';
+export type LanguageDirection = 'ltr' | 'rtl';
 
 /** A language the interface can be read in, named the way its own readers name it. */
 export type InterfaceLanguage = {
     /** The BCP 47 tag of its folder of messages, `pt-BR` for a regional one. */
     code: string;
-    direction: TextDirection;
+    direction: LanguageDirection;
     /** Its name in itself, `Español`, so a reader finds it whatever the window speaks now. */
     name: string;
 };
@@ -24,6 +24,6 @@ export const INTERFACE_LANGUAGES = [
 export function textDirectionOf(
     code: string,
     languages: readonly InterfaceLanguage[] = INTERFACE_LANGUAGES,
-): TextDirection {
+): LanguageDirection {
     return languages.find((language) => language.code === code)?.direction ?? 'ltr';
 }

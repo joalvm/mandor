@@ -273,7 +273,7 @@ export {
     INTERFACE_LANGUAGES,
     textDirectionOf,
     type InterfaceLanguage,
-    type TextDirection,
+    type LanguageDirection,
 } from './preference/interface-languages.js';
 export { PREFERENCE_DEFINITIONS } from './preference/preference-definitions.js';
 export { THEME_IDS, type ThemeId } from './preference/theme-id.js';

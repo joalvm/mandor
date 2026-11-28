@@ -82,7 +82,7 @@ function objectSchema(value, complete, forms) {
  * The shape a language must give one English namespace: the same keys, except that a key English
  * says in plural takes the forms of that language instead of the two of English.
  */
-export function schemaOf(value, complete, forms) {
+function schemaOf(value, complete, forms) {
     if (typeof value === 'string') {
         return { minLength: 1, type: 'string' };
     }
