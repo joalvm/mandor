@@ -291,3 +291,39 @@ design` comprueba marcado y tokens. Estándar de interfaz e iconos: skills `ui-d
 - La línea de estado alterna el diseño de paneles vertical u horizontal (también en la paleta).
   Consola y campana marcan su cuenta de 1 a 9+ en la esquina del icono. Barras de 4 px.
 - El ui-lab se dibuja como las apps y lee el valor de cada token de la página.
+
+## Idiomas
+
+Inglés (base y respaldo) y español. Un idioma nuevo es solo datos, en las dos apps a la vez:
+
+1. Carpeta `packages/i18n/src/lang/<código>/` con los mismos temas que `en/`. Cada idioma dice
+   todas las claves del inglés; una variante regional (`pt-BR` junto a `pt`) solo las que cambia.
+   Los plurales llevan las formas que `Intl.PluralRules` da a ese idioma (`_one`, `_few`,
+   `_many`, `_other`…). El generador exige las que alcanza un número pequeño; la que falte cae
+   en `_other`.
+2. Una fila en `INTERFACE_LANGUAGES` (`packages/schema/src/preference/interface-languages.ts`),
+   con su nombre en su propio idioma y su dirección (`ltr` o `rtl`). El selector de Ajustes, la
+   preferencia y la ventana la leen de ahí. Un test compara la tabla con las carpetas.
+3. `npm run i18n` regenera el registro tipado.
+4. Si Monaco trae ese idioma (`monaco-editor/nls/lang/<código>.js`), una entrada en `BUNDLES` de
+   `packages/ui/src/editor/editor-messages.ts`. Sin ella, los textos del editor quedan en inglés.
+
+Lo que ya está resuelto:
+
+- La raíz lleva `lang` y `dir`. Radix (menús, pestañas, deslizadores) lee la dirección de
+  `TextDirection`. El layout usa propiedades lógicas, y `npm run design` rechaza un lado físico
+  (`ml-`, `right-`, `text-left`, `border-left`…).
+- Lo que dibuja la hoja de estilos hacia un lado (fundidos, el interruptor, las guías del árbol,
+  el giro de los chevrons) sale de `--mandor-inline-sign`, `--mandor-side-start` y
+  `--mandor-to-inline-end`. Divisores, la barra lateral y las columnas de tabla miden el puntero
+  y las flechas desde el borde donde empieza el texto. La rejilla de paneles queda de izquierda a
+  derecha en todos los idiomas.
+- Un glifo que apunta a lo largo de la línea lleva `mirrored` en `icon-sources.json` y se espeja
+  en RTL: chevron izquierdo y derecho, enviar, barra lateral y ajuste de línea. Reproducir,
+  descargar o un reloj no se espejan.
+- Números, tamaños, duraciones y horas salen por `Intl` en el idioma de la ventana
+  (`formatNumber` de `@mandor/i18n`). Los símbolos de unidad (`B`, `kB`, `ms`, `s`) quedan
+  literales en todos.
+- `packages/ui/src/styles/scripts.css`: CJK, índicas, tailandés y árabe ponen a 0 el
+  multiplicador `--mandor-tracking` del tracking de cada escalón, y traen su fuente detrás de
+  Inter por `:lang()`. Una escritura nueva que no esté en esa lista añade ahí su pila.
