@@ -12,7 +12,7 @@ export function FactRows({ rows }: FactRowsProps) {
             {seen.map(([label, value]) => (
                 <div className="flex min-w-0 items-baseline gap-gap-control" key={label}>
                     <dt className="shrink-0 text-text-secondary">{label}</dt>
-                    <dd className="ml-auto min-w-0 truncate text-right tabular-nums text-text-primary">
+                    <dd className="ms-auto min-w-0 truncate text-end tabular-nums text-text-primary">
                         {value}
                     </dd>
                 </div>

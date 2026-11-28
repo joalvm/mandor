@@ -44,7 +44,7 @@ export const CookieDomainGroup = memo(function CookieDomainGroup({
                     {labels('count', { count: domain.cookies.length })}
                 </span>
                 <IconButton
-                    className="ml-auto"
+                    className="ms-auto"
                     icon="delete"
                     label={labels('deleteDomain', { domain: domain.domain })}
                     onClick={forget}

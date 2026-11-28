@@ -68,7 +68,7 @@ describe('the settings of the app', () => {
         fireEvent.keyDown(screen.getByRole('combobox', { name: 'Language' }), {
             key: 'ArrowDown',
         });
-        fireEvent.click(await screen.findByRole('option', { name: 'Spanish' }));
+        fireEvent.click(await screen.findByRole('option', { name: 'Español' }));
 
         expect(window.localStorage.getItem(PREFERENCE_STORAGE_KEY)).toBe(
             JSON.stringify({ 'appearance.language': 'es' }),

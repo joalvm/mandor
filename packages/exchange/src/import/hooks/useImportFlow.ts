@@ -14,6 +14,7 @@ import {
 } from '../lib/import-plan-tree.js';
 import type { ImportChoice, ImportPick } from '../lib/import-choice.js';
 import { IMPORT_DOORS } from '../lib/import-doors.js';
+import { lossValues } from '../lib/loss-values.js';
 import type { DroppedTransfer } from '../lib/read-dropped.js';
 import type { ImportedDocument } from '../lib/imported-document.js';
 import { notifyImported } from '../lib/imported-signal.js';
@@ -86,7 +87,7 @@ export function useImportFlow(
                 ? NO_NODES
                 : importChoiceNodes(plan, {
                       conflict: conflictWord,
-                      loss: ({ code, values }) => messages(`loss.${code}`, values),
+                      loss: ({ code, values }) => messages(`loss.${code}`, lossValues(values)),
                       removal: removalWord,
                   }),
         [conflictWord, messages, plan, removalWord],

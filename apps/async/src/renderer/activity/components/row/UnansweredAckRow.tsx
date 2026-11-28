@@ -1,5 +1,5 @@
 import { WarningIcon } from '@mandor/icons';
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 
 import type { ConnectionMessageEntry } from '../../activity-entry.js';
 import { formatByteSize } from '../../lib/format-byte-size.js';
@@ -15,11 +15,12 @@ type UnansweredAckRowProps = {
  */
 export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
     const messages = useMessages('connections');
+    const language = useLanguage();
     const record = entry.detail;
 
     return (
         <div
-            className="flex h-row min-w-0 flex-1 items-center gap-gap-group pl-9 pr-pad-control text-xs tabular-nums"
+            className="flex h-row min-w-0 flex-1 items-center gap-gap-group ps-9 pe-pad-control text-xs tabular-nums"
             data-part="activity-row"
             data-reply="fault"
         >
@@ -29,15 +30,15 @@ export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
             <span className="min-w-0 flex-1 truncate font-semibold" data-part="activity-event">
                 {record.event === undefined
                     ? messages('ackUnanswered')
-                    : `${record.event} — ${messages('ackUnanswered')}`}
+                    : messages('ackUnansweredFor', { event: record.event })}
             </span>
             <time
                 className="w-16 shrink-0 text-text-secondary"
                 dateTime={new Date(entry.at).toISOString()}
             >
-                {formatActivityTime(entry.at)}
+                {formatActivityTime(entry.at, language)}
             </time>
-            <span className="w-13 shrink-0 text-right">{formatByteSize(entry.bytes)}</span>
+            <span className="w-13 shrink-0 text-end">{formatByteSize(entry.bytes, language)}</span>
         </div>
     );
 }

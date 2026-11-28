@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { CodeIcon, ErrorIcon } from '@mandor/icons';
 import { cn } from '@mandor/ui';
 
@@ -18,6 +18,7 @@ type ConnectionScriptRowProps = {
  */
 export function ConnectionScriptRow({ entry }: ConnectionScriptRowProps) {
     const labels = useMessages('connections');
+    const language = useLanguage();
     const broke = entry.detail.error !== undefined;
 
     return (
@@ -32,7 +33,7 @@ export function ConnectionScriptRow({ entry }: ConnectionScriptRowProps) {
                 {scriptNoteFigures(entry.detail, labels)}
             </span>
             <time className="w-16 shrink-0" dateTime={new Date(entry.at).toISOString()}>
-                {formatActivityTime(entry.at)}
+                {formatActivityTime(entry.at, language)}
             </time>
             {/* The column of the bytes, empty: the moment stays under the moments of the frames. */}
             <span aria-hidden="true" className="w-13 shrink-0" />

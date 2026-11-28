@@ -11,8 +11,8 @@ type DocCodeProps = PropsWithChildren<{
 
 /** In the corner of the block, over it: hidden at rest, there under the pointer or the focus. */
 const ACTIONS = [
-    'absolute top-pad-control right-pad-control flex items-center gap-gap-icon-text',
-    'rounded-md pl-pad-control',
+    'absolute top-pad-control end-pad-control flex items-center gap-gap-icon-text',
+    'rounded-md ps-pad-control',
     'opacity-0 transition-opacity duration-fast',
     'group-focus-within:opacity-100 group-hover:opacity-100',
 ].join(' ');

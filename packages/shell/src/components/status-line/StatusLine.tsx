@@ -62,7 +62,7 @@ export function StatusLine() {
                 }}
                 size="xs"
             />
-            <div className="ml-auto flex items-center gap-gap-control">
+            <div className="ms-auto flex items-center gap-gap-control">
                 <StatusText>
                     <Badge tone={look.tone}>
                         <span

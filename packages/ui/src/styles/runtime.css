@@ -52,12 +52,15 @@ textarea,
 }
 
 /**
- * The chevron of a foldable region turns with the region. It is the header's own glyph, and the
- * state radix writes on the trigger already says which way the region is: the turn is said once
- * here instead of once in every header that draws one.
+ * The chevron of a foldable region, and of a folder of a tree, turns with what it folds. It is the
+ * header's own glyph, and the state radix or the row writes already says which way the region is:
+ * the turn is said once here instead of once in every header that draws one. Closed it points to
+ * where the line runs, so in a window written from the right it points left, and the turn that
+ * brings it down goes the other way.
  */
-[data-state='open'] > [data-part='collapsible-chevron'] {
-    transform: rotate(90deg);
+[data-state='open'] > [data-part='collapsible-chevron'],
+[aria-expanded='true'] [data-part='tree-chevron'] {
+    transform: rotate(calc(var(--mandor-inline-sign) * 90deg));
 }
 
 [data-part='activity-viewport'],
@@ -462,7 +465,7 @@ textarea,
     from,
     to {
         mask-image: linear-gradient(
-            to right,
+            var(--mandor-to-inline-end),
             black calc(100% - var(--mandor-width-tab-fade)),
             transparent
         );
@@ -510,11 +513,12 @@ textarea,
 
 [data-part='tree-line'][data-level]::before {
     background-image: repeating-linear-gradient(
-        to right,
+        var(--mandor-to-inline-end),
         var(--border-strong) 0 1px,
         transparent 1px var(--mandor-indent-tree)
     );
-    background-position-x: calc(var(--mandor-pad-inline-panel) + var(--mandor-icon-sm) / 2);
+    background-position-x: var(--mandor-side-start)
+        calc(var(--mandor-pad-inline-panel) + var(--mandor-icon-sm) / 2);
     background-repeat: no-repeat;
     background-size: calc((attr(data-level type(<number>), 1) - 1) * var(--mandor-indent-tree)) 100%;
     content: '';
@@ -662,7 +666,10 @@ textarea,
 
 [data-part='switch'][data-state='checked'] [data-part='switch-thumb'] {
     transform: translateX(
-        calc(var(--mandor-width-toggle) - var(--mandor-icon-md) - 2 * var(--mandor-pad-toggle))
+        calc(
+            var(--mandor-inline-sign) *
+                (var(--mandor-width-toggle) - var(--mandor-icon-md) - 2 * var(--mandor-pad-toggle))
+        )
     );
 }
 

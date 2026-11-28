@@ -44,7 +44,7 @@ export function ConflictLine({
     return (
         <li
             className={cn(
-                'flex min-w-0 items-start gap-gap-control border-l-2 px-pad-control py-1',
+                'flex min-w-0 items-start gap-gap-control border-s-2 px-pad-control py-1',
                 'transition-colors duration-fast',
                 checked ? FILLS[tone] : 'border-transparent',
             )}

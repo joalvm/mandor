@@ -39,7 +39,7 @@ export function ChoiceTreeToolbar({
                 className={
                     alone
                         ? 'flex min-w-0 flex-1 items-center gap-gap-control'
-                        : 'ml-auto flex items-center gap-gap-control'
+                        : 'ms-auto flex items-center gap-gap-control'
                 }
             >
                 <SearchInput

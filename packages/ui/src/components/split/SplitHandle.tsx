@@ -2,7 +2,7 @@ import type { KeyboardEvent } from 'react';
 
 import { usePointerDrag } from '../../hooks/usePointerDrag.js';
 import { cn } from '../../lib/cn.js';
-import { clampedSplit, keyboardDelta, stepOf, type SplitAxis } from './split-axis.js';
+import { clampedSplit, keyboardDelta, reachInto, stepOf, type SplitAxis } from './split-axis.js';
 
 type SplitHandleProps = {
     /** Where a double click puts the line back. */
@@ -42,9 +42,7 @@ export function SplitHandle({
             return;
         }
 
-        onValueChange(
-            clampedSplit(((axis.pointOf(event) - axis.startOf(bounds)) / size) * 100, min, max),
-        );
+        onValueChange(clampedSplit((reachInto(event, bounds, axis) / size) * 100, min, max));
     });
 
     function onKeyDown(event: KeyboardEvent<HTMLElement>): void {

@@ -96,7 +96,10 @@ function RowChevron({ visible }: { visible: boolean }) {
     }
 
     return (
-        <span className="flex items-center text-text-secondary transition-transform duration-fast group-aria-expanded:rotate-90">
+        <span
+            className="flex items-center text-text-secondary transition-transform duration-fast"
+            data-part="tree-chevron"
+        >
             <ChevronRightIcon size="sm" />
         </span>
     );

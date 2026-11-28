@@ -1,6 +1,7 @@
 export { MessagesProvider } from './MessagesProvider.js';
 export { createI18n } from './create-i18n.js';
 export { createPlainI18n } from './create-plain-i18n.js';
+export { formatNumber } from './format-number.js';
 export { DEFAULT_LANGUAGE, LANGUAGE_CODES, type Language } from './generated/resources.js';
 export { useEditorIssueMessage } from './hooks/useEditorIssueMessage.js';
 export { useLanguage } from './hooks/useLanguage.js';

@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { cn } from '@mandor/ui';
 
 import { factText } from '../../lib/fact-text.js';
@@ -31,6 +31,7 @@ export function FactsDiff({ facts }: FactsDiffProps) {
 
 function FactLine({ fact }: { fact: FactRow }) {
     const labels = useMessages('history');
+    const language = useLanguage();
 
     return (
         <tr
@@ -42,8 +43,8 @@ function FactLine({ fact }: { fact: FactRow }) {
                 {labels(LABEL_OF[fact.key])}
                 <ChangedNotice same={fact.same} />
             </th>
-            <td className="tabular-nums">{factText(fact.key, fact.before)}</td>
-            <td className="tabular-nums">{factText(fact.key, fact.after)}</td>
+            <td className="tabular-nums">{factText(fact.key, fact.before, language)}</td>
+            <td className="tabular-nums">{factText(fact.key, fact.after, language)}</td>
         </tr>
     );
 }

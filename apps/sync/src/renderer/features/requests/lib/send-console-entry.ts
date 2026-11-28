@@ -90,6 +90,7 @@ export function sendConsoleEntry(
     log: RequestSendLog,
     labels: Labels,
     source: string,
+    language: string,
 ): ConsoleWrite {
     const text = log.sent === undefined ? source : `${log.sent.method} ${log.sent.url}`;
     const base = { text, source, network: true, sections: sectionsOf(log, labels) };
@@ -108,6 +109,6 @@ export function sendConsoleEntry(
             text: `${String(status)} ${statusText}`.trim(),
             outcome: refused ? 'refused' : 'ok',
         },
-        time: formatDuration(totalMs),
+        time: formatDuration(totalMs, language),
     };
 }

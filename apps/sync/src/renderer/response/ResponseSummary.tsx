@@ -1,5 +1,5 @@
 import type { HttpResponse } from '@mandor/schema';
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { Badge } from '@mandor/ui';
 import type { PropsWithChildren } from 'react';
 
@@ -31,11 +31,12 @@ function Separator() {
  */
 export function ResponseSummary({ children, response }: ResponseSummaryProps) {
     const labels = useMessages('requests');
+    const language = useLanguage();
     const { graphqlErrors, sizes, timings } = response;
 
     return (
         <div
-            className="ml-auto flex min-w-0 items-center gap-gap-tight overflow-hidden text-sm"
+            className="ms-auto flex min-w-0 items-center gap-gap-tight overflow-hidden text-sm"
             data-fault={graphqlErrors !== undefined}
             data-part="response-summary"
             data-state="done"
@@ -45,7 +46,7 @@ export function ResponseSummary({ children, response }: ResponseSummaryProps) {
             <ResponseFact
                 label={labels('responseTime')}
                 part="response-time"
-                text={formatDuration(timings.totalMs)}
+                text={formatDuration(timings.totalMs, language)}
             >
                 <ResponseTimeDetail timings={timings} />
             </ResponseFact>
@@ -53,7 +54,7 @@ export function ResponseSummary({ children, response }: ResponseSummaryProps) {
             <ResponseFact
                 label={labels('responseSize')}
                 part="response-size"
-                text={formatBytes(responseBytesOf(sizes))}
+                text={formatBytes(responseBytesOf(sizes), language)}
             >
                 <ResponseSizeDetail sizes={sizes} />
             </ResponseFact>

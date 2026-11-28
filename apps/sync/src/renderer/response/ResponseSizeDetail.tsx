@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { ArrowInboundIcon, ArrowOutboundIcon } from '@mandor/icons';
 import type { HttpResponse } from '@mandor/schema';
 
@@ -18,19 +18,26 @@ type Row = readonly [string, string | undefined];
  */
 export function ResponseSizeDetail({ sizes }: ResponseSizeDetailProps) {
     const labels = useMessages('requests');
+    const language = useLanguage();
     const { bodyBytes, headerBytes, transferredBytes } = sizes;
     const answer: Row[] = [
-        [labels('sizeHeaders'), headerBytes === undefined ? undefined : formatBytes(headerBytes)],
-        [labels('sizeBody'), formatBytes(transferredBytes)],
+        [
+            labels('sizeHeaders'),
+            headerBytes === undefined ? undefined : formatBytes(headerBytes, language),
+        ],
+        [labels('sizeBody'), formatBytes(transferredBytes, language)],
         [
             labels('sizeDecoded'),
-            bodyBytes === transferredBytes ? undefined : formatBytes(bodyBytes),
+            bodyBytes === transferredBytes ? undefined : formatBytes(bodyBytes, language),
         ],
     ];
 
     return (
         <div className="flex flex-col gap-gap-control" data-part="response-size-detail">
-            <FactHeading label={labels('responseSize')} value={formatBytes(responseBytesOf(sizes))}>
+            <FactHeading
+                label={labels('responseSize')}
+                value={formatBytes(responseBytesOf(sizes), language)}
+            >
                 <ArrowInboundIcon className="text-text-success" />
             </FactHeading>
             <FactRows rows={answer} />
@@ -41,6 +48,7 @@ export function ResponseSizeDetail({ sizes }: ResponseSizeDetailProps) {
 
 function RequestSizes({ sizes }: ResponseSizeDetailProps) {
     const labels = useMessages('requests');
+    const language = useLanguage();
     const { requestBodyBytes, requestHeaderBytes } = sizes;
 
     if (requestHeaderBytes === undefined || requestBodyBytes === undefined) {
@@ -51,14 +59,14 @@ function RequestSizes({ sizes }: ResponseSizeDetailProps) {
         <>
             <FactHeading
                 label={labels('requestSize')}
-                value={formatBytes(requestHeaderBytes + requestBodyBytes)}
+                value={formatBytes(requestHeaderBytes + requestBodyBytes, language)}
             >
                 <ArrowOutboundIcon className="text-text-info" />
             </FactHeading>
             <FactRows
                 rows={[
-                    [labels('sizeHeaders'), formatBytes(requestHeaderBytes)],
-                    [labels('sizeBody'), formatBytes(requestBodyBytes)],
+                    [labels('sizeHeaders'), formatBytes(requestHeaderBytes, language)],
+                    [labels('sizeBody'), formatBytes(requestBodyBytes, language)],
                 ]}
             />
         </>

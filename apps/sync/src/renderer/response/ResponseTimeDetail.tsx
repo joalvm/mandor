@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import type { HttpResponse } from '@mandor/schema';
 
 import { FactHeading } from './FactHeading.js';
@@ -33,10 +33,14 @@ const BAR_OF_PHASE = {
  */
 export function ResponseTimeDetail({ timings }: ResponseTimeDetailProps) {
     const labels = useMessages('requests');
+    const language = useLanguage();
 
     return (
         <div className="flex flex-col gap-gap-control" data-part="response-time-detail">
-            <FactHeading label={labels('responseTime')} value={formatDuration(timings.totalMs)} />
+            <FactHeading
+                label={labels('responseTime')}
+                value={formatDuration(timings.totalMs, language)}
+            />
             <div className="flex flex-col gap-gap-tight">
                 {timingPhasesOf(timings).map((phase) => (
                     <TimingRow

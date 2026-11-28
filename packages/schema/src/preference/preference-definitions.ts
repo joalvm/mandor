@@ -1,4 +1,5 @@
 import { EDITOR_PREFERENCES } from './editor-preferences.js';
+import { INTERFACE_LANGUAGES } from './interface-languages.js';
 import { INTERFACE_PREFERENCES } from './interface-preferences.js';
 import type { PreferenceDefinition } from './preference-definition.js';
 import { RETENTION_PREFERENCES } from './retention-preferences.js';
@@ -10,10 +11,11 @@ export const PREFERENCE_DEFINITIONS = [
         helpKey: 'preferences:languageHelp',
         key: 'appearance.language',
         labelKey: 'preferences:language',
+        optionNames: Object.fromEntries(INTERFACE_LANGUAGES.map(({ code, name }) => [code, name])),
         scope: 'app',
         section: 'general',
         type: 'select',
-        values: ['en', 'es'],
+        values: INTERFACE_LANGUAGES.map(({ code }) => code),
     },
     ...INTERFACE_PREFERENCES,
     ...EDITOR_PREFERENCES,

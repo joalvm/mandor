@@ -122,7 +122,7 @@ describe('the payload of the chosen frame', () => {
         const dump = (await editorAt(0, byPart('frame-payload-view'))).text().split('\n');
 
         expect(dump).toHaveLength(1_048_576 / 16);
-        expect(screen.getByText('Se muestra el primer 1.0 MB de 6.0 MB.')).toBeVisible();
+        expect(screen.getByText('Se muestra el primer 1,0 MB de 6,0 MB.')).toBeVisible();
         expect(screen.queryByText(/Demasiado grande/)).toBeNull();
     });
 
@@ -169,6 +169,6 @@ describe('the payload of the chosen frame', () => {
         draw({ binary: true, data: 'QUFB'.repeat(FORMAT_BYTES) }, 'raw');
 
         expect((await editorAt(0)).text()).toHaveLength(FORMAT_BYTES);
-        expect(screen.getByText('Se muestra el primer 5.0 MB de 15.0 MB.')).toBeVisible();
+        expect(screen.getByText('Se muestra el primer 5,0 MB de 15,0 MB.')).toBeVisible();
     });
 });

@@ -58,7 +58,7 @@ function UnapprovedBand({ onApprove, source }: BandProps) {
             <span className="min-w-0 truncate">{labels('scriptUnapproved')}</span>
             <HiddenCount source={source} />
             <Button
-                className="ml-auto"
+                className="ms-auto"
                 data-part="script-approve"
                 onClick={onApprove}
                 size="sm"

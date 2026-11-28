@@ -134,7 +134,7 @@ function PaneLead({ children }: PropsWithChildren) {
 
     return (
         <div
-            className="mr-auto flex min-w-0 items-center gap-gap-control"
+            className="me-auto flex min-w-0 items-center gap-gap-control"
             data-part="schema-pane-lead"
         >
             {children}

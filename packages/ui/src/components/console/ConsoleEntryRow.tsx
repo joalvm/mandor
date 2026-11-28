@@ -24,7 +24,7 @@ const STATUS_COLORS: Readonly<Record<ConsoleStatus['outcome'], string>> = {
     refused: 'text-text-error',
 };
 
-const LINE = 'flex w-full min-w-0 items-start gap-gap-icon-text px-pad-panel py-1 text-left';
+const LINE = 'flex w-full min-w-0 items-start gap-gap-icon-text px-pad-panel py-1 text-start';
 
 const SLOT = 'flex h-lh w-icon-md shrink-0 items-center justify-center';
 

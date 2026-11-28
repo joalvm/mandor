@@ -1,6 +1,13 @@
 import { SIDEBAR_WIDTH } from '@mandor/ipc';
 import { useMessages } from '@mandor/i18n';
-import { arrowPixels, arrowStep, usePointerDrag } from '@mandor/ui';
+import {
+    arrowPixels,
+    arrowStep,
+    reachInto,
+    splitAxisOf,
+    usePointerDrag,
+    useWritingDirection,
+} from '@mandor/ui';
 import type { KeyboardEvent } from 'react';
 
 import { useShellStore } from '../../hooks/useShellStore.js';
@@ -17,6 +24,7 @@ export function SidebarResizer() {
     const messages = useMessages('shell');
     const width = useShellStore((state) => state.panels.sidebarWidth);
     const setPanels = useShellStore((state) => state.setPanels);
+    const writing = useWritingDirection();
 
     function widen(sidebarWidth: number): void {
         setPanels({
@@ -25,11 +33,11 @@ export function SidebarResizer() {
     }
 
     const drag = usePointerDrag((event, band) => {
-        widen(event.clientX - band.getBoundingClientRect().left);
+        widen(reachInto(event, band.getBoundingClientRect(), splitAxisOf('row', writing)));
     });
 
     function onKeyDown(event: KeyboardEvent<HTMLElement>): void {
-        const direction = arrowStep(event.key, 'row');
+        const direction = arrowStep(event.key, 'row', writing);
 
         if (direction === 0) {
             return;

@@ -1,5 +1,7 @@
 import { type PointerEvent as ReactPointerEvent, type PropsWithChildren, useRef } from 'react';
 
+import { useWritingDirection } from '../../hooks/useWritingDirection.js';
+import { splitAxisOf } from '../split/split-axis.js';
 import { resizableColumn } from './table-columns.js';
 import { useTableContext } from './table-context.js';
 
@@ -36,6 +38,7 @@ export function TableHeaderCell({ children, column }: TableHeaderCellProps) {
 function TableResizeEdge({ column }: { column: string }) {
     const table = useTableContext();
     const lastX = useRef<number | null>(null);
+    const axis = splitAxisOf('row', useWritingDirection());
 
     if (!resizableColumn(table.columns, column)) {
         return null;
@@ -48,7 +51,7 @@ function TableResizeEdge({ column }: { column: string }) {
             onPointerDown={(event: ReactPointerEvent<HTMLSpanElement>) => {
                 event.preventDefault();
                 event.currentTarget.setPointerCapture(event.pointerId);
-                lastX.current = event.clientX;
+                lastX.current = axis.pointOf(event);
             }}
             onPointerMove={(event: ReactPointerEvent<HTMLSpanElement>) => {
                 const cell = event.currentTarget.parentElement;
@@ -58,11 +61,11 @@ function TableResizeEdge({ column }: { column: string }) {
                 }
 
                 table.resize({
-                    deltaX: event.clientX - lastX.current,
+                    deltaX: axis.pointOf(event) - lastX.current,
                     id: column,
                     width: cell.getBoundingClientRect().width,
                 });
-                lastX.current = event.clientX;
+                lastX.current = axis.pointOf(event);
             }}
             onPointerUp={() => {
                 lastX.current = null;

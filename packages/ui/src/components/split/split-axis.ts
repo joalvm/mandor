@@ -1,5 +1,7 @@
 import type { KeyboardEvent, PointerEvent } from 'react';
 
+import type { WritingDirection } from '../../hooks/useWritingDirection.js';
+
 /** Which way the second half sits: beside the first, or under it. */
 export type SplitDirection = 'column' | 'row';
 
@@ -48,6 +50,34 @@ export const SPLIT_AXES: Record<SplitDirection, SplitAxis> = {
     },
 };
 
+/**
+ * A row read from the right, the way a window written from the right lays it out: its first half
+ * stands at the right edge and the arrow that points away from it, the left one, moves it forward.
+ * The pointer is measured backwards, so the distance from the start still grows as it moves on.
+ */
+const ROW_FROM_THE_RIGHT: SplitAxis = {
+    ...SPLIT_AXES.row,
+    back: 'ArrowRight',
+    forward: 'ArrowLeft',
+    pointOf: (event) => -event.clientX,
+    startOf: (bounds) => -bounds.right,
+};
+
+const AXES_BY_WRITING: Record<WritingDirection, Record<SplitDirection, SplitAxis>> = {
+    ltr: SPLIT_AXES,
+    rtl: { column: SPLIT_AXES.column, row: ROW_FROM_THE_RIGHT },
+};
+
+/** The axis of a split in a window that reads one way or the other: only a row turns round. */
+export function splitAxisOf(direction: SplitDirection, writing: WritingDirection): SplitAxis {
+    return AXES_BY_WRITING[writing][direction];
+}
+
+/** How far into its box the pointer stands, counted from the edge the box starts at. */
+export function reachInto(event: PointerSpot, bounds: DOMRect, axis: SplitAxis): number {
+    return axis.pointOf(event) - axis.startOf(bounds);
+}
+
 export function clampedSplit(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
 }
@@ -71,9 +101,15 @@ export function stepOf(key: string, axis: SplitAxis): number {
 /**
  * Which way an arrow key moves a divider the split does not own —a seam of the stack, the edge
  * of the sidebar, a separator of the grid— so every divider of the window answers the same keys.
+ * The grid lays its panels out from the left in every language, so its separators keep the
+ * arrows of a window read from the left.
  */
-export function arrowStep(key: string, direction: SplitDirection): number {
-    return stepOf(key, SPLIT_AXES[direction]);
+export function arrowStep(
+    key: string,
+    direction: SplitDirection,
+    writing: WritingDirection = 'ltr',
+): number {
+    return stepOf(key, splitAxisOf(direction, writing));
 }
 
 /** How far one arrow key moves any divider, in pixels: the same reach in every one of them. */

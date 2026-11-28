@@ -19,7 +19,7 @@ type AppBodyProps = PropsWithChildren;
 export function AppBody({ children }: AppBodyProps) {
     return (
         <div
-            className="flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden pr-gap-gutter"
+            className="flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden pe-gap-gutter"
             data-part="app-body"
         >
             {children}

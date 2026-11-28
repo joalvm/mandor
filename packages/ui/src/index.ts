@@ -74,7 +74,13 @@ export {
 export { SettingRow } from './components/settings/SettingRow.js';
 export { SettingsGroup } from './components/settings/SettingsGroup.js';
 export { SidePanel } from './components/layout/SidePanel.js';
-export { arrowPixels, arrowStep, dividerOrientation } from './components/split/split-axis.js';
+export {
+    arrowPixels,
+    arrowStep,
+    dividerOrientation,
+    reachInto,
+    splitAxisOf,
+} from './components/split/split-axis.js';
 export { SplitHalf } from './components/split/SplitHalf.js';
 export { SplitPane } from './components/split/SplitPane.js';
 export { StatusBar } from './components/layout/StatusBar.js';
@@ -95,6 +101,7 @@ export { TabsStrip } from './components/tabs/TabsStrip.js';
 export { TabsTab } from './components/tabs/TabsTab.js';
 export { Checkbox } from './components/toggle/Checkbox.js';
 export { Switch } from './components/toggle/Switch.js';
+export { TextDirection } from './components/layout/TextDirection.js';
 export { TitleBar } from './components/layout/TitleBar.js';
 export { ToastProvider } from './components/toast/Toast.js';
 export { Tooltip } from './components/tooltip/Tooltip.js';
@@ -148,6 +155,7 @@ export { schemaLintOf } from './editor/schema-lint-of.js';
 export { warmEditorWhenIdle } from './editor/warm-editor.js';
 export { MARKDOWN_PREVIEW_EVENT } from './editor/markdown-preview.js';
 export { usePointerDrag } from './hooks/usePointerDrag.js';
+export { useWritingDirection, type WritingDirection } from './hooks/useWritingDirection.js';
 export { useRowWindow, type RowWindow } from './hooks/useRowWindow.js';
 export { useSchemaChecker } from './hooks/useSchemaChecker.js';
 export { useSettledValue } from './hooks/useSettledValue.js';

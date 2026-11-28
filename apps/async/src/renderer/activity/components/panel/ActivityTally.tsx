@@ -1,3 +1,4 @@
+import { formatNumber, useLanguage } from '@mandor/i18n';
 import { tallyOf } from '../../activity-tally.js';
 import type { ActivityEntry } from '../../activity-entry.js';
 import { formatByteSize } from '../../lib/format-byte-size.js';
@@ -12,9 +13,10 @@ type ActivityTallyProps = {
  * leaves on screen, in the tertiary ink of a count read in passing.
  */
 export function ActivityTally({ entries }: ActivityTallyProps) {
+    const language = useLanguage();
     const tally = tallyOf(entries);
-    const inbound = `↓${String(tally.inbound.count)}·${formatByteSize(tally.inbound.bytes)}`;
-    const outbound = `↑${String(tally.outbound.count)}·${formatByteSize(tally.outbound.bytes)}`;
+    const inbound = `↓${formatNumber(tally.inbound.count, language)}·${formatByteSize(tally.inbound.bytes, language)}`;
+    const outbound = `↑${formatNumber(tally.outbound.count, language)}·${formatByteSize(tally.outbound.bytes, language)}`;
 
     return (
         <span

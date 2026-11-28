@@ -193,7 +193,7 @@ function SeeAll({
 }) {
     return (
         <Button
-            className="ml-auto shrink-0 border-none bg-transparent px-0 text-xs text-text-accent hover:bg-transparent hover:underline"
+            className="ms-auto shrink-0 border-none bg-transparent px-0 text-xs text-text-accent hover:bg-transparent hover:underline"
             onClick={onSeeAll}
             size="sm"
             variant="ghost"

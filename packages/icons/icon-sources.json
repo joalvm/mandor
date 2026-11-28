@@ -60,6 +60,7 @@
         },
         "chevron-left": {
             "state": "approved",
+            "mirrored": true,
             "source": {
                 "origin": "codicons",
                 "id": "chevron-left",
@@ -69,6 +70,7 @@
         },
         "chevron-right": {
             "state": "approved",
+            "mirrored": true,
             "source": {
                 "origin": "codicons",
                 "id": "chevron-right",
@@ -548,6 +550,7 @@
         },
         "send": {
             "state": "approved",
+            "mirrored": true,
             "source": {
                 "origin": "codicons",
                 "id": "send",
@@ -566,6 +569,7 @@
         },
         "sidebar-left": {
             "state": "approved",
+            "mirrored": true,
             "source": {
                 "origin": "codicons",
                 "id": "layout-sidebar-left",
@@ -656,6 +660,7 @@
         },
         "wrap-text": {
             "state": "approved",
+            "mirrored": true,
             "source": {
                 "origin": "codicons",
                 "id": "word-wrap",
@@ -665,6 +670,7 @@
         },
         "wrap-text-off": {
             "state": "approved",
+            "mirrored": true,
             "source": {
                 "origin": "derived",
                 "file": "authoring/wrap-text-off.svg",

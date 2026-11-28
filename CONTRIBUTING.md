@@ -190,7 +190,9 @@ Project rules (`tools/eslint-rules/`; the ones about file shape apply to `src/` 
   live in `packages/icons/src/glyph/`. The accent colour is for focus, the primary action, what
   is switched on (checkbox, switch) and the app mark only; hover, selection and active are grey.
 - `npm run design` checks markup and tokens; exceptions carry `// band-policy:` or
-  `// markup-policy:` with the reason.
+  `// markup-policy:` with the reason. It also refuses a physical side (`ml-`, `right-`,
+  `text-left`, `border-left`…): the layout names the start and the end of the line, so a
+  language written from the right turns it round.
 - The design standard is the `ui-design` skill. Its project hooks: the focus rule lives once in
   `packages/ui/src/styles/focus.css` and reaches a control through `data-focus-frame` (it has a
   line of its own) or `data-focus-ring` (it has none); a glyph of work in progress turns under

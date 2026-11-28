@@ -37,7 +37,7 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
             data-part="theme-preview"
             data-theme={theme}
         >
-            <div className="flex w-1/4 flex-col gap-gap-tight border-r border-border-subtle bg-surface-panel p-pad-toggle">
+            <div className="flex w-1/4 flex-col gap-gap-tight border-e border-border-subtle bg-surface-panel p-pad-toggle">
                 <span className="h-2 w-3/4 rounded-sm bg-surface-control" />
                 <span className="h-2 w-full rounded-sm bg-surface-selected" />
                 <span className="h-2 w-2/3 rounded-sm bg-surface-control" />

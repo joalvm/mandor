@@ -53,7 +53,7 @@ export function SyncTitleBar({
                 <CommandCenter />
             </div>
             <div
-                className="flex h-full flex-1 basis-0 items-center justify-end gap-gap-control pl-pad-panel"
+                className="flex h-full flex-1 basis-0 items-center justify-end gap-gap-control ps-pad-panel"
                 data-part="title-end"
             >
                 <span className="flex shrink-0 items-center" data-part="title-environment">

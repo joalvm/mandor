@@ -38,7 +38,7 @@ export function EnvironmentSelect({
         <Menu checkable>
             <MenuTrigger>
                 <Button
-                    className="h-field max-w-48 shrink-0 rounded-r-none border-0 px-pad-control"
+                    className="h-field max-w-48 shrink-0 rounded-e-none border-0 px-pad-control"
                     data-part="environment-select"
                     disabled={disabled || empty}
                     disabledReason={reason}

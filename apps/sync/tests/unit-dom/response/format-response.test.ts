@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
     formatBytes,
     formatDuration,
+    formatPreciseDuration,
     formatSocketEnd,
     httpVersionLabel,
     statusFamilyOf,
@@ -10,28 +11,36 @@ import {
 
 describe('the durations of a response', () => {
     it('reads milliseconds while they are under a second', () => {
-        expect(formatDuration(0)).toBe('0 ms');
-        expect(formatDuration(141.6)).toBe('142 ms');
-        expect(formatDuration(999.4)).toBe('999 ms');
+        expect(formatDuration(0, 'en')).toBe('0 ms');
+        expect(formatDuration(141.6, 'en')).toBe('142 ms');
+        expect(formatDuration(999.4, 'en')).toBe('999 ms');
     });
 
     it('reads seconds from a second on, with one decimal', () => {
-        expect(formatDuration(1000)).toBe('1.0 s');
-        expect(formatDuration(12_340)).toBe('12.3 s');
+        expect(formatDuration(1000, 'en')).toBe('1.0 s');
+        expect(formatDuration(12_340, 'en')).toBe('12.3 s');
     });
 });
 
 describe('the sizes of a response', () => {
     it('counts bytes under a kilobyte, which is a thousand of them', () => {
-        expect(formatBytes(0)).toBe('0 B');
-        expect(formatBytes(999)).toBe('999 B');
+        expect(formatBytes(0, 'en')).toBe('0 B');
+        expect(formatBytes(999, 'en')).toBe('999 B');
     });
 
     it('steps up a unit every thousand, with one decimal', () => {
-        expect(formatBytes(1000)).toBe('1.0 kB');
-        expect(formatBytes(3100)).toBe('3.1 kB');
-        expect(formatBytes(2_500_000)).toBe('2.5 MB');
-        expect(formatBytes(4_000_000_000)).toBe('4.0 GB');
+        expect(formatBytes(1000, 'en')).toBe('1.0 kB');
+        expect(formatBytes(3100, 'en')).toBe('3.1 kB');
+        expect(formatBytes(2_500_000, 'en')).toBe('2.5 MB');
+        expect(formatBytes(4_000_000_000, 'en')).toBe('4.0 GB');
+    });
+});
+
+describe('the numbers of a response in the language of the window', () => {
+    it('writes the decimal mark of the language and keeps the unit symbol', () => {
+        expect(formatDuration(12_340, 'es')).toBe('12,3 s');
+        expect(formatBytes(3100, 'es')).toBe('3,1 kB');
+        expect(formatPreciseDuration(0.25, 'es')).toBe('0,25 ms');
     });
 });
 

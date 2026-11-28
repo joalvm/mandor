@@ -43,7 +43,7 @@ export function RequestBar({
 
     return (
         <div
-            className="flex shrink-0 items-center gap-gap-control pt-0.5 pr-2.5 pb-1.5 pl-pad-panel"
+            className="flex shrink-0 items-center gap-gap-control pt-0.5 pe-2.5 pb-1.5 ps-pad-panel"
             data-part="request-bar"
         >
             <AddressBar className="flex-1">

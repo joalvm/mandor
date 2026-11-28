@@ -15,7 +15,8 @@
  */
 
 const OUTLINE = /\boutline(?:-[\w-]+)?\s*:/;
-const INSET = /\binset\b/;
+/** The `inset` of a shadow, not the logical `inset-inline` that places a frame. */
+const INSET = /\binset\b(?!-)/;
 const SPREAD = /box-shadow\s*:\s*0\s+0\s+0\b/;
 const RESET = 'packages/ui/src/styles/base.css';
 

@@ -40,6 +40,7 @@ afterEach(() => {
     document.documentElement.removeAttribute('data-density');
     document.documentElement.removeAttribute('data-motion');
     document.documentElement.removeAttribute('lang');
+    document.documentElement.removeAttribute('dir');
     window.localStorage.clear();
     vi.restoreAllMocks();
 });

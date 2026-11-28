@@ -28,7 +28,7 @@ function Send({ caption, entry }: SendProps) {
                 {entry.request.method}
             </span>
             <span className="min-w-0 truncate text-text-primary">{entry.request.url}</span>
-            <span className="ml-auto shrink-0 tabular-nums text-text-secondary">
+            <span className="ms-auto shrink-0 tabular-nums text-text-secondary">
                 {formatSentDay(entry.sentAt, language)} · {formatSentTime(entry.sentAt, language)}
             </span>
         </div>

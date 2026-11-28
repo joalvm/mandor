@@ -5,7 +5,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the sidebar left icon. */
 export function SidebarLeftIcon(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props} mirrored>
             <path
                 d={
                     'M12.5 1C13.881 1 15 2.119 15 3.5V12.5C15 13.881 13.881 15 12.5 15H3.5C2.119 ' +

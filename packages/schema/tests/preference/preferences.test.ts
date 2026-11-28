@@ -25,6 +25,7 @@ describe('the preference schema', () => {
                 helpKey: 'preferences:languageHelp',
                 key: 'appearance.language',
                 labelKey: 'preferences:language',
+                optionNames: { en: 'English', es: 'Español' },
                 scope: 'app',
                 section: 'general',
                 type: 'select',

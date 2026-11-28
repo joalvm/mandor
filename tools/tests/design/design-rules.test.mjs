@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { bandGeometryProblems } from '../../design/band-geometry.mjs';
 import { focusRingProblems } from '../../design/focus-ring.mjs';
 import { inlineValueProblems } from '../../design/inline-values.mjs';
+import { writingSideProblems } from '../../design/writing-sides.mjs';
 
 function file(path, text) {
     return { path, text };
@@ -75,6 +76,15 @@ describe('the focus ring rule', () => {
 
         expect(focusRingProblems([runtime])).toEqual([]);
     });
+
+    it('lets a focus frame be placed with the logical inset of its sides', () => {
+        const runtime = file(
+            'packages/env/src/styles/key-value.css',
+            '[data-row]:focus-within::after { inset-inline: -1px 0; border-color: red; }',
+        );
+
+        expect(focusRingProblems([runtime])).toEqual([]);
+    });
 });
 
 describe('the inline value rule', () => {
@@ -123,6 +133,18 @@ describe('the band geometry rule', () => {
             file(
                 'packages/ui/src/components/Bar.tsx',
                 `<div className="flex ${height} items-center px-pad-panel" />`,
+            ),
+        );
+
+        expect(bandGeometryProblems(rows)).toEqual([]);
+    });
+
+    /** An inset written to the start or the end of the line is an inset too. */
+    it('accepts a band whose inset names the start or the end of the line', () => {
+        const rows = ['ps-pad-panel', 'pe-pad-control'].map((inset) =>
+            file(
+                'packages/ui/src/components/Bar.tsx',
+                `<div className="flex h-header items-center ${inset}" />`,
             ),
         );
 
@@ -198,5 +220,42 @@ describe('the band geometry rule', () => {
         const css = file('packages/ui/src/styles/scales.css', '.flex { display: flex; }');
 
         expect(bandGeometryProblems([css])).toEqual([]);
+    });
+});
+
+describe('the sides of the line', () => {
+    it('reports a class written to the left or the right of a component', () => {
+        const row = file('packages/ui/src/components/Row.tsx', '<div className="flex ml-auto" />');
+
+        expect(writingSideProblems([row])).toHaveLength(1);
+        expect(writingSideProblems([row])[0]).toContain('ms-');
+    });
+
+    it('takes the classes that name the start and the end, and centring on the middle', () => {
+        const row = file(
+            'packages/ui/src/components/Row.tsx',
+            '<div className="ms-auto pe-pad-panel text-end border-s-2 rounded-e-none before:left-1/2 before:-translate-x-1/2" />',
+        );
+
+        expect(writingSideProblems([row])).toEqual([]);
+    });
+
+    it('reports a stylesheet that lays something out to a physical side', () => {
+        const sheets = [
+            file('packages/ui/src/styles/a.css', 'a {\n    right: 0;\n}'),
+            file('packages/ui/src/styles/b.css', 'b {\n    border-left: 1px solid;\n}'),
+            file('packages/ui/src/styles/c.css', 'c {\n    text-align: left;\n}'),
+        ];
+
+        expect(writingSideProblems(sheets)).toHaveLength(3);
+    });
+
+    it('leaves a class name of a library that says a side alone', () => {
+        const grid = file(
+            'packages/shell/src/styles/grid.css',
+            '.dv-left-actions-container {\n    inset-inline-start: 0;\n}',
+        );
+
+        expect(writingSideProblems([grid])).toEqual([]);
     });
 });

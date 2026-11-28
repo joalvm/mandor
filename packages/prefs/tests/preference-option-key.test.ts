@@ -4,8 +4,8 @@ import { preferenceOptionKey, preferenceOptionLabel } from '../src/lib/preferenc
 
 describe('the key of the message that names one option of a preference', () => {
     it('is built from the preference and the option, in the preferences bundle', () => {
-        expect(preferenceOptionKey({ key: 'appearance.language' }, 'en')).toBe(
-            'preferences:appearance-language-en',
+        expect(preferenceOptionKey({ key: 'editor.indentType' }, 'tabs')).toBe(
+            'preferences:editor-indentType-tabs',
         );
         expect(preferenceOptionKey({ key: 'appearance.themeManual' }, 'dark-contrast')).toBe(
             'preferences:appearance-themeManual-dark-contrast',
@@ -38,5 +38,15 @@ describe('the words one option of a preference reads as', () => {
                 said,
             ),
         ).toBe('preferences:unitDays(30)');
+    });
+
+    it('reads an option with a name of its own by that name, whatever the window speaks', () => {
+        expect(
+            preferenceOptionLabel(
+                { key: 'appearance.language', optionNames: { es: 'Español' } },
+                'es',
+                said,
+            ),
+        ).toBe('Español');
     });
 });

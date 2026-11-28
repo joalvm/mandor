@@ -71,7 +71,7 @@ function NoticeCount({ count }: Pick<Notice, 'count'>) {
     }
 
     return (
-        <span className="ml-gap-icon-text text-xs text-text-secondary">{`×${String(count)}`}</span>
+        <span className="ms-gap-icon-text text-xs text-text-secondary">{`×${String(count)}`}</span>
     );
 }
 

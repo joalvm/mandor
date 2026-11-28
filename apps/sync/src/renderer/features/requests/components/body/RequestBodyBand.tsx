@@ -56,7 +56,7 @@ function BeautifyButton({ editor, type }: Pick<RequestBodyBandProps, 'editor' | 
 
     return (
         <Button
-            className="ml-auto"
+            className="ms-auto"
             data-part="request-body-beautify"
             onClick={() => {
                 fireAndForget(editor.current?.run('format'));

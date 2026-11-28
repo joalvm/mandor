@@ -1,8 +1,11 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { ChevronDownIcon } from '../src/chevron-down.js';
+import { ChevronRightIcon } from '../src/chevron-right.js';
 import { ICON_SIZE_PX, type IconAppearanceProps } from '../src/icon-appearance.js';
 import { IconFrame } from '../src/icon-frame.js';
+import { SendIcon } from '../src/send.js';
 
 /** What every generated icon is: the frame with its paths nested inside and nothing else. */
 function AddIcon(props: IconAppearanceProps) {
@@ -55,6 +58,24 @@ describe('the icon frame', () => {
 
         expect(inherited.container.querySelector('svg')?.getAttribute('color')).toBeNull();
         expect(passed.container.querySelector('svg')?.getAttribute('color')).toBe('#2552aa');
+    });
+
+    /**
+     * A glyph that points along the line says so, and the stylesheet turns it round in a window
+     * written from the right; one that points down, or nowhere, says nothing.
+     */
+    it('marks the glyphs that point along the line, and only those', () => {
+        const along = [render(<ChevronRightIcon />), render(<SendIcon />)];
+        const across = render(<ChevronDownIcon />);
+
+        for (const { container } of along) {
+            expect(container.querySelector('svg')).toHaveAttribute('data-mirrored', '');
+        }
+
+        expect(across.container.querySelector('svg')).not.toHaveAttribute('data-mirrored');
+        expect(render(<AddIcon />).container.querySelector('svg')).not.toHaveAttribute(
+            'data-mirrored',
+        );
     });
 
     it('keeps the fill rules the source drew, whatever the origin', () => {

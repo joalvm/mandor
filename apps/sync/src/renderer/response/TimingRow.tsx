@@ -1,3 +1,4 @@
+import { useLanguage } from '@mandor/i18n';
 import { cn } from '@mandor/ui';
 
 import { formatPreciseDuration } from './lib/format-response.js';
@@ -19,6 +20,8 @@ type TimingRowProps = {
  * stylesheet, so the row never measures anything.
  */
 export function TimingRow({ bar, label, ms, startMs, totalMs }: TimingRowProps) {
+    const language = useLanguage();
+
     return (
         <div className="flex min-w-0 items-center gap-gap-control text-xs" data-part="timing-row">
             <span className="w-28 shrink-0 truncate text-text-secondary">{label}</span>
@@ -36,8 +39,8 @@ export function TimingRow({ bar, label, ms, startMs, totalMs }: TimingRowProps) 
                 />
                 <span data-part="timing-span" data-weight={Math.max(0, totalMs - startMs - ms)} />
             </span>
-            <span className="w-16 shrink-0 text-right tabular-nums text-text-primary">
-                {formatPreciseDuration(ms)}
+            <span className="w-16 shrink-0 text-end tabular-nums text-text-primary">
+                {formatPreciseDuration(ms, language)}
             </span>
         </div>
     );

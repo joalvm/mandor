@@ -22,7 +22,7 @@ export function RequestBreadcrumb({ children, name, trail }: RequestBreadcrumbPr
 
     return (
         <div
-            className="flex h-crumb shrink-0 items-center gap-gap-control overflow-hidden pt-0.5 pr-1.5 pl-pad-panel"
+            className="flex h-crumb shrink-0 items-center gap-gap-control overflow-hidden pt-0.5 pe-1.5 ps-pad-panel"
             data-part="request-breadcrumb"
         >
             <Breadcrumbs label={labels('breadcrumb')} parts={[...trail, name]}>

@@ -21,7 +21,7 @@ type ConsoleEntryBodyProps = {
 export function ConsoleEntryBody({ entry, open, onToggle, tone }: ConsoleEntryBodyProps) {
     return (
         <div
-            className="flex flex-col gap-gap-tight pr-pad-panel pb-1 pl-12"
+            className="flex flex-col gap-gap-tight pe-pad-panel pb-1 ps-12"
             data-part="console-entry-body"
         >
             <EntryDetail detail={entry.detail} tone={tone} />
@@ -74,7 +74,7 @@ function SectionValue({ open, value }: { open: boolean; value: unknown }) {
     }
 
     return (
-        <div className="pl-6" data-part="console-entry-section-value">
+        <div className="ps-6" data-part="console-entry-section-value">
             <ConsoleValue value={value} />
         </div>
     );

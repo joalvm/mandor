@@ -39,7 +39,7 @@ Edita el JSON del mismo tema en cada idioma dentro de [`src/lang/`](src/lang/). 
 
 ### De un JSON a una clave tipada
 
-[`build-resources.mjs`](tools/build-resources.mjs) compara los temas y claves de `src/lang/en` y `src/lang/es`, genera el registro de recursos y los esquemas JSON. El inglés funciona como base y respaldo. Por eso una clave nueva se escribe en los dos idiomas del mismo tema y luego se regenera; no se edita el archivo generado.
+[`build-resources.mjs`](tools/build-resources.mjs) compara los temas y claves de cada carpeta de `src/lang/` con `src/lang/en`, genera el registro de recursos y los esquemas JSON. El inglés funciona como base y respaldo. Por eso una clave nueva se escribe en cada idioma del mismo tema y luego se regenera; no se edita el archivo generado. Cómo se añade un idioma: `docs/specs/mandor.md` §Idiomas.
 
 `MessagesProvider` recibe `preferences.language` y crea una instancia cuando cambia ese valor. `useMessages(namespace)` restringe las claves a ese tema. `useTranslator()` acepta una clave dinámica completa cuando se conoce solo en ejecución. `createPlainI18n` sirve para menú o proceso sin árbol React, con instancia separada de la de la ventana.
 

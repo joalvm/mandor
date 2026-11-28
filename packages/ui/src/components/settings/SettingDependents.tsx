@@ -11,7 +11,7 @@ import type { PropsWithChildren } from 'react';
 export function SettingDependents({ children }: PropsWithChildren) {
     return (
         <div
-            className="flex min-w-0 flex-col gap-gap-group rounded-md bg-surface-tray py-pad-panel pl-pad-panel"
+            className="flex min-w-0 flex-col gap-gap-group rounded-md bg-surface-tray py-pad-panel ps-pad-panel"
             data-part="setting-dependents"
         >
             {children}

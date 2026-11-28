@@ -6,7 +6,9 @@ import {
     clampedSplit,
     dividerOrientation,
     keyboardDelta,
+    reachInto,
     SPLIT_AXES,
+    splitAxisOf,
     stepOf,
 } from '../../../src/components/split/split-axis.js';
 
@@ -68,6 +70,28 @@ describe('the axes of a split', () => {
         expect(
             ['ArrowUp', 'ArrowDown', 'ArrowLeft'].map((key) => arrowStep(key, 'column')),
         ).toEqual([-1, 1, 0]);
+    });
+
+    /**
+     * A window written from the right lays a row out from its right edge: the first half stands
+     * there, the pointer reaches into it from that edge, and the left arrow moves the divider on.
+     */
+    it('reads a row from the right edge in a window written from the right', () => {
+        const axis = splitAxisOf('row', 'rtl');
+        const bounds = { height: 100, left: 10, right: 210, top: 20, width: 200 } as DOMRect;
+
+        expect(reachInto(pointerAt(160, 7), bounds, axis)).toBe(50);
+        expect(reachInto(pointerAt(160, 7), bounds, splitAxisOf('row', 'ltr'))).toBe(150);
+        expect(axis.sizeOf(bounds)).toBe(200);
+        expect(['ArrowLeft', 'ArrowRight'].map((key) => stepOf(key, axis))).toEqual([1, -1]);
+        expect(['ArrowLeft', 'ArrowRight'].map((key) => arrowStep(key, 'row', 'rtl'))).toEqual([
+            1, -1,
+        ]);
+    });
+
+    it('keeps a column reading from the top whichever way the text runs', () => {
+        expect(splitAxisOf('column', 'rtl')).toBe(SPLIT_AXES.column);
+        expect(splitAxisOf('row', 'ltr')).toBe(SPLIT_AXES.row);
     });
 
     it('moves any divider eight pixels a key, and thirty-two with shift', () => {

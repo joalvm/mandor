@@ -17,12 +17,12 @@ afterEach(() => {
 
 describe('the facts of a response as a person reads them', () => {
     it('puts the unit with the number', () => {
-        expect(factText('status', 404)).toBe('404');
-        expect(factText('totalMs', 120)).toBe('120 ms');
-        expect(factText('totalMs', 2500)).toBe('2.5 s');
-        expect(factText('bodyBytes', 3100)).toBe('3.1 kB');
-        expect(factText('version', '2')).toBe('HTTP/2');
-        expect(factText('version', '1.1')).toBe('HTTP/1.1');
+        expect(factText('status', 404, 'en')).toBe('404');
+        expect(factText('totalMs', 120, 'en')).toBe('120 ms');
+        expect(factText('totalMs', 2500, 'en')).toBe('2.5 s');
+        expect(factText('bodyBytes', 3100, 'en')).toBe('3.1 kB');
+        expect(factText('version', '2', 'en')).toBe('HTTP/2');
+        expect(factText('version', '1.1', 'en')).toBe('HTTP/1.1');
     });
 });
 

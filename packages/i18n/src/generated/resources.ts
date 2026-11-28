@@ -55,6 +55,17 @@ import esSync from '../lang/es/sync.json';
 import esUpdates from '../lang/es/updates.json';
 import esWorkspace from '../lang/es/workspace.json';
 
+type PluralCategory = 'few' | 'many' | 'one' | 'other' | 'two' | 'zero';
+
+/** Every English key; the plural forms are each language's own, checked when generating. */
+type LocaleMessages<Value> = Value extends string
+    ? string
+    : {
+          [
+              Key in keyof Value as Key extends `${string}_${PluralCategory}` ? never : Key
+          ]: LocaleMessages<Value[Key]>;
+      };
+
 const EN_ERRORS = enErrors satisfies Record<ErrorCode, string>;
 
 export const EN_RESOURCE = {
@@ -115,7 +126,7 @@ const ES_RESOURCE = {
     sync: esSync,
     updates: esUpdates,
     workspace: esWorkspace,
-} satisfies typeof EN_RESOURCE;
+} satisfies LocaleMessages<typeof EN_RESOURCE>;
 
 export const DEFAULT_LANGUAGE = 'en';
 export const DEFAULT_NAMESPACE = 'shell';

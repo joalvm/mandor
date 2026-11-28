@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { StatusText } from '@mandor/ui';
 
 import { formatDuration } from '../../../../response/lib/format-response.js';
@@ -21,6 +21,7 @@ const WAIT_WORD = { idle: undefined, sending: 'sending' } as const;
 export function SendAnnouncement({ entry }: SendAnnouncementProps) {
     const errors = useMessages('errors');
     const labels = useMessages('requests');
+    const language = useLanguage();
 
     if ('response' in entry) {
         const { status, statusText, timings } = entry.response;
@@ -30,7 +31,7 @@ export function SendAnnouncement({ entry }: SendAnnouncementProps) {
                 {labels('sendReceived', {
                     status: String(status),
                     statusText,
-                    time: formatDuration(timings.totalMs),
+                    time: formatDuration(timings.totalMs, language),
                 })}
             </StatusText>
         );

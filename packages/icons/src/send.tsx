@@ -5,7 +5,7 @@ import { IconFrame } from './icon-frame.js';
 /** Represents the send icon. */
 export function SendIcon(props: IconAppearanceProps) {
     return (
-        <IconFrame {...props}>
+        <IconFrame {...props} mirrored>
             <path
                 d={
                     'M1.17683 1.11898C1.32953 0.989634 1.54464 0.963786 1.72363 1.05328L14.7236 ' +

@@ -81,7 +81,7 @@ function ChosenBadge({ chosen }: { chosen: boolean }) {
     }
 
     return (
-        <Badge className="ml-auto" tone="success">
+        <Badge className="ms-auto" tone="success">
             {messages('chosen')}
         </Badge>
     );

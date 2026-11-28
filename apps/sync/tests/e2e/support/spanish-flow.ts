@@ -15,7 +15,7 @@ const SPANISH_ROW: RowLabels = { key: 'Clave', value: 'Valor' };
 export async function speakSpanish(page: Page): Promise<void> {
     await page.getByRole('button', { exact: true, name: 'Settings' }).click();
     await page.getByRole('combobox', { name: 'Language' }).click();
-    await page.getByRole('option', { name: 'Spanish' }).click();
+    await page.getByRole('option', { name: 'Español' }).click();
     // The list fades out after the choice and holds the keys while it does: Escape is for the
     // settings once it is gone.
     await expect(page.locator('[data-part="select-content"]')).toHaveCount(0);
