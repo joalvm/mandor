@@ -1,7 +1,8 @@
 import { MessagesProvider } from '@mandor/i18n';
 import { updateConfigureRequestSchema } from '@mandor/ipc';
+import { textDirectionOf } from '@mandor/schema';
 import { bridge, fireAndForget } from '@mandor/shell';
-import { setTextZoom, watchTextZoom } from '@mandor/ui';
+import { setTextZoom, TextDirection, watchTextZoom } from '@mandor/ui';
 import { useEffect, useLayoutEffect, type PropsWithChildren } from 'react';
 
 import { useAppliedCodePreferences } from './hooks/useAppliedCodePreferences.js';
@@ -16,6 +17,7 @@ type PreferencesApplicationProps = PropsWithChildren;
 export function PreferencesApplication({ children }: PreferencesApplicationProps) {
     const { values, writePreference } = usePreferences();
     const language = values['appearance.language'];
+    const direction = textDirectionOf(language);
     const density = values['appearance.density'];
     const motion = values['appearance.motion'];
     const { source, theme } = useAppliedTheme();
@@ -82,17 +84,22 @@ export function PreferencesApplication({ children }: PreferencesApplicationProps
         fireAndForget(bridge.app.configureAppearance({ source }));
     }, [source]);
 
-    // What language the window is being read in, said where anything can read it: a screen
-    // reader pronounces the page by it, and the editor picks its own messages off it. A layout
+    // What language the window is being read in, and which way it runs, said where anything can
+    // read it: a screen reader pronounces the page by it, the editor picks its own messages off
+    // it, and the stylesheets lay the window out from the side the text starts on. A layout
     // effect, because the effects of what the window holds run before the ones of the window, and
     // an editor restored open would load its messages before a plain effect said the language.
     useLayoutEffect(() => {
-        document.documentElement.lang = language;
+        const root = document.documentElement;
+
+        root.lang = language;
+        root.dir = direction;
 
         return () => {
-            document.documentElement.removeAttribute('lang');
+            root.removeAttribute('lang');
+            root.removeAttribute('dir');
         };
-    }, [language]);
+    }, [language, direction]);
 
     // Main looks for versions by itself and cannot read the settings, which live in this window:
     // it is told what the person chose once the window is up and at every change.
@@ -104,5 +111,9 @@ export function PreferencesApplication({ children }: PreferencesApplicationProps
         }
     }, [mode, channel]);
 
-    return <MessagesProvider preferences={{ language }}>{children}</MessagesProvider>;
+    return (
+        <MessagesProvider preferences={{ language }}>
+            <TextDirection dir={direction}>{children}</TextDirection>
+        </MessagesProvider>
+    );
 }

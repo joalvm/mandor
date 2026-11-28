@@ -15,6 +15,11 @@ type PreferenceBase = {
  * amounts names its unit, and each option reads as that many of it instead of by a name of its own.
  */
 export type ChoicePreference = PreferenceBase & {
+    /**
+     * The options that read the same in every language, by their own names: a language is listed
+     * in itself, so whoever cannot read the window now still finds theirs.
+     */
+    optionNames?: Readonly<Record<string, string>> | undefined;
     type: 'select' | 'switch';
     /** The message that reads an option as an amount, `{{count}}` of the unit. */
     unitKey?: string | undefined;

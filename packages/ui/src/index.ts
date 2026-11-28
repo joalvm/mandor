@@ -95,6 +95,7 @@ export { TabsStrip } from './components/tabs/TabsStrip.js';
 export { TabsTab } from './components/tabs/TabsTab.js';
 export { Checkbox } from './components/toggle/Checkbox.js';
 export { Switch } from './components/toggle/Switch.js';
+export { TextDirection } from './components/layout/TextDirection.js';
 export { TitleBar } from './components/layout/TitleBar.js';
 export { ToastProvider } from './components/toast/Toast.js';
 export { Tooltip } from './components/tooltip/Tooltip.js';

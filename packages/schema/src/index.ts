@@ -269,6 +269,12 @@ export {
     type PreferenceDefinition,
     type TextPreference,
 } from './preference/preference-definition.js';
+export {
+    INTERFACE_LANGUAGES,
+    textDirectionOf,
+    type InterfaceLanguage,
+    type TextDirection,
+} from './preference/interface-languages.js';
 export { PREFERENCE_DEFINITIONS } from './preference/preference-definitions.js';
 export { THEME_IDS, type ThemeId } from './preference/theme-id.js';
 export {

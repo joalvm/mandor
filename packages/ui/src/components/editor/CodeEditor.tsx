@@ -102,6 +102,7 @@ export function CodeEditor({
             aria-label={labels.editor}
             className="h-full min-h-0 min-w-0"
             data-language={language}
+            dir="ltr"
             data-part="code-editor"
             data-read-only={readOnly}
             ref={containerRef}

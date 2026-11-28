@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { byPart } from '../../src/testing/by-part.js';
 
@@ -8,6 +8,11 @@ import {
     Card,
     SidePanel,
     StatusBar,
+    Tabs,
+    TabsList,
+    TabsStrip,
+    TabsTab,
+    TextDirection,
     TitleBar,
     Workbench,
 } from '../../src/index.js';
@@ -123,5 +128,36 @@ describe('the zones of the window', () => {
         expect(target).not.toHaveClass('flex-1', 'h-full');
         expect(body).toHaveClass('flex-1', 'h-full');
         expect(body).not.toHaveClass('shrink-0');
+    });
+
+    /**
+     * In a language written from the right, the tab after the current one sits on its left: the
+     * arrow that points at it is the one that gets there.
+     */
+    it('moves through the tabs the way the text of the window runs', async () => {
+        render(
+            <TextDirection dir="rtl">
+                <Tabs onValueChange={() => undefined} value="headers">
+                    <TabsStrip>
+                        <TabsList label="Secciones">
+                            <TabsTab label="Descripción" value="description" />
+                            <TabsTab label="Headers" value="headers" />
+                            <TabsTab label="Payload" value="payload" />
+                        </TabsList>
+                    </TabsStrip>
+                </Tabs>
+            </TextDirection>,
+        );
+
+        const current = screen.getByRole('tab', { name: 'Headers' });
+
+        act(() => {
+            current.focus();
+        });
+        fireEvent.keyDown(current, { key: 'ArrowLeft' });
+
+        await waitFor(() => {
+            expect(screen.getByRole('tab', { name: 'Payload' })).toHaveFocus();
+        });
     });
 });

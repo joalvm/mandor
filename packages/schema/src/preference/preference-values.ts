@@ -14,10 +14,14 @@ export type ResolvedPreferenceValues = Record<PreferenceKey, string>;
 
 type DefinedPreference = PreferenceDefinition & { key: PreferenceKey };
 
-export function resolvePreferenceValues(layers: PreferenceLayers): ResolvedPreferenceValues {
+/** What every preference is worth once the layers are read, from the definitions given. */
+export function resolvePreferenceValues(
+    layers: PreferenceLayers,
+    definitions: readonly DefinedPreference[] = PREFERENCE_DEFINITIONS,
+): ResolvedPreferenceValues {
     const values: Record<string, string> = {};
 
-    for (const definition of PREFERENCE_DEFINITIONS) {
+    for (const definition of definitions) {
         values[definition.key] = resolveDefinition(definition, layers);
     }
 
