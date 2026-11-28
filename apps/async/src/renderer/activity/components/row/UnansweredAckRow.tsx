@@ -1,5 +1,5 @@
 import { WarningIcon } from '@mandor/icons';
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 
 import type { ConnectionMessageEntry } from '../../activity-entry.js';
 import { formatByteSize } from '../../lib/format-byte-size.js';
@@ -15,6 +15,7 @@ type UnansweredAckRowProps = {
  */
 export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
     const messages = useMessages('connections');
+    const language = useLanguage();
     const record = entry.detail;
 
     return (
@@ -35,9 +36,11 @@ export function UnansweredAckRow({ entry }: UnansweredAckRowProps) {
                 className="w-16 shrink-0 text-text-secondary"
                 dateTime={new Date(entry.at).toISOString()}
             >
-                {formatActivityTime(entry.at)}
+                {formatActivityTime(entry.at, language)}
             </time>
-            <span className="w-13 shrink-0 text-right">{formatByteSize(entry.bytes)}</span>
+            <span className="w-13 shrink-0 text-right">
+                {formatByteSize(entry.bytes, language)}
+            </span>
         </div>
     );
 }

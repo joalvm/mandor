@@ -34,6 +34,6 @@ describe('the row of a network failure', () => {
         const time = byPart('activity-fault-row').querySelector('time');
 
         expect(time).toHaveAttribute('dateTime', new Date(entry.at).toISOString());
-        expect(time).toHaveTextContent(formatActivityTime(entry.at));
+        expect(time).toHaveTextContent(formatActivityTime(entry.at, 'en'));
     });
 });

@@ -1,22 +1,29 @@
+import { formatNumber } from '@mandor/i18n';
+
 /** A duration the way a person reads it: milliseconds until a second, then seconds. */
-export function formatDuration(ms: number): string {
-    return ms < 1000 ? `${String(Math.round(ms))} ms` : `${(ms / 1000).toFixed(1)} s`;
+export function formatDuration(ms: number, language: string): string {
+    return ms < 1000
+        ? `${formatNumber(Math.round(ms), language)} ms`
+        : `${formatNumber(ms / 1000, language, 1)} s`;
 }
 
 /** A phase of a send, which is often under a millisecond: up to two decimals, none trailing. */
-export function formatPreciseDuration(ms: number): string {
-    return ms < 1000 ? `${String(Number(ms.toFixed(2)))} ms` : formatDuration(ms);
+export function formatPreciseDuration(ms: number, language: string): string {
+    return ms < 1000 ? `${formatNumber(ms, language, 2, 0)} ms` : formatDuration(ms, language);
 }
 
 const UNITS = ['kB', 'MB', 'GB'];
 
-/** A size in thousands, as a network speaks of it, so 3100 bytes read `3.1 kB`. */
-export function formatBytes(bytes: number): string {
+/**
+ * A size in thousands, as a network speaks of it, so 3100 bytes read `3.1 kB`. The number is
+ * written the way the language writes it; the unit is the symbol every language reads.
+ */
+export function formatBytes(bytes: number, language: string): string {
     let value = bytes / 1000;
     let unit = 0;
 
     if (bytes < 1000) {
-        return `${String(bytes)} B`;
+        return `${formatNumber(bytes, language)} B`;
     }
 
     while (value >= 1000 && unit < UNITS.length - 1) {
@@ -24,7 +31,7 @@ export function formatBytes(bytes: number): string {
         unit += 1;
     }
 
-    return `${value.toFixed(1)} ${UNITS[unit] ?? 'GB'}`;
+    return `${formatNumber(value, language, 1)} ${UNITS[unit] ?? 'GB'}`;
 }
 
 export function httpVersionLabel(version: '1.1' | '2'): string {

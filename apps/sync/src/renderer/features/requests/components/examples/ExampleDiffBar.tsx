@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import type { RequestExample } from '@mandor/schema';
 import { IconButton } from '@mandor/ui';
 
@@ -25,6 +25,7 @@ export function ExampleDiffBar({
     wrap,
 }: ExampleDiffBarProps) {
     const labels = useMessages('requests');
+    const language = useLanguage();
     const { received } = comparison;
 
     return (
@@ -36,7 +37,7 @@ export function ExampleDiffBar({
             <ResponseStatus status={received.status} statusText={received.statusText} />
             <Expected comparison={comparison} example={example} />
             <span className="tabular-nums text-text-tertiary">
-                · {formatDuration(received.timings.totalMs)}
+                · {formatDuration(received.timings.totalMs, language)}
             </span>
             <div className="ml-auto flex items-center gap-gap-tight">
                 <IconButton

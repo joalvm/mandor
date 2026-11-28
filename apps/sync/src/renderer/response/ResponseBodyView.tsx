@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { HEX_DUMP_BYTES, HexView } from '@mandor/ui';
 
 import { BodyPreview } from './BodyPreview.js';
@@ -78,6 +78,7 @@ function BodyDump({ bytes, modelKey, total }: BodyDumpProps) {
 /** Said only once more was read than the dump shows: the band already tells what is read. */
 function DumpHeadNote({ shown, total }: { shown: number; total: number }) {
     const labels = useMessages('requests');
+    const language = useLanguage();
 
     if (shown <= HEX_DUMP_BYTES) {
         return null;
@@ -89,8 +90,8 @@ function DumpHeadNote({ shown, total }: { shown: number; total: number }) {
             data-part="response-body-dump-head"
         >
             {labels('dumpHead', {
-                shown: formatBytes(HEX_DUMP_BYTES),
-                total: formatBytes(total),
+                shown: formatBytes(HEX_DUMP_BYTES, language),
+                total: formatBytes(total, language),
             })}
         </p>
     );

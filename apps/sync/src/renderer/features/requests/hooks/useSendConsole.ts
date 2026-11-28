@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import type { RequestSendLog } from '@mandor/ipc';
 import { writeConsole } from '@mandor/shell';
 import { useEffect, useEffectEvent } from 'react';
@@ -15,11 +15,12 @@ import { sendConsoleEntry } from '../lib/send-console-entry.js';
 export function useSendConsole(): void {
     const requests = useMessages('requests');
     const errors = useMessages('errors');
+    const language = useLanguage();
     const write = useEffectEvent((log: RequestSendLog) => {
         const place = scriptOutputStore.getState().places[log.sendId];
 
         if (place !== undefined) {
-            writeConsole([sendConsoleEntry(log, { requests, errors }, place.title)]);
+            writeConsole([sendConsoleEntry(log, { requests, errors }, place.title, language)]);
         }
     });
 

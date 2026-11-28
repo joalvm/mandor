@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { PreviewIcon } from '@mandor/icons';
 import { Button, IconButton } from '@mandor/ui';
 
@@ -103,6 +103,7 @@ function PreviewToggle({
 
 function LoadedNote({ partial, progress }: { partial: boolean; progress: ResponseBodyProgress }) {
     const labels = useMessages('requests');
+    const language = useLanguage();
 
     if (!partial) {
         return null;
@@ -111,8 +112,8 @@ function LoadedNote({ partial, progress }: { partial: boolean; progress: Respons
     return (
         <span className="truncate">
             {labels('bodyProgress', {
-                loaded: formatBytes(progress.loaded),
-                total: formatBytes(progress.total),
+                loaded: formatBytes(progress.loaded, language),
+                total: formatBytes(progress.total, language),
             })}
         </span>
     );

@@ -83,11 +83,15 @@ export const HistoryRow = memo(function HistoryRow({ summary, workspaceId }: His
 });
 
 function HistoryDuration({ outcome }: { outcome: HistorySummary['outcome'] }) {
+    const language = useLanguage();
+
     if (outcome.kind !== 'response') {
         return null;
     }
 
     return (
-        <span className={cn(FACT, 'text-text-secondary')}>{formatDuration(outcome.totalMs)}</span>
+        <span className={cn(FACT, 'text-text-secondary')}>
+            {formatDuration(outcome.totalMs, language)}
+        </span>
     );
 }

@@ -1,5 +1,5 @@
 import { ConnectIcon, DisconnectIcon } from '@mandor/icons';
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import type { ReactNode } from 'react';
 
 import type { ConnectionStatus, ConnectionStatusEntry } from '../../activity-entry.js';
@@ -35,6 +35,7 @@ type ConnectionStatusRowProps = {
  */
 export function ConnectionStatusRow({ entry }: ConnectionStatusRowProps) {
     const messages = useMessages('connections');
+    const language = useLanguage();
     const look = STATUS_LOOKS[entry.detail.status];
 
     return (
@@ -50,7 +51,7 @@ export function ConnectionStatusRow({ entry }: ConnectionStatusRowProps) {
                 {messages(look.label)}
             </span>
             <time className="w-16 shrink-0" dateTime={new Date(entry.at).toISOString()}>
-                {formatActivityTime(entry.at)}
+                {formatActivityTime(entry.at, language)}
             </time>
             {/* The column of the bytes, empty: the moment stays under the moments of the frames. */}
             <span aria-hidden="true" className="w-13 shrink-0" />

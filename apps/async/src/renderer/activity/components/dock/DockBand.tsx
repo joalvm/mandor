@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { ArrowInboundIcon, ArrowOutboundIcon } from '@mandor/icons';
 import { IconButton } from '@mandor/ui';
 import { use, type PropsWithChildren } from 'react';
@@ -24,6 +24,8 @@ type DockBandProps = PropsWithChildren<{
  * the way out of the dock. Each detail draws it, because what it can do with the entry is its own.
  */
 export function DockBand({ children, entry }: DockBandProps) {
+    const language = useLanguage();
+
     return (
         <div
             className="flex h-section shrink-0 items-center gap-gap-tight px-pad-panel"
@@ -35,11 +37,11 @@ export function DockBand({ children, entry }: DockBandProps) {
             >
                 <DockDirection direction={directionOf(entry)} />
                 <span className="flex min-w-0 items-center gap-gap-tight truncate text-text-secondary">
-                    <span>{formatByteSize(entry.bytes)}</span>
+                    <span>{formatByteSize(entry.bytes, language)}</span>
                     <span aria-hidden="true" className="text-text-tertiary">
                         ·
                     </span>
-                    <span>{formatActivityTime(entry.at)}</span>
+                    <span>{formatActivityTime(entry.at, language)}</span>
                 </span>
             </div>
             {children}

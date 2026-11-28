@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { FORMAT_BYTES } from '@mandor/ipc';
 import { CodeEditor, HEX_DUMP_BYTES, HexView, type EditorOptions } from '@mandor/ui';
 import { useMemo, type ReactNode } from 'react';
@@ -136,6 +136,7 @@ function FrameDump({ frame, modelKey }: { frame: Frame; modelKey: string }) {
 /** What was left out of a frame read only up to a limit: it says how large it was whole. */
 function DumpHeadNote({ frame, limit }: { frame: Frame; limit: number }) {
     const messages = useMessages('connections');
+    const language = useLanguage();
     const total = useMemo(() => frameByteLength(frame), [frame]);
 
     if (total <= limit) {
@@ -147,7 +148,10 @@ function DumpHeadNote({ frame, limit }: { frame: Frame; limit: number }) {
             className="flex h-row shrink-0 items-center truncate px-pad-panel text-text-secondary"
             data-part="frame-dump-head"
         >
-            {messages('dumpHead', { shown: formatByteSize(limit), total: formatByteSize(total) })}
+            {messages('dumpHead', {
+                shown: formatByteSize(limit, language),
+                total: formatByteSize(total, language),
+            })}
         </p>
     );
 }

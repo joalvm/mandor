@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { ArrowInboundIcon, ArrowOutboundIcon, WarningIcon } from '@mandor/icons';
 import type { ActivityRecord } from '@mandor/ipc';
 import { cn } from '@mandor/ui';
@@ -62,6 +62,7 @@ export const ConnectionMessageRow = memo(function ConnectionMessageRow({
     entry,
 }: ConnectionMessageRowProps) {
     const messages = useMessages('connections');
+    const language = useLanguage();
     const record = entry.detail;
     const inbound = record.direction === 'in';
     const name = recordNameOf(record);
@@ -117,9 +118,11 @@ export const ConnectionMessageRow = memo(function ConnectionMessageRow({
                 className="w-16 shrink-0 text-text-secondary"
                 dateTime={new Date(entry.at).toISOString()}
             >
-                {formatActivityTime(entry.at)}
+                {formatActivityTime(entry.at, language)}
             </time>
-            <span className="w-13 shrink-0 text-right">{formatByteSize(entry.bytes)}</span>
+            <span className="w-13 shrink-0 text-right">
+                {formatByteSize(entry.bytes, language)}
+            </span>
         </div>
     );
 });

@@ -47,7 +47,7 @@ describe('the band over the detail of an entry', () => {
 
         expect(band).toHaveClass('h-section');
         expect(screen.getByText('Recibido')).toHaveClass('font-semibold');
-        expect(band).toHaveTextContent(`56 B·${formatActivityTime(AT)}`);
+        expect(band).toHaveTextContent(`56 B·${formatActivityTime(AT, 'en')}`);
     });
 
     it('names a frame that left as sent', () => {
@@ -61,7 +61,7 @@ describe('the band over the detail of an entry', () => {
 
         expect(screen.queryByText('Recibido')).toBeNull();
         expect(screen.queryByText('Enviado')).toBeNull();
-        expect(byPart('activity-dock-head')).toHaveTextContent(formatActivityTime(AT));
+        expect(byPart('activity-dock-head')).toHaveTextContent(formatActivityTime(AT, 'en'));
     });
 
     it('carries what its detail puts in it before the way out', () => {

@@ -1,4 +1,4 @@
-import { useMessages } from '@mandor/i18n';
+import { useLanguage, useMessages } from '@mandor/i18n';
 import { ErrorIcon } from '@mandor/icons';
 
 import type { ConnectionFaultEntry } from '../../activity-entry.js';
@@ -15,6 +15,7 @@ type ConnectionFaultRowProps = {
 export function ConnectionFaultRow({ entry }: ConnectionFaultRowProps) {
     const messages = useMessages('connections');
     const errorMessages = useMessages('errors');
+    const language = useLanguage();
     const fault = entry.detail;
 
     return (
@@ -33,7 +34,7 @@ export function ConnectionFaultRow({ entry }: ConnectionFaultRowProps) {
                 {errorMessages(fault.code)}
             </span>
             <time className="w-16 shrink-0" dateTime={new Date(entry.at).toISOString()}>
-                {formatActivityTime(entry.at)}
+                {formatActivityTime(entry.at, language)}
             </time>
             {/* The column of the bytes, empty: the moment stays under the moments of the frames. */}
             <span aria-hidden="true" className="w-13 shrink-0" />
